@@ -6,6 +6,6 @@ package com.herthrone.base;
 public interface Weapon extends BaseCard {
 
   public abstract int use();
-  public abstract Attribute getDurability();
-  public abstract Attribute getAttack();
+  public abstract Attribute getDurabilityAttr();
+  public abstract Attribute getAttackAttr();
 }

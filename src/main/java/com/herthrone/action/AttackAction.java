@@ -5,12 +5,12 @@ import com.herthrone.base.BaseCreature;
 /**
  * Created by yifeng on 4/4/16.
  */
-public class AttackAction <T extends BaseCreature> implements Action {
+public class AttackAction implements Action {
 
   private final BaseCreature attacker;
   private final BaseCreature attackee;
 
-  public AttackAction(T attacker, T attackee) {
+  public AttackAction(BaseCreature attacker, BaseCreature attackee) {
     this.attacker = attacker;
     this.attackee = attackee;
   }

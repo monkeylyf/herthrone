@@ -2,14 +2,11 @@ package com.herthrone.card.heropower;
 
 import com.herthrone.action.Action;
 import com.herthrone.action.ActionFactory;
-import com.herthrone.action.CastSpell;
 import com.herthrone.action.SpellAction;
 import com.herthrone.base.Attribute;
 import com.herthrone.base.BaseCreature;
-import com.herthrone.base.Hero;
 import com.herthrone.base.Spell;
 import com.herthrone.card.Constants;
-import com.herthrone.card.weapon.WickedKnife;
 
 import java.util.List;
 

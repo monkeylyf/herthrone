@@ -4,11 +4,10 @@ import com.herthrone.action.Action;
 import com.herthrone.action.GeneralActionFactory;
 import com.herthrone.action.SummonAction;
 import com.herthrone.base.Attribute;
-import com.herthrone.base.BaseMinion;
+import com.herthrone.base.BaseCreature;
 import com.herthrone.base.Player;
 import com.herthrone.base.Summon;
 import com.herthrone.card.Constants;
-import com.herthrone.card.minion.SilverHandRecruit;
 import com.herthrone.container.Board;
 
 import java.util.Arrays;
@@ -40,7 +39,7 @@ public class Reinforce implements Summon, GeneralActionFactory {
 
   @Override
   public void summon(Board board) {
-    BaseMinion silverHandRecruit = new SilverHandRecruit();
+    BaseCreature silverHandRecruit = null;
     board.addMinion(silverHandRecruit);
   }
 

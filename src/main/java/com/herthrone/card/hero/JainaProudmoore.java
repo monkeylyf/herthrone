@@ -1,7 +1,5 @@
 package com.herthrone.card.hero;
 
-import com.herthrone.base.Hero;
-import com.herthrone.card.heropower.FireBlast;
 
 /**
  * Created by yifeng on 4/2/16.

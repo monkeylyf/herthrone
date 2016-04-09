@@ -1,7 +1,6 @@
 package com.herthrone.container;
 
 import com.herthrone.base.BaseCreature;
-import com.herthrone.base.BaseMinion;
 import com.herthrone.base.Secret;
 
 import java.util.ArrayList;
@@ -16,11 +15,11 @@ public class Board {
 
   private static final int maxCapacity = 7;
 
-  private final List<BaseMinion> board;
+  private final List<BaseCreature> board;
   private final List<Secret> secrets;
 
   public Board() {
-    this.board = new ArrayList<BaseMinion>();
+    this.board = new ArrayList<BaseCreature>();
     this.secrets = new ArrayList<Secret>();
   }
 
@@ -28,21 +27,21 @@ public class Board {
     return this.board.size() == Board.maxCapacity;
   }
 
-  public void addMinion(final BaseMinion minion) {
+  public void addMinion(final BaseCreature minion) {
     if (!isFull()) {
       this.board.add(minion);
     }
   }
 
-  public void addMinion(final BaseMinion minion, final int index) {
+  public void addMinion(final BaseCreature minion, final int index) {
     if (!isFull()) {
       this.board.add(index, minion);
     }
   }
 
   public void removeDead() {
-    for (Iterator<BaseMinion> iterator = this.board.iterator(); iterator.hasNext();) {
-      BaseMinion minion = iterator.next();
+    for (Iterator<BaseCreature> iterator = this.board.iterator(); iterator.hasNext();) {
+      BaseCreature minion = iterator.next();
       if (minion.getHealthAttr().getVal() <= 0) {
         iterator.remove();
       }

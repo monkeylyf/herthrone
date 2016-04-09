@@ -10,7 +10,7 @@ public class FieryWarAxe implements Weapon {
 
   private static final String NAME = Constants.FIERY_WAR_AEX;
 
-  public static final int ATTACK = 0;
+  public static final int ATTACK = 3;
   public static final int DURABILITY = 2;
   public static final int CRYSTAL_MANA_COST = 1;
 
@@ -41,12 +41,12 @@ public class FieryWarAxe implements Weapon {
   }
 
   @Override
-  public Attribute getDurability() {
+  public Attribute getDurabilityAttr() {
     return this.durabilityAttr;
   }
 
   @Override
-  public Attribute getAttack() {
+  public Attribute getAttackAttr() {
     return this.attackAttr;
   }
 

@@ -41,12 +41,12 @@ public class WickedKnife implements Weapon {
   }
 
   @Override
-  public Attribute getDurability() {
+  public Attribute getDurabilityAttr() {
     return this.durabilityAttr;
   }
 
   @Override
-  public Attribute getAttack() {
+  public Attribute getAttackAttr() {
     return this.attackAttr;
   }
 
