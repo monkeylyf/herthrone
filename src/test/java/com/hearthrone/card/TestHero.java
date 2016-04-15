@@ -1,12 +1,17 @@
 package com.hearthrone.card;
 
-import com.herthrone.base.BaseCreature;
+import com.herthrone.action.ActionFactory;
+import com.herthrone.base.Battlefield;
+import com.herthrone.base.Hero;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
-import com.herthrone.card.hero.HeroFactory;
-import com.herthrone.card.heropower.ArmorUp;
+import com.herthrone.card.factory.HeroFactory;
+import com.herthrone.card.factory.HeroPowerFactory;
 import com.herthrone.card.weapon.Constants;
-import com.herthrone.card.weapon.WeaponFactory;
+import com.herthrone.card.factory.WeaponFactory;
+import com.herthrone.container.Board;
+import com.herthrone.container.Deck;
+import com.herthrone.container.Hand;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,20 +26,45 @@ public class TestHero extends TestCase {
   private final int weaponDurability1 = 2;
   private final int weaponDurability2 = 3;
 
-  private BaseCreature hero1;
-  private BaseCreature hero2;
+  private Hero hero1;
+  private Hero hero2;
+  private Hand hand1;
+  private Hand hand2;
+  private Deck deck1;
+  private Deck deck2;
+  private Board board1;
+  private Board board2;
+  private Battlefield battlefield1;
+  private Battlefield battlefield2;
 
-  private Spell heroPower;
+  private ActionFactory heroPower1;
+  private ActionFactory heroPower2;
+  private HeroPowerFactory heroPowerFactory1;
+  private HeroPowerFactory heroPowerFactory2;
 
   private Weapon weapon1;
   private Weapon weapon2;
 
   @Before
   public void setUp() {
-    this.heroPower = new ArmorUp();
-
     this.hero1 = HeroFactory.createHeroByName("FOO");
     this.hero2 = HeroFactory.createHeroByName("BAR");
+    this.hand1 = new Hand();
+    this.hand2 = new Hand();
+    this.deck1 = new Deck();
+    this.deck2 = new Deck();
+    this.board1 = new Board();
+    this.board2 = new Board();
+
+    this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2);
+    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1);
+
+    this.heroPowerFactory1 = new HeroPowerFactory(this.battlefield1);
+    this.heroPowerFactory2 = new HeroPowerFactory(this.battlefield2);
+
+    this.heroPower1 = this.heroPowerFactory1.getArmorUp();
+    this.heroPower2 = this.heroPowerFactory2.getArmorUp();
+
 
     this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.FIERY_WAR_AEX);
     this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.FIERY_WAR_AEX);
@@ -108,15 +138,15 @@ public class TestHero extends TestCase {
   @Test
   public void testArmorUp() {
     assertEquals(0, this.hero1.getArmorAttr().getVal());
-    this.heroPower.cast(this.hero1);
+    this.heroPower1.yieldActions().stream().forEach(action -> action.act());
     assertEquals(2, this.hero1.getArmorAttr().getVal());
-    this.heroPower.cast(this.hero1);
+    this.heroPower1.yieldActions().forEach(action -> action.act());
     assertEquals(4, this.hero1.getArmorAttr().getVal());
 
     assertEquals(0, this.hero2.getArmorAttr().getVal());
-    this.heroPower.cast(this.hero2);
+    this.heroPower2.yieldActions().forEach(action -> action.act());
     assertEquals(2, this.hero2.getArmorAttr().getVal());
-    this.heroPower.cast(this.hero2);
+    this.heroPower2.yieldActions().forEach(action -> action.act());
     assertEquals(4, this.hero2.getArmorAttr().getVal());
   }
 
@@ -127,7 +157,7 @@ public class TestHero extends TestCase {
     this.hero1.equipWeapon(this.weapon1);
     this.hero2.equipWeapon(this.weapon2);
 
-    this.heroPower.cast(this.hero1);
+    this.heroPower1.yieldActions().forEach(action -> action.act());
     assertEquals(2, this.hero1.getArmorAttr().getVal());
     this.hero2.yieldAttackAction(this.hero1).act();
     assertEquals(0, this.hero1.getArmorAttr().getVal());

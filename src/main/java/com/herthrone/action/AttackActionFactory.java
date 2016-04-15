@@ -1,11 +1,12 @@
 package com.herthrone.action;
 
-import com.herthrone.base.BaseCreature;
+import com.herthrone.base.Minion;
+import com.herthrone.card.action.PhysicalDamage;
 
 /**
  * Created by yifeng on 4/8/16.
  */
 public interface AttackActionFactory {
 
-  public AttackAction yieldAttackAction(BaseCreature creature);
+  public PhysicalDamage yieldAttackAction(Minion creature);
 }

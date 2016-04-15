@@ -1,7 +1,9 @@
 package com.herthrone.container;
 
 import com.herthrone.base.BaseCard;
+import com.herthrone.exception.CardNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -13,9 +15,18 @@ public class Deck {
   private static final int deckSize = 30;
   private final List<BaseCard> deck;
 
-  public Deck(final List<BaseCard> deck) {
-    assert(deck.size() == Deck.deckSize);
-    this.deck = deck;
+  public Deck() {
+    this.deck = new ArrayList<>();
+  }
+  public Deck(final List<BaseCard> cards) throws CardNotFoundException {
+    assert(cards.size() == Deck.deckSize);
+    this.deck = cards;
+  }
+
+  public void initDeck(final List<BaseCard> cards) throws CardNotFoundException {
+    for (BaseCard card : cards) {
+      this.deck.add(card);
+    }
   }
 
   public BaseCard topCard() {

@@ -1,76 +1,24 @@
 package com.herthrone.base;
 
-import com.herthrone.action.AttackAction;
-
-import java.util.Optional;
+import com.herthrone.action.AttackActionFactory;
 
 /**
- * Created by yifeng on 4/8/16.
+ * Created by yifeng on 4/2/16.
  */
-public class Minion implements BaseCreature {
 
-  private final Attribute attackAttr;
-  private final Attribute healthAttr;
-  private final Attribute crystalManaCostAttr;
 
-  public Minion(final int attack, final int health, final int crystalManaCost) {
-    this.attackAttr = new Attribute(attack);
-    this.healthAttr = new Attribute(health);
-    this.crystalManaCostAttr = new Attribute(crystalManaCost);
-  }
+public interface Minion extends BaseCard, AttackActionFactory {
 
-  @Override
-  public Attribute getHealthAttr() {
-    return null;
-  }
+  public Attribute getHealthAttr();
+  public Attribute getAttackAttr();
+  //public Attribute getArmorAttr();
+  public String getHeroClass();
 
-  @Override
-  public Attribute getAttackAttr() {
-    return null;
-  }
+  public void causeDamage(Minion creature);
+  public void takeDamage(final int damage);
 
-  @Override
-  public Attribute getArmorAttr() {
-    return null;
-  }
+  //public void equipWeapon(Weapon weapon);
+  //public void disarm();
 
-  @Override
-  public void causeDamage(BaseCreature creature) {
-
-  }
-
-  @Override
-  public void takeDamage(int damage) {
-
-  }
-
-  @Override
-  public void equipWeapon(Weapon weapon) {
-    throw new IllegalArgumentException("Minions cannot equip weapon.");
-  }
-
-  @Override
-  public void disarm() {
-
-  }
-
-  @Override
-  public boolean canDamage() {
-    return false;
-  }
-
-  @Override
-  public AttackAction yieldAttackAction(BaseCreature creature) {
-    return null;
-  }
-
-  @Override
-  public String getCardName() {
-    return null;
-  }
-
-  @Override
-  public Attribute getCrystalManaCost() {
-    return null;
-  }
+  public boolean canDamage();
 }

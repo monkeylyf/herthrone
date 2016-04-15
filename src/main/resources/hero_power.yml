@@ -1,0 +1,59 @@
+- name: ArmorUp
+  class: Warrior
+  actions:
+    - armor: 2
+      target: hero
+
+- name: DaggerMastery
+  class: Rogue
+  actions:
+    - weapon: WickedBlade
+      target: hero
+
+- name: FireBlast
+  class: Mage
+  actions:
+    - damage: 1
+      target: any
+
+- name: LesserHeal
+  class: Priest
+  actions:
+    - health: 2
+      target: any
+
+ - name: LifeTap
+   class: Warlock
+   actions:
+     - health: -2
+       target: hero
+     - draw_card: 1
+       target: hero
+
+ - name: Reinforce
+   class: Paladin
+   actions:
+     - summon:
+        - SilverHandRecruit
+
+ - name: Shapeshift
+   class: Druid
+   actions:
+     - attack: 1
+       target: hero
+       effective: 1
+     - armor: 1
+       target: hero
+
+  - name: SteadyShot
+    class: Hunter
+    actions:
+      - health: -2
+        target: hero
+
+  - name: TotemicCall
+    class: Shaman
+    actions:
+      - summon:
+        -
+

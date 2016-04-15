@@ -1,0 +1,26 @@
+---
+id: 1
+name: Chillwind Yeti
+class: Common
+attack: 4
+health: 5
+crystal: 4
+mechanics: []
+---
+id: 2
+name: Silver Hand Recruit
+class: Paladin
+attack: 1
+health: 1
+crystal: 1
+mechanics: []
+---
+id: 3
+name: Sen'jin Shieldmasta
+class: Common
+attack: 3
+health: 5
+crystal: 4
+mechanics:
+  - ability: Taunt
+    stats: null

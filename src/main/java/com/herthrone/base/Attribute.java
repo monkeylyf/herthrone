@@ -19,9 +19,11 @@ public class Attribute {
   public int getVal() { return this.val + this.buffDelta; }
   public int getRawVal() { return this.val; }
   public void setBuff(final int buff) { this.buffDelta += buff; }
+  public void resetBuff() { this.buffDelta = 0; }
   public void reset() {
     this.val = this.rawVal;
     this.buffDelta = 0;
+    this.resetAfter = false;
   }
 
   public void increaseToMax(final int val) {
@@ -42,7 +44,10 @@ public class Attribute {
   public void resetAfterRound() {
     if (this.resetAfter) {
       reset();
-      this.resetAfter = false;
     }
+  }
+
+  public void vary(final int delta) {
+    this.val += delta;
   }
 }

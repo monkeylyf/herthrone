@@ -1,6 +1,6 @@
 package com.herthrone.container;
 
-import com.herthrone.base.BaseCreature;
+import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 
 import java.util.ArrayList;
@@ -15,33 +15,33 @@ public class Board {
 
   private static final int maxCapacity = 7;
 
-  private final List<BaseCreature> board;
+  private final List<Minion> board;
   private final List<Secret> secrets;
 
   public Board() {
-    this.board = new ArrayList<BaseCreature>();
-    this.secrets = new ArrayList<Secret>();
+    this.board = new ArrayList<>();
+    this.secrets = new ArrayList<>();
   }
 
   public boolean isFull() {
     return this.board.size() == Board.maxCapacity;
   }
 
-  public void addMinion(final BaseCreature minion) {
+  public void addMinion(final Minion minion) {
     if (!isFull()) {
       this.board.add(minion);
     }
   }
 
-  public void addMinion(final BaseCreature minion, final int index) {
+  public void addMinion(final Minion minion, final int index) {
     if (!isFull()) {
       this.board.add(index, minion);
     }
   }
 
   public void removeDead() {
-    for (Iterator<BaseCreature> iterator = this.board.iterator(); iterator.hasNext();) {
-      BaseCreature minion = iterator.next();
+    for (Iterator<Minion> iterator = this.board.iterator(); iterator.hasNext();) {
+      Minion minion = iterator.next();
       if (minion.getHealthAttr().getVal() <= 0) {
         iterator.remove();
       }
@@ -60,12 +60,12 @@ public class Board {
     this.addSecret(secret);
   }
 
-  public boolean attackable(BaseCreature attackee) {
+  public boolean attackable(Minion attackee) {
     // Check whether there is taunt on board. If there is, the attackee must be one of the taunt otherwise it's not attackable.
     return true;
   }
 
-  public Stream stream() {
+  public Stream<Minion> stream() {
     return this.board.stream();
   }
 }

@@ -1,42 +1,25 @@
 package com.herthrone.base;
 
+import com.herthrone.container.Board;
+import com.herthrone.container.Deck;
+import com.herthrone.container.Hand;
+
 /**
  * Created by yifeng on 4/2/16.
  */
 public class Battlefield {
 
-  private final Player playerA;
-  private final Player playerB;
+  private final Side mySide;
+  private final Side opponentSide;
 
-  private int round;
-
-  public Battlefield(Player playerA, Player playerB) {
-    this.playerA = playerA;
-    this.playerB = playerB;
-
-    this.playerA.registerOpponent(playerB);
-    this.playerB.registerOpponent(playerA);
-
-    this.round = 0;
+  public Battlefield(Hero hero1, Hero hero2, Hand hand1, Hand hand2, Deck deck1, Deck deck2, Board board1, Board board2) {
+    this.mySide = new Side(hero1, hand1, deck1, board1);
+    this.opponentSide = new Side(hero2, hand2, deck2, board2);
   }
 
-  public void play() {
-    while (!this.playerA.isDefeated() && !this.playerB.isDefeated()) {
-      this.playerA.move();
-      this.playerB.move();
-    }
-    sumUp();
-  }
+  public Side getMySide() { return this.mySide; }
+  public Side getOpponentSide() { return this.opponentSide; }
 
-  private void sumUp() {
-    if (this.playerA.isDefeated() && this.playerB.isDefeated()) {
-      // Draw game.
-    } else if (this.playerA.isDefeated()) {
-      // this.playerA.user.wins += 1;
-      // this.playerB.user.losses += 1;
-    } else {
-      // this.playerB.user.wins += 1;
-      // this.playerA.user.losses += 1;
-    }
-  }
 }
+
+

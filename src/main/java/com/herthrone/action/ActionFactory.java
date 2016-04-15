@@ -1,6 +1,6 @@
 package com.herthrone.action;
 
-import com.herthrone.base.BaseCreature;
+import com.herthrone.base.Minion;
 
 import java.util.List;
 
@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface ActionFactory  {
 
-  public Action yieldAction(List<BaseCreature> creature);
+  public List<Action> yieldActions();
 }

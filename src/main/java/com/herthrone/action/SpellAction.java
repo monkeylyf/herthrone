@@ -1,6 +1,6 @@
 package com.herthrone.action;
 
-import com.herthrone.base.BaseCreature;
+import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 
 import java.util.List;
@@ -11,17 +11,17 @@ import java.util.List;
 public class SpellAction implements Action {
 
   private final Spell spell;
-  private final List<BaseCreature> creatures;
+  private final List<Minion> creatures;
 
-  public SpellAction(Spell spell, List<BaseCreature> creatures) {
+  public SpellAction(Spell spell, List<Minion> creatures) {
     this.spell = spell;
     this.creatures = creatures;
   }
 
   @Override
   public void act() {
-    for (BaseCreature baseCreature : this.creatures) {
-      this.spell.cast(baseCreature);
+    for (Minion minion : this.creatures) {
+      this.spell.cast(minion);
     }
   }
 
