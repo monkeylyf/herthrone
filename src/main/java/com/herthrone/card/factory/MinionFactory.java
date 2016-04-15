@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.herthrone.base.Battlefield;
+import com.herthrone.base.Status;
 import com.herthrone.card.action.PhysicalDamage;
 import com.herthrone.base.Attribute;
 import com.herthrone.base.Minion;
@@ -37,6 +38,9 @@ public class MinionFactory {
       private final Attribute healthUpperAttr = new Attribute(health);
       private final Attribute attackAttr = new Attribute(attack);
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
+      private final Status damageImmunity = new Status(false);
+      private final Status divineShield = new Status(false);
+      private final Status frozen = new Status(false);
       private final String minionName = name;
       private final String heroClass = className;
       private final Battlefield battlefield = field;
@@ -69,6 +73,21 @@ public class MinionFactory {
       @Override
       public Attribute getAttackAttr() {
         return this.attackAttr;
+      }
+
+      @Override
+      public Status getDamageImmunity() {
+        return this.damageImmunity;
+      }
+
+      @Override
+      public Status getFrozen() {
+        return this.frozen;
+      }
+
+      @Override
+      public Status getDivineShield() {
+        return this.divineShield;
       }
 
       @Override

@@ -1,10 +1,7 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.base.Hero;
+import com.herthrone.base.*;
 import com.herthrone.card.action.PhysicalDamage;
-import com.herthrone.base.Attribute;
-import com.herthrone.base.Minion;
-import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.exception.HeroNotFoundException;
@@ -22,13 +19,9 @@ public class HeroFactory {
   public static final int ARMOR = 0;
   public static final int CRYSTAL_MANA_COST = 0;
 
-  public static Hero createHeroByName(final String name) {
-    try {
+  public static Hero createHeroByName(final String name) throws FileNotFoundException, HeroNotFoundException {
       HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(name);
       return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, name, heroConfig.getClassName());
-    } catch (FileNotFoundException|HeroNotFoundException e) {
-      return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, name, "UNKNOWN");
-    }
   }
 
   public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final String name, final String className) {
@@ -39,6 +32,9 @@ public class HeroFactory {
       private final Attribute armorAttr = new Attribute(armor);
       private final Attribute attackAttr = new Attribute(attack);
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
+      private final Status damageImmunity = new Status(false);
+      private final Status divineShield = new Status(false);
+      private final Status frozen = new Status(false);
       private final String heroName = name;
       private final String heroClass = className;
 
@@ -72,6 +68,21 @@ public class HeroFactory {
       @Override
       public Attribute getAttackAttr() {
         return this.attackAttr;
+      }
+
+      @Override
+      public Status getDamageImmunity() {
+        return this.damageImmunity;
+      }
+
+      @Override
+      public Status getFrozen() {
+        return this.frozen;
+      }
+
+      @Override
+      public Status getDivineShield() {
+        return this.divineShield;
       }
 
       @Override

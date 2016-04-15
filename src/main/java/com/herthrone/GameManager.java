@@ -8,6 +8,7 @@ import com.herthrone.container.Deck;
 import com.herthrone.container.Hand;
 import com.herthrone.exception.CardNotFoundException;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class GameManager {
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;
 
-  public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException {
+  public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {
     this.hero1 = HeroFactory.createHeroByName(hero1);
     this.hero2 = HeroFactory.createHeroByName(hero2);
     this.hand1 = new Hand();

@@ -1,7 +1,7 @@
 ---
 name: Anduin Wrynn
 class: Priest
-hero_power: ArmorUp
+hero_power: LesserHeal
 description: null
 ---
 name: Gul'dan
@@ -20,7 +20,7 @@ hero_power: Shapeshift
 description: null
 ---
 name: Rexxar
-class: Druid
+class: Hunter
 hero_power: SteadyShot
 description: null
 ---
@@ -37,4 +37,9 @@ description: null
 name: Valeera Sanguinar
 class: Rogue
 hero_power: DaggerMaster
+description: null
+---
+name: Garrosh Hellscream
+class: Warrior
+hero_power: ArmorUp
 description: null

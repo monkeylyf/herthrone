@@ -11,9 +11,12 @@ import com.herthrone.card.factory.WeaponFactory;
 import com.herthrone.container.Board;
 import com.herthrone.container.Deck;
 import com.herthrone.container.Hand;
+import com.herthrone.exception.HeroNotFoundException;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
 
 /**
  * Created by yifeng on 4/4/16.
@@ -46,9 +49,9 @@ public class TestHero extends TestCase {
   private Weapon weapon2;
 
   @Before
-  public void setUp() {
-    this.hero1 = HeroFactory.createHeroByName("FOO");
-    this.hero2 = HeroFactory.createHeroByName("BAR");
+  public void setUp() throws FileNotFoundException, HeroNotFoundException {
+    this.hero1 = HeroFactory.createHeroByName("Garrosh Hellscream");
+    this.hero2 = HeroFactory.createHeroByName("Garrosh Hellscream");
     this.hand1 = new Hand();
     this.hand2 = new Hand();
     this.deck1 = new Deck();
