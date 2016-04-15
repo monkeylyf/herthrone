@@ -35,6 +35,7 @@ public class HeroFactory {
 
     return new Hero() {
       private final Attribute healthAttr = new Attribute(health);
+      private final Attribute healthUpperAttr = new Attribute(health);
       private final Attribute armorAttr = new Attribute(armor);
       private final Attribute attackAttr = new Attribute(attack);
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
@@ -61,6 +62,11 @@ public class HeroFactory {
       @Override
       public Attribute getHealthAttr() {
         return this.healthAttr;
+      }
+
+      @Override
+      public Attribute getHealthUpperAttr() {
+        return this.healthUpperAttr;
       }
 
       @Override

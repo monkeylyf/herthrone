@@ -17,17 +17,13 @@ public class AttributeTest extends TestCase {
     assertEquals(AttributeTest.FOUR, this.attr.getVal());
   }
 
-  public void testGetRawVal() throws Exception {
-    assertEquals(AttributeTest.FOUR, this.attr.getRawVal());
-  }
-
   public void testSetBuff() throws Exception {
-    this.attr.setBuff(AttributeTest.BUFF);
+    this.attr.buff(AttributeTest.BUFF);
     assertEquals(AttributeTest.BUFF + AttributeTest.FOUR, this.attr.getVal());
   }
 
   public void testResetBuff() throws Exception {
-    this.attr.setBuff(AttributeTest.DEBUFF);
+    this.attr.buff(AttributeTest.DEBUFF);
     assertEquals(AttributeTest.DEBUFF + AttributeTest.FOUR, this.attr.getVal());
 
     this.attr.resetBuff();
@@ -35,41 +31,23 @@ public class AttributeTest extends TestCase {
   }
 
   public void testReset() throws Exception {
-    this.attr.decrease();
-    this.attr.setBuff(AttributeTest.BUFF);
-    this.attr.setResetAfterRound();
+    this.attr.decrease(1);
+    this.attr.buff(AttributeTest.BUFF);
 
     this.attr.reset();
 
     assertEquals(AttributeTest.FOUR, this.attr.getVal());
-    assertEquals(AttributeTest.FOUR, this.attr.getRawVal());
-  }
-
-  public void testIncreaseToMax() throws Exception {
-
   }
 
   public void testIncrease() throws Exception {
-
-  }
-
-  public void testIncrease1() throws Exception {
-
+    final int val = 2;
+    this.attr.increase(val);
+    assertEquals(AttributeTest.FOUR + val, this.attr.getVal());
   }
 
   public void testDecrease() throws Exception {
-
-  }
-
-  public void testDecrease1() throws Exception {
-
-  }
-
-  public void testSetResetAfterRound() throws Exception {
-
-  }
-
-  public void testResetAfterRound() throws Exception {
-
+    final int val = 2;
+    this.attr.decrease(val);
+    assertEquals(AttributeTest.FOUR - val, this.attr.getVal());
   }
 }

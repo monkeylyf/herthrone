@@ -3,17 +3,31 @@ package com.herthrone.base;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class Status {
+public class Status implements RoundStatusController {
 
   private boolean on;
-  private boolean resetAfterRound;
+  private double roundsToLast;
 
-  public Status(final boolean on, final boolean resetAfterRound) {
+  public Status(final boolean on, final double roundsToLast) {
     this.on = on;
-    this.resetAfterRound = resetAfterRound;
+    this.roundsToLast = roundsToLast;
   }
 
-  public void resetAfter() {
+  public Status(final boolean on) {
+    this(on, Double.POSITIVE_INFINITY);
+  }
+
+  @Override
+  public void nextRound() {
+    roundsToLast -= 1;
+    if (roundsToLast == 0) {
+      reset();
+    }
+  }
+
+  @Override
+  public void reset() {
     this.on = false;
+    this.roundsToLast = 0.0;
   }
 }

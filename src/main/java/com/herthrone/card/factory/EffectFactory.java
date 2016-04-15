@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class HeroPowerFactory {
+public class EffectFactory {
 
   private final Side side;
 
-  public HeroPowerFactory(Side side) {
+  public EffectFactory(Side side) {
     this.side = side;
   }
 

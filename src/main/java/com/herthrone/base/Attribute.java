@@ -3,51 +3,42 @@ package com.herthrone.base;
 /**
  * Created by yifeng on 4/5/16.
  */
-public class Attribute {
+public class Attribute implements RoundStatusController {
 
   private int val;
   private int buffDelta;
-  private final int rawVal;
-  private boolean resetAfter;
+  private double roundsToLast;
+
+  public Attribute(final int val, final double roundsToLast) {
+    this.val = val;
+    this.buffDelta = 0;
+    this.roundsToLast = roundsToLast;
+  }
 
   public Attribute(final int val) {
-    this.val = this.rawVal = val;
-    this.buffDelta = 0;
-    this.resetAfter = false;
+    this(val, Double.POSITIVE_INFINITY);
   }
 
   public int getVal() { return this.val + this.buffDelta; }
-  public int getRawVal() { return this.val; }
-  public void setBuff(final int buff) { this.buffDelta += buff; }
+
+  public void buff(final int val) { this.buffDelta += val; }
+  public void increase(final int gain) { this.val += gain; }
+  public void decrease(final int loss) { this.val -= loss; }
+
+  public void resetVal() { this.val = 0; }
   public void resetBuff() { this.buffDelta = 0; }
-  public void reset() {
-    this.val = this.rawVal;
-    this.buffDelta = 0;
-    this.resetAfter = false;
-  }
 
-  public void increaseToMax(final int val) {
-    this.val = Math.max(this.val + val, this.rawVal + this.buffDelta);
-  }
-  public void increase() { this.val += 1; }
-  public void increase(final int val) { this.val += val; }
-  public void decrease() {
-    this.val -= 1;
-  }
-  public void decrease(final int val) {
-    this.val -= val;
-  }
-
-  public void setResetAfterRound() {
-    this.resetAfter = true;
-  }
-  public void resetAfterRound() {
-    if (this.resetAfter) {
-      reset();
+  @Override
+  public void nextRound() {
+    this.roundsToLast -= 1;
+    if (this.roundsToLast == 0) {
+      resetBuff();
     }
   }
 
-  public void vary(final int delta) {
-    this.val += delta;
+  @Override
+  public void reset() {
+    resetVal();
+    resetBuff();
   }
 }

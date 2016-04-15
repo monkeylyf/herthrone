@@ -34,6 +34,7 @@ public class MinionFactory {
     return new Minion() {
 
       private final Attribute healthAttr = new Attribute(health);
+      private final Attribute healthUpperAttr = new Attribute(health);
       private final Attribute attackAttr = new Attribute(attack);
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
       private final String minionName = name;
@@ -61,14 +62,14 @@ public class MinionFactory {
       }
 
       @Override
+      public Attribute getHealthUpperAttr() {
+        return this.healthUpperAttr;
+      }
+
+      @Override
       public Attribute getAttackAttr() {
         return this.attackAttr;
       }
-
-      //@Override
-      //public Attribute getArmorAttr() {
-      //  throw new IllegalArgumentException("Minions have no armor attribute.");
-      //}
 
       @Override
       public String getHeroClass() {
@@ -84,16 +85,6 @@ public class MinionFactory {
       public void takeDamage(final int damage) {
         this.healthAttr.decrease(damage);
       }
-
-      //@Override
-      //public void equipWeapon(Weapon weapon) {
-      //  throw new IllegalArgumentException("Minions cannot equip weapon.");
-      //}
-
-      //@Override
-      //public void disarm() {
-      //  throw new IllegalArgumentException("Minions cannot be disarmed.");
-      //}
 
       @Override
       public boolean canDamage() {

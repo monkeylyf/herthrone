@@ -5,7 +5,7 @@ import com.herthrone.base.Battlefield;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Weapon;
 import com.herthrone.card.factory.HeroFactory;
-import com.herthrone.card.factory.HeroPowerFactory;
+import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.weapon.Constants;
 import com.herthrone.card.factory.WeaponFactory;
 import com.herthrone.container.Board;
@@ -39,8 +39,8 @@ public class TestHero extends TestCase {
 
   private ActionFactory armorUpActionGenerator1;
   private ActionFactory armorUpActionGenerator2;
-  private HeroPowerFactory heroPowerFactory1;
-  private HeroPowerFactory heroPowerFactory2;
+  private EffectFactory effectFactory1;
+  private EffectFactory effectFactory2;
 
   private Weapon weapon1;
   private Weapon weapon2;
@@ -59,11 +59,11 @@ public class TestHero extends TestCase {
     this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2);
     this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1);
 
-    this.heroPowerFactory1 = new HeroPowerFactory(this.battlefield1.getMySide());
-    this.heroPowerFactory2 = new HeroPowerFactory(this.battlefield2.getMySide());
+    this.effectFactory1 = new EffectFactory(this.battlefield1.getMySide());
+    this.effectFactory2 = new EffectFactory(this.battlefield2.getMySide());
 
-    this.armorUpActionGenerator1 = this.heroPowerFactory1.getArmorActionGenerator(this.armorGain);
-    this.armorUpActionGenerator2 = this.heroPowerFactory2.getArmorActionGenerator(this.armorGain);
+    this.armorUpActionGenerator1 = this.effectFactory1.getArmorActionGenerator(this.armorGain);
+    this.armorUpActionGenerator2 = this.effectFactory2.getArmorActionGenerator(this.armorGain);
 
 
     this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.FIERY_WAR_AEX);

@@ -40,7 +40,7 @@ public class WeaponFactory {
 
       @Override
       public int use() {
-        this.durabilityAttr.decrease();
+        this.durabilityAttr.decrease(1);
         return this.attackAttr.getVal();
       }
 
