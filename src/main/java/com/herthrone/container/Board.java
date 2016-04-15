@@ -39,6 +39,10 @@ public class Board {
     }
   }
 
+  public Minion getMinion(final int index) {
+    return this.board.get(index);
+  }
+
   public void removeDead() {
     for (Iterator<Minion> iterator = this.board.iterator(); iterator.hasNext();) {
       Minion minion = iterator.next();

@@ -2,8 +2,11 @@ package com.herthrone.card.factory;
 
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Battlefield;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
 import com.herthrone.exception.CardNotFoundException;
 import com.herthrone.exception.MinionNotFoundException;
+import com.sun.xml.internal.rngom.parse.host.Base;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -41,5 +44,17 @@ public class Factory {
     } catch (FileNotFoundException |MinionNotFoundException e) {
       throw new CardNotFoundException(cardName);
     }
+  }
+
+  public static boolean targetAny(BaseCard card) {
+    return targetMinion(card) || targetMinion(card);
+  }
+
+  public static boolean targetMinion(BaseCard card) {
+    return card instanceof Minion && !(card instanceof Hero);
+  }
+
+  public static boolean targetHero(BaseCard card) {
+    return card instanceof Hero;
   }
 }

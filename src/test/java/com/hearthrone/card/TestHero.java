@@ -3,7 +3,6 @@ package com.hearthrone.card;
 import com.herthrone.action.ActionFactory;
 import com.herthrone.base.Battlefield;
 import com.herthrone.base.Hero;
-import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.card.factory.HeroPowerFactory;
@@ -25,6 +24,7 @@ public class TestHero extends TestCase {
   private final int weaponAttackVal2 = 3;
   private final int weaponDurability1 = 2;
   private final int weaponDurability2 = 3;
+  private final int armorGain = 2;
 
   private Hero hero1;
   private Hero hero2;
@@ -37,8 +37,8 @@ public class TestHero extends TestCase {
   private Battlefield battlefield1;
   private Battlefield battlefield2;
 
-  private ActionFactory heroPower1;
-  private ActionFactory heroPower2;
+  private ActionFactory armorUpActionGenerator1;
+  private ActionFactory armorUpActionGenerator2;
   private HeroPowerFactory heroPowerFactory1;
   private HeroPowerFactory heroPowerFactory2;
 
@@ -59,11 +59,11 @@ public class TestHero extends TestCase {
     this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2);
     this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1);
 
-    this.heroPowerFactory1 = new HeroPowerFactory(this.battlefield1);
-    this.heroPowerFactory2 = new HeroPowerFactory(this.battlefield2);
+    this.heroPowerFactory1 = new HeroPowerFactory(this.battlefield1.getMySide());
+    this.heroPowerFactory2 = new HeroPowerFactory(this.battlefield2.getMySide());
 
-    this.heroPower1 = this.heroPowerFactory1.getArmorUp();
-    this.heroPower2 = this.heroPowerFactory2.getArmorUp();
+    this.armorUpActionGenerator1 = this.heroPowerFactory1.getArmorActionGenerator(this.armorGain);
+    this.armorUpActionGenerator2 = this.heroPowerFactory2.getArmorActionGenerator(this.armorGain);
 
 
     this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.FIERY_WAR_AEX);
@@ -138,16 +138,16 @@ public class TestHero extends TestCase {
   @Test
   public void testArmorUp() {
     assertEquals(0, this.hero1.getArmorAttr().getVal());
-    this.heroPower1.yieldActions().stream().forEach(action -> action.act());
-    assertEquals(2, this.hero1.getArmorAttr().getVal());
-    this.heroPower1.yieldActions().forEach(action -> action.act());
-    assertEquals(4, this.hero1.getArmorAttr().getVal());
+    this.armorUpActionGenerator1.yieldActions().stream().forEach(action -> action.act());
+    assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
+    this.armorUpActionGenerator1.yieldActions().forEach(action -> action.act());
+    assertEquals(this.armorGain * 2, this.hero1.getArmorAttr().getVal());
 
     assertEquals(0, this.hero2.getArmorAttr().getVal());
-    this.heroPower2.yieldActions().forEach(action -> action.act());
-    assertEquals(2, this.hero2.getArmorAttr().getVal());
-    this.heroPower2.yieldActions().forEach(action -> action.act());
-    assertEquals(4, this.hero2.getArmorAttr().getVal());
+    this.armorUpActionGenerator2.yieldActions().forEach(action -> action.act());
+    assertEquals(this.armorGain, this.hero2.getArmorAttr().getVal());
+    this.armorUpActionGenerator2.yieldActions().forEach(action -> action.act());
+    assertEquals(this.armorGain * 2, this.hero2.getArmorAttr().getVal());
   }
 
   @Test
@@ -157,11 +157,11 @@ public class TestHero extends TestCase {
     this.hero1.equipWeapon(this.weapon1);
     this.hero2.equipWeapon(this.weapon2);
 
-    this.heroPower1.yieldActions().forEach(action -> action.act());
-    assertEquals(2, this.hero1.getArmorAttr().getVal());
+    this.armorUpActionGenerator1.yieldActions().forEach(action -> action.act());
+    assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
     this.hero2.yieldAttackAction(this.hero1).act();
     assertEquals(0, this.hero1.getArmorAttr().getVal());
-    assertEquals(HeroFactory.HEALTH + 2 - this.weaponAttackVal2, this.hero1.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH + this.armorGain - this.weaponAttackVal2, this.hero1.getHealthAttr().getVal());
   }
 
 }
