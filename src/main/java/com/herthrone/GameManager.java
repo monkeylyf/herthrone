@@ -1,11 +1,12 @@
 package com.herthrone;
 
+import com.herthrone.base.BaseCard;
 import com.herthrone.base.Battlefield;
 import com.herthrone.base.Hero;
 import com.herthrone.card.factory.HeroFactory;
+import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.container.Board;
-import com.herthrone.container.Deck;
-import com.herthrone.container.Hand;
+import com.herthrone.container.Container;
 import com.herthrone.exception.CardNotFoundException;
 
 import java.io.FileNotFoundException;
@@ -18,22 +19,25 @@ public class GameManager {
 
   private final Hero hero1;
   private final Hero hero2;
-  private final Hand hand1;
-  private final Hand hand2;
-  private final Deck deck1;
-  private final Deck deck2;
+  private final Container<BaseCard> hand1;
+  private final Container<BaseCard> hand2;
+  private final Container<BaseCard> deck1;
+  private final Container<BaseCard> deck2;
   private final Board board1;
   private final Board board2;
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;
 
   public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {
+    final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
+    final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+
     this.hero1 = HeroFactory.createHeroByName(hero1);
     this.hero2 = HeroFactory.createHeroByName(hero2);
-    this.hand1 = new Hand();
-    this.hand2 = new Hand();
-    this.deck1 = new Deck();
-    this.deck2 = new Deck();
+    this.hand1 = new Container<>(handCapacity);
+    this.hand2 = new Container<>(handCapacity);
+    this.deck1 = new Container<>(deckCapacity);
+    this.deck2 = new Container<>(deckCapacity);
     this.board1 = new Board();
     this.board2 = new Board();
 

@@ -1,6 +1,5 @@
 package com.herthrone.base;
 
-import com.herthrone.action.SpellActionFactory;
 import com.herthrone.action.SpellEffect;
 
 /**

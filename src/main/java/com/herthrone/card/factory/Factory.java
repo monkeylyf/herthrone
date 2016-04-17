@@ -4,9 +4,10 @@ import com.herthrone.base.BaseCard;
 import com.herthrone.base.Battlefield;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
+import com.herthrone.configuration.Constants;
 import com.herthrone.exception.CardNotFoundException;
+import com.herthrone.exception.HeroNotFoundException;
 import com.herthrone.exception.MinionNotFoundException;
-import com.sun.xml.internal.rngom.parse.host.Base;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,12 +22,14 @@ public class Factory {
   private final MinionFactory minionFactory;
   private final SpellFactory spellFactory;
   private final WeaponFactory weaponFactory;
+  private final SecretFactory secretFactory;
 
   public Factory(final Battlefield battlefield) {
     this.battlefield = battlefield;
     this.minionFactory = new MinionFactory(battlefield);
     this.spellFactory = new SpellFactory(battlefield);
     this.weaponFactory = new WeaponFactory(battlefield);
+    this.secretFactory = new SecretFactory(battlefield);
   }
 
 
@@ -42,7 +45,19 @@ public class Factory {
     try {
       return this.minionFactory.createMinionByName(cardName);
     } catch (FileNotFoundException |MinionNotFoundException e) {
-      throw new CardNotFoundException(cardName);
+      e.printStackTrace();
+    }
+    throw new CardNotFoundException(cardName);
+  }
+
+  public BaseCard createCardByName(final String cardName, final String cardType) throws FileNotFoundException, CardNotFoundException {
+    switch (cardType) {
+      case Constants.HERO:  return HeroFactory.createHeroByName(cardName);
+      case Constants.MINION: return this.minionFactory.createMinionByName(cardName);
+      case Constants.WEAPON: return this.weaponFactory.createWeaponByName(cardName);
+      case Constants.SPELL: return this.spellFactory.createSpellByName(cardName);
+      case Constants.SECRET: return this.secretFactory.createSecretByName(cardName);
+      default: throw new CardNotFoundException(String.format("Card %s with type %s does not exist", cardName, cardType));
     }
   }
 

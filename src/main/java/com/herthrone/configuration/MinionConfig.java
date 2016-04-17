@@ -11,6 +11,7 @@ public class MinionConfig {
   private final int id;
   private final String name;
   private final String className;
+  private final String type = Constants.MINION;
   private final int attack;
   private final int health;
   private final int crystal;
@@ -35,5 +36,6 @@ public class MinionConfig {
   public int getHealth() { return this.health; }
   public int getCrystal() { return this.crystal; }
   public List<String> getMechanics() { return this.mechanics; }
+  public String getType() { return this.type; }
 
 }

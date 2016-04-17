@@ -7,5 +7,6 @@ package com.herthrone.base;
 public abstract interface BaseCard {
 
   public String getCardName();
+  public String getType();
   public Attribute getCrystalManaCost();
 }

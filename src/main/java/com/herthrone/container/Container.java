@@ -3,6 +3,7 @@ package com.herthrone.container;
 import com.herthrone.base.BaseCard;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -22,6 +23,11 @@ public class Container <T extends BaseCard> {
 
   public Container(final int maxCapacity) {
     this(new ArrayList<T>(maxCapacity), maxCapacity);
+  }
+
+  public Container() {
+    this.maxCapacity = Integer.MAX_VALUE;
+    this.container = new ArrayList<>();
   }
 
   public int getMaxCapacity() { return this.maxCapacity; }
@@ -46,6 +52,7 @@ public class Container <T extends BaseCard> {
   }
 
   public T top() { return this.container.remove(this.container.size() - 1); }
+  public T get(final int index) { return this.container.get(index); }
 
   public T random() {
     final Random random = new Random();
@@ -53,6 +60,7 @@ public class Container <T extends BaseCard> {
     return this.container.remove(index);
   }
 
+  public Iterator<T> iterator() { return this.container.iterator(); }
   public Stream<T> stream() {
     return this.container.stream();
   }

@@ -1,11 +1,12 @@
 package com.herthrone.card.factory;
 
+import com.herthrone.base.Attribute;
 import com.herthrone.base.Battlefield;
+import com.herthrone.base.Minion;
 import com.herthrone.base.Status;
 import com.herthrone.card.action.PhysicalDamage;
-import com.herthrone.base.Attribute;
-import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.exception.MinionNotFoundException;
 
@@ -48,6 +49,11 @@ public class MinionFactory {
       @Override
       public String getCardName() {
         return this.minionName;
+      }
+
+      @Override
+      public String getType() {
+        return Constants.MINION;
       }
 
       @Override
@@ -96,13 +102,17 @@ public class MinionFactory {
       }
 
       @Override
-      public void causeDamage(Minion creature) {
-        creature.takeDamage(this.attackAttr.getVal());
+      public void causeDamage(Minion minion) {
+        minion.takeDamage(this.attackAttr.getVal());
       }
 
       @Override
       public void takeDamage(final int damage) {
-        this.healthAttr.decrease(damage);
+        if (this.getDivineShield().isOn()) {
+          this.getDivineShield().reset();
+        } else {
+          this.healthAttr.decrease(damage);
+        }
       }
 
       @Override

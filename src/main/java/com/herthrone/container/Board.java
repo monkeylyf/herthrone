@@ -2,6 +2,7 @@ package com.herthrone.container;
 
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
+import com.herthrone.configuration.ConfigLoader;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,18 +14,17 @@ import java.util.stream.Stream;
  */
 public class Board {
 
-  private static final int maxCapacity = 7;
-
-  private final List<Minion> board;
-  private final List<Secret> secrets;
+  private final Container<Minion> board;
+  private final Container<Secret> secrets;
 
   public Board() {
-    this.board = new ArrayList<>();
-    this.secrets = new ArrayList<>();
+    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
+    this.board = new Container<>(boardCapacity);
+    this.secrets = new Container<>();
   }
 
   public boolean isFull() {
-    return this.board.size() == Board.maxCapacity;
+    return this.board.isFull();
   }
 
   public void addMinion(final Minion minion) {

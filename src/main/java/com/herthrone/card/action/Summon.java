@@ -1,8 +1,6 @@
 package com.herthrone.card.action;
 
 import com.herthrone.action.Action;
-import com.herthrone.base.Minion;
-import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.container.Board;
 
 import java.util.List;

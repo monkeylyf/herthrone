@@ -11,6 +11,7 @@ public class HeroConfig {
   private final String className;
   private final String description;
   private final String heroPower;
+  private final String type = Constants.HERO;
 
   public HeroConfig(Map map) {
     this.name = (String) map.get("name");
@@ -23,4 +24,5 @@ public class HeroConfig {
   public String getClassName() { return this.className; }
   public String getHeroPower() { return this.heroPower; }
   public String getDescription() { return this.description; }
+  public String getType() { return this.type; }
 }

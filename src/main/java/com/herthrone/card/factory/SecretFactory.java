@@ -2,23 +2,22 @@ package com.herthrone.card.factory;
 
 import com.herthrone.base.Attribute;
 import com.herthrone.base.Battlefield;
-import com.herthrone.base.Minion;
-import com.herthrone.base.Spell;
+import com.herthrone.base.Secret;
 
 /**
- * Created by yifeng on 4/14/16.
+ * Created by yifeng on 4/16/16.
  */
-public class SpellFactory {
+public class SecretFactory {
+
 
   private final Battlefield battlefield;
 
-  public SpellFactory(final Battlefield battlefield) {
+  public SecretFactory(final Battlefield battlefield) {
     this.battlefield = battlefield;
   }
 
-  public Spell createSpellByName(final String name) {
-    // TODO:
-    return new Spell() {
+  public Secret createSecretByName(final String name) {
+    return new Secret() {
       @Override
       public String getCardName() {
         return null;
@@ -32,11 +31,6 @@ public class SpellFactory {
       @Override
       public Attribute getCrystalManaCost() {
         return null;
-      }
-
-      @Override
-      public void cast(Minion creature) {
-
       }
     };
   }

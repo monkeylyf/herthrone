@@ -3,6 +3,7 @@ package com.herthrone.card.factory;
 import com.herthrone.base.Attribute;
 import com.herthrone.base.Battlefield;
 import com.herthrone.base.Weapon;
+import com.herthrone.configuration.Constants;
 
 /**
  * Created by yifeng on 4/8/16.
@@ -31,6 +32,11 @@ public class WeaponFactory {
       @Override
       public String getCardName() {
         return this.weaponName;
+      }
+
+      @Override
+      public String getType() {
+        return Constants.WEAPON;
       }
 
       @Override

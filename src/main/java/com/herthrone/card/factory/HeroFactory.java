@@ -3,6 +3,7 @@ package com.herthrone.card.factory;
 import com.herthrone.base.*;
 import com.herthrone.card.action.PhysicalDamage;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.exception.HeroNotFoundException;
 
@@ -43,6 +44,11 @@ public class HeroFactory {
       @Override
       public String getCardName() {
         return this.heroName;
+      }
+
+      @Override
+      public String getType() {
+        return Constants.HERO;
       }
 
       @Override
@@ -115,6 +121,9 @@ public class HeroFactory {
 
       @Override
       public void equipWeapon(Weapon weapon) {
+        if (this.weapon.isPresent()) {
+          disarm();
+        }
         this.weapon = Optional.of(weapon);
       }
 

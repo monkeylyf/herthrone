@@ -6,21 +6,28 @@ package com.herthrone.base;
 public class Status implements RoundStatusController {
 
   private boolean on;
-  private double roundsToLast;
+  private double roundUntilExpire;
 
-  public Status(final boolean on, final double roundsToLast) {
+  public Status(final boolean on, final double roundUntilExpire) {
     this.on = on;
-    this.roundsToLast = roundsToLast;
+    this.roundUntilExpire = roundUntilExpire;
   }
 
   public Status(final boolean on) {
     this(on, Double.POSITIVE_INFINITY);
   }
 
+  public void on(final double roundUntilExpire) {
+    this.on = on;
+    this.roundUntilExpire = roundUntilExpire;
+  }
+
+  public boolean isOn() { return this.on; }
+
   @Override
   public void nextRound() {
-    roundsToLast -= 1;
-    if (roundsToLast == 0) {
+    this.roundUntilExpire -= 1;
+    if (this.roundUntilExpire == 0) {
       reset();
     }
   }
@@ -28,6 +35,6 @@ public class Status implements RoundStatusController {
   @Override
   public void reset() {
     this.on = false;
-    this.roundsToLast = 0.0;
+    this.roundUntilExpire = 0.0;
   }
 }
