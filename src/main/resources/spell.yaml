@@ -1,0 +1,8 @@
+- name: FireBall
+  class: Mage
+  actions:
+    - effect: attribute
+      type: health
+      value: -6
+      target: [hero, minion]
+

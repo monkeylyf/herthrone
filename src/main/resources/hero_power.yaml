@@ -1,0 +1,82 @@
+- name: ArmorUp
+  class: Warrior
+  actions:
+    - effect: attribute
+      type: armor
+      value: 2
+      target: [hero]
+
+- name: DaggerMastery
+  class: Rogue
+  actions:
+    - effect: weapon
+      type: WickedBlade
+      value: 1
+      target: [hero]
+
+- name: FireBlast
+  class: Mage
+  actions:
+    - effect: attribute
+      type: health
+      value: -1
+      target: [hero, minion]
+
+- name: LesserHeal
+  class: Priest
+  actions:
+    - effect: attribute
+      type: health
+      value: 2
+      target: [hero, minion]
+
+- name: LifeTap
+  class: Warlock
+  actions:
+    - effect: attribute
+      type: health
+      value: -2
+      target: [hero]
+    - effect: draw
+      type: card
+      value: 1
+      target: [deck]
+
+- name: Reinforce
+  class: Paladin
+  actions:
+    - effect: summon
+      type: minion
+      value: 1
+      target: [SilverHandRecruit]
+      unique: false
+
+- name: Shapeshift
+  class: Druid
+  actions:
+    - effect: attribute
+      type: attack
+      duration: 1
+      value: 1
+      target: [hero]
+    - effect: attribute
+      type: armor
+      value: 1
+      target: [hero]
+
+- name: SteadyShot
+  class: Hunter
+  actions:
+    - effect: attribute
+      type: health
+      value: -2
+      target: [hero]
+
+- name: TotemicCall
+  class: Shaman
+  actions:
+    - effect: summon
+      type: minion
+      value: 1
+      target: [HealingTotem, SearingTotem, WrathOfAirTotem, StoneclawTotem]
+      unique: true

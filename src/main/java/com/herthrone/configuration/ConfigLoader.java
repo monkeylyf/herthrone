@@ -8,10 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by yifeng on 4/9/16.
@@ -22,13 +19,12 @@ public class ConfigLoader {
   private static volatile List<HeroConfig> HERO_CONFIGS;
   private static volatile ResourceBundle RESOURCE;
 
-  private static final String pathTemplate = "src/main/resources/%s.yml";
+  private static final String pathTemplate = "src/main/resources/%s.yaml";
 
   public static void main(String[] args) throws FileNotFoundException {
-    List<MinionConfig> configs = loadMinionConfiguration();
-    for (MinionConfig card : configs) {
-      System.out.println(card.getId() + " " + card);
-      System.out.println(card.getMechanics());
+    for (SpellConfig config : loadHeroPowerConfiguration()) {
+      System.out.println(config.getName());
+      System.out.println(config.getEffects().size());
     }
   }
 
@@ -98,8 +94,10 @@ public class ConfigLoader {
     Yaml yaml = new Yaml();
     final String configPath = String.format(ConfigLoader.pathTemplate, "minion");
     InputStream input = new FileInputStream(new File(configPath));
+    Iterator<Object> iterator = yaml.loadAll(input).iterator();
+    List<Object> minions = (List) iterator.next();
     List<MinionConfig> cardConfigs = new ArrayList<>();
-    for(Object object : yaml.loadAll(input)) {
+    for(Object object : minions) {
       Map map = (Map) object;
       cardConfigs.add(new MinionConfig(map));
     }
@@ -110,12 +108,28 @@ public class ConfigLoader {
     Yaml yaml = new Yaml();
     final String configPath = String.format(ConfigLoader.pathTemplate, "hero");
     InputStream input = new FileInputStream(new File(configPath));
+    Iterator<Object> iterator = yaml.loadAll(input).iterator();
+    List<Object> heroes = (List) iterator.next();
     List<HeroConfig> heroConfigs = new ArrayList<>();
-    for(Object object : yaml.loadAll(input)) {
+    for(Object object : heroes) {
       Map map = (Map) object;
       heroConfigs.add(new HeroConfig(map));
     }
     return heroConfigs;
   }
 
+  private static List<SpellConfig> loadHeroPowerConfiguration() throws FileNotFoundException {
+    Yaml yaml = new Yaml();
+    final String configPath = String.format(ConfigLoader.pathTemplate, "hero_power");
+    InputStream input = new FileInputStream(new File(configPath));
+    Iterator<Object> iterator = yaml.loadAll(input).iterator();
+    List<Object> heroPowers = (List) iterator.next();
+    List<SpellConfig> heroPowerConfigs = new ArrayList<>();
+    for (Object object : heroPowers) {
+      Map map = (Map) object;
+      SpellConfig config = new SpellConfig(map);
+      heroPowerConfigs.add(config);
+    }
+    return heroPowerConfigs;
+  }
 }

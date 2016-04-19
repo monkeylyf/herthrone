@@ -1,0 +1,36 @@
+- name: Anduin Wrynn
+  class: Priest
+  hero_power: LesserHeal
+  description: null
+- name: Gul'dan
+  class: Warlock
+  hero_power: LifeTap
+  description: null
+- name: Jaina Proudmoore
+  class: Mage
+  hero_power: FireBlast
+  description: null
+- name: Malfurion Stormrage
+  class: Druid
+  hero_power: Shapeshift
+  description: null
+- name: Rexxar
+  class: Hunter
+  hero_power: SteadyShot
+  description: null
+- name: Thrall
+  class: Shaman
+  hero_power: TotemicCall
+  description: null
+- name: Uther Lightbringer
+  class: Paladin
+  hero_power: Reinforce
+  description: null
+- name: Valeera Sanguinar
+  class: Rogue
+  hero_power: DaggerMaster
+  description: null
+- name: Garrosh Hellscream
+  class: Warrior
+  hero_power: ArmorUp
+  description: null
