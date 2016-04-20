@@ -45,6 +45,54 @@ public class GameManager {
     this.secrets2 = new Container<>();
 
     this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2, this.secrets1, this.secrets2);
-    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1, this.secrets2, this.secrets1);
+    this.battlefield2 = this.battlefield1.getMirrorBattlefield();
+  }
+
+  public Hero getHero1() {
+    return this.hero1;
+  }
+
+  public Hero getHero2() {
+    return this.hero2;
+  }
+
+  public Container<BaseCard> getHand1() {
+    return this.hand1;
+  }
+
+  public Container<BaseCard> getHand2() {
+    return this.hand2;
+  }
+
+  public Container<BaseCard> getDeck1() {
+    return this.deck1;
+  }
+
+  public Container<BaseCard> getDeck2() {
+    return this.deck2;
+  }
+
+  public Container<Minion> getBoard1() {
+    return this.board1;
+  }
+
+  public Container<Minion> getBoard2() {
+    return this.board2;
+  }
+
+  public Container<Secret> getSecrets1() {
+    return this.secrets1;
+  }
+
+  public Container<Secret> getSecrets2() {
+    return this.secrets2;
+  }
+
+  public Battlefield getBattlefield1() {
+    return this.battlefield1;
+  }
+
+  public Battlefield getBattlefield2() {
+    return this.battlefield2;
   }
 }

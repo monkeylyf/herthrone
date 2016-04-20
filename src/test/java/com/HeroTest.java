@@ -1,17 +1,20 @@
 package com;
 
 import com.herthrone.Constants;
+import com.herthrone.GameManager;
 import com.herthrone.base.*;
 import com.herthrone.card.factory.*;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.container.Board;
 import com.herthrone.container.Container;
+import com.herthrone.exception.CardNotFoundException;
 import com.herthrone.exception.HeroNotFoundException;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
+import java.util.Collections;
 
 /**
  * Created by yifeng on 4/4/16.
@@ -47,24 +50,23 @@ public class HeroTest extends TestCase {
   private Weapon weapon1;
   private Weapon weapon2;
 
-  @Before
-  public void setUp() throws FileNotFoundException, HeroNotFoundException {
-    final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
-    final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
-    this.hero1 = HeroFactory.createHeroByName("Garrosh Hellscream");
-    this.hero2 = HeroFactory.createHeroByName("Garrosh Hellscream");
-    this.hand1 = new Container<>(handCapacity);
-    this.hand2 = new Container<>(handCapacity);
-    this.deck1 = new Container<>(deckCapacity);
-    this.deck2 = new Container<>(deckCapacity);
-    this.board1 = new Container<>(boardCapacity);
-    this.board2 = new Container<>(boardCapacity);
-    this.secrets1 = new Container<>();
-    this.secrets2 = new Container<>();
+  private GameManager gm;
 
-    this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2, this.secrets1, this.secrets2);
-    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1, this.secrets2, this.secrets1);
+  @Before
+  public void setUp() throws FileNotFoundException, CardNotFoundException {
+    this.gm = new GameManager(Constants.Hero.GARROSH_HELLSCREAM, Constants.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.hero1 = this.gm.getHero1();
+    this.hero2 = this.gm.getHero2();
+    this.hand1 = this.gm.getHand1();
+    this.hand2 = this.gm.getHand2();
+    this.deck1 = this.gm.getDeck1();
+    this.deck1 = this.gm.getDeck2();
+    this.board1 = this.gm.getBoard1();
+    this.board2 = this.gm.getBoard2();
+    this.secrets1 = this.gm.getSecrets1();
+    this.secrets2 = this.gm.getSecrets2();
+    this.battlefield1 = this.gm.getBattlefield1();
+    this.battlefield2 = this.gm.getBattlefield2();
 
     this.minionFactory1 = new MinionFactory(this.battlefield1);
     this.minionFactory2 = new MinionFactory(this.battlefield2);

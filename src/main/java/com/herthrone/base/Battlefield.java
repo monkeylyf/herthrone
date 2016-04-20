@@ -19,6 +19,9 @@ public class Battlefield {
   public Side getMySide() { return this.mySide; }
   public Side getOpponentSide() { return this.opponentSide; }
 
+  public Battlefield getMirrorBattlefield() {
+    return new Battlefield(this.opponentSide.getHero(), this.mySide.getHero(), this.opponentSide.getHand(), this.mySide.getHand(), this.opponentSide.getDeck(), this.mySide.getDeck(), this.opponentSide.getMinions(), this.mySide.getMinions(), this.opponentSide.getSecrets(), this.getMySide().getSecrets());
+  }
 }
 
 

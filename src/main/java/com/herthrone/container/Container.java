@@ -1,5 +1,6 @@
 package com.herthrone.container;
 
+import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class Container <T extends BaseCard> {
   private final List<T> container;
 
   public Container(final List<T> container, final int maxCapacity) {
+    Preconditions.checkArgument(container.size() <= maxCapacity, "Container size larger that max capacity: " + maxCapacity);
     this.container = container;
     this.maxCapacity = maxCapacity;
   }

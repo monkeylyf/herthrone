@@ -14,6 +14,7 @@ public class Constants {
     public static final String THRALL = "Thrall";
     public static final String UTHER_LIGHTBRINGER = "Uther Lightbringer";
     public static final String VALEERA_SANGUINAR = "Valeera Sanguinar";
+    public static final String GARROSH_HELLSCREAM = "Garrosh Hellscream";
   }
 
   public static class Class {
@@ -25,6 +26,7 @@ public class Constants {
     public static final String WARLOCK = "Warlock";
     public static final String SHAMAN = "Shaman";
     public static final String DRUID = "Druid";
+    public static final String HUNTER = "Hunter";
   }
 
   public static class Weapon {
