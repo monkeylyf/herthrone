@@ -8,5 +8,6 @@ public abstract interface BaseCard {
 
   public String getCardName();
   public String getType();
+  public String getClassName();
   public Attribute getCrystalManaCost();
 }

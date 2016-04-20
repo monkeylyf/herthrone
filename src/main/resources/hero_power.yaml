@@ -1,5 +1,6 @@
 - name: ArmorUp
   class: Warrior
+  crystal: 2
   actions:
     - effect: attribute
       type: armor
@@ -8,6 +9,7 @@
 
 - name: DaggerMastery
   class: Rogue
+  crystal: 2
   actions:
     - effect: weapon
       type: WickedBlade
@@ -16,6 +18,7 @@
 
 - name: FireBlast
   class: Mage
+  crystal: 2
   actions:
     - effect: attribute
       type: health
@@ -24,6 +27,7 @@
 
 - name: LesserHeal
   class: Priest
+  crystal: 2
   actions:
     - effect: attribute
       type: health
@@ -32,6 +36,7 @@
 
 - name: LifeTap
   class: Warlock
+  crystal: 2
   actions:
     - effect: attribute
       type: health
@@ -44,6 +49,7 @@
 
 - name: Reinforce
   class: Paladin
+  crystal: 2
   actions:
     - effect: summon
       type: minion
@@ -53,6 +59,7 @@
 
 - name: Shapeshift
   class: Druid
+  crystal: 2
   actions:
     - effect: attribute
       type: attack
@@ -66,6 +73,7 @@
 
 - name: SteadyShot
   class: Hunter
+  crystal: 2
   actions:
     - effect: attribute
       type: health
@@ -74,6 +82,7 @@
 
 - name: TotemicCall
   class: Shaman
+  crystal: 2
   actions:
     - effect: summon
       type: minion

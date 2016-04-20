@@ -2,6 +2,7 @@ package com.herthrone.configuration;
 
 import com.herthrone.exception.HeroNotFoundException;
 import com.herthrone.exception.MinionNotFoundException;
+import com.herthrone.exception.SpellNotFoundException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -15,16 +16,17 @@ import java.util.*;
  */
 public class ConfigLoader {
 
-  private static volatile List<MinionConfig> CARD_CONFIGS;
-  private static volatile List<HeroConfig> HERO_CONFIGS;
+  private static volatile Map<String, SpellConfig> SPELL_CONFIGS;
+  private static volatile Map<String, MinionConfig> CARD_CONFIGS;
+  private static volatile Map<String, HeroConfig> HERO_CONFIGS;
   private static volatile ResourceBundle RESOURCE;
 
   private static final String pathTemplate = "src/main/resources/%s.yaml";
 
   public static void main(String[] args) throws FileNotFoundException {
-    for (SpellConfig config : loadHeroPowerConfiguration()) {
-      System.out.println(config.getName());
-      System.out.println(config.getEffects().size());
+    for (Map.Entry<String, SpellConfig> entry : loadSpellConfiguration().entrySet()) {
+      System.out.println(entry.getKey());
+      System.out.println(entry.getValue().getEffects().size());
     }
   }
 
@@ -41,8 +43,8 @@ public class ConfigLoader {
     return noneVolatileResource;
   }
 
-  public static List<MinionConfig> getMinionConfigurations() throws FileNotFoundException {
-    List<MinionConfig> noneVolatileMinionConfigs = ConfigLoader.CARD_CONFIGS;
+  public static Map<String, MinionConfig> getMinionConfigurations() throws FileNotFoundException {
+    Map<String, MinionConfig> noneVolatileMinionConfigs = ConfigLoader.CARD_CONFIGS;
     if (noneVolatileMinionConfigs == null) {
       synchronized (ConfigLoader.class) {
         noneVolatileMinionConfigs = ConfigLoader.CARD_CONFIGS;
@@ -55,16 +57,16 @@ public class ConfigLoader {
   }
 
   public static MinionConfig getMinionConfigByName(final String minionName) throws FileNotFoundException, MinionNotFoundException {
-    for (MinionConfig config : getMinionConfigurations()) {
-      if (config.getName().equals(minionName)) {
+      MinionConfig config = loadMinionConfiguration().get(minionName);
+      if (config == null) {
+        throw new MinionNotFoundException(String.format("Minion %s not found", minionName));
+      } else {
         return config;
       }
-    }
-    throw new MinionNotFoundException(String.format("Minion %s not found", minionName));
   }
 
-  public static List<HeroConfig> getHeroConfiguration() throws FileNotFoundException {
-    List<HeroConfig> noneVolatileHeroConfigs = ConfigLoader.HERO_CONFIGS;
+  public static Map<String, HeroConfig> getHeroConfiguration() throws FileNotFoundException {
+    Map<String, HeroConfig> noneVolatileHeroConfigs = ConfigLoader.HERO_CONFIGS;
     if (noneVolatileHeroConfigs == null) {
       synchronized (ConfigLoader.class) {
         noneVolatileHeroConfigs = ConfigLoader.HERO_CONFIGS;
@@ -77,59 +79,77 @@ public class ConfigLoader {
   }
 
   public static HeroConfig getHeroConfigByName(final String heroName) throws FileNotFoundException, HeroNotFoundException {
-    for (HeroConfig heroConfig : getHeroConfiguration()) {
-      if (heroConfig.getName().equals(heroName)) {
-        return heroConfig;
+    HeroConfig config = loadHeroConfiguration().get(heroName);
+    if (config == null) {
+      throw new HeroNotFoundException(String.format("Hero %s not found", heroName));
+    } else {
+      return config;
+    }
+  }
+
+  public static Map<String, SpellConfig> getSpellConfiguration() throws FileNotFoundException {
+    Map<String, SpellConfig>  noneVolatileSpellConfigs = ConfigLoader.SPELL_CONFIGS;
+    if (noneVolatileSpellConfigs == null) {
+      synchronized (ConfigLoader.class) {
+        if (noneVolatileSpellConfigs == null) {
+          noneVolatileSpellConfigs = ConfigLoader.SPELL_CONFIGS = ConfigLoader.loadSpellConfiguration();
+        }
       }
     }
+    return noneVolatileSpellConfigs;
+  }
 
-    throw new HeroNotFoundException(String.format("Hero %s not found", heroName));
+  public static SpellConfig getSpellConfigByName(final String spellName) throws FileNotFoundException, SpellNotFoundException {
+    SpellConfig config = loadSpellConfiguration().get(spellName);
+    if (config == null) {
+      throw new SpellNotFoundException(String.format("Spell %s not found", spellName));
+    } else {
+      return config;
+    }
   }
 
   private static ResourceBundle loadResource() {
     return ResourceBundle.getBundle("configuration");
   }
 
-  private static List<MinionConfig> loadMinionConfiguration() throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    final String configPath = String.format(ConfigLoader.pathTemplate, "minion");
-    InputStream input = new FileInputStream(new File(configPath));
-    Iterator<Object> iterator = yaml.loadAll(input).iterator();
-    List<Object> minions = (List) iterator.next();
-    List<MinionConfig> cardConfigs = new ArrayList<>();
+  private static Map<String, MinionConfig> loadMinionConfiguration() throws FileNotFoundException {
+    List<Object> minions = loadYaml("minion");
+    Map<String, MinionConfig> cardConfigs = new HashMap<>();
     for(Object object : minions) {
       Map map = (Map) object;
-      cardConfigs.add(new MinionConfig(map));
+      MinionConfig config = new MinionConfig(map);
+      cardConfigs.put(config.getName(), config);
     }
     return cardConfigs;
   }
 
-  private static List<HeroConfig> loadHeroConfiguration() throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    final String configPath = String.format(ConfigLoader.pathTemplate, "hero");
-    InputStream input = new FileInputStream(new File(configPath));
-    Iterator<Object> iterator = yaml.loadAll(input).iterator();
-    List<Object> heroes = (List) iterator.next();
-    List<HeroConfig> heroConfigs = new ArrayList<>();
+  private static Map<String, HeroConfig> loadHeroConfiguration() throws FileNotFoundException {
+    List<Object> heroes = loadYaml("hero");
+    Map<String, HeroConfig> heroConfigs = new HashMap<>();
     for(Object object : heroes) {
       Map map = (Map) object;
-      heroConfigs.add(new HeroConfig(map));
+      HeroConfig config = new HeroConfig(map);
+      heroConfigs.put(config.getName(), config);
     }
     return heroConfigs;
   }
 
-  private static List<SpellConfig> loadHeroPowerConfiguration() throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    final String configPath = String.format(ConfigLoader.pathTemplate, "hero_power");
-    InputStream input = new FileInputStream(new File(configPath));
-    Iterator<Object> iterator = yaml.loadAll(input).iterator();
-    List<Object> heroPowers = (List) iterator.next();
-    List<SpellConfig> heroPowerConfigs = new ArrayList<>();
+  private static Map<String, SpellConfig> loadSpellConfiguration() throws FileNotFoundException {
+    List<Object> heroPowers = loadYaml("hero_power");
+    Map<String, SpellConfig> heroPowerConfigs = new HashMap<>();
     for (Object object : heroPowers) {
       Map map = (Map) object;
       SpellConfig config = new SpellConfig(map);
-      heroPowerConfigs.add(config);
+      heroPowerConfigs.put(config.getName(), config);
     }
     return heroPowerConfigs;
+  }
+
+  private static List<Object> loadYaml(final String configSignature) throws FileNotFoundException {
+    Yaml yaml = new Yaml();
+    final String configPath = String.format(ConfigLoader.pathTemplate, configSignature);
+    InputStream input = new FileInputStream(new File(configPath));
+    Iterator<Object> iterator = yaml.loadAll(input).iterator();
+    return (List) iterator.next();
   }
 }

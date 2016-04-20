@@ -6,7 +6,7 @@ import java.util.Map;
 /**
 * Created by yifeng on 4/12/16.
 */
-public class MinionConfig {
+public class MinionConfig implements BaseConfig {
 
   private final int id;
   private final String name;
@@ -30,12 +30,23 @@ public class MinionConfig {
   public String toString() { return this.name; }
 
   public int getId() { return this.id; }
-  public String getName() { return this.name; }
-  public String getClassName() { return this.className; }
   public int getAttack() { return this.attack; }
   public int getHealth() { return this.health; }
   public int getCrystal() { return this.crystal; }
   public List<String> getMechanics() { return this.mechanics; }
-  public String getType() { return this.type; }
 
+  @Override
+  public String getName() {
+    return this.name;
+  }
+
+  @Override
+  public String getClassName() {
+    return this.className;
+  }
+
+  @Override
+  public String getType() {
+    return this.type;
+  }
 }

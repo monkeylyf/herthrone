@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class HeroConfig {
+public class HeroConfig implements BaseConfig {
 
   private final String name;
   private final String className;
@@ -20,9 +20,26 @@ public class HeroConfig {
     this.description = (String) map.get("description");
   }
 
-  public String getName() { return this.name; };
-  public String getClassName() { return this.className; }
   public String getHeroPower() { return this.heroPower; }
   public String getDescription() { return this.description; }
-  public String getType() { return this.type; }
+
+  @Override
+  public String getName() {
+    return this.name;
+  }
+
+  @Override
+  public String getClassName() {
+    return this.className;
+  }
+
+  @Override
+  public String getType() {
+    return this.type;
+  }
+
+  @Override
+  public int getCrystal() {
+    return 0;
+  }
 }

@@ -36,19 +36,22 @@ public class HeroFactory {
       private final Status damageImmunity = new Status(false);
       private final Status divineShield = new Status(false);
       private final Status frozen = new Status(false);
-      private final String heroName = name;
-      private final String heroClass = className;
 
       private Optional<Weapon> weapon = Optional.empty();
 
       @Override
       public String getCardName() {
-        return this.heroName;
+        return name;
       }
 
       @Override
       public String getType() {
         return Constants.HERO;
+      }
+
+      @Override
+      public String getClassName() {
+        return className;
       }
 
       @Override
@@ -94,11 +97,6 @@ public class HeroFactory {
       @Override
       public Attribute getArmorAttr() {
         return this.armorAttr;
-      }
-
-      @Override
-      public String getHeroClass() {
-        return this.heroClass;
       }
 
       @Override

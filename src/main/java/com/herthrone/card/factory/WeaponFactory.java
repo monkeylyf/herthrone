@@ -18,25 +18,29 @@ public class WeaponFactory {
 
   public static Weapon createWeaponByName(final String name) {
     // TODO: need a json.
-    return createWeapon(3, 2, 2, name);
+    return createWeapon(3, 2, 2, name, "warrior");
   }
 
-  public static Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name) {
+  public static Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className) {
 
     return new Weapon() {
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
       private final Attribute attackAttr = new Attribute(attack);
       private final Attribute durabilityAttr = new Attribute(durability);
-      private final String weaponName = name;
 
       @Override
       public String getCardName() {
-        return this.weaponName;
+        return name;
       }
 
       @Override
       public String getType() {
         return Constants.WEAPON;
+      }
+
+      @Override
+      public String getClassName() {
+        return className;
       }
 
       @Override

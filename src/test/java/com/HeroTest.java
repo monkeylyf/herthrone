@@ -72,8 +72,8 @@ public class HeroTest extends TestCase {
     this.armorUpActionGenerator2 = this.effectFactory2.getArmorActionGenerator(this.armorGain);
 
 
-    this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.FIERY_WAR_AEX);
-    this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.FIERY_WAR_AEX);
+    this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.FIERY_WAR_AEX, "Warrior");
+    this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.FIERY_WAR_AEX, "Warrior");
   }
 
   @Test

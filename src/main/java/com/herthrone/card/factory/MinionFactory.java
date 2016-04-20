@@ -42,18 +42,21 @@ public class MinionFactory {
       private final Status damageImmunity = new Status(false);
       private final Status divineShield = new Status(false);
       private final Status frozen = new Status(false);
-      private final String minionName = name;
-      private final String heroClass = className;
       private final Battlefield battlefield = field;
 
       @Override
       public String getCardName() {
-        return this.minionName;
+        return name;
       }
 
       @Override
       public String getType() {
         return Constants.MINION;
+      }
+
+      @Override
+      public String getClassName() {
+        return className;
       }
 
       @Override
@@ -94,11 +97,6 @@ public class MinionFactory {
       @Override
       public Status getDivineShield() {
         return this.divineShield;
-      }
-
-      @Override
-      public String getHeroClass() {
-        return this.heroClass;
       }
 
       @Override

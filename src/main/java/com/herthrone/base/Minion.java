@@ -17,8 +17,6 @@ public interface Minion extends BaseCard, AttackActionFactory {
   public Status getFrozen();
   public Status getDivineShield();
 
-  public String getHeroClass();
-
   public void causeDamage(Minion creature);
   public void takeDamage(final int damage);
   public boolean canDamage();

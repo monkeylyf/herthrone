@@ -29,6 +29,11 @@ public class SecretFactory {
       }
 
       @Override
+      public String getClassName() {
+        return null;
+      }
+
+      @Override
       public Attribute getCrystalManaCost() {
         return null;
       }
