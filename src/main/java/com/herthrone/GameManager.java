@@ -1,10 +1,13 @@
 package com.herthrone;
 
-import com.herthrone.base.*;
+import com.herthrone.base.BaseCard;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Secret;
+import com.herthrone.base.Battlefield;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.container.Board;
-import com.herthrone.container.Container;
+import com.herthrone.base.Container;
 import com.herthrone.exception.CardNotFoundException;
 
 import java.io.FileNotFoundException;

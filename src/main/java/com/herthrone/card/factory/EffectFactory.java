@@ -9,8 +9,7 @@ import com.herthrone.card.action.MoveCardEffect;
 import com.herthrone.card.action.StatusEffect;
 import com.herthrone.card.action.SummonEffect;
 import com.herthrone.configuration.EffectConfig;
-import com.herthrone.container.Board;
-import com.herthrone.container.Container;
+import com.herthrone.base.Container;
 import com.herthrone.exception.MinionNotFoundException;
 
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package com.herthrone.container;
+package com.herthrone.base;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;

@@ -2,8 +2,7 @@ package com.herthrone.card.action;
 
 import com.herthrone.base.Minion;
 import com.herthrone.card.factory.Action;
-import com.herthrone.container.Board;
-import com.herthrone.container.Container;
+import com.herthrone.base.Container;
 
 import java.util.List;
 

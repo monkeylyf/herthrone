@@ -1,8 +1,5 @@
 package com.herthrone.base;
 
-import com.herthrone.container.Board;
-import com.herthrone.container.Container;
-
 /**
  * Created by yifeng on 4/2/16.
  */
