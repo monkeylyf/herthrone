@@ -14,7 +14,6 @@ import com.herthrone.exception.MinionNotFoundException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +49,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new AttributeEffect(side.getHero().getArmorAttr(), gain);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -65,7 +64,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new AttributeEffect(minion.getHealthAttr(), gain);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -80,7 +79,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new AttributeEffect(minion.getAttackAttr(), gain);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -97,7 +96,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new SummonEffect(board, minions);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -112,7 +111,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new StatusEffect(minion.getDivineShield(), 1);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -127,7 +126,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new StatusEffect(minion.getFrozen(), 1);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -142,7 +141,7 @@ public class EffectFactory {
       @Override
       public List<Action> yieldActions() {
         Action action = new StatusEffect(minion.getDamageImmunity(), 1);
-        return singleActionToList(action);
+        return Factory.singleActionToList(action);
       }
     };
   }
@@ -165,10 +164,6 @@ public class EffectFactory {
         return actions;
       }
     };
-  }
-
-  private static List<Action> singleActionToList(Action action) {
-    return Arrays.asList(action);
   }
 
   /**

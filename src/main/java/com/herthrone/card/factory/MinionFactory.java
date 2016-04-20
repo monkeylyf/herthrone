@@ -65,11 +65,6 @@ public class MinionFactory {
       }
 
       @Override
-      public PhysicalDamage yieldAttackAction(Minion creature) {
-        return new PhysicalDamage(this, creature);
-      }
-
-      @Override
       public Attribute getHealthAttr() {
         return this.healthAttr;
       }
@@ -116,6 +111,11 @@ public class MinionFactory {
       @Override
       public boolean canDamage() {
         return this.attackAttr.getVal() > 0;
+      }
+
+      @Override
+      public boolean isDead() {
+        return this.healthAttr.getVal() <= 0;
       }
     };
   }

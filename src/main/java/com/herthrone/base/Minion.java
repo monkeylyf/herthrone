@@ -1,13 +1,11 @@
 package com.herthrone.base;
 
-import com.herthrone.card.factory.AttackActionFactory;
-
 /**
  * Created by yifeng on 4/2/16.
  */
 
 
-public interface Minion extends BaseCard, AttackActionFactory {
+public interface Minion extends BaseCard {
 
   public Attribute getHealthAttr();
   public Attribute getHealthUpperAttr();
@@ -20,4 +18,6 @@ public interface Minion extends BaseCard, AttackActionFactory {
   public void causeDamage(Minion creature);
   public void takeDamage(final int damage);
   public boolean canDamage();
+
+  public boolean isDead();
 }

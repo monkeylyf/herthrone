@@ -6,11 +6,11 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.Constants;
 import com.herthrone.exception.CardNotFoundException;
-import com.herthrone.exception.HeroNotFoundException;
 import com.herthrone.exception.MinionNotFoundException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,11 +19,12 @@ import java.util.List;
 public class Factory {
 
   private final Battlefield battlefield;
-  private final MinionFactory minionFactory;
-  private final SpellFactory spellFactory;
-  private final WeaponFactory weaponFactory;
-  private final SecretFactory secretFactory;
-  private final EffectFactory effectFactory;
+  public final MinionFactory minionFactory;
+  public final SpellFactory spellFactory;
+  public final WeaponFactory weaponFactory;
+  public final SecretFactory secretFactory;
+  public final EffectFactory effectFactory;
+  public final AttackFactory attackFactory;
 
   public Factory(final Battlefield battlefield) {
     this.battlefield = battlefield;
@@ -32,6 +33,11 @@ public class Factory {
     this.spellFactory = new SpellFactory(this.effectFactory);
     this.weaponFactory = new WeaponFactory(battlefield);
     this.secretFactory = new SecretFactory(battlefield);
+    this.attackFactory = new AttackFactory(battlefield);
+  }
+
+  public static List<Action> singleActionToList(Action action) {
+    return Arrays.asList(action);
   }
 
 

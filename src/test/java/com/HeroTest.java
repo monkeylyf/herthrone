@@ -84,12 +84,20 @@ public class HeroTest extends TestCase {
     assertEquals(HeroFactory.HEALTH, this.hero2.getHealthAttr().getVal());
   }
 
+  private void hero1AttackHero2() {
+    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
+  }
+
+  private void hero2AttackHero1() {
+    this.gm.factory2.attackFactory.getPhysicalDamageAction(this.hero2, this.hero1).act();
+  }
+
   @Test
   public void testAttackAction() {
     this.hero1.equipWeapon(weapon1);
     this.hero2.equipWeapon(weapon2);
 
-    this.hero1.yieldAttackAction(this.hero2).act();
+    hero1AttackHero2();
 
     // Even if hero2 has weapon, hero1 won't take any damage from hero2 while attacking.
     assertEquals(HeroFactory.HEALTH, this.hero1.getHealthAttr().getVal());
@@ -106,10 +114,10 @@ public class HeroTest extends TestCase {
 
     while (this.hero1.canDamage() || this.hero2.canDamage()) {
       if (this.hero1.canDamage()) {
-        this.hero1.yieldAttackAction(this.hero2).act();
+        hero1AttackHero2();
       }
       if (this.hero2.canDamage()) {
-        this.hero2.yieldAttackAction(this.hero1).act();
+        hero2AttackHero1();
       }
     }
 
@@ -133,10 +141,10 @@ public class HeroTest extends TestCase {
 
     while (this.hero1.canDamage() || this.hero2.canDamage()) {
       if (this.hero1.canDamage()) {
-        this.hero1.yieldAttackAction(this.hero2).act();
+        hero1AttackHero2();
       }
       if (this.hero2.canDamage()) {
-        this.hero2.yieldAttackAction(this.hero1).act();
+        hero2AttackHero1();
       }
     }
     assertFalse(this.hero1.canDamage());
@@ -167,7 +175,7 @@ public class HeroTest extends TestCase {
 
     this.armorUpActionGenerator1.yieldActions().forEach(action -> action.act());
     assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
-    this.hero2.yieldAttackAction(this.hero1).act();
+    hero2AttackHero1();
     assertEquals(0, this.hero1.getArmorAttr().getVal());
     assertEquals(HeroFactory.HEALTH + this.armorGain - this.weaponAttackVal2, this.hero1.getHealthAttr().getVal());
   }

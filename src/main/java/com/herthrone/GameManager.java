@@ -5,6 +5,7 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Battlefield;
+import com.herthrone.card.factory.Factory;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.base.Container;
@@ -30,6 +31,9 @@ public class GameManager {
   private final Container<Secret> secrets2;
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;
+  public final Factory factory1;
+  public final Factory factory2;
+
 
   public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
@@ -49,6 +53,8 @@ public class GameManager {
 
     this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2, this.secrets1, this.secrets2);
     this.battlefield2 = this.battlefield1.getMirrorBattlefield();
+    this.factory1 = new Factory(this.battlefield1);
+    this.factory2 = new Factory(this.battlefield2);
   }
 
   public Hero getHero1() {
