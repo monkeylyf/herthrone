@@ -1,4 +1,4 @@
-package com.herthrone.action;
+package com.herthrone.card.factory;
 
 import com.herthrone.base.Minion;
 import com.herthrone.card.action.PhysicalDamage;

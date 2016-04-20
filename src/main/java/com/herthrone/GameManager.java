@@ -1,8 +1,6 @@
 package com.herthrone;
 
-import com.herthrone.base.BaseCard;
-import com.herthrone.base.Battlefield;
-import com.herthrone.base.Hero;
+import com.herthrone.base.*;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.container.Board;
@@ -23,14 +21,17 @@ public class GameManager {
   private final Container<BaseCard> hand2;
   private final Container<BaseCard> deck1;
   private final Container<BaseCard> deck2;
-  private final Board board1;
-  private final Board board2;
+  private final Container<Minion> board1;
+  private final Container<Minion> board2;
+  private final Container<Secret> secrets1;
+  private final Container<Secret> secrets2;
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;
 
   public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
 
     this.hero1 = HeroFactory.createHeroByName(hero1);
     this.hero2 = HeroFactory.createHeroByName(hero2);
@@ -38,10 +39,12 @@ public class GameManager {
     this.hand2 = new Container<>(handCapacity);
     this.deck1 = new Container<>(deckCapacity);
     this.deck2 = new Container<>(deckCapacity);
-    this.board1 = new Board();
-    this.board2 = new Board();
+    this.board1 = new Container<>(boardCapacity);
+    this.board2 = new Container<>(boardCapacity);
+    this.secrets1 = new Container<>();
+    this.secrets2 = new Container<>();
 
-    this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2);
-    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1);
+    this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2, this.secrets1, this.secrets2);
+    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1, this.secrets2, this.secrets1);
   }
 }

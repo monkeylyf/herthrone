@@ -1,17 +1,19 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.action.Action;
-import com.herthrone.action.ActionFactory;
 import com.herthrone.base.BaseCard;
+import com.herthrone.base.Battlefield;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Side;
 import com.herthrone.card.action.AttributeEffect;
 import com.herthrone.card.action.MoveCardEffect;
 import com.herthrone.card.action.StatusEffect;
-import com.herthrone.card.action.Summon;
+import com.herthrone.card.action.SummonEffect;
+import com.herthrone.configuration.EffectConfig;
 import com.herthrone.container.Board;
 import com.herthrone.container.Container;
+import com.herthrone.exception.MinionNotFoundException;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,14 +23,27 @@ import java.util.List;
  */
 public class EffectFactory {
 
-  private final Side side;
+  private final Side mySide;
+  private final Side opponentSide;
+  private final MinionFactory minionFactory;
 
-  public EffectFactory(Side side) {
-    this.side = side;
+  public EffectFactory(final MinionFactory minionFactory, final Battlefield battlefield) {
+    this.minionFactory = minionFactory;
+    this.mySide = battlefield.getMySide();
+    this.opponentSide = battlefield.getOpponentSide();
+  }
+
+  public ActionFactory getActionFactoryByConfig(EffectConfig config) {
+    final String effect = config.getEffect();
+    //switch (effect) {
+    //  case Constants.ATTRIBUTE:
+    //}
+    // TODO:
+    return getArmorActionGenerator(2);
   }
 
   public ActionFactory getArmorActionGenerator(final int gain) {
-    return getArmorActionGenerator(this.side, gain);
+    return getArmorActionGenerator(this.mySide, gain);
   }
 
   private ActionFactory getArmorActionGenerator(final Side side, final int gain) {
@@ -70,15 +85,19 @@ public class EffectFactory {
       }
     };
   }
-  public ActionFactory getSummonActionGenerator(final List<String> minionNames) {
-    return  getSummonActionGenerator(this.side.getBoard(), minionNames);
+  public ActionFactory getSummonActionGenerator(final List<String> minionNames) throws FileNotFoundException, MinionNotFoundException {
+    final List<Minion> minions = new ArrayList<>();
+    for (String minionName : minionNames) {
+      minions.add(this.minionFactory.createMinionByName(minionName));
+    }
+    return  getSummonActionGenerator(this.mySide.getMinions(), minions);
   }
 
-  private ActionFactory getSummonActionGenerator(final Board board, final List<String> minionNames) {
+  private ActionFactory getSummonActionGenerator(final Container<Minion> board, final List<Minion> minions) {
     return new ActionFactory() {
       @Override
       public List<Action> yieldActions() {
-        Action action = new Summon(board, minionNames);
+        Action action = new SummonEffect(board, minions);
         return singleActionToList(action);
       }
     };
@@ -130,8 +149,8 @@ public class EffectFactory {
   }
 
   public ActionFactory getDrawCardFromDeckActionGenerator(final int num) {
-    Container<BaseCard> hand = this.side.getHand();
-    Container<BaseCard> deck = this.side.getDeck();
+    Container<BaseCard> hand = this.mySide.getHand();
+    Container<BaseCard> deck = this.mySide.getDeck();
     return getDrawCardFromDeckActionGenerator(hand, deck, num);
   }
 
@@ -162,8 +181,8 @@ public class EffectFactory {
    */
   private Minion getMinionByIndex(final int index) {
     switch (index) {
-      case -1: return this.side.getHero();
-      default: return this.side.getBoard().getMinion(index);
+      case -1: return this.mySide.getHero();
+      default: return this.mySide.getMinions().get(index);
     }
   }
 }

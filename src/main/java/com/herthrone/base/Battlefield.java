@@ -11,9 +11,9 @@ public class Battlefield {
   private final Side mySide;
   private final Side opponentSide;
 
-  public Battlefield(Hero hero1, Hero hero2, Container<BaseCard> hand1, Container<BaseCard> hand2, Container<BaseCard> deck1, Container<BaseCard> deck2, Board board1, Board board2) {
-    this.mySide = new Side(hero1, hand1, deck1, board1);
-    this.opponentSide = new Side(hero2, hand2, deck2, board2);
+  public Battlefield(Hero hero1, Hero hero2, Container<BaseCard> hand1, Container<BaseCard> hand2, Container<BaseCard> deck1, Container<BaseCard> deck2, Container<Minion> board1, Container<Minion> board2, Container<Secret> secrets1, Container<Secret> secrets2) {
+    this.mySide = new Side(hero1, hand1, deck1, board1, secrets1);
+    this.opponentSide = new Side(hero2, hand2, deck2, board2, secrets2);
   }
 
   public Side getMySide() { return this.mySide; }

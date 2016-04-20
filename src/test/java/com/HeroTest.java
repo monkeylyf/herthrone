@@ -1,14 +1,8 @@
 package com;
 
-import com.herthrone.action.ActionFactory;
-import com.herthrone.base.BaseCard;
-import com.herthrone.base.Battlefield;
-import com.herthrone.base.Hero;
-import com.herthrone.base.Weapon;
-import com.herthrone.card.factory.EffectFactory;
-import com.herthrone.card.factory.HeroFactory;
-import com.herthrone.card.factory.WeaponFactory;
-import com.herthrone.card.weapon.Constants;
+import com.herthrone.Constants;
+import com.herthrone.base.*;
+import com.herthrone.card.factory.*;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.container.Board;
 import com.herthrone.container.Container;
@@ -36,13 +30,17 @@ public class HeroTest extends TestCase {
   private Container<BaseCard> hand2;
   private Container<BaseCard> deck1;
   private Container<BaseCard> deck2;
-  private Board board1;
-  private Board board2;
+  private Container<Minion> board1;
+  private Container<Minion> board2;
+  private Container<Secret> secrets1;
+  private Container<Secret> secrets2;
   private Battlefield battlefield1;
   private Battlefield battlefield2;
 
   private ActionFactory armorUpActionGenerator1;
   private ActionFactory armorUpActionGenerator2;
+  private MinionFactory minionFactory1;
+  private MinionFactory minionFactory2;
   private EffectFactory effectFactory1;
   private EffectFactory effectFactory2;
 
@@ -53,27 +51,32 @@ public class HeroTest extends TestCase {
   public void setUp() throws FileNotFoundException, HeroNotFoundException {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
     this.hero1 = HeroFactory.createHeroByName("Garrosh Hellscream");
     this.hero2 = HeroFactory.createHeroByName("Garrosh Hellscream");
     this.hand1 = new Container<>(handCapacity);
     this.hand2 = new Container<>(handCapacity);
     this.deck1 = new Container<>(deckCapacity);
     this.deck2 = new Container<>(deckCapacity);
-    this.board1 = new Board();
-    this.board2 = new Board();
+    this.board1 = new Container<>(boardCapacity);
+    this.board2 = new Container<>(boardCapacity);
+    this.secrets1 = new Container<>();
+    this.secrets2 = new Container<>();
 
-    this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2);
-    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1);
+    this.battlefield1 = new Battlefield(this.hero1, this.hero2, this.hand1, this.hand2, this.deck1, this.deck2, this.board1, this.board2, this.secrets1, this.secrets2);
+    this.battlefield2 = new Battlefield(this.hero2, this.hero1, this.hand2, this.hand1, this.deck2, this.deck1, this.board2, this.board1, this.secrets2, this.secrets1);
 
-    this.effectFactory1 = new EffectFactory(this.battlefield1.getMySide());
-    this.effectFactory2 = new EffectFactory(this.battlefield2.getMySide());
+    this.minionFactory1 = new MinionFactory(this.battlefield1);
+    this.minionFactory2 = new MinionFactory(this.battlefield2);
+    this.effectFactory1 = new EffectFactory(this.minionFactory1, this.battlefield1);
+    this.effectFactory2 = new EffectFactory(this.minionFactory2, this.battlefield2);
 
     this.armorUpActionGenerator1 = this.effectFactory1.getArmorActionGenerator(this.armorGain);
     this.armorUpActionGenerator2 = this.effectFactory2.getArmorActionGenerator(this.armorGain);
 
 
-    this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.FIERY_WAR_AEX, "Warrior");
-    this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.FIERY_WAR_AEX, "Warrior");
+    this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
+    this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
   }
 
   @Test

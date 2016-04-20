@@ -23,11 +23,13 @@ public class Factory {
   private final SpellFactory spellFactory;
   private final WeaponFactory weaponFactory;
   private final SecretFactory secretFactory;
+  private final EffectFactory effectFactory;
 
   public Factory(final Battlefield battlefield) {
     this.battlefield = battlefield;
     this.minionFactory = new MinionFactory(battlefield);
-    this.spellFactory = new SpellFactory(battlefield);
+    this.effectFactory = new EffectFactory(this.minionFactory, battlefield);
+    this.spellFactory = new SpellFactory(this.effectFactory);
     this.weaponFactory = new WeaponFactory(battlefield);
     this.secretFactory = new SecretFactory(battlefield);
   }

@@ -10,4 +10,6 @@ public class Constants {
   public static final String MINION = "Minion";
   public static final String WEAPON = "Weapon";
   public static final String SECRET = "Secret";
+
+  public static final String ATTRIBUTE = "attribute";
 }

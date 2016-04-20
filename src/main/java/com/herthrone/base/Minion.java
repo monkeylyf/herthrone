@@ -1,6 +1,6 @@
 package com.herthrone.base;
 
-import com.herthrone.action.AttackActionFactory;
+import com.herthrone.card.factory.AttackActionFactory;
 
 /**
  * Created by yifeng on 4/2/16.

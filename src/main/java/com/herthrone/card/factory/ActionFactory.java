@@ -1,6 +1,4 @@
-package com.herthrone.action;
-
-import com.herthrone.base.Minion;
+package com.herthrone.card.factory;
 
 import java.util.List;
 
