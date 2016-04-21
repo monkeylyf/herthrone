@@ -20,4 +20,5 @@ public interface Minion extends BaseCard {
   public boolean canDamage();
 
   public boolean isDead();
+  public int getHealthLoss();
 }

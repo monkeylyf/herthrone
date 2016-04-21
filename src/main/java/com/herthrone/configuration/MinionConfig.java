@@ -27,8 +27,6 @@ public class MinionConfig implements BaseConfig {
     this.mechanics = (List<String>) map.get("mechanics");
   }
 
-  public String toString() { return this.name; }
-
   public int getId() { return this.id; }
   public int getAttack() { return this.attack; }
   public int getHealth() { return this.health; }

@@ -134,6 +134,11 @@ public class HeroFactory {
       public boolean isDead() {
         return this.healthAttr.getVal() <= 0;
       }
+
+      @Override
+      public int getHealthLoss() {
+        return this.getHealthUpperAttr().getVal() - this.getHealthAttr().getVal();
+      }
     };
   }
 }

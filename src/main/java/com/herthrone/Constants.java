@@ -46,8 +46,22 @@ public class Constants {
     public static final String TOTEMIC_CALL = "TotemicCall";
   }
 
-  public static class Spell {
+  public static class Type {
+    public static final String HERO = "Hero";
+    public static final String SPELL = "Spell";
+    public static final String MINION = "Minion";
+    public static final String WEAPON = "Weapon";
+    public static final String SECRET = "Secret";
+
     public static final String ATTRIBUTE = "attribute";
     public static final String HEALTH = "health";
+    public static final String ARMOR = "armor";
+    public static final String ATTACK = "attack";
+    public static final String HEALTH_UPPER_BOUND = "health_upper_bound";
+    public static final String CRYSTAL = "crystal";
+  }
+
+  public static class Minion {
+    public static final String CHILLWIND_YETI = "Chillwind Yeti";
   }
 }

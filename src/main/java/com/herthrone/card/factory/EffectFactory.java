@@ -2,16 +2,12 @@ package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.Constants;
-import com.herthrone.base.BaseCard;
-import com.herthrone.base.Battlefield;
-import com.herthrone.base.Minion;
-import com.herthrone.base.Side;
+import com.herthrone.base.*;
 import com.herthrone.card.action.AttributeEffect;
 import com.herthrone.card.action.MoveCardEffect;
 import com.herthrone.card.action.StatusEffect;
 import com.herthrone.card.action.SummonEffect;
 import com.herthrone.configuration.EffectConfig;
-import com.herthrone.base.Container;
 import com.herthrone.exception.MinionNotFoundException;
 
 import java.io.FileNotFoundException;
@@ -33,36 +29,45 @@ public class EffectFactory {
     this.opponentSide = battlefield.getOpponentSide();
   }
 
-  public ActionFactory getActionFactoryByConfig(EffectConfig config) {
+  public Action getActionsByConfig(final EffectConfig config, final Minion minion) {
     final String effect = config.getEffect();
-    //switch (effect) {
-    //  case Constants.ATTRIBUTE:
-    //}
-    // TODO:
-    return getArmorActionGenerator(2);
+    switch (effect) {
+      case Constants.Type.ATTRIBUTE:
+        return getAttributeAction(config, minion);
+      default:
+        return getAttributeAction(config, minion);
+    }
   }
 
-  private ActionFactory getHealthAttributeActionFactor(final Minion minion) {
-    return new ActionFactory() {
-      @Override
-      public List<Action> yieldActions() {
-        return null;
-      }
-    };
+  private Action getAttributeAction(final EffectConfig effect, final Minion minion) {
+    final String type = effect.getType();
+    switch (type) {
+      case (Constants.Type.HEALTH):
+        return getHealthAttributeAction(minion, effect.getValue());
+      case (Constants.Type.ATTACK):
+        return getGeneralAttributeAction(minion.getAttackAttr(), effect.getValue());
+      case (Constants.Type.CRYSTAL):
+        return getGeneralAttributeAction(minion.getCrystalManaCost(), effect.getValue());
+      case (Constants.Type.HEALTH_UPPER_BOUND):
+        return getGeneralAttributeAction(minion.getHealthUpperAttr(), effect.getValue());
+      case (Constants.Type.ARMOR):
+        Preconditions.checkArgument(minion instanceof Hero, "Armor Attribute applies to Hero only, not " + minion.getType());
+        final Hero hero = (Hero) minion;
+        return getGeneralAttributeAction(hero.getArmorAttr(), effect.getValue());
+      default:
+        throw new IllegalArgumentException("Unknown effect type " + effect.getType());
+    }
   }
 
-  public ActionFactory getArmorActionGenerator(final int gain) {
-    return getArmorActionGenerator(this.mySide, gain);
+  private Action getGeneralAttributeAction(final Attribute attr, final int change) {
+    Preconditions.checkArgument(change != 0, "Attribute change must be non-zero");
+    return new AttributeEffect(attr, change);
   }
 
-  private ActionFactory getArmorActionGenerator(final Side side, final int gain) {
-    return new ActionFactory() {
-      @Override
-      public List<Action> yieldActions() {
-        Action action = new AttributeEffect(side.getHero().getArmorAttr(), gain);
-        return Factory.singleActionToList(action);
-      }
-    };
+  private Action getHealthAttributeAction(final Minion minion, final int change) {
+    Preconditions.checkArgument(change != 0, "Health change must be non-zero");
+    final int adjustChange = (change > 0) ? Math.max(change, minion.getHealthLoss()) : change;
+    return new AttributeEffect(minion.getHealthAttr(), change);
   }
 
   public ActionFactory getHealthActionGenerator(final int index, final int gain) {

@@ -5,6 +5,8 @@ import com.herthrone.GameManager;
 import com.herthrone.base.*;
 import com.herthrone.card.factory.*;
 import com.herthrone.base.Container;
+import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.CardNotFoundException;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -26,23 +28,15 @@ public class HeroTest extends TestCase {
 
   private Hero hero1;
   private Hero hero2;
-  private Container<BaseCard> hand1;
-  private Container<BaseCard> hand2;
-  private Container<BaseCard> deck1;
-  private Container<BaseCard> deck2;
-  private Container<Minion> board1;
-  private Container<Minion> board2;
-  private Container<Secret> secrets1;
-  private Container<Secret> secrets2;
   private Battlefield battlefield1;
   private Battlefield battlefield2;
 
-  private ActionFactory armorUpActionGenerator1;
-  private ActionFactory armorUpActionGenerator2;
   private MinionFactory minionFactory1;
   private MinionFactory minionFactory2;
   private EffectFactory effectFactory1;
   private EffectFactory effectFactory2;
+
+  private SpellConfig armorUp;
 
   private Weapon weapon1;
   private Weapon weapon2;
@@ -54,14 +48,6 @@ public class HeroTest extends TestCase {
     this.gm = new GameManager(Constants.Hero.GARROSH_HELLSCREAM, Constants.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
-    this.hand1 = this.gm.getHand1();
-    this.hand2 = this.gm.getHand2();
-    this.deck1 = this.gm.getDeck1();
-    this.deck1 = this.gm.getDeck2();
-    this.board1 = this.gm.getBoard1();
-    this.board2 = this.gm.getBoard2();
-    this.secrets1 = this.gm.getSecrets1();
-    this.secrets2 = this.gm.getSecrets2();
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 
@@ -70,9 +56,7 @@ public class HeroTest extends TestCase {
     this.effectFactory1 = new EffectFactory(this.minionFactory1, this.battlefield1);
     this.effectFactory2 = new EffectFactory(this.minionFactory2, this.battlefield2);
 
-    this.armorUpActionGenerator1 = this.effectFactory1.getArmorActionGenerator(this.armorGain);
-    this.armorUpActionGenerator2 = this.effectFactory2.getArmorActionGenerator(this.armorGain);
-
+    this.armorUp = ConfigLoader.getHeroPowerConfigByName("ArmorUp");
 
     this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
     this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
@@ -82,14 +66,6 @@ public class HeroTest extends TestCase {
   public void testHeroHealth() {
     assertEquals(HeroFactory.HEALTH, this.hero1.getHealthAttr().getVal());
     assertEquals(HeroFactory.HEALTH, this.hero2.getHealthAttr().getVal());
-  }
-
-  private void hero1AttackHero2() {
-    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
-  }
-
-  private void hero2AttackHero1() {
-    this.gm.factory2.attackFactory.getPhysicalDamageAction(this.hero2, this.hero1).act();
   }
 
   @Test
@@ -154,15 +130,15 @@ public class HeroTest extends TestCase {
   @Test
   public void testArmorUp() {
     assertEquals(0, this.hero1.getArmorAttr().getVal());
-    this.armorUpActionGenerator1.yieldActions().stream().forEach(action -> action.act());
+    hero1ArmorUp();
     assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
-    this.armorUpActionGenerator1.yieldActions().forEach(action -> action.act());
+    hero1ArmorUp();
     assertEquals(this.armorGain * 2, this.hero1.getArmorAttr().getVal());
 
     assertEquals(0, this.hero2.getArmorAttr().getVal());
-    this.armorUpActionGenerator2.yieldActions().forEach(action -> action.act());
+    hero2ArmorUp();
     assertEquals(this.armorGain, this.hero2.getArmorAttr().getVal());
-    this.armorUpActionGenerator2.yieldActions().forEach(action -> action.act());
+    hero2ArmorUp();
     assertEquals(this.armorGain * 2, this.hero2.getArmorAttr().getVal());
   }
 
@@ -173,11 +149,27 @@ public class HeroTest extends TestCase {
     this.hero1.equipWeapon(this.weapon1);
     this.hero2.equipWeapon(this.weapon2);
 
-    this.armorUpActionGenerator1.yieldActions().forEach(action -> action.act());
+    hero1ArmorUp();
     assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
     hero2AttackHero1();
     assertEquals(0, this.hero1.getArmorAttr().getVal());
     assertEquals(HeroFactory.HEALTH + this.armorGain - this.weaponAttackVal2, this.hero1.getHealthAttr().getVal());
+  }
+
+  private void hero1ArmorUp() {
+    this.effectFactory1.getActionsByConfig(this.armorUp.getEffects().get(0), this.hero1).act();
+  }
+
+  private void hero2ArmorUp() {
+    this.effectFactory1.getActionsByConfig(this.armorUp.getEffects().get(0), this.hero2).act();
+  }
+
+  private void hero1AttackHero2() {
+    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
+  }
+
+  private void hero2AttackHero1() {
+    this.gm.factory2.attackFactory.getPhysicalDamageAction(this.hero2, this.hero1).act();
   }
 
 }
