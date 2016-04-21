@@ -46,4 +46,8 @@ public class EffectConfig {
   public int getDuration() {
     return duration;
   }
+
+  public String toString() {
+    return String.format("Effect <%s> Type <%s> Value <%d> Targets: <%s>", this.effect, this.type, this.value, this.target);
+  }
 }

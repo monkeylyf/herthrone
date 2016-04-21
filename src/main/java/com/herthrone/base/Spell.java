@@ -1,6 +1,6 @@
 package com.herthrone.base;
 
-import com.herthrone.card.factory.ActionFactory;
+import com.herthrone.configuration.EffectConfig;
 
 import java.util.List;
 
@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface Spell extends BaseCard {
 
-  public List<ActionFactory> getActionFactories();
+  public List<EffectConfig> getEffects();
 }

@@ -24,23 +24,18 @@ public class SpellFactory {
 
   public Spell createSpellByName(final String name) throws FileNotFoundException, SpellNotFoundException {
     SpellConfig config = ConfigLoader.getSpellConfigByName(name);
-    List<ActionFactory> actionFactories = new ArrayList<>();
-    for (EffectConfig effectConfig : config.getEffects()) {
-      ActionFactory actionFactory = this.effectFactory.getActionFactoryByConfig(effectConfig);
-      actionFactories.add(actionFactory);
-    }
-    return createSpell(name, config.getClassName(), config.getCrystal(), config.getType(), actionFactories);
+    return createSpell(name, config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 
-  public Spell createSpell(final String name, final String className, final int crystal, final String type, final List<ActionFactory> actionFactories) {
+  public Spell createSpell(final String name, final String className, final int crystal, final String type, final List<EffectConfig> effects) {
     return new Spell() {
 
-      private final Attribute crystalManaCostAttr = new Attribute(crystal);
-
       @Override
-      public List<ActionFactory> getActionFactories() {
-        return this.getActionFactories();
+      public List<EffectConfig> getEffects() {
+        return effects;
       }
+
+      private final Attribute crystalManaCostAttr = new Attribute(crystal);
 
       @Override
       public String getCardName() {

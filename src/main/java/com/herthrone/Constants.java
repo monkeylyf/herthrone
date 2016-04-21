@@ -45,4 +45,9 @@ public class Constants {
     public static final String STEADY_SHOT = "SteadyShot";
     public static final String TOTEMIC_CALL = "TotemicCall";
   }
+
+  public static class Spell {
+    public static final String ATTRIBUTE = "attribute";
+    public static final String HEALTH = "health";
+  }
 }

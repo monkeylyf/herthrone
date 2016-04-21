@@ -19,6 +19,7 @@ public class ConfigLoader {
   private static volatile Map<String, SpellConfig> SPELL_CONFIGS;
   private static volatile Map<String, MinionConfig> CARD_CONFIGS;
   private static volatile Map<String, HeroConfig> HERO_CONFIGS;
+  private static volatile Map<String, SpellConfig> HERO_POWER_CONFIGS;
   private static volatile ResourceBundle RESOURCE;
 
   private static final String pathTemplate = "src/main/resources/%s.yaml";
@@ -108,6 +109,27 @@ public class ConfigLoader {
     }
   }
 
+  public static Map<String, SpellConfig> getHeroPowerConfiguration() throws FileNotFoundException {
+    Map<String, SpellConfig>  noneVolatileHeroPowerConfigs = ConfigLoader.HERO_POWER_CONFIGS;
+    if (noneVolatileHeroPowerConfigs == null) {
+      synchronized (ConfigLoader.class) {
+        if (noneVolatileHeroPowerConfigs == null) {
+          noneVolatileHeroPowerConfigs = ConfigLoader.HERO_POWER_CONFIGS = ConfigLoader.loadHeroPowerConfiguration();
+        }
+      }
+    }
+    return noneVolatileHeroPowerConfigs;
+  }
+
+  public static SpellConfig getHeroPowerConfigByName(final String heroPowerName) throws FileNotFoundException, SpellNotFoundException {
+    SpellConfig config = loadHeroPowerConfiguration().get(heroPowerName);
+    if (config == null) {
+      throw new SpellNotFoundException(String.format("Hero power %s not found", heroPowerName));
+    } else {
+      return config;
+    }
+  }
+
   private static ResourceBundle loadResource() {
     return ResourceBundle.getBundle("configuration");
   }
@@ -134,8 +156,19 @@ public class ConfigLoader {
     return heroConfigs;
   }
 
-  private static Map<String, SpellConfig> loadSpellConfiguration() throws FileNotFoundException {
+  private static Map<String, SpellConfig> loadHeroPowerConfiguration() throws FileNotFoundException {
     List<Object> heroPowers = loadYaml("hero_power");
+    Map<String, SpellConfig> heroPowerConfigs = new HashMap<>();
+    for(Object object : heroPowers) {
+      Map map = (Map) object;
+      SpellConfig config = new SpellConfig(map);
+      heroPowerConfigs.put(config.getName(), config);
+    }
+    return heroPowerConfigs;
+  }
+
+  private static Map<String, SpellConfig> loadSpellConfiguration() throws FileNotFoundException {
+    List<Object> heroPowers = loadYaml("spell");
     Map<String, SpellConfig> heroPowerConfigs = new HashMap<>();
     for (Object object : heroPowers) {
       Map map = (Map) object;

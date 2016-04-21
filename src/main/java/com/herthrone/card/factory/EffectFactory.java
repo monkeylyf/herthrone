@@ -1,5 +1,7 @@
 package com.herthrone.card.factory;
 
+import com.google.common.base.Preconditions;
+import com.herthrone.Constants;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Battlefield;
 import com.herthrone.base.Minion;
@@ -38,6 +40,15 @@ public class EffectFactory {
     //}
     // TODO:
     return getArmorActionGenerator(2);
+  }
+
+  private ActionFactory getHealthAttributeActionFactor(final Minion minion) {
+    return new ActionFactory() {
+      @Override
+      public List<Action> yieldActions() {
+        return null;
+      }
+    };
   }
 
   public ActionFactory getArmorActionGenerator(final int gain) {
