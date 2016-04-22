@@ -1,11 +1,12 @@
 package com.herthrone.card.factory;
 
 import com.herthrone.base.*;
-import com.herthrone.card.action.PhysicalDamage;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.exception.HeroNotFoundException;
+import com.herthrone.stats.Attribute;
+import com.herthrone.stats.Status;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;

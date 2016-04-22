@@ -1,6 +1,6 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.base.Attribute;
+import com.herthrone.stats.Attribute;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
@@ -8,7 +8,6 @@ import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.SpellNotFoundException;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +23,11 @@ public class SpellFactory {
 
   public Spell createSpellByName(final String name) throws FileNotFoundException, SpellNotFoundException {
     SpellConfig config = ConfigLoader.getSpellConfigByName(name);
+    return createSpell(name, config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
+  }
+
+  public Spell createHeroPowerByName(final String name) throws FileNotFoundException, SpellNotFoundException {
+    SpellConfig config = ConfigLoader.getHeroPowerConfigByName(name);
     return createSpell(name, config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 

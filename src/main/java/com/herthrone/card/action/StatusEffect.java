@@ -1,7 +1,7 @@
 package com.herthrone.card.action;
 
 import com.herthrone.card.factory.Action;
-import com.herthrone.base.Status;
+import com.herthrone.stats.Status;
 
 /**
  * Created by yifeng on 4/15/16.

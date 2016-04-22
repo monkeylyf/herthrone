@@ -1,17 +1,18 @@
 package com;
 
 import com.herthrone.Constants;
-import com.herthrone.GameManager;
+import com.herthrone.game.Battlefield;
+import com.herthrone.game.GameManager;
 import com.herthrone.base.*;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
-import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.CardNotFoundException;
 import com.herthrone.exception.SpellNotFoundException;
 import junit.framework.TestCase;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.util.Collections;
@@ -52,13 +53,91 @@ public class SpellTest extends TestCase{
     this.minion = this.minionFactory1.createMinionByName(Constants.Minion.CHILLWIND_YETI);
   }
 
+  @Test
   public void testFireBall() throws FileNotFoundException, SpellNotFoundException {
     final String spellName = "FireBall";
-    SpellConfig fireBallConfig = ConfigLoader.getSpellConfigByName(spellName);
     Spell fireBall = this.gm.factory1.spellFactory.createSpellByName(spellName);
 
-    this.effectFactory1.getActionsByConfig(fireBallConfig.getEffects().get(0), this.minion).act();
-    assertEquals(this.yetiConfig.getHealth() + fireBallConfig.getEffects().get(0).getValue(), this.minion.getHealthAttr().getVal());
+    this.effectFactory1.getActionsByConfig(fireBall, this.minion).stream().forEach(action -> action.act());
+    assertEquals(this.yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue(), this.minion.getHealthAttr().getVal());
     assertTrue(this.minion.isDead());
+  }
+
+  @Test
+  public void testArmorUp() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "ArmorUp";
+    assertEquals(0, this.hero1.getArmorAttr().getVal());
+    Spell armorUp = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+
+    assertEquals(0, this.hero1.getArmorAttr().getVal());
+    this.effectFactory1.getActionsByConfig(armorUp, this.hero1).stream().forEach(action -> action.act());
+    assertEquals(armorUp.getEffects().get(0).getValue(), this.hero1.getArmorAttr().getVal());
+  }
+
+  @Test
+  public void testLesserHeal() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "LesserHeal";
+    Spell lesserHeal = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    assertEquals(0, this.hero1.getHealthLoss());
+    final int largeDamage = 5;
+    final int healVol = lesserHeal.getEffects().get(0).getValue();
+    this.hero1.takeDamage(largeDamage);
+    assertEquals(largeDamage, this.hero1.getHealthLoss());
+
+    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(action -> action.act());
+    assertEquals(largeDamage - healVol, this.hero1.getHealthLoss());
+    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(action -> action.act());
+    assertEquals(largeDamage - healVol * 2, this.hero1.getHealthLoss());
+    // Healing cannot exceed the health upper bound.
+    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(action -> action.act());
+    assertEquals(0, this.hero1.getHealthLoss());
+  }
+
+  @Test
+  public void testFireBlast() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "FireBlast";
+    Spell fireBlast = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    final int damage = fireBlast.getEffects().get(0).getValue();
+    assertEquals(0, this.hero2.getHealthLoss());
+
+    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(action -> action.act());
+    assertEquals(-damage, this.hero2.getHealthLoss());
+
+    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(action -> action.act());
+    assertEquals(-damage * 2, this.hero2.getHealthLoss());
+  }
+
+  @Test
+  public void testSteadyShot() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "SteadyShot";
+    Spell steadyShot = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+
+    final int damage = steadyShot.getEffects().get(0).getValue();
+    assertEquals(0, this.hero2.getHealthLoss());
+
+    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(action -> action.act());
+    assertEquals(-damage, this.hero2.getHealthLoss());
+
+    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(action -> action.act());
+    assertEquals(-damage * 2, this.hero2.getHealthLoss());
+  }
+
+  @Test
+  public void testShapeshift() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "Shapeshift";
+    Spell shapeshift = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    final int attack = shapeshift.getEffects().get(0).getValue();
+    final int armor = shapeshift.getEffects().get(1).getValue();
+
+    assertEquals(0, this.hero1.getAttackAttr().getVal());
+    assertEquals(0, this.hero1.getArmorAttr().getVal());
+
+    this.effectFactory1.getActionsByConfig(shapeshift, this.hero1).stream().forEach(action -> action.act());
+
+    assertEquals(attack, this.hero1.getAttackAttr().getVal());
+    assertEquals(armor, this.hero1.getArmorAttr().getVal());
+
+    this.hero1.getAttackAttr().nextRound();
+    //assertEquals(0, this.hero1.getAttackAttr().getVal());
   }
 }

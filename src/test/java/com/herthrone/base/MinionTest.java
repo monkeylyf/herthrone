@@ -1,7 +1,9 @@
 package com.herthrone.base;
 
 import com.herthrone.Constants;
-import com.herthrone.GameManager;
+import com.herthrone.game.Battlefield;
+import com.herthrone.game.Container;
+import com.herthrone.game.GameManager;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;

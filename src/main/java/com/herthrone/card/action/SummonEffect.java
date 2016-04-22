@@ -2,7 +2,7 @@ package com.herthrone.card.action;
 
 import com.herthrone.base.Minion;
 import com.herthrone.card.factory.Action;
-import com.herthrone.base.Container;
+import com.herthrone.game.Container;
 
 import java.util.List;
 

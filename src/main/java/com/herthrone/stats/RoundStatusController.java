@@ -1,4 +1,4 @@
-package com.herthrone.base;
+package com.herthrone.stats;
 
 /**
  * Created by yifeng on 4/15/16.

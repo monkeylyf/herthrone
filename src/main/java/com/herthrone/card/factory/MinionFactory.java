@@ -1,10 +1,9 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.base.Attribute;
-import com.herthrone.base.Battlefield;
+import com.herthrone.stats.Attribute;
+import com.herthrone.game.Battlefield;
 import com.herthrone.base.Minion;
-import com.herthrone.base.Status;
-import com.herthrone.card.action.PhysicalDamage;
+import com.herthrone.stats.Status;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.MinionConfig;

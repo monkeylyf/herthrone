@@ -1,4 +1,4 @@
-package com.herthrone.base;
+package com.herthrone.game;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;

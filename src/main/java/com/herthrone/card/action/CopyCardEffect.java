@@ -2,7 +2,7 @@ package com.herthrone.card.action;
 
 import com.herthrone.card.factory.Action;
 import com.herthrone.base.BaseCard;
-import com.herthrone.base.Container;
+import com.herthrone.game.Container;
 
 /**
  * Created by yifeng on 4/16/16.

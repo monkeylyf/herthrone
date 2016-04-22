@@ -1,4 +1,6 @@
-package com.herthrone.base;
+package com.herthrone.game;
+
+import com.herthrone.base.*;
 
 /**
  * Created by yifeng on 4/14/16.

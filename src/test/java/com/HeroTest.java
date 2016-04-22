@@ -1,10 +1,10 @@
 package com;
 
 import com.herthrone.Constants;
-import com.herthrone.GameManager;
+import com.herthrone.game.Battlefield;
+import com.herthrone.game.GameManager;
 import com.herthrone.base.*;
 import com.herthrone.card.factory.*;
-import com.herthrone.base.Container;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.CardNotFoundException;
@@ -157,11 +157,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    this.effectFactory1.getActionsByConfig(this.armorUp.getEffects().get(0), this.hero1).act();
+    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero1).stream().forEach(action -> action.act());
   }
 
   private void hero2ArmorUp() {
-    this.effectFactory1.getActionsByConfig(this.armorUp.getEffects().get(0), this.hero2).act();
+    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero2).stream().forEach(action -> action.act());
   }
 
   private void hero1AttackHero2() {

@@ -1,5 +1,8 @@
 package com.herthrone.base;
 
+import com.herthrone.stats.Attribute;
+import com.herthrone.stats.Status;
+
 /**
  * Created by yifeng on 4/2/16.
  */

@@ -1,7 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.herthrone.base.BaseCard;
-import com.herthrone.base.Battlefield;
+import com.herthrone.game.Battlefield;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.Constants;

@@ -8,11 +8,17 @@ import com.herthrone.card.action.MoveCardEffect;
 import com.herthrone.card.action.StatusEffect;
 import com.herthrone.card.action.SummonEffect;
 import com.herthrone.configuration.EffectConfig;
+import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.MinionNotFoundException;
+import com.herthrone.game.Battlefield;
+import com.herthrone.game.Container;
+import com.herthrone.game.Side;
+import com.herthrone.stats.Attribute;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by yifeng on 4/14/16.
@@ -29,6 +35,18 @@ public class EffectFactory {
     this.opponentSide = battlefield.getOpponentSide();
   }
 
+  public List<Action> getActionsByConfig(final Spell spell, final Minion minion) {
+    return spell.getEffects().stream()
+            .map(effect -> getActionsByConfig(effect, minion))
+            .collect(Collectors.toList());
+  }
+
+  public List<Action> getActionsByConfig(final SpellConfig config, final Minion minion) {
+    return config.getEffects().stream()
+            .map(effect -> getActionsByConfig(effect, minion))
+            .collect(Collectors.toList());
+  }
+
   public Action getActionsByConfig(final EffectConfig config, final Minion minion) {
     final String effect = config.getEffect();
     switch (effect) {
@@ -43,62 +61,34 @@ public class EffectFactory {
     final String type = effect.getType();
     switch (type) {
       case (Constants.Type.HEALTH):
-        return getHealthAttributeAction(minion, effect.getValue());
+        return getHealthAttributeAction(minion, effect);
       case (Constants.Type.ATTACK):
-        return getGeneralAttributeAction(minion.getAttackAttr(), effect.getValue());
+        return getGeneralAttributeAction(minion.getAttackAttr(), effect);
       case (Constants.Type.CRYSTAL):
-        return getGeneralAttributeAction(minion.getCrystalManaCost(), effect.getValue());
+        return getGeneralAttributeAction(minion.getCrystalManaCost(), effect);
       case (Constants.Type.HEALTH_UPPER_BOUND):
-        return getGeneralAttributeAction(minion.getHealthUpperAttr(), effect.getValue());
+        return getGeneralAttributeAction(minion.getHealthUpperAttr(), effect);
       case (Constants.Type.ARMOR):
         Preconditions.checkArgument(minion instanceof Hero, "Armor Attribute applies to Hero only, not " + minion.getType());
         final Hero hero = (Hero) minion;
-        return getGeneralAttributeAction(hero.getArmorAttr(), effect.getValue());
+        return getGeneralAttributeAction(hero.getArmorAttr(), effect);
       default:
         throw new IllegalArgumentException("Unknown effect type " + effect.getType());
     }
   }
 
-  private Action getGeneralAttributeAction(final Attribute attr, final int change) {
-    Preconditions.checkArgument(change != 0, "Attribute change must be non-zero");
-    return new AttributeEffect(attr, change);
+  private Action getGeneralAttributeAction(final Attribute attr, final EffectConfig effect) {
+    Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
+    return new AttributeEffect(attr, effect.getValue(), effect.getDuration());
   }
 
-  private Action getHealthAttributeAction(final Minion minion, final int change) {
-    Preconditions.checkArgument(change != 0, "Health change must be non-zero");
-    final int adjustChange = (change > 0) ? Math.max(change, minion.getHealthLoss()) : change;
-    return new AttributeEffect(minion.getHealthAttr(), change);
+  private Action getHealthAttributeAction(final Minion minion, final EffectConfig effect) {
+    final int value = effect.getValue();
+    Preconditions.checkArgument(value != 0, "Health change must be non-zero");
+    final int adjustChange = (value > 0) ? Math.min(value, minion.getHealthLoss()) : value;
+    return new AttributeEffect(minion.getHealthAttr(), adjustChange, effect.getDuration());
   }
 
-  public ActionFactory getHealthActionGenerator(final int index, final int gain) {
-    Minion minion = getMinionByIndex(index);
-    return getHealthActionGenerator(minion, gain);
-  }
-
-  private ActionFactory getHealthActionGenerator(final Minion minion, final int gain) {
-    return new ActionFactory() {
-      @Override
-      public List<Action> yieldActions() {
-        Action action = new AttributeEffect(minion.getHealthAttr(), gain);
-        return Factory.singleActionToList(action);
-      }
-    };
-  }
-
-  public ActionFactory getAttackActionGenerator(final int index, final int gain) {
-    Minion minion = getMinionByIndex(index);
-    return getAttackActionGenerator(minion, gain);
-  }
-
-  private ActionFactory getAttackActionGenerator(final Minion minion, final int gain) {
-    return new ActionFactory() {
-      @Override
-      public List<Action> yieldActions() {
-        Action action = new AttributeEffect(minion.getAttackAttr(), gain);
-        return Factory.singleActionToList(action);
-      }
-    };
-  }
   public ActionFactory getSummonActionGenerator(final List<String> minionNames) throws FileNotFoundException, MinionNotFoundException {
     final List<Minion> minions = new ArrayList<>();
     for (String minionName : minionNames) {

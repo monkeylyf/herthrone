@@ -1,7 +1,7 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.base.Attribute;
-import com.herthrone.base.Battlefield;
+import com.herthrone.stats.Attribute;
+import com.herthrone.game.Battlefield;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.Constants;
 

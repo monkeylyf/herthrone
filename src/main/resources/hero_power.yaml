@@ -78,7 +78,7 @@
     - effect: attribute
       type: health
       value: -2
-      target: [hero]
+      target: [enemy_hero]
 
 - name: TotemicCall
   class: Shaman
