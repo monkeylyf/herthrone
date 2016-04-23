@@ -1,6 +1,6 @@
 package com;
 
-import com.herthrone.Constants;
+import com.herthrone.game.Constants;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import com.herthrone.base.*;
@@ -51,15 +51,15 @@ public class HeroTest extends TestCase {
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 
-    this.minionFactory1 = new MinionFactory(this.battlefield1);
-    this.minionFactory2 = new MinionFactory(this.battlefield2);
-    this.effectFactory1 = new EffectFactory(this.minionFactory1, this.battlefield1);
-    this.effectFactory2 = new EffectFactory(this.minionFactory2, this.battlefield2);
+    this.minionFactory1 = this.gm.factory1.minionFactory;
+    this.minionFactory2 = this.gm.factory2.minionFactory;
+    this.effectFactory1 = this.gm.factory1.effectFactory;
+    this.effectFactory2 = this.gm.factory2.effectFactory;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName("ArmorUp");
 
-    this.weapon1 = WeaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
-    this.weapon2 = WeaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
+    this.weapon1 = this.gm.factory1.weaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
+    this.weapon2 = this.gm.factory2.weaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constants.Weapon.FIERY_WAR_AEX, "Warrior");
   }
 
   @Test

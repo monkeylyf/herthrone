@@ -1,12 +1,9 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.Constants;
+import com.herthrone.card.action.*;
+import com.herthrone.game.Constants;
 import com.herthrone.base.*;
-import com.herthrone.card.action.AttributeEffect;
-import com.herthrone.card.action.MoveCardEffect;
-import com.herthrone.card.action.StatusEffect;
-import com.herthrone.card.action.SummonEffect;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.MinionNotFoundException;
@@ -28,9 +25,11 @@ public class EffectFactory {
   private final Side mySide;
   private final Side opponentSide;
   private final MinionFactory minionFactory;
+  private final WeaponFactory weaponFactory;
 
-  public EffectFactory(final MinionFactory minionFactory, final Battlefield battlefield) {
+  public EffectFactory(final MinionFactory minionFactory, final WeaponFactory weaponFactory, final Battlefield battlefield) {
     this.minionFactory = minionFactory;
+    this.weaponFactory = weaponFactory;
     this.mySide = battlefield.getMySide();
     this.opponentSide = battlefield.getOpponentSide();
   }
@@ -52,6 +51,10 @@ public class EffectFactory {
     switch (effect) {
       case Constants.Type.ATTRIBUTE:
         return getAttributeAction(config, minion);
+      case Constants.Type.WEAPON:
+        Preconditions.checkArgument(minion instanceof Hero, "Only hero can equip weapon, not " + minion.getType());
+        final Hero hero = (Hero) minion;
+        return getEquipWeaponAction(hero, config);
       default:
         return getAttributeAction(config, minion);
     }
@@ -87,6 +90,12 @@ public class EffectFactory {
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
     final int adjustChange = (value > 0) ? Math.min(value, minion.getHealthLoss()) : value;
     return new AttributeEffect(minion.getHealthAttr(), adjustChange, effect.getDuration());
+  }
+
+  private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
+    final String weaponName = effect.getType();
+    Weapon weapon = this.weaponFactory.createWeaponByName(weaponName);
+    return new EquipWeaponEffect(hero, weapon);
   }
 
   public ActionFactory getSummonActionGenerator(final List<String> minionNames) throws FileNotFoundException, MinionNotFoundException {

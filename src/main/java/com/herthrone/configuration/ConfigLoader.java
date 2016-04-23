@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.herthrone.exception.HeroNotFoundException;
 import com.herthrone.exception.MinionNotFoundException;
 import com.herthrone.exception.SpellNotFoundException;
+import com.herthrone.exception.WeaponNotFoundException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -20,6 +21,7 @@ public class ConfigLoader {
   private static volatile Map<String, MinionConfig> CARD_CONFIGS;
   private static volatile Map<String, HeroConfig> HERO_CONFIGS;
   private static volatile Map<String, SpellConfig> HERO_POWER_CONFIGS;
+  private static volatile Map<String, WeaponConfig> WEAPON_CONFIGS;
   private static volatile ResourceBundle RESOURCE;
 
   private static final String pathTemplate = "src/main/resources/%s.yaml";
@@ -58,7 +60,7 @@ public class ConfigLoader {
   }
 
   public static MinionConfig getMinionConfigByName(final String minionName) throws FileNotFoundException, MinionNotFoundException {
-      MinionConfig config = loadMinionConfiguration().get(minionName);
+      MinionConfig config = getMinionConfigurations().get(minionName);
       if (config == null) {
         throw new MinionNotFoundException(String.format("Minion %s not found", minionName));
       } else {
@@ -80,7 +82,7 @@ public class ConfigLoader {
   }
 
   public static HeroConfig getHeroConfigByName(final String heroName) throws FileNotFoundException, HeroNotFoundException {
-    HeroConfig config = loadHeroConfiguration().get(heroName);
+    HeroConfig config = getHeroConfiguration().get(heroName);
     if (config == null) {
       throw new HeroNotFoundException(String.format("Hero %s not found", heroName));
     } else {
@@ -101,7 +103,7 @@ public class ConfigLoader {
   }
 
   public static SpellConfig getSpellConfigByName(final String spellName) throws FileNotFoundException, SpellNotFoundException {
-    SpellConfig config = loadSpellConfiguration().get(spellName);
+    SpellConfig config = getSpellConfiguration().get(spellName);
     if (config == null) {
       throw new SpellNotFoundException(String.format("Spell %s not found", spellName));
     } else {
@@ -110,7 +112,7 @@ public class ConfigLoader {
   }
 
   public static Map<String, SpellConfig> getHeroPowerConfiguration() throws FileNotFoundException {
-    Map<String, SpellConfig>  noneVolatileHeroPowerConfigs = ConfigLoader.HERO_POWER_CONFIGS;
+    Map<String, SpellConfig> noneVolatileHeroPowerConfigs = ConfigLoader.HERO_POWER_CONFIGS;
     if (noneVolatileHeroPowerConfigs == null) {
       synchronized (ConfigLoader.class) {
         if (noneVolatileHeroPowerConfigs == null) {
@@ -122,9 +124,30 @@ public class ConfigLoader {
   }
 
   public static SpellConfig getHeroPowerConfigByName(final String heroPowerName) throws FileNotFoundException, SpellNotFoundException {
-    SpellConfig config = loadHeroPowerConfiguration().get(heroPowerName);
+    SpellConfig config = getHeroPowerConfiguration().get(heroPowerName);
     if (config == null) {
       throw new SpellNotFoundException(String.format("Hero power %s not found", heroPowerName));
+    } else {
+      return config;
+    }
+  }
+
+  public static Map<String, WeaponConfig> getWeaponConfiguration() throws FileNotFoundException {
+    Map<String, WeaponConfig> nonVolatileWeaponConfigs = ConfigLoader.WEAPON_CONFIGS;
+    if (nonVolatileWeaponConfigs == null) {
+      synchronized (ConfigLoader.class) {
+        if (nonVolatileWeaponConfigs == null) {
+          nonVolatileWeaponConfigs = ConfigLoader.WEAPON_CONFIGS = ConfigLoader.loadWeaponConfiguration();
+        }
+      }
+    }
+    return nonVolatileWeaponConfigs;
+  }
+
+  public static WeaponConfig getWeaponConfigByName(final String weaponName) throws FileNotFoundException, WeaponNotFoundException {
+    WeaponConfig config = getWeaponConfiguration().get(weaponName);
+    if (config == null) {
+      throw new WeaponNotFoundException(String.format("Weapon %s not found", weaponName));
     } else {
       return config;
     }
@@ -176,6 +199,17 @@ public class ConfigLoader {
       heroPowerConfigs.put(config.getName(), config);
     }
     return heroPowerConfigs;
+  }
+
+  private static Map<String, WeaponConfig> loadWeaponConfiguration() throws FileNotFoundException {
+    List<Object> weapons = loadYaml("weapon");
+    Map<String, WeaponConfig> weaponConfigs = new HashMap<>();
+    for (Object object : weapons) {
+      Map map = (Map) object;
+      WeaponConfig config = new WeaponConfig(map);
+      weaponConfigs.put(config.getName(), config);
+    }
+    return weaponConfigs;
   }
 
   private static List<Object> loadYaml(final String configSignature) throws FileNotFoundException {

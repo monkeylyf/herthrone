@@ -1,6 +1,6 @@
 package com.herthrone.base;
 
-import com.herthrone.Constants;
+import com.herthrone.game.Constants;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
@@ -59,10 +59,10 @@ public class MinionTest extends TestCase {
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 
-    this.minionFactory1 = new MinionFactory(this.battlefield1);
-    this.minionFactory2 = new MinionFactory(this.battlefield2);
-    this.effectFactory1 = new EffectFactory(this.minionFactory1, this.battlefield1);
-    this.effectFactory2 = new EffectFactory(this.minionFactory2, this.battlefield2);
+    this.minionFactory1 = this.gm.factory1.minionFactory;
+    this.minionFactory2 = this.gm.factory2.minionFactory;
+    this.effectFactory1 = this.gm.factory1.effectFactory;
+    this.effectFactory2 = this.gm.factory2.effectFactory;
 
     this.minion1 = this.minionFactory1.createMinionByName(Constants.Minion.CHILLWIND_YETI);
     this.minion2 = this.minionFactory1.createMinionByName(Constants.Minion.CHILLWIND_YETI);

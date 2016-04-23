@@ -1,6 +1,6 @@
 package com;
 
-import com.herthrone.Constants;
+import com.herthrone.game.Constants;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import com.herthrone.base.*;
@@ -44,10 +44,10 @@ public class SpellTest extends TestCase{
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 
-    this.minionFactory1 = new MinionFactory(this.battlefield1);
-    this.minionFactory2 = new MinionFactory(this.battlefield2);
-    this.effectFactory1 = new EffectFactory(this.minionFactory1, this.battlefield1);
-    this.effectFactory2 = new EffectFactory(this.minionFactory2, this.battlefield2);
+    this.minionFactory1 = this.gm.factory1.minionFactory;
+    this.minionFactory2 = this.gm.factory2.minionFactory;
+    this.effectFactory1 = this.gm.factory1.effectFactory;
+    this.effectFactory2 = this.gm.factory2.effectFactory;
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(Constants.Minion.CHILLWIND_YETI);
     this.minion = this.minionFactory1.createMinionByName(Constants.Minion.CHILLWIND_YETI);
@@ -139,5 +139,17 @@ public class SpellTest extends TestCase{
 
     this.hero1.getAttackAttr().nextRound();
     //assertEquals(0, this.hero1.getAttackAttr().getVal());
+  }
+
+  @Test
+  public void testDaggerMastery() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "DaggerMastery";
+    Spell daggerMastery = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    assertFalse(this.hero1.canDamage());
+    this.effectFactory1.getActionsByConfig(daggerMastery, this.hero1).stream().forEach(action -> action.act());
+    assertTrue(this.hero1.canDamage());
+
+    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
+    assertEquals(daggerMastery.getEffects().get(0).getValue(), this.hero2.getHealthLoss());
   }
 }

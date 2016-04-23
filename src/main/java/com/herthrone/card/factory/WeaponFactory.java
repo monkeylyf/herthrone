@@ -1,9 +1,14 @@
 package com.herthrone.card.factory;
 
+import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.WeaponConfig;
+import com.herthrone.exception.WeaponNotFoundException;
 import com.herthrone.stats.Attribute;
 import com.herthrone.game.Battlefield;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.Constants;
+
+import java.io.FileNotFoundException;
 
 /**
  * Created by yifeng on 4/8/16.
@@ -16,12 +21,17 @@ public class WeaponFactory {
     this.battlefield = battlefield;
   }
 
-  public static Weapon createWeaponByName(final String name) {
-    // TODO: need a json.
-    return createWeapon(3, 2, 2, name, "warrior");
+  public Weapon createWeaponByName(final String name) {
+    try {
+      WeaponConfig config = ConfigLoader.getWeaponConfigByName(name);
+      return createWeapon(config.getCrystal(), config.getAttack(), config.getDuration(), config.getName(), config.getClassName());
+    } catch (FileNotFoundException|WeaponNotFoundException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
-  public static Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className) {
+  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className) {
 
     return new Weapon() {
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
