@@ -3,7 +3,7 @@ package com.herthrone.stats;
 /**
  * Created by yifeng on 4/15/16.
  */
-public interface RoundStatusController {
+public interface StatsPerRound {
 
   public void nextRound();
 

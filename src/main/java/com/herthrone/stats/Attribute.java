@@ -3,7 +3,7 @@ package com.herthrone.stats;
 /**
  * Created by yifeng on 4/5/16.
  */
-public class Attribute implements RoundStatusController {
+public class Attribute implements StatsPerRound {
 
   private int val;
   private final int rawVal;

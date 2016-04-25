@@ -3,7 +3,7 @@ package com.herthrone.stats;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class Status implements RoundStatusController {
+public class Status implements StatsPerRound {
 
   private boolean on;
   private double roundUntilExpire;
