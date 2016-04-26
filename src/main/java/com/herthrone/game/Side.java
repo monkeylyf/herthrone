@@ -23,6 +23,6 @@ public class Side {
   public Hero getHero() { return this.hero; }
   public Container<BaseCard> getHand() { return this.hand; }
   public Container<BaseCard> getDeck() { return this.deck; }
-  public Container<Minion> getMinions() { return this.minions; }
+  public Container<Minion> getBoard() { return this.minions; }
   public Container<Secret> getSecrets() { return this.secrets; }
 }

@@ -1,9 +1,11 @@
 package com;
 
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
 import com.herthrone.game.Constants;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
-import com.herthrone.base.*;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
@@ -16,6 +18,8 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by yifeng on 4/20/16.
@@ -151,5 +155,29 @@ public class SpellTest extends TestCase{
 
     this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
     assertEquals(daggerMastery.getEffects().get(0).getValue(), this.hero2.getHealthLoss());
+  }
+
+  @Test
+  public void testReinforce() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "Reinforce";
+    Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    assertEquals(0, this.battlefield1.getMySide().getBoard().size());
+    this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(action -> action.act());
+    assertEquals(1, this.battlefield1.getMySide().getBoard().size());
+  }
+
+  @Test
+  public void testTotemicCall() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "TotemicCall";
+    Spell totemicCall = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    final int size = totemicCall.getEffects().get(0).getTarget().size();
+
+    for (int i = 0; i <size; ++i) {
+      this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(action -> action.act());
+      assertEquals(i + 1, this.battlefield1.getMySide().getBoard().size());
+    }
+
+    Set<String> totems = this.battlefield1.getMySide().getBoard().stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
+    assertEquals(size, totems.size());
   }
 }

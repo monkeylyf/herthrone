@@ -77,4 +77,8 @@ public class Container <T extends BaseCard> {
     }
     return count;
   }
+
+  public int size() {
+    return this.container.size();
+  }
 }

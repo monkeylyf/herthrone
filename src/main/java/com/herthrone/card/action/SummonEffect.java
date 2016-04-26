@@ -12,17 +12,15 @@ import java.util.List;
 public class SummonEffect implements Action {
 
   private final Container<Minion> board;
-  private final List<Minion> minions;
+  private final Minion minion;
 
-  public SummonEffect(final Container<Minion> board, final List<Minion> minions) {
+  public SummonEffect(final Container<Minion> board, final Minion minion) {
     this.board = board;
-    this.minions = minions;
+    this.minion = minion;
   }
 
   @Override
   public void act() {
-    for (Minion minion : this.minions) {
-      this.board.add(minion);
-    }
+    this.board.add(minion);
   }
 }

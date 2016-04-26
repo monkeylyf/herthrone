@@ -54,6 +54,7 @@ public class Constants {
 
     public static final String ATTRIBUTE = "attribute";
     public static final String HEALTH = "health";
+    public static final String SUMMON = "summon";
     public static final String ARMOR = "armor";
     public static final String WEAPON = "weapon";
     public static final String ATTACK = "attack";

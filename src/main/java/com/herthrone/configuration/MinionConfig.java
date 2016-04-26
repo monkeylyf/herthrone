@@ -8,7 +8,6 @@ import java.util.Map;
 */
 public class MinionConfig implements BaseConfig {
 
-  private final int id;
   private final String name;
   private final String className;
   private final String type = Constants.MINION;
@@ -18,7 +17,6 @@ public class MinionConfig implements BaseConfig {
   private final List<String> mechanics;
 
   public MinionConfig(final Map map) {
-    this.id = (int) map.get("id");
     this.name = (String) map.get("name");
     this.className = (String) map.get("class");
     this.attack = (int) map.get("attack");
@@ -27,7 +25,6 @@ public class MinionConfig implements BaseConfig {
     this.mechanics = (List<String>) map.get("mechanics");
   }
 
-  public int getId() { return this.id; }
   public int getAttack() { return this.attack; }
   public int getHealth() { return this.health; }
   public int getCrystal() { return this.crystal; }

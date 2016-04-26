@@ -50,12 +50,7 @@ public class Factory {
   }
 
   public BaseCard createCardByName(final String cardName) throws CardNotFoundException {
-    try {
-      return this.minionFactory.createMinionByName(cardName);
-    } catch (FileNotFoundException |MinionNotFoundException e) {
-      e.printStackTrace();
-    }
-    throw new CardNotFoundException(cardName);
+    return this.minionFactory.createMinionByName(cardName);
   }
 
   public BaseCard createCardByName(final String cardName, final String cardType) throws FileNotFoundException, CardNotFoundException {

@@ -27,13 +27,6 @@ public class ConfigLoader {
 
   private static final String pathTemplate = "src/main/resources/%s.yaml";
 
-  public static void main(String[] args) throws FileNotFoundException {
-    for (ImmutableMap.Entry<String, SpellConfig> entry : loadSpellConfiguration().entrySet()) {
-      System.out.println(entry.getKey());
-      System.out.println(entry.getValue().getEffects().size());
-    }
-  }
-
   public static ResourceBundle getResource() {
     ResourceBundle noneVolatileResource = ConfigLoader.RESOURCE;
     if (noneVolatileResource == null) {

@@ -22,9 +22,14 @@ public class MinionFactory {
     this.battlefield = battlefield;
   }
 
-  public Minion createMinionByName(final String name) throws FileNotFoundException, MinionNotFoundException {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(name);
-    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName());
+  public Minion createMinionByName(final String name) {
+    try {
+      MinionConfig config = ConfigLoader.getMinionConfigByName(name);
+      return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName());
+    } catch (FileNotFoundException|MinionNotFoundException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name) {

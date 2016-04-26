@@ -6,15 +6,12 @@ import com.herthrone.game.Constants;
 import com.herthrone.base.*;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
-import com.herthrone.exception.MinionNotFoundException;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
 import com.herthrone.stats.Attribute;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +52,8 @@ public class EffectFactory {
         Preconditions.checkArgument(minion instanceof Hero, "Only hero can equip weapon, not " + minion.getType());
         final Hero hero = (Hero) minion;
         return getEquipWeaponAction(hero, config);
+      case Constants.Type.SUMMON:
+        return getSummonAction(config);
       default:
         return getAttributeAction(config, minion);
     }
@@ -98,22 +97,22 @@ public class EffectFactory {
     return new EquipWeaponEffect(hero, weapon);
   }
 
-  public ActionFactory getSummonActionGenerator(final List<String> minionNames) throws FileNotFoundException, MinionNotFoundException {
-    final List<Minion> minions = new ArrayList<>();
-    for (String minionName : minionNames) {
-      minions.add(this.minionFactory.createMinionByName(minionName));
-    }
-    return  getSummonActionGenerator(this.mySide.getMinions(), minions);
-  }
-
-  private ActionFactory getSummonActionGenerator(final Container<Minion> board, final List<Minion> minions) {
-    return new ActionFactory() {
-      @Override
-      public List<Action> yieldActions() {
-        Action action = new SummonEffect(board, minions);
-        return Factory.singleActionToList(action);
+  private Action getSummonAction(final EffectConfig effect) {
+    List<String> summonTargets = new ArrayList<>(effect.getTarget());
+    final int size = effect.getTarget().size();
+    int index = 0;
+    if (size > 0) {
+      final Random random = new Random();
+      if (effect.isUnique()) {
+        List<String> uniqueMinionsOnBoard = this.mySide.getBoard().stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
+        summonTargets.removeAll(uniqueMinionsOnBoard);
+      } else {
+        index = random.nextInt(size);
       }
-    };
+    }
+    final String summonTargetName = summonTargets.get(index);
+    final Minion minion = this.minionFactory.createMinionByName(summonTargetName);
+    return new SummonEffect(this.mySide.getBoard(), minion);
   }
 
   public ActionFactory getDivineShieldStatusActionGenerator(final int index) {
@@ -191,7 +190,7 @@ public class EffectFactory {
   private Minion getMinionByIndex(final int index) {
     switch (index) {
       case -1: return this.mySide.getHero();
-      default: return this.mySide.getMinions().get(index);
+      default: return this.mySide.getBoard().get(index);
     }
   }
 }
