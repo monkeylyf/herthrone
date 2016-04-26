@@ -58,6 +58,7 @@ public class Constants {
     public static final String ARMOR = "armor";
     public static final String WEAPON = "weapon";
     public static final String ATTACK = "attack";
+    public static final String DRAW = "draw";
     public static final String HEALTH_UPPER_BOUND = "health_upper_bound";
     public static final String CRYSTAL = "crystal";
   }

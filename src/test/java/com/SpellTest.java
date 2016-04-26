@@ -1,10 +1,12 @@
 package com;
 
+import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.game.Constants;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
@@ -179,5 +181,28 @@ public class SpellTest extends TestCase{
 
     Set<String> totems = this.battlefield1.getMySide().getBoard().stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
     assertEquals(size, totems.size());
+  }
+
+  @Test
+  public void testLifeTap() throws FileNotFoundException, SpellNotFoundException {
+    final String spellName = "LifeTap";
+    final Spell lifeTap = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
+    final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(Constants.Minion.CHILLWIND_YETI);
+    final int damage = -lifeTap.getEffects().get(0).getValue();
+
+    final Container<BaseCard> hand = this.battlefield1.getMySide().getHand();
+    final Container<BaseCard> deck = this.battlefield1.getMySide().getDeck();
+
+    assertEquals(0, deck.size());
+    deck.add(yeti);
+    assertEquals(1, deck.size());
+
+    assertEquals(0, hand.size());
+    assertEquals(0, this.hero1.getHealthLoss());
+    this.effectFactory1.getActionsByConfig(lifeTap, this.hero1).stream().forEach(action -> action.act());
+
+    assertEquals(1, hand.size());
+    assertEquals(0, deck.size());
+    assertEquals(damage, this.hero1.getHealthLoss());
   }
 }

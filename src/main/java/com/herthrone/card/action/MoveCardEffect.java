@@ -12,7 +12,7 @@ public class MoveCardEffect implements Action {
   private final Container<BaseCard> moveTo;
   private final Container<BaseCard> moveFrom;
 
-  public MoveCardEffect(Container<BaseCard> moveTo, Container<BaseCard> moveFrom) {
+  public MoveCardEffect(final Container<BaseCard> moveTo, final Container<BaseCard> moveFrom) {
     this.moveTo = moveTo;
     this.moveFrom = moveFrom;
   }

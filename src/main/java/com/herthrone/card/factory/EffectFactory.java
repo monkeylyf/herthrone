@@ -54,8 +54,10 @@ public class EffectFactory {
         return getEquipWeaponAction(hero, config);
       case Constants.Type.SUMMON:
         return getSummonAction(config);
+      case Constants.Type.DRAW:
+        return getDrawCardAction(config);
       default:
-        return getAttributeAction(config, minion);
+        throw new IllegalArgumentException("Unknown effect: " + effect);
     }
   }
 
@@ -75,7 +77,7 @@ public class EffectFactory {
         final Hero hero = (Hero) minion;
         return getGeneralAttributeAction(hero.getArmorAttr(), effect);
       default:
-        throw new IllegalArgumentException("Unknown effect type " + effect.getType());
+        throw new IllegalArgumentException("Unknown effect type: " + type);
     }
   }
 
@@ -113,6 +115,11 @@ public class EffectFactory {
     final String summonTargetName = summonTargets.get(index);
     final Minion minion = this.minionFactory.createMinionByName(summonTargetName);
     return new SummonEffect(this.mySide.getBoard(), minion);
+  }
+
+  private Action getDrawCardAction(final EffectConfig effect) {
+    // TODO: draw from own deck/opponent deck/opponent hand
+    return new MoveCardEffect(this.mySide.getHand(), this.mySide.getDeck());
   }
 
   public ActionFactory getDivineShieldStatusActionGenerator(final int index) {
@@ -156,26 +163,6 @@ public class EffectFactory {
       public List<Action> yieldActions() {
         Action action = new StatusEffect(minion.getDamageImmunity(), 1);
         return Factory.singleActionToList(action);
-      }
-    };
-  }
-
-  public ActionFactory getDrawCardFromDeckActionGenerator(final int num) {
-    Container<BaseCard> hand = this.mySide.getHand();
-    Container<BaseCard> deck = this.mySide.getDeck();
-    return getDrawCardFromDeckActionGenerator(hand, deck, num);
-  }
-
-  private ActionFactory getDrawCardFromDeckActionGenerator(final Container<BaseCard> hand, final Container<BaseCard> deck, final int num) {
-    return new ActionFactory() {
-      @Override
-      public List<Action> yieldActions() {
-        List<Action> actions = new ArrayList<>();
-        for (int i = 0; i < num; i++) {
-          Action action = new MoveCardEffect(hand, deck);
-          actions.add(action);
-        }
-        return actions;
       }
     };
   }
