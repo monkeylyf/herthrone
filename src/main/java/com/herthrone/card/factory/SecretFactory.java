@@ -37,6 +37,11 @@ public class SecretFactory {
       public Attribute getCrystalManaCost() {
         return null;
       }
+
+      @Override
+      public boolean isCollectible() {
+        return true;
+      }
     };
   }
 }

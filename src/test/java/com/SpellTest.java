@@ -1,9 +1,6 @@
 package com;
 
-import com.herthrone.base.BaseCard;
-import com.herthrone.base.Hero;
-import com.herthrone.base.Minion;
-import com.herthrone.base.Spell;
+import com.herthrone.base.*;
 import com.herthrone.game.Constants;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.Container;

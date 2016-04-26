@@ -60,6 +60,11 @@ public class SpellFactory {
       public Attribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
       }
+
+      @Override
+      public boolean isCollectible() {
+        return true;
+      }
     };
   }
 

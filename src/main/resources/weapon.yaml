@@ -3,6 +3,7 @@
   duration: 2
   class: Rogue
   crystal: 1
+  collectible: false
 
 - name: FieryWarAxe
   attack: 3

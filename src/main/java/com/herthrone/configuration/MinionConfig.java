@@ -15,6 +15,7 @@ public class MinionConfig implements BaseConfig {
   private final int health;
   private final int crystal;
   private final List<String> mechanics;
+  private final boolean collectible;
 
   public MinionConfig(final Map map) {
     this.name = (String) map.get("name");
@@ -23,6 +24,7 @@ public class MinionConfig implements BaseConfig {
     this.health = (int) map.get("health");
     this.crystal = (int) map.get("crystal");
     this.mechanics = (List<String>) map.get("mechanics");
+    this.collectible = map.containsKey("collectible") && (Boolean) map.get("collectible");
   }
 
   public int getAttack() { return this.attack; }
@@ -43,5 +45,9 @@ public class MinionConfig implements BaseConfig {
   @Override
   public String getType() {
     return this.type;
+  }
+
+  public boolean isCollectible() {
+    return this.collectible;
   }
 }

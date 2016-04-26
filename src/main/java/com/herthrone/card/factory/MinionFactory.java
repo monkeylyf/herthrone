@@ -25,18 +25,18 @@ public class MinionFactory {
   public Minion createMinionByName(final String name) {
     try {
       MinionConfig config = ConfigLoader.getMinionConfigByName(name);
-      return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName());
+      return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
     } catch (FileNotFoundException|MinionNotFoundException e) {
       e.printStackTrace();
       return null;
     }
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name) {
-    return createMinion(health, attack, crystalManaCost, className, name, this.battlefield);
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name, final boolean isCollectible) {
+    return createMinion(health, attack, crystalManaCost, className, name, isCollectible, this.battlefield);
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name, final Battlefield field) {
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name, final boolean isCollectible, final Battlefield field) {
     return new Minion() {
 
       private final Attribute healthAttr = new Attribute(health);
@@ -66,6 +66,11 @@ public class MinionFactory {
       @Override
       public Attribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
+      }
+
+      @Override
+      public boolean isCollectible() {
+        return isCollectible;
       }
 
       @Override

@@ -24,14 +24,14 @@ public class WeaponFactory {
   public Weapon createWeaponByName(final String name) {
     try {
       WeaponConfig config = ConfigLoader.getWeaponConfigByName(name);
-      return createWeapon(config.getCrystal(), config.getAttack(), config.getDuration(), config.getName(), config.getClassName());
+      return createWeapon(config.getCrystal(), config.getAttack(), config.getDuration(), config.getName(), config.getClassName(), config.isCollectible());
     } catch (FileNotFoundException|WeaponNotFoundException e) {
       e.printStackTrace();
       return null;
     }
   }
 
-  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className) {
+  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className, final boolean isCollectible) {
 
     return new Weapon() {
       private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
@@ -56,6 +56,11 @@ public class WeaponFactory {
       @Override
       public Attribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
+      }
+
+      @Override
+      public boolean isCollectible() {
+        return isCollectible;
       }
 
       @Override

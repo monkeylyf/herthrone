@@ -61,6 +61,11 @@ public class HeroFactory {
       }
 
       @Override
+      public boolean isCollectible() {
+        return false;
+      }
+
+      @Override
       public Attribute getHealthAttr() {
         return this.healthAttr;
       }

@@ -13,6 +13,7 @@ public class WeaponConfig implements BaseConfig {
   private final int attack;
   private final int duration;
   private final int crystal;
+  private final boolean collectible;
 
   public WeaponConfig(Map map) {
     this.name = (String) map.get("name");
@@ -20,6 +21,7 @@ public class WeaponConfig implements BaseConfig {
     this.attack = (int) map.get("attack");
     this.duration = (int) map.get("duration");
     this.crystal = (int) map.get("crystal");
+    this.collectible = map.containsKey("collectible") && (Boolean) map.get("collectible");
   }
 
   public int getAttack() {
@@ -48,5 +50,9 @@ public class WeaponConfig implements BaseConfig {
   @Override
   public int getCrystal() {
     return this.crystal;
+  }
+
+  public boolean isCollectible() {
+    return this.collectible;
   }
 }

@@ -12,4 +12,5 @@ public abstract interface BaseCard {
   public String getType();
   public String getClassName();
   public Attribute getCrystalManaCost();
+  public boolean isCollectible();
 }

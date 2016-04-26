@@ -40,30 +40,6 @@ public class Factory {
     return Arrays.asList(action);
   }
 
-
-  public List<BaseCard> createCardsByName(final List<String> cardNames) throws CardNotFoundException {
-    List<BaseCard> cards = new ArrayList<>();
-    for (String cardName : cardNames) {
-      cards.add(createCardByName(cardName));
-    }
-    return cards;
-  }
-
-  public BaseCard createCardByName(final String cardName) throws CardNotFoundException {
-    return this.minionFactory.createMinionByName(cardName);
-  }
-
-  public BaseCard createCardByName(final String cardName, final String cardType) throws FileNotFoundException, CardNotFoundException {
-    switch (cardType) {
-      case Constants.HERO:  return HeroFactory.createHeroByName(cardName);
-      case Constants.MINION: return this.minionFactory.createMinionByName(cardName);
-      case Constants.WEAPON: return this.weaponFactory.createWeaponByName(cardName);
-      case Constants.SPELL: return this.spellFactory.createSpellByName(cardName);
-      case Constants.SECRET: return this.secretFactory.createSecretByName(cardName);
-      default: throw new CardNotFoundException(String.format("Card %s with type %s does not exist", cardName, cardType));
-    }
-  }
-
   public static boolean targetAny(BaseCard card) {
     return targetMinion(card) || targetMinion(card);
   }
