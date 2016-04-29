@@ -1,6 +1,6 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.stats.Attribute;
+import com.herthrone.stats.IntAttribute;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
@@ -39,7 +39,7 @@ public class SpellFactory {
         return effects;
       }
 
-      private final Attribute crystalManaCostAttr = new Attribute(crystal);
+      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
 
       @Override
       public String getCardName() {
@@ -57,7 +57,7 @@ public class SpellFactory {
       }
 
       @Override
-      public Attribute getCrystalManaCost() {
+      public IntAttribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
       }
 

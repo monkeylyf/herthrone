@@ -1,26 +1,25 @@
 package com.herthrone.card.action;
 
 import com.herthrone.card.factory.Action;
-import com.herthrone.stats.Attribute;
+import com.herthrone.stats.IntAttribute;
 
 /**
  * Created by yifeng on 4/14/16.
  */
 public class AttributeEffect implements Action {
 
-  private final Attribute attr;
+  private final IntAttribute attr;
   private final int delta;
-  private final int duration;
+  private final boolean permanent;
 
-  public AttributeEffect(final Attribute attr, final int delta, final int duration) {
+  public AttributeEffect(final IntAttribute attr, final int delta, final boolean permanent) {
     this.attr = attr;
     this.delta = delta;
-    this.duration = duration;
+    this.permanent = permanent;
   }
 
   @Override
   public void act() {
     this.attr.increase(delta);
-    this.attr.setDuration(this.duration);
   }
 }

@@ -1,9 +1,9 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.stats.Attribute;
+import com.herthrone.stats.IntAttribute;
 import com.herthrone.game.Battlefield;
 import com.herthrone.base.Minion;
-import com.herthrone.stats.Status;
+import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.MinionConfig;
@@ -39,13 +39,13 @@ public class MinionFactory {
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name, final boolean isCollectible, final Battlefield field) {
     return new Minion() {
 
-      private final Attribute healthAttr = new Attribute(health);
-      private final Attribute healthUpperAttr = new Attribute(health);
-      private final Attribute attackAttr = new Attribute(attack);
-      private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
-      private final Status damageImmunity = new Status(false);
-      private final Status divineShield = new Status(false);
-      private final Status frozen = new Status(false);
+      private final IntAttribute healthAttr = new IntAttribute(health);
+      private final IntAttribute healthUpperAttr = new IntAttribute(health);
+      private final IntAttribute attackAttr = new IntAttribute(attack);
+      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
+      private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
+      private final BooleanAttribute divineShield = new BooleanAttribute(false);
+      private final BooleanAttribute frozen = new BooleanAttribute(false);
       private final Battlefield battlefield = field;
 
       @Override
@@ -64,7 +64,7 @@ public class MinionFactory {
       }
 
       @Override
-      public Attribute getCrystalManaCost() {
+      public IntAttribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
       }
 
@@ -74,32 +74,32 @@ public class MinionFactory {
       }
 
       @Override
-      public Attribute getHealthAttr() {
+      public IntAttribute getHealthAttr() {
         return this.healthAttr;
       }
 
       @Override
-      public Attribute getHealthUpperAttr() {
+      public IntAttribute getHealthUpperAttr() {
         return this.healthUpperAttr;
       }
 
       @Override
-      public Attribute getAttackAttr() {
+      public IntAttribute getAttackAttr() {
         return this.attackAttr;
       }
 
       @Override
-      public Status getDamageImmunity() {
+      public BooleanAttribute getDamageImmunity() {
         return this.damageImmunity;
       }
 
       @Override
-      public Status getFrozen() {
+      public BooleanAttribute getFrozen() {
         return this.frozen;
       }
 
       @Override
-      public Status getDivineShield() {
+      public BooleanAttribute getDivineShield() {
         return this.divineShield;
       }
 

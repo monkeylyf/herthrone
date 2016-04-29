@@ -1,7 +1,7 @@
 package com.herthrone.base;
 
-import com.herthrone.stats.Attribute;
-import com.herthrone.stats.Status;
+import com.herthrone.stats.IntAttribute;
+import com.herthrone.stats.BooleanAttribute;
 
 /**
  * Created by yifeng on 4/2/16.
@@ -10,13 +10,13 @@ import com.herthrone.stats.Status;
 
 public interface Minion extends BaseCard {
 
-  public Attribute getHealthAttr();
-  public Attribute getHealthUpperAttr();
-  public Attribute getAttackAttr();
+  public IntAttribute getHealthAttr();
+  public IntAttribute getHealthUpperAttr();
+  public IntAttribute getAttackAttr();
 
-  public Status getDamageImmunity();
-  public Status getFrozen();
-  public Status getDivineShield();
+  public BooleanAttribute getDamageImmunity();
+  public BooleanAttribute getFrozen();
+  public BooleanAttribute getDivineShield();
 
   public void causeDamage(Minion creature);
   public void takeDamage(final int damage);

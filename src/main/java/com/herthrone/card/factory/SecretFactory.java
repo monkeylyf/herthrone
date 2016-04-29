@@ -1,6 +1,6 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.stats.Attribute;
+import com.herthrone.stats.IntAttribute;
 import com.herthrone.game.Battlefield;
 import com.herthrone.base.Secret;
 
@@ -34,7 +34,7 @@ public class SecretFactory {
       }
 
       @Override
-      public Attribute getCrystalManaCost() {
+      public IntAttribute getCrystalManaCost() {
         return null;
       }
 

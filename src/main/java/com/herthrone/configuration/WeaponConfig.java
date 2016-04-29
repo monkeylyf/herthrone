@@ -11,7 +11,7 @@ public class WeaponConfig implements BaseConfig {
   private final String name;
   private final String className;
   private final int attack;
-  private final int duration;
+  private final int durability;
   private final int crystal;
   private final boolean collectible;
 
@@ -19,7 +19,7 @@ public class WeaponConfig implements BaseConfig {
     this.name = (String) map.get("name");
     this.className = (String) map.get("className");
     this.attack = (int) map.get("attack");
-    this.duration = (int) map.get("duration");
+    this.durability = (int) map.get("durability");
     this.crystal = (int) map.get("crystal");
     this.collectible = map.containsKey("collectible") && (Boolean) map.get("collectible");
   }
@@ -28,8 +28,8 @@ public class WeaponConfig implements BaseConfig {
     return this.attack;
   }
 
-  public int getDuration() {
-    return this.duration;
+  public int getDurability() {
+    return this.durability;
   }
 
   @Override

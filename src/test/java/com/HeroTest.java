@@ -70,8 +70,8 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testAttackAction() {
-    this.hero1.equipWeapon(weapon1);
-    this.hero2.equipWeapon(weapon2);
+    this.hero1.arm(weapon1);
+    this.hero2.arm(weapon2);
 
     hero1AttackHero2();
 
@@ -85,8 +85,8 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testAttackActionUtilWeaponExpires() {
-    this.hero1.equipWeapon(this.weapon1);
-    this.hero2.equipWeapon(this.weapon2);
+    this.hero1.arm(this.weapon1);
+    this.hero2.arm(this.weapon2);
 
     while (this.hero1.canDamage() || this.hero2.canDamage()) {
       if (this.hero1.canDamage()) {
@@ -109,8 +109,8 @@ public class HeroTest extends TestCase {
     assertFalse(this.hero1.canDamage());
     assertFalse(this.hero2.canDamage());
 
-    this.hero1.equipWeapon(this.weapon1);
-    this.hero2.equipWeapon(this.weapon2);
+    this.hero1.arm(this.weapon1);
+    this.hero2.arm(this.weapon2);
 
     assertTrue(this.hero1.canDamage());
     assertTrue(this.hero2.canDamage());
@@ -146,8 +146,8 @@ public class HeroTest extends TestCase {
   public void testArmorUpAttackMixture() {
     assertEquals(0, this.hero1.getArmorAttr().getVal());
 
-    this.hero1.equipWeapon(this.weapon1);
-    this.hero2.equipWeapon(this.weapon2);
+    this.hero1.arm(this.weapon1);
+    this.hero2.arm(this.weapon2);
 
     hero1ArmorUp();
     assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());

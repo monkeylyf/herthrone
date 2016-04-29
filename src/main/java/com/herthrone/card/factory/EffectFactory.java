@@ -7,9 +7,8 @@ import com.herthrone.base.*;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.stats.Attribute;
+import com.herthrone.stats.IntAttribute;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,16 +80,16 @@ public class EffectFactory {
     }
   }
 
-  private Action getGeneralAttributeAction(final Attribute attr, final EffectConfig effect) {
+  private Action getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
     Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
-    return new AttributeEffect(attr, effect.getValue(), effect.getDuration());
+    return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
   }
 
   private Action getHealthAttributeAction(final Minion minion, final EffectConfig effect) {
     final int value = effect.getValue();
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
     final int adjustChange = (value > 0) ? Math.min(value, minion.getHealthLoss()) : value;
-    return new AttributeEffect(minion.getHealthAttr(), adjustChange, effect.getDuration());
+    return new AttributeEffect(minion.getHealthAttr(), adjustChange, effect.isPermanent());
   }
 
   private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {

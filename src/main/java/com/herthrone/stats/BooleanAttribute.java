@@ -3,17 +3,17 @@ package com.herthrone.stats;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class Status implements StatsPerRound {
+public class BooleanAttribute implements Round, Reset {
 
   private boolean on;
   private double roundUntilExpire;
 
-  public Status(final boolean on, final double roundUntilExpire) {
+  public BooleanAttribute(final boolean on, final double roundUntilExpire) {
     this.on = on;
     this.roundUntilExpire = roundUntilExpire;
   }
 
-  public Status(final boolean on) {
+  public BooleanAttribute(final boolean on) {
     this(on, Double.POSITIVE_INFINITY);
   }
 
@@ -28,7 +28,7 @@ public class Status implements StatsPerRound {
   public void nextRound() {
     this.roundUntilExpire -= 1;
     if (this.roundUntilExpire == 0) {
-      reset();
+      //reset();
     }
   }
 

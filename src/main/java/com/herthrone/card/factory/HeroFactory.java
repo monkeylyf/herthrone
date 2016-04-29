@@ -5,8 +5,8 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.exception.HeroNotFoundException;
-import com.herthrone.stats.Attribute;
-import com.herthrone.stats.Status;
+import com.herthrone.stats.IntAttribute;
+import com.herthrone.stats.BooleanAttribute;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;
@@ -29,14 +29,14 @@ public class HeroFactory {
   public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final String name, final String className) {
 
     return new Hero() {
-      private final Attribute healthAttr = new Attribute(health);
-      private final Attribute healthUpperAttr = new Attribute(health);
-      private final Attribute armorAttr = new Attribute(armor);
-      private final Attribute attackAttr = new Attribute(attack);
-      private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
-      private final Status damageImmunity = new Status(false);
-      private final Status divineShield = new Status(false);
-      private final Status frozen = new Status(false);
+      private final IntAttribute healthAttr = new IntAttribute(health);
+      private final IntAttribute healthUpperAttr = new IntAttribute(health);
+      private final IntAttribute armorAttr = new IntAttribute(armor);
+      private final IntAttribute attackAttr = new IntAttribute(attack);
+      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
+      private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
+      private final BooleanAttribute divineShield = new BooleanAttribute(false);
+      private final BooleanAttribute frozen = new BooleanAttribute(false);
 
       private Optional<Weapon> weapon = Optional.empty();
 
@@ -56,7 +56,7 @@ public class HeroFactory {
       }
 
       @Override
-      public Attribute getCrystalManaCost() {
+      public IntAttribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
       }
 
@@ -66,37 +66,37 @@ public class HeroFactory {
       }
 
       @Override
-      public Attribute getHealthAttr() {
+      public IntAttribute getHealthAttr() {
         return this.healthAttr;
       }
 
       @Override
-      public Attribute getHealthUpperAttr() {
+      public IntAttribute getHealthUpperAttr() {
         return this.healthUpperAttr;
       }
 
       @Override
-      public Attribute getAttackAttr() {
+      public IntAttribute getAttackAttr() {
         return this.attackAttr;
       }
 
       @Override
-      public Status getDamageImmunity() {
+      public BooleanAttribute getDamageImmunity() {
         return this.damageImmunity;
       }
 
       @Override
-      public Status getFrozen() {
+      public BooleanAttribute getFrozen() {
         return this.frozen;
       }
 
       @Override
-      public Status getDivineShield() {
+      public BooleanAttribute getDivineShield() {
         return this.divineShield;
       }
 
       @Override
-      public Attribute getArmorAttr() {
+      public IntAttribute getArmorAttr() {
         return this.armorAttr;
       }
 
@@ -119,7 +119,7 @@ public class HeroFactory {
       }
 
       @Override
-      public void equipWeapon(Weapon weapon) {
+      public void arm(Weapon weapon) {
         if (this.weapon.isPresent()) {
           disarm();
         }

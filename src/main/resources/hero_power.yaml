@@ -63,7 +63,7 @@
   actions:
     - effect: attribute
       type: attack
-      duration: 1
+      permanent: false  # true by default
       value: 1
       target: [hero]
     - effect: attribute

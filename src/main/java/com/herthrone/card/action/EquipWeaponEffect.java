@@ -19,6 +19,6 @@ public class EquipWeaponEffect implements Action {
 
   @Override
   public void act() {
-    this.hero.equipWeapon(weapon);
+    this.hero.arm(weapon);
   }
 }

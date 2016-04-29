@@ -141,6 +141,7 @@ public class SpellTest extends TestCase{
     assertEquals(armor, this.hero1.getArmorAttr().getVal());
 
     this.hero1.getAttackAttr().nextRound();
+    // TODO:
     //assertEquals(0, this.hero1.getAttackAttr().getVal());
   }
 

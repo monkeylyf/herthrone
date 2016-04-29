@@ -3,7 +3,7 @@ package com.herthrone.card.factory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.exception.WeaponNotFoundException;
-import com.herthrone.stats.Attribute;
+import com.herthrone.stats.IntAttribute;
 import com.herthrone.game.Battlefield;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.Constants;
@@ -24,7 +24,7 @@ public class WeaponFactory {
   public Weapon createWeaponByName(final String name) {
     try {
       WeaponConfig config = ConfigLoader.getWeaponConfigByName(name);
-      return createWeapon(config.getCrystal(), config.getAttack(), config.getDuration(), config.getName(), config.getClassName(), config.isCollectible());
+      return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
     } catch (FileNotFoundException|WeaponNotFoundException e) {
       e.printStackTrace();
       return null;
@@ -34,9 +34,9 @@ public class WeaponFactory {
   public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className, final boolean isCollectible) {
 
     return new Weapon() {
-      private final Attribute crystalManaCostAttr = new Attribute(crystalManaCost);
-      private final Attribute attackAttr = new Attribute(attack);
-      private final Attribute durabilityAttr = new Attribute(durability);
+      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
+      private final IntAttribute attackAttr = new IntAttribute(attack);
+      private final IntAttribute durabilityAttr = new IntAttribute(durability);
 
       @Override
       public String getCardName() {
@@ -54,7 +54,7 @@ public class WeaponFactory {
       }
 
       @Override
-      public Attribute getCrystalManaCost() {
+      public IntAttribute getCrystalManaCost() {
         return this.crystalManaCostAttr;
       }
 
@@ -70,12 +70,12 @@ public class WeaponFactory {
       }
 
       @Override
-      public Attribute getDurabilityAttr() {
+      public IntAttribute getDurabilityAttr() {
         return this.durabilityAttr;
       }
 
       @Override
-      public Attribute getAttackAttr() {
+      public IntAttribute getAttackAttr() {
         return this.attackAttr;
       }
     };

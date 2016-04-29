@@ -4,13 +4,17 @@ import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
+import com.herthrone.card.factory.Action;
 import com.herthrone.card.factory.Factory;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.exception.CardNotFoundException;
+import com.herthrone.stats.Crystal;
 
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by yifeng on 4/14/16.
@@ -19,6 +23,8 @@ public class GameManager {
 
   private final Hero hero1;
   private final Hero hero2;
+  private final Crystal crystal1;
+  private final Crystal crystal2;
   private final Container<BaseCard> hand1;
   private final Container<BaseCard> hand2;
   private final Container<BaseCard> deck1;
@@ -32,6 +38,7 @@ public class GameManager {
   public final Factory factory1;
   public final Factory factory2;
 
+  private final Queue<Action> actionQueue;
 
   public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
@@ -40,6 +47,8 @@ public class GameManager {
 
     this.hero1 = HeroFactory.createHeroByName(hero1);
     this.hero2 = HeroFactory.createHeroByName(hero2);
+    this.crystal1 = new Crystal();
+    this.crystal2 = new Crystal();
     this.hand1 = new Container<>(handCapacity);
     this.hand2 = new Container<>(handCapacity);
     this.deck1 = new Container<>(deckCapacity);
@@ -53,6 +62,8 @@ public class GameManager {
     this.battlefield2 = this.battlefield1.getMirrorBattlefield();
     this.factory1 = new Factory(this.battlefield1);
     this.factory2 = new Factory(this.battlefield2);
+
+    this.actionQueue = new LinkedList<>();
   }
 
   public Hero getHero1() {
@@ -101,5 +112,13 @@ public class GameManager {
 
   public Battlefield getBattlefield2() {
     return this.battlefield2;
+  }
+
+  public Crystal getCrystal1() {
+    return this.crystal1;
+  }
+
+  public Crystal getCrystal2() {
+    return this.crystal2;
   }
 }

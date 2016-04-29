@@ -14,7 +14,7 @@ public class EffectConfig {
   private final int value;
   private final List<String> target;
   private final boolean unique;
-  private final int duration;
+  private final boolean permanent;
 
   public EffectConfig(Map map) {
     this.effect = (String) map.get("effect");
@@ -22,7 +22,7 @@ public class EffectConfig {
     this.value = (int) map.get("value");
     this.target = (List) map.get("target");
     this.unique = (map.containsKey("unique")) ? (boolean) map.get("unique") : false;
-    this.duration = (map.containsKey("duration")) ? (int) map.get("duration") : Integer.MAX_VALUE;
+    this.permanent = (map.containsKey("permanent")) ? (boolean) map.get("permanent") : false;
   }
 
   public String getEffect() { return this.effect; }
@@ -43,8 +43,8 @@ public class EffectConfig {
     return unique;
   }
 
-  public int getDuration() {
-    return duration;
+  public boolean isPermanent() {
+    return this.permanent;
   }
 
   public String toString() {

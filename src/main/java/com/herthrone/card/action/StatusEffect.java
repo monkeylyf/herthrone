@@ -1,23 +1,23 @@
 package com.herthrone.card.action;
 
 import com.herthrone.card.factory.Action;
-import com.herthrone.stats.Status;
+import com.herthrone.stats.BooleanAttribute;
 
 /**
  * Created by yifeng on 4/15/16.
  */
 public class StatusEffect implements Action {
 
-  private final Status status;
+  private final BooleanAttribute booleanAttribute;
   private final double roundUntilExpire;
 
-  public StatusEffect(final Status status, final double roundUntilExpire) {
-    this.status = status;
+  public StatusEffect(final BooleanAttribute booleanAttribute, final double roundUntilExpire) {
+    this.booleanAttribute = booleanAttribute;
     this.roundUntilExpire = roundUntilExpire;
   }
 
   @Override
   public void act() {
-    this.status.on(this.roundUntilExpire);
+    this.booleanAttribute.on(this.roundUntilExpire);
   }
 }

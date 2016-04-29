@@ -1,19 +1,19 @@
 - name: WickedBlade
   attack: 1
-  duration: 2
+  durability: 2
   class: Rogue
   crystal: 1
   collectible: false
 
 - name: FieryWarAxe
   attack: 3
-  duration: 2
+  durability: 2
   class: Warrior
   crystal: 2
 
 - name: TruesilverChampion
   attack: 4
-  duration: 2
+  durability: 2
   actions:
     - effect: attribute
       type: health
