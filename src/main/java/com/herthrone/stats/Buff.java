@@ -5,20 +5,20 @@ package com.herthrone.stats;
  */
 public class Buff {
 
-    public Value temp;
-    public Value perm;
+  public Value temp;
+  public Value perm;
 
-    public Buff() {
-        this.temp = new Value();
-        this.perm = new Value();
-    }
+  public Buff() {
+    this.temp = new Value();
+    this.perm = new Value();
+  }
 
-    public int getBuffVal() {
-        return this.temp.getVal() + this.perm.getVal();
-    }
+  public int getBuffVal() {
+    return this.temp.getVal() + this.perm.getVal();
+  }
 
-    public void reset() {
-        this.temp.reset();
-        this.perm.reset();
-    }
+  public void reset() {
+    this.temp.reset();
+    this.perm.reset();
+  }
 }

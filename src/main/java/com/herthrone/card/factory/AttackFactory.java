@@ -1,8 +1,8 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.game.Battlefield;
 import com.herthrone.base.Minion;
 import com.herthrone.card.action.PhysicalDamage;
+import com.herthrone.game.Battlefield;
 
 /**
  * Created by yifeng on 4/20/16.

@@ -11,21 +11,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by yifeng on 4/9/16.
  */
 public class ConfigLoader {
 
+  private static final String pathTemplate = "src/main/resources/%s.yaml";
   private static volatile ImmutableMap<String, SpellConfig> SPELL_CONFIGS;
   private static volatile ImmutableMap<String, MinionConfig> CARD_CONFIGS;
   private static volatile ImmutableMap<String, HeroConfig> HERO_CONFIGS;
   private static volatile ImmutableMap<String, SpellConfig> HERO_POWER_CONFIGS;
   private static volatile ImmutableMap<String, WeaponConfig> WEAPON_CONFIGS;
   private static volatile ResourceBundle RESOURCE;
-
-  private static final String pathTemplate = "src/main/resources/%s.yaml";
 
   public static ResourceBundle getResource() {
     ResourceBundle noneVolatileResource = ConfigLoader.RESOURCE;
@@ -54,12 +56,12 @@ public class ConfigLoader {
   }
 
   public static MinionConfig getMinionConfigByName(final String minionName) throws FileNotFoundException, MinionNotFoundException {
-      MinionConfig config = getMinionConfigurations().get(minionName);
-      if (config == null) {
-        throw new MinionNotFoundException(String.format("Minion %s not found", minionName));
-      } else {
-        return config;
-      }
+    MinionConfig config = getMinionConfigurations().get(minionName);
+    if (config == null) {
+      throw new MinionNotFoundException(String.format("Minion %s not found", minionName));
+    } else {
+      return config;
+    }
   }
 
   public static ImmutableMap<String, HeroConfig> getHeroConfiguration() throws FileNotFoundException {
@@ -85,7 +87,7 @@ public class ConfigLoader {
   }
 
   public static ImmutableMap<String, SpellConfig> getSpellConfiguration() throws FileNotFoundException {
-    ImmutableMap<String, SpellConfig>  noneVolatileSpellConfigs = ConfigLoader.SPELL_CONFIGS;
+    ImmutableMap<String, SpellConfig> noneVolatileSpellConfigs = ConfigLoader.SPELL_CONFIGS;
     if (noneVolatileSpellConfigs == null) {
       synchronized (ConfigLoader.class) {
         if (noneVolatileSpellConfigs == null) {
@@ -154,7 +156,7 @@ public class ConfigLoader {
   private static ImmutableMap<String, MinionConfig> loadMinionConfiguration() throws FileNotFoundException {
     List<Object> minions = loadYaml("minion");
     ImmutableMap.Builder<String, MinionConfig> builder = ImmutableMap.builder();
-    for(Object object : minions) {
+    for (Object object : minions) {
       Map map = (Map) object;
       MinionConfig config = new MinionConfig(map);
       builder.put(config.getName(), config);
@@ -165,7 +167,7 @@ public class ConfigLoader {
   private static ImmutableMap<String, HeroConfig> loadHeroConfiguration() throws FileNotFoundException {
     List<Object> heroes = loadYaml("hero");
     ImmutableMap.Builder<String, HeroConfig> builder = ImmutableMap.builder();
-    for(Object object : heroes) {
+    for (Object object : heroes) {
       Map map = (Map) object;
       HeroConfig config = new HeroConfig(map);
       builder.put(config.getName(), config);
@@ -176,7 +178,7 @@ public class ConfigLoader {
   private static ImmutableMap<String, SpellConfig> loadHeroPowerConfiguration() throws FileNotFoundException {
     List<Object> heroPowers = loadYaml("hero_power");
     ImmutableMap.Builder<String, SpellConfig> builder = ImmutableMap.builder();
-    for(Object object : heroPowers) {
+    for (Object object : heroPowers) {
       Map map = (Map) object;
       SpellConfig config = new SpellConfig(map);
       builder.put(config.getName(), config);

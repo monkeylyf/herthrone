@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 /**
  * Created by yifeng on 4/9/16.
  */
-public class Container <T extends BaseCard> {
+public class Container<T extends BaseCard> {
 
   private final int maxCapacity;
   private final List<T> container;
@@ -32,8 +32,13 @@ public class Container <T extends BaseCard> {
     this.container = new ArrayList<>();
   }
 
-  public int getMaxCapacity() { return this.maxCapacity; }
-  public boolean isFull() {return this.container.size() == this.maxCapacity; }
+  public int getMaxCapacity() {
+    return this.maxCapacity;
+  }
+
+  public boolean isFull() {
+    return this.container.size() == this.maxCapacity;
+  }
 
   public void add(final T card) {
     this.container.add(card);
@@ -53,8 +58,13 @@ public class Container <T extends BaseCard> {
     // TODO: shuffle the deck.
   }
 
-  public T top() { return this.container.remove(this.container.size() - 1); }
-  public T get(final int index) { return this.container.get(index); }
+  public T top() {
+    return this.container.remove(this.container.size() - 1);
+  }
+
+  public T get(final int index) {
+    return this.container.get(index);
+  }
 
   public T random() {
     final Random random = new Random();
@@ -62,7 +72,10 @@ public class Container <T extends BaseCard> {
     return this.container.remove(index);
   }
 
-  public Iterator<T> iterator() { return this.container.iterator(); }
+  public Iterator<T> iterator() {
+    return this.container.iterator();
+  }
+
   public Stream<T> stream() {
     return this.container.stream();
   }

@@ -5,7 +5,7 @@ package com.herthrone.card.factory;
  */
 public interface Action {
 
-  public void act();
+  void act();
 
   //public boolean actionable(Card card);
 }

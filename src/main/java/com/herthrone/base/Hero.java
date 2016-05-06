@@ -7,8 +7,10 @@ import com.herthrone.stats.IntAttribute;
  */
 public interface Hero extends Minion {
 
-  public IntAttribute getArmorAttr();
-  public void arm(Weapon weapon);
-  public void disarm();
+  IntAttribute getArmorAttr();
+
+  void arm(Weapon weapon);
+
+  void disarm();
 
 }

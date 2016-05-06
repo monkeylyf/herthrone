@@ -1,13 +1,16 @@
 package com;
 
-import com.herthrone.game.Constants;
-import com.herthrone.game.Battlefield;
-import com.herthrone.game.GameManager;
-import com.herthrone.base.*;
-import com.herthrone.card.factory.*;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Weapon;
+import com.herthrone.card.factory.EffectFactory;
+import com.herthrone.card.factory.HeroFactory;
+import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.CardNotFoundException;
+import com.herthrone.game.Battlefield;
+import com.herthrone.game.Constants;
+import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;

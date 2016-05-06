@@ -5,7 +5,9 @@ package com.herthrone.exception;
  */
 public class SpellNotFoundException extends CardNotFoundException {
 
-  public SpellNotFoundException() {}
+  public SpellNotFoundException() {
+  }
+
   public SpellNotFoundException(final String message) {
     super(message);
   }

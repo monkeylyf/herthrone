@@ -5,5 +5,5 @@ package com.herthrone.stats;
  */
 public interface Round {
 
-  public void nextRound();
+  void nextRound();
 }

@@ -1,15 +1,10 @@
 package com.herthrone.card.factory;
 
 import com.herthrone.base.BaseCard;
-import com.herthrone.game.Battlefield;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
-import com.herthrone.configuration.Constants;
-import com.herthrone.exception.CardNotFoundException;
-import com.herthrone.exception.MinionNotFoundException;
+import com.herthrone.game.Battlefield;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,13 +13,13 @@ import java.util.List;
  */
 public class Factory {
 
-  private final Battlefield battlefield;
   public final MinionFactory minionFactory;
   public final SpellFactory spellFactory;
   public final WeaponFactory weaponFactory;
   public final SecretFactory secretFactory;
   public final EffectFactory effectFactory;
   public final AttackFactory attackFactory;
+  private final Battlefield battlefield;
 
   public Factory(final Battlefield battlefield) {
     this.battlefield = battlefield;

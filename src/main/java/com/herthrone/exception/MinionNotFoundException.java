@@ -5,7 +5,9 @@ package com.herthrone.exception;
  */
 public class MinionNotFoundException extends CardNotFoundException {
 
-  public MinionNotFoundException() {}
+  public MinionNotFoundException() {
+  }
+
   public MinionNotFoundException(final String message) {
     super(message);
   }

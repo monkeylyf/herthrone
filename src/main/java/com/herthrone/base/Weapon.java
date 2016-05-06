@@ -7,7 +7,9 @@ import com.herthrone.stats.IntAttribute;
  */
 public interface Weapon extends BaseCard {
 
-  public abstract int use();
-  public abstract IntAttribute getDurabilityAttr();
-  public abstract IntAttribute getAttackAttr();
+  int use();
+
+  IntAttribute getDurabilityAttr();
+
+  IntAttribute getAttackAttr();
 }

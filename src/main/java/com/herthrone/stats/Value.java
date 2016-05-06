@@ -5,33 +5,33 @@ package com.herthrone.stats;
  */
 public class Value {
 
-    private int val;
+  private int val;
 
-    public Value(final int val) {
-        this.val = val;
-    }
+  public Value(final int val) {
+    this.val = val;
+  }
 
-    public Value() {
-        this(0);
-    }
+  public Value() {
+    this(0);
+  }
 
-    public void reset() {
-        this.val = 0;
-    }
+  public void reset() {
+    this.val = 0;
+  }
 
-    public void increase(final int gain) {
-        this.val += gain;
-    }
+  public void increase(final int gain) {
+    this.val += gain;
+  }
 
-    public void decrease(final int loss) {
-        this.val -= loss;
-    }
+  public void decrease(final int loss) {
+    this.val -= loss;
+  }
 
-    public int getVal() {
-        return this.val;
-    }
+  public int getVal() {
+    return this.val;
+  }
 
-    public void setTo(final int val) {
-        this.val = val;
-    }
+  public void setTo(final int val) {
+    this.val = val;
+  }
 }

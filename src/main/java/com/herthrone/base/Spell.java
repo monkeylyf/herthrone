@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface Spell extends BaseCard {
 
-  public List<EffectConfig> getEffects();
+  List<EffectConfig> getEffects();
 }

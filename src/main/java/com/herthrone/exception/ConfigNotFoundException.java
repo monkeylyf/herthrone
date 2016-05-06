@@ -5,7 +5,9 @@ package com.herthrone.exception;
  */
 public class ConfigNotFoundException extends Exception {
 
-  public ConfigNotFoundException() {}
+  public ConfigNotFoundException() {
+  }
+
   public ConfigNotFoundException(final String message) {
     super(message);
   }

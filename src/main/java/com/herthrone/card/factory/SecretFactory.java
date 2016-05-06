@@ -1,8 +1,8 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.stats.IntAttribute;
-import com.herthrone.game.Battlefield;
 import com.herthrone.base.Secret;
+import com.herthrone.game.Battlefield;
+import com.herthrone.stats.IntAttribute;
 
 /**
  * Created by yifeng on 4/16/16.

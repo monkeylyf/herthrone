@@ -1,11 +1,11 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.stats.IntAttribute;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.exception.SpellNotFoundException;
+import com.herthrone.stats.IntAttribute;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -34,12 +34,12 @@ public class SpellFactory {
   public Spell createSpell(final String name, final String className, final int crystal, final String type, final List<EffectConfig> effects) {
     return new Spell() {
 
+      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
+
       @Override
       public List<EffectConfig> getEffects() {
         return effects;
       }
-
-      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
 
       @Override
       public String getCardName() {

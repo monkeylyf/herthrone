@@ -1,7 +1,6 @@
 package com.herthrone.stats;
 
 import com.herthrone.base.BaseCard;
-import com.herthrone.base.Minion;
 
 import java.util.HashMap;
 import java.util.Map;

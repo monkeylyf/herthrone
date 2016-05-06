@@ -5,5 +5,5 @@ package com.herthrone.stats;
  */
 public interface Reset {
 
-  public void reset();
+  void reset();
 }

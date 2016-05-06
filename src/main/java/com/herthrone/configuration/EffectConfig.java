@@ -2,7 +2,6 @@ package com.herthrone.configuration;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by yifeng on 4/18/16.
@@ -25,7 +24,9 @@ public class EffectConfig {
     this.permanent = (map.containsKey("permanent")) ? (boolean) map.get("permanent") : false;
   }
 
-  public String getEffect() { return this.effect; }
+  public String getEffect() {
+    return this.effect;
+  }
 
   public String getType() {
     return type;

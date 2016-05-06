@@ -22,7 +22,9 @@ public class BooleanAttribute implements Round, Reset {
     this.roundUntilExpire = roundUntilExpire;
   }
 
-  public boolean isOn() { return this.on; }
+  public boolean isOn() {
+    return this.on;
+  }
 
   @Override
   public void nextRound() {

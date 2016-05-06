@@ -20,8 +20,13 @@ public class HeroConfig implements BaseConfig {
     this.description = (String) map.get("description");
   }
 
-  public String getHeroPower() { return this.heroPower; }
-  public String getDescription() { return this.description; }
+  public String getHeroPower() {
+    return this.heroPower;
+  }
+
+  public String getDescription() {
+    return this.description;
+  }
 
   @Override
   public String getName() {

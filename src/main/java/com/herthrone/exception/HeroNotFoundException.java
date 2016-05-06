@@ -5,7 +5,9 @@ package com.herthrone.exception;
  */
 public class HeroNotFoundException extends CardNotFoundException {
 
-  public HeroNotFoundException() {}
+  public HeroNotFoundException() {
+  }
+
   public HeroNotFoundException(final String message) {
     super(message);
   }

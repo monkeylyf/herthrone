@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* Created by yifeng on 4/12/16.
-*/
+ * Created by yifeng on 4/12/16.
+ */
 public class MinionConfig implements BaseConfig {
 
   private final String name;
@@ -27,10 +27,21 @@ public class MinionConfig implements BaseConfig {
     this.collectible = map.containsKey("collectible") && (Boolean) map.get("collectible");
   }
 
-  public int getAttack() { return this.attack; }
-  public int getHealth() { return this.health; }
-  public int getCrystal() { return this.crystal; }
-  public List<String> getMechanics() { return this.mechanics; }
+  public int getAttack() {
+    return this.attack;
+  }
+
+  public int getHealth() {
+    return this.health;
+  }
+
+  public int getCrystal() {
+    return this.crystal;
+  }
+
+  public List<String> getMechanics() {
+    return this.mechanics;
+  }
 
   @Override
   public String getName() {

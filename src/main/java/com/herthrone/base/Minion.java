@@ -1,7 +1,7 @@
 package com.herthrone.base;
 
-import com.herthrone.stats.IntAttribute;
 import com.herthrone.stats.BooleanAttribute;
+import com.herthrone.stats.IntAttribute;
 
 /**
  * Created by yifeng on 4/2/16.
@@ -10,18 +10,25 @@ import com.herthrone.stats.BooleanAttribute;
 
 public interface Minion extends BaseCard {
 
-  public IntAttribute getHealthAttr();
-  public IntAttribute getHealthUpperAttr();
-  public IntAttribute getAttackAttr();
+  IntAttribute getHealthAttr();
 
-  public BooleanAttribute getDamageImmunity();
-  public BooleanAttribute getFrozen();
-  public BooleanAttribute getDivineShield();
+  IntAttribute getHealthUpperAttr();
 
-  public void causeDamage(Minion creature);
-  public void takeDamage(final int damage);
-  public boolean canDamage();
+  IntAttribute getAttackAttr();
 
-  public boolean isDead();
-  public int getHealthLoss();
+  BooleanAttribute getDamageImmunity();
+
+  BooleanAttribute getFrozen();
+
+  BooleanAttribute getDivineShield();
+
+  void causeDamage(Minion creature);
+
+  void takeDamage(final int damage);
+
+  boolean canDamage();
+
+  boolean isDead();
+
+  int getHealthLoss();
 }

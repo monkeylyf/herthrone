@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by yifeng on 4/6/16.
  */
-public interface ActionFactory  {
+public interface ActionFactory {
 
-  public List<Action> yieldActions();
+  List<Action> yieldActions();
 }

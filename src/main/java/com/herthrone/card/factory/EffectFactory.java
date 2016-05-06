@@ -1,16 +1,21 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
+import com.herthrone.base.Weapon;
 import com.herthrone.card.action.*;
-import com.herthrone.game.Constants;
-import com.herthrone.base.*;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.Constants;
 import com.herthrone.game.Side;
 import com.herthrone.stats.IntAttribute;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -175,8 +180,10 @@ public class EffectFactory {
    */
   private Minion getMinionByIndex(final int index) {
     switch (index) {
-      case -1: return this.mySide.getHero();
-      default: return this.mySide.getBoard().get(index);
+      case -1:
+        return this.mySide.getHero();
+      default:
+        return this.mySide.getBoard().get(index);
     }
   }
 }

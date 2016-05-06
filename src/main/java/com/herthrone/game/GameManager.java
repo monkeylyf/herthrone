@@ -21,6 +21,8 @@ import java.util.Queue;
  */
 public class GameManager {
 
+  public final Factory factory1;
+  public final Factory factory2;
   private final Hero hero1;
   private final Hero hero2;
   private final Crystal crystal1;
@@ -35,9 +37,6 @@ public class GameManager {
   private final Container<Secret> secrets2;
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;
-  public final Factory factory1;
-  public final Factory factory2;
-
   private final Queue<Action> actionQueue;
 
   public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {

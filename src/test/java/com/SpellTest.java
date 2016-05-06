@@ -1,16 +1,19 @@
 package com;
 
-import com.herthrone.base.*;
-import com.herthrone.game.Constants;
-import com.herthrone.game.Battlefield;
-import com.herthrone.game.Container;
-import com.herthrone.game.GameManager;
+import com.herthrone.base.BaseCard;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.exception.CardNotFoundException;
 import com.herthrone.exception.SpellNotFoundException;
+import com.herthrone.game.Battlefield;
+import com.herthrone.game.Constants;
+import com.herthrone.game.Container;
+import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Created by yifeng on 4/20/16.
  */
-public class SpellTest extends TestCase{
+public class SpellTest extends TestCase {
 
   private Hero hero1;
   private Hero hero2;
@@ -172,7 +175,7 @@ public class SpellTest extends TestCase{
     Spell totemicCall = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
     final int size = totemicCall.getEffects().get(0).getTarget().size();
 
-    for (int i = 0; i <size; ++i) {
+    for (int i = 0; i < size; ++i) {
       this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(action -> action.act());
       assertEquals(i + 1, this.battlefield1.getMySide().getBoard().size());
     }

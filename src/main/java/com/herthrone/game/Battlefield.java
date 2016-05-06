@@ -1,6 +1,9 @@
 package com.herthrone.game;
 
-import com.herthrone.base.*;
+import com.herthrone.base.BaseCard;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Secret;
 
 /**
  * Created by yifeng on 4/2/16.
@@ -15,8 +18,13 @@ public class Battlefield {
     this.opponentSide = new Side(hero2, hand2, deck2, board2, secrets2);
   }
 
-  public Side getMySide() { return this.mySide; }
-  public Side getOpponentSide() { return this.opponentSide; }
+  public Side getMySide() {
+    return this.mySide;
+  }
+
+  public Side getOpponentSide() {
+    return this.opponentSide;
+  }
 
   public Battlefield getMirrorBattlefield() {
     return new Battlefield(this.opponentSide.getHero(), this.mySide.getHero(), this.opponentSide.getHand(), this.mySide.getHand(), this.opponentSide.getDeck(), this.mySide.getDeck(), this.opponentSide.getBoard(), this.mySide.getBoard(), this.opponentSide.getSecrets(), this.getMySide().getSecrets());

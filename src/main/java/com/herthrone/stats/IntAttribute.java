@@ -5,10 +5,9 @@ package com.herthrone.stats;
  */
 public class IntAttribute implements Round {
 
+  public final Buff buff;
   private final int rawVal;
   private Value val;
-
-  public final Buff buff;
 
   public IntAttribute(final int val) {
     this.val = new Value(val);
@@ -16,9 +15,18 @@ public class IntAttribute implements Round {
     this.buff = new Buff();
   }
 
-  public int getVal() { return this.val.getVal() + this.buff.getBuffVal(); }
-  public void increase(final int gain) { this.val.increase(gain); }
-  public void decrease(final int loss) { this.val.decrease(loss); }
+  public int getVal() {
+    return this.val.getVal() + this.buff.getBuffVal();
+  }
+
+  public void increase(final int gain) {
+    this.val.increase(gain);
+  }
+
+  public void decrease(final int loss) {
+    this.val.decrease(loss);
+  }
+
   public void reset() {
     this.val.setTo(this.rawVal);
     this.buff.reset();

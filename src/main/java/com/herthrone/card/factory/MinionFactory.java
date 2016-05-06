@@ -1,13 +1,13 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.stats.IntAttribute;
-import com.herthrone.game.Battlefield;
 import com.herthrone.base.Minion;
-import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.exception.MinionNotFoundException;
+import com.herthrone.game.Battlefield;
+import com.herthrone.stats.BooleanAttribute;
+import com.herthrone.stats.IntAttribute;
 
 import java.io.FileNotFoundException;
 
@@ -26,7 +26,7 @@ public class MinionFactory {
     try {
       MinionConfig config = ConfigLoader.getMinionConfigByName(name);
       return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
-    } catch (FileNotFoundException|MinionNotFoundException e) {
+    } catch (FileNotFoundException | MinionNotFoundException e) {
       e.printStackTrace();
       return null;
     }
