@@ -20,6 +20,7 @@ import java.util.Collections;
  */
 public class HeroTest extends TestCase {
 
+
   private final int weaponAttackVal1 = 2;
   private final int weaponAttackVal2 = 3;
   private final int weaponDurability1 = 2;

@@ -19,21 +19,24 @@ public class IntAttributeTest extends TestCase {
   }
 
   public void testSetBuff() throws Exception {
-    this.attr.permIncrease(IntAttributeTest.BUFF);
+    this.attr.buff.perm.increase(IntAttributeTest.BUFF);
     assertEquals(IntAttributeTest.BUFF + IntAttributeTest.FOUR, this.attr.getVal());
   }
 
   public void testResetBuff() throws Exception {
-    this.attr.permIncrease(IntAttributeTest.DEBUFF);
+    this.attr.buff.perm.increase(IntAttributeTest.DEBUFF);
     assertEquals(IntAttributeTest.DEBUFF + IntAttributeTest.FOUR, this.attr.getVal());
 
-    this.attr.resetBuff();
+    this.attr.buff.reset();
     assertEquals(IntAttributeTest.FOUR, this.attr.getVal());
   }
 
   public void testReset() throws Exception {
-    this.attr.decrease(1);
-    this.attr.permIncrease(IntAttributeTest.BUFF);
+    int decreaseVal = 1;
+    this.attr.decrease(decreaseVal);
+    assertEquals(IntAttributeTest.FOUR - decreaseVal, this.attr.getVal());
+    this.attr.buff.perm.increase(IntAttributeTest.BUFF);
+    assertEquals(IntAttributeTest.FOUR - decreaseVal + IntAttributeTest.BUFF, this.attr.getVal());
 
     this.attr.reset();
 
