@@ -39,7 +39,6 @@ TODO
 - Shuffle into deck
 - Silence
 - Spell damage
-- Stealth
 - Summon
 - Taunt
 - Take control
@@ -52,7 +51,16 @@ TODO
 -----------
 In Progress
 -----------
-6. Redo attribute. Health is a special one. attack and crystal mana cost is less special with buffs. Armor is simply a int.
+Design of cards mechanism
+
+- Stealth
+
+----
+Done
+----
+04/08/2016 Refactor abstract class Card as a super parent. Super constructor is annoying. And manaCrystal should be private final attribute.
+04/08/2016 Replace attribute with Attribute Type instead of primitive type.
+05/06/2016 Redo attribute. Health is a special one. attack and crystal mana cost is less special with buffs. Armor is simply a int.
 Actually it's a little bit complicated than I thought. Buff is can be done in three ways:
 I. Buff other minion when a minion with such effect is on the board
 II. Buff exist only for one round(either your round or opponent round)
@@ -60,11 +68,6 @@ III. Permanent buff until this minion dies.
 - Health will be health and health upper bound. That being said, buff health upper bound need to increase the health value as well.
 Which will be considered as two actions.
 
-----
-Done
-----
-04/08/2016 Refactor abstract class Card as a super parent. Super constructor is annoying. And manaCrystal should be private final attribute.
-04/08/2016 Replace attribute with Attribute Type instead of primitive type.
 
 ---------------
 Invalid and Why

@@ -46,6 +46,7 @@ public class MinionFactory {
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
+      private final BooleanAttribute stealth = new BooleanAttribute(false);
       private final Battlefield battlefield = field;
 
       @Override
@@ -104,8 +105,19 @@ public class MinionFactory {
       }
 
       @Override
+      public BooleanAttribute getStealth() {
+        return this.stealth;
+      }
+
+      @Override
       public void causeDamage(Minion minion) {
         minion.takeDamage(this.attackAttr.getVal());
+        if (this.stealth.isOn()) {
+          // After attack, minions reveal themselves from stealth.
+          // TODO: but this is not the only way to reveal a minion in stealth.
+          // http://hearthstone.gamepedia.com/Stealth
+          this.stealth.reset();
+        }
       }
 
       @Override

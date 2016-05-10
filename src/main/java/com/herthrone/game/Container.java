@@ -3,10 +3,7 @@ package com.herthrone.game;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -55,7 +52,7 @@ public class Container<T extends BaseCard> {
   }
 
   public void shuffle() {
-    // TODO: shuffle the deck.
+    Collections.shuffle(this.container);
   }
 
   public T top() {
@@ -94,4 +91,5 @@ public class Container<T extends BaseCard> {
   public int size() {
     return this.container.size();
   }
+
 }

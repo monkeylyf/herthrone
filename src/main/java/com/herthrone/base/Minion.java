@@ -22,6 +22,8 @@ public interface Minion extends BaseCard {
 
   BooleanAttribute getDivineShield();
 
+  BooleanAttribute getStealth();
+
   void causeDamage(Minion creature);
 
   void takeDamage(final int damage);
