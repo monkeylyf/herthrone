@@ -1,11 +1,11 @@
 package com.herthrone.base;
 
+import com.herthrone.Constant;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.shit;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -45,8 +45,7 @@ public class MinionTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    //this.gm = new GameManager(Hero.GULDAN.getHeroName(), Hero.GULDAN.getHeroName(), Collections.emptyList(), Collections.emptyList());
-    this.gm = new GameManager(shit.Hero.GULDAN, shit.Hero.GULDAN, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(Constant.Hero.GULDAN.hero, Constant.Hero.GULDAN.hero, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.hand1 = this.gm.getHand1();
@@ -63,15 +62,15 @@ public class MinionTest extends TestCase {
     this.effectFactory1 = this.gm.factory1.effectFactory;
     this.effectFactory2 = this.gm.factory2.effectFactory;
 
-    this.minion1 = this.minionFactory1.createMinionByName(shit.Minion.CHILLWIND_YETI);
-    this.minion2 = this.minionFactory1.createMinionByName(shit.Minion.CHILLWIND_YETI);
+    this.minion1 = this.minionFactory1.createMinionByName(Constant.Minion.CHILLWIND_YETI.name);
+    this.minion2 = this.minionFactory1.createMinionByName(Constant.Minion.CHILLWIND_YETI.name);
 
-    this.yetiConfig = ConfigLoader.getMinionConfigByName(shit.Minion.CHILLWIND_YETI);
+    this.yetiConfig = ConfigLoader.getMinionConfigByName(Constant.Minion.CHILLWIND_YETI.name);
   }
 
   @Test
   public void testMinionStats() throws FileNotFoundException {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(shit.Minion.CHILLWIND_YETI);
+    MinionConfig config = ConfigLoader.getMinionConfigByName(Constant.Minion.CHILLWIND_YETI.name);
     assertEquals(config.getHealth(), this.minion1.getHealthAttr().getVal());
     assertEquals(config.getHealth(), this.minion2.getHealthAttr().getVal());
     assertFalse(this.minion1.isDead());

@@ -1,10 +1,10 @@
 package com.herthrone.card.factory;
 
+import com.herthrone.Constant;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.shit;
 import com.herthrone.stats.IntAttribute;
 
 import java.io.FileNotFoundException;
@@ -44,7 +44,7 @@ public class WeaponFactory {
 
       @Override
       public String getType() {
-        return shit.Type.WEAPON;
+        return Constant.WEAPON;
       }
 
       @Override

@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
+import com.herthrone.Constant;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
@@ -9,7 +10,6 @@ import com.herthrone.card.action.*;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.shit;
 import com.herthrone.game.Side;
 import com.herthrone.stats.IntAttribute;
 
@@ -50,15 +50,15 @@ public class EffectFactory {
   public Action getActionsByConfig(final EffectConfig config, final Minion minion) {
     final String effect = config.getEffect();
     switch (effect) {
-      case shit.Type.ATTRIBUTE:
+      case Constant.ATTRIBUTE:
         return getAttributeAction(config, minion);
-      case shit.Type.WEAPON:
+      case Constant.WEAPON:
         Preconditions.checkArgument(minion instanceof Hero, "Only hero can equip weapon, not " + minion.getType());
         final Hero hero = (Hero) minion;
         return getEquipWeaponAction(hero, config);
-      case shit.Type.SUMMON:
+      case Constant.SUMMON:
         return getSummonAction(config);
-      case shit.Type.DRAW:
+      case Constant.DRAW:
         return getDrawCardAction(config);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
@@ -68,15 +68,15 @@ public class EffectFactory {
   private Action getAttributeAction(final EffectConfig effect, final Minion minion) {
     final String type = effect.getType();
     switch (type) {
-      case (shit.Type.HEALTH):
+      case (Constant.HEALTH):
         return getHealthAttributeAction(minion, effect);
-      case (shit.Type.ATTACK):
+      case (Constant.ATTACK):
         return getGeneralAttributeAction(minion.getAttackAttr(), effect);
-      case (shit.Type.CRYSTAL):
+      case (Constant.CRYSTAL):
         return getGeneralAttributeAction(minion.getCrystalManaCost(), effect);
-      case (shit.Type.HEALTH_UPPER_BOUND):
+      case (Constant.HEALTH_UPPER_BOUND):
         return getGeneralAttributeAction(minion.getHealthUpperAttr(), effect);
-      case (shit.Type.ARMOR):
+      case (Constant.ARMOR):
         Preconditions.checkArgument(minion instanceof Hero, "Armor Attribute applies to Hero only, not " + minion.getType());
         final Hero hero = (Hero) minion;
         return getGeneralAttributeAction(hero.getArmorAttr(), effect);

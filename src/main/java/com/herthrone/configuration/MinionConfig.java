@@ -1,8 +1,7 @@
 package com.herthrone.configuration;
 
-import com.herthrone.game.shit;
+import com.herthrone.Constant;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,7 +11,7 @@ public class MinionConfig implements BaseConfig {
 
   private final String name;
   private final String className;
-  private final String type = shit.Type.MINION;
+  private final String type = Constant.MINION;
   private final int attack;
   private final int health;
   private final int crystal;

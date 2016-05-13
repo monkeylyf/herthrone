@@ -1,5 +1,6 @@
 package com;
 
+import com.herthrone.Constant;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
@@ -9,7 +10,6 @@ import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.shit;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -42,7 +42,7 @@ public class SpellTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(shit.Hero.GARROSH_HELLSCREAM, shit.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(Constant.Hero.GARROSH_HELLSCREAM.hero, Constant.Hero.GARROSH_HELLSCREAM.hero, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.battlefield1 = this.gm.getBattlefield1();
@@ -53,8 +53,8 @@ public class SpellTest extends TestCase {
     this.effectFactory1 = this.gm.factory1.effectFactory;
     this.effectFactory2 = this.gm.factory2.effectFactory;
 
-    this.yetiConfig = ConfigLoader.getMinionConfigByName(shit.Minion.CHILLWIND_YETI);
-    this.minion = this.minionFactory1.createMinionByName(shit.Minion.CHILLWIND_YETI);
+    this.yetiConfig = ConfigLoader.getMinionConfigByName(Constant.Minion.CHILLWIND_YETI.name);
+    this.minion = this.minionFactory1.createMinionByName(Constant.Minion.CHILLWIND_YETI.name);
   }
 
   @Test
@@ -186,7 +186,7 @@ public class SpellTest extends TestCase {
   public void testLifeTap() throws FileNotFoundException {
     final String spellName = "LifeTap";
     final Spell lifeTap = this.gm.factory1.spellFactory.createHeroPowerByName(spellName);
-    final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(shit.Minion.CHILLWIND_YETI);
+    final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(Constant.Minion.CHILLWIND_YETI.name);
     final int damage = -lifeTap.getEffects().get(0).getValue();
 
     final Container<BaseCard> hand = this.battlefield1.getMySide().getHand();

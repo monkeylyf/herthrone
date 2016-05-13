@@ -1,7 +1,7 @@
 package com.herthrone.configuration;
 
 
-import com.herthrone.game.shit;
+import com.herthrone.Constant;
 
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class WeaponConfig implements BaseConfig {
 
   @Override
   public String getType() {
-    return shit.Type.WEAPON;
+    return Constant.WEAPON;
   }
 
   @Override

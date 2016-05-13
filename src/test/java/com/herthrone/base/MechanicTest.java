@@ -1,11 +1,11 @@
 package com.herthrone.base;
 
+import com.herthrone.Constant;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.shit;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class MechanicTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(shit.Hero.GARROSH_HELLSCREAM, shit.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(Constant.Hero.GARROSH_HELLSCREAM.hero, Constant.Hero.GARROSH_HELLSCREAM.hero, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.battlefield1 = this.gm.getBattlefield1();
@@ -52,7 +52,7 @@ public class MechanicTest extends TestCase {
   public void testCharge() throws FileNotFoundException {
     System.out.println("hello world");
 
-    MinionConfig config = ConfigLoader.getMinionConfigByName(shit.Minion.WOLFRIDER);
-    final Minion minion = this.minionFactory1.createMinionByName(shit.Minion.WOLFRIDER);
+    MinionConfig config = ConfigLoader.getMinionConfigByName(Constant.Minion.WOLFRIDER.name);
+    final Minion minion = this.minionFactory1.createMinionByName(Constant.Minion.WOLFRIDER.name);
   }
 }

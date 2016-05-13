@@ -1,10 +1,10 @@
 package com.herthrone.card.factory;
 
+import com.herthrone.Constant;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.shit;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
@@ -56,7 +56,7 @@ public class MinionFactory {
 
       @Override
       public String getType() {
-        return shit.Type.MINION;
+        return Constant.MINION;
       }
 
       @Override
