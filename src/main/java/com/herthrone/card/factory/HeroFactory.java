@@ -4,9 +4,8 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.HeroConfig;
-import com.herthrone.exception.HeroNotFoundException;
+import com.herthrone.game.shit;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
@@ -23,7 +22,7 @@ public class HeroFactory {
   public static final int ARMOR = 0;
   public static final int CRYSTAL_MANA_COST = 0;
 
-  public static Hero createHeroByName(final String name) throws FileNotFoundException, HeroNotFoundException {
+  public static Hero createHeroByName(final String name) throws FileNotFoundException {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(name);
     return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, name, heroConfig.getClassName());
   }
@@ -36,6 +35,7 @@ public class HeroFactory {
       private final IntAttribute armorAttr = new IntAttribute(armor);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
+      private final IntAttribute movePoints = new IntAttribute(1);
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
@@ -50,7 +50,7 @@ public class HeroFactory {
 
       @Override
       public String getType() {
-        return Constants.HERO;
+        return shit.Type.HERO;
       }
 
       @Override
@@ -81,6 +81,11 @@ public class HeroFactory {
       @Override
       public IntAttribute getAttackAttr() {
         return this.attackAttr;
+      }
+
+      @Override
+      public IntAttribute getMovePoints() {
+        return this.movePoints;
       }
 
       @Override

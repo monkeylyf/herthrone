@@ -2,10 +2,9 @@ package com.herthrone.card.factory;
 
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.MinionConfig;
-import com.herthrone.exception.MinionNotFoundException;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.shit;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
@@ -26,7 +25,7 @@ public class MinionFactory {
     try {
       MinionConfig config = ConfigLoader.getMinionConfigByName(name);
       return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
-    } catch (FileNotFoundException | MinionNotFoundException e) {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
       return null;
     }
@@ -43,6 +42,7 @@ public class MinionFactory {
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
+      private final IntAttribute movePoints = new IntAttribute(1);
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
@@ -56,7 +56,7 @@ public class MinionFactory {
 
       @Override
       public String getType() {
-        return Constants.MINION;
+        return shit.Type.MINION;
       }
 
       @Override
@@ -87,6 +87,11 @@ public class MinionFactory {
       @Override
       public IntAttribute getAttackAttr() {
         return this.attackAttr;
+      }
+
+      @Override
+      public IntAttribute getMovePoints() {
+        return null;
       }
 
       @Override

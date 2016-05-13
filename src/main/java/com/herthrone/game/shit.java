@@ -3,7 +3,7 @@ package com.herthrone.game;
 /**
  * Created by yifeng on 4/8/16.
  */
-public class Constants {
+public class shit {
 
   public static class Hero {
     public static final String ANDUIN_WRYNN = "Anduin Wrynn";
@@ -47,10 +47,10 @@ public class Constants {
   }
 
   public static class Type {
-    public static final String HERO = "Hero";
-    public static final String SPELL = "Spell";
-    public static final String MINION = "Minion";
-    public static final String SECRET = "Secret";
+    public static final String HERO = "hero";
+    public static final String SPELL = "spell";
+    public static final String MINION = "minion";
+    public static final String SECRET = "secret";
 
     public static final String ATTRIBUTE = "attribute";
     public static final String HEALTH = "health";
@@ -65,5 +65,6 @@ public class Constants {
 
   public static class Minion {
     public static final String CHILLWIND_YETI = "Chillwind Yeti";
+    public static final String WOLFRIDER = "Wolfrider";
   }
 }

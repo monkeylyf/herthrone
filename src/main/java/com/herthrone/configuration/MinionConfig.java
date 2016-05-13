@@ -1,5 +1,7 @@
 package com.herthrone.configuration;
 
+import com.herthrone.game.shit;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +12,11 @@ public class MinionConfig implements BaseConfig {
 
   private final String name;
   private final String className;
-  private final String type = Constants.MINION;
+  private final String type = shit.Type.MINION;
   private final int attack;
   private final int health;
   private final int crystal;
-  private final List<String> mechanics;
+  private final Map<String, MechanicConfig> mechanics;
   private final boolean collectible;
 
   public MinionConfig(final Map map) {
@@ -23,7 +25,7 @@ public class MinionConfig implements BaseConfig {
     this.attack = (int) map.get("attack");
     this.health = (int) map.get("health");
     this.crystal = (int) map.get("crystal");
-    this.mechanics = (List<String>) map.get("mechanics");
+    this.mechanics = MechanicConfig.mechanicConfigFactory(map.get("mechanics"));
     this.collectible = map.containsKey("collectible") && (Boolean) map.get("collectible");
   }
 
@@ -39,7 +41,7 @@ public class MinionConfig implements BaseConfig {
     return this.crystal;
   }
 
-  public List<String> getMechanics() {
+  public Map<String, MechanicConfig> getMechanics() {
     return this.mechanics;
   }
 

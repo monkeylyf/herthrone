@@ -2,10 +2,9 @@ package com.herthrone.card.factory;
 
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.Constants;
 import com.herthrone.configuration.WeaponConfig;
-import com.herthrone.exception.WeaponNotFoundException;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.shit;
 import com.herthrone.stats.IntAttribute;
 
 import java.io.FileNotFoundException;
@@ -25,7 +24,7 @@ public class WeaponFactory {
     try {
       WeaponConfig config = ConfigLoader.getWeaponConfigByName(name);
       return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
-    } catch (FileNotFoundException | WeaponNotFoundException e) {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
       return null;
     }
@@ -45,7 +44,7 @@ public class WeaponFactory {
 
       @Override
       public String getType() {
-        return Constants.WEAPON;
+        return shit.Type.WEAPON;
       }
 
       @Override

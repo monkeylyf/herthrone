@@ -10,6 +10,7 @@ public interface BaseCard {
 
   String getCardName();
 
+  // TODO: return type should be enum.
   String getType();
 
   String getClassName();

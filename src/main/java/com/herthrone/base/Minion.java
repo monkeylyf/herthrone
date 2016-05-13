@@ -16,6 +16,8 @@ public interface Minion extends BaseCard {
 
   IntAttribute getAttackAttr();
 
+  IntAttribute getMovePoints();
+
   BooleanAttribute getDamageImmunity();
 
   BooleanAttribute getFrozen();

@@ -8,7 +8,6 @@ import com.herthrone.card.factory.Action;
 import com.herthrone.card.factory.Factory;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.exception.CardNotFoundException;
 import com.herthrone.stats.Crystal;
 
 import java.io.FileNotFoundException;
@@ -39,7 +38,7 @@ public class GameManager {
   private final Battlefield battlefield2;
   private final Queue<Action> actionQueue;
 
-  public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws CardNotFoundException, FileNotFoundException {
+  public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws FileNotFoundException {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
     final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));

@@ -53,3 +53,11 @@
   crystal: 1
   mechanics: []
   collectible: false
+
+- name: Wolfrider
+  class: Common
+  attack: 3
+  health: 1
+  crystal: 3
+  mechanics:
+    - name: charge

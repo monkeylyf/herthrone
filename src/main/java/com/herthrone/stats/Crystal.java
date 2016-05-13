@@ -11,9 +11,13 @@ public class Crystal implements Round {
   private static final int MAX_CRYSTALS = 10;
   private int crystal;
   private int crystalUpperBound;
+  private int overloaded;
+  private int lockedCrystal;
 
   public Crystal() {
     this.crystal = 1;
+    this.overloaded = 0;
+    this.lockedCrystal = 0;
   }
 
   public boolean canPlay(final BaseCard card) {
@@ -33,6 +37,17 @@ public class Crystal implements Round {
   public void nextRound() {
     increaseUpperBound();
     this.crystal = crystalUpperBound;
+    applyOverload();
   }
 
+  public void overload(final int val) {
+    Preconditions.checkArgument(val > 0, "Overload must be positive, not " + val);
+    this.overloaded += val;
+  }
+
+  private void applyOverload() {
+    this.crystal -= this.overloaded;
+    this.lockedCrystal = this.overloaded;
+    this.overloaded = 0;
+  }
 }

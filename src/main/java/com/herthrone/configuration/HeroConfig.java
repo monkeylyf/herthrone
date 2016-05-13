@@ -1,5 +1,7 @@
 package com.herthrone.configuration;
 
+import com.herthrone.game.shit;
+
 import java.util.Map;
 
 /**
@@ -11,7 +13,7 @@ public class HeroConfig implements BaseConfig {
   private final String className;
   private final String description;
   private final String heroPower;
-  private final String type = Constants.HERO;
+  private final String type = shit.Type.HERO;
 
   public HeroConfig(Map map) {
     this.name = (String) map.get("name");

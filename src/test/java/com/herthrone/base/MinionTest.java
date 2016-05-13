@@ -4,10 +4,8 @@ import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
-import com.herthrone.exception.CardNotFoundException;
-import com.herthrone.exception.MinionNotFoundException;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Constants;
+import com.herthrone.game.shit;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -46,8 +44,9 @@ public class MinionTest extends TestCase {
   private GameManager gm;
 
   @Before
-  public void setUp() throws FileNotFoundException, CardNotFoundException {
-    this.gm = new GameManager(Constants.Hero.GULDAN, Constants.Hero.GULDAN, Collections.emptyList(), Collections.emptyList());
+  public void setUp() throws FileNotFoundException {
+    //this.gm = new GameManager(Hero.GULDAN.getHeroName(), Hero.GULDAN.getHeroName(), Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(shit.Hero.GULDAN, shit.Hero.GULDAN, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.hand1 = this.gm.getHand1();
@@ -64,15 +63,15 @@ public class MinionTest extends TestCase {
     this.effectFactory1 = this.gm.factory1.effectFactory;
     this.effectFactory2 = this.gm.factory2.effectFactory;
 
-    this.minion1 = this.minionFactory1.createMinionByName(Constants.Minion.CHILLWIND_YETI);
-    this.minion2 = this.minionFactory1.createMinionByName(Constants.Minion.CHILLWIND_YETI);
+    this.minion1 = this.minionFactory1.createMinionByName(shit.Minion.CHILLWIND_YETI);
+    this.minion2 = this.minionFactory1.createMinionByName(shit.Minion.CHILLWIND_YETI);
 
-    this.yetiConfig = ConfigLoader.getMinionConfigByName(Constants.Minion.CHILLWIND_YETI);
+    this.yetiConfig = ConfigLoader.getMinionConfigByName(shit.Minion.CHILLWIND_YETI);
   }
 
   @Test
-  public void testMinionStats() throws FileNotFoundException, MinionNotFoundException {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(Constants.Minion.CHILLWIND_YETI);
+  public void testMinionStats() throws FileNotFoundException {
+    MinionConfig config = ConfigLoader.getMinionConfigByName(shit.Minion.CHILLWIND_YETI);
     assertEquals(config.getHealth(), this.minion1.getHealthAttr().getVal());
     assertEquals(config.getHealth(), this.minion2.getHealthAttr().getVal());
     assertFalse(this.minion1.isDead());
