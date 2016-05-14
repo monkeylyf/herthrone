@@ -1,5 +1,6 @@
 package com.herthrone.game;
 
+import com.herthrone.Constant;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
@@ -38,7 +39,7 @@ public class GameManager {
   private final Battlefield battlefield2;
   private final Queue<Action> actionQueue;
 
-  public GameManager(final String hero1, final String hero2, final List<String> cardList1, final List<String> cardList2) throws FileNotFoundException {
+  public GameManager(final Constant.Hero hero1, final Constant.Hero hero2, final List<String> cardList1, final List<String> cardList2) throws FileNotFoundException {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
     final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));

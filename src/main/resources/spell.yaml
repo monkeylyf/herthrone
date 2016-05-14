@@ -1,4 +1,5 @@
-- name: FireBall
+- name: fire_ball
+  display: FireBall
   class: Mage
   crystal: 4
   actions:

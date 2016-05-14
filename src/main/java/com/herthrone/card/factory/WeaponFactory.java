@@ -20,9 +20,9 @@ public class WeaponFactory {
     this.battlefield = battlefield;
   }
 
-  public Weapon createWeaponByName(final String name) {
+  public Weapon createWeaponByName(final Constant.Weapon weapon) {
     try {
-      WeaponConfig config = ConfigLoader.getWeaponConfigByName(name);
+      WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
       return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -30,7 +30,7 @@ public class WeaponFactory {
     }
   }
 
-  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final String name, final String className, final boolean isCollectible) {
+  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final Constant.Weapon name, final Constant.Clazz className, final boolean isCollectible) {
 
     return new Weapon() {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
@@ -39,16 +39,16 @@ public class WeaponFactory {
 
       @Override
       public String getCardName() {
-        return name;
+        return name.toString();
       }
 
       @Override
-      public String getType() {
-        return Constant.WEAPON;
+      public Constant.Type getType() {
+        return Constant.Type.WEAPON;
       }
 
       @Override
-      public String getClassName() {
+      public Constant.Clazz getClassName() {
         return className;
       }
 

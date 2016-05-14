@@ -1,5 +1,6 @@
 package com.herthrone.card.factory;
 
+import com.herthrone.Constant;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
@@ -20,17 +21,17 @@ public class SpellFactory {
     this.effectFactory = effectFactory;
   }
 
-  public Spell createSpellByName(final String name) throws FileNotFoundException {
-    SpellConfig config = ConfigLoader.getSpellConfigByName(name);
-    return createSpell(name, config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
+  public Spell createSpellByName(final Constant.Spell spell) throws FileNotFoundException {
+    SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
+    return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 
-  public Spell createHeroPowerByName(final String name) throws FileNotFoundException {
-    SpellConfig config = ConfigLoader.getHeroPowerConfigByName(name);
-    return createSpell(name, config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
+  public Spell createHeroPowerByName(final Constant.HeroPower heroPower) throws FileNotFoundException {
+    SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
+    return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 
-  public Spell createSpell(final String name, final String className, final int crystal, final String type, final List<EffectConfig> effects) {
+  public Spell createSpell(final Constant.Spell name, final Constant.Clazz className, final int crystal, final Constant.Type type, final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
@@ -42,16 +43,16 @@ public class SpellFactory {
 
       @Override
       public String getCardName() {
-        return name;
+        return name.toString();
       }
 
       @Override
-      public String getType() {
+      public Constant.Type getType() {
         return type;
       }
 
       @Override
-      public String getClassName() {
+      public Constant.Clazz getClassName() {
         return className;
       }
 

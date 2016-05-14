@@ -7,11 +7,10 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class MinionConfig implements BaseConfig {
+public class MinionConfig implements BaseConfig <Constant.Minion> {
 
-  private final String name;
-  private final String className;
-  private final String type = Constant.MINION;
+  private final Constant.Minion name;
+  private final Constant.Clazz className;
   private final int attack;
   private final int health;
   private final int crystal;
@@ -19,8 +18,8 @@ public class MinionConfig implements BaseConfig {
   private final boolean collectible;
 
   public MinionConfig(final Map map) {
-    this.name = (String) map.get("name");
-    this.className = (String) map.get("class");
+    this.name = Constant.Minion.valueOf(Constant.upperCaseValue(map, "name"));
+    this.className = Constant.Clazz.valueOf(Constant.upperCaseValue(map, "class"));
     this.attack = (int) map.get("attack");
     this.health = (int) map.get("health");
     this.crystal = (int) map.get("crystal");
@@ -45,18 +44,18 @@ public class MinionConfig implements BaseConfig {
   }
 
   @Override
-  public String getName() {
+  public Constant.Minion getName() {
     return this.name;
   }
 
   @Override
-  public String getClassName() {
+  public Constant.Clazz getClassName() {
     return this.className;
   }
 
   @Override
-  public String getType() {
-    return this.type;
+  public Constant.Type getType() {
+    return Constant.Type.MINION;
   }
 
   public boolean isCollectible() {

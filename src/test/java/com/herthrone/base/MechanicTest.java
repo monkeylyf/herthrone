@@ -35,7 +35,7 @@ public class MechanicTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(Constant.Hero.GARROSH_HELLSCREAM.hero, Constant.Hero.GARROSH_HELLSCREAM.hero, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(Constant.Hero.GARROSH_HELLSCREAM, Constant.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.battlefield1 = this.gm.getBattlefield1();
@@ -45,14 +45,11 @@ public class MechanicTest extends TestCase {
     this.minionFactory2 = this.gm.factory2.minionFactory;
     this.effectFactory1 = this.gm.factory1.effectFactory;
     this.effectFactory2 = this.gm.factory2.effectFactory;
-
   }
 
   @Test
   public void testCharge() throws FileNotFoundException {
-    System.out.println("hello world");
-
-    MinionConfig config = ConfigLoader.getMinionConfigByName(Constant.Minion.WOLFRIDER.name);
-    final Minion minion = this.minionFactory1.createMinionByName(Constant.Minion.WOLFRIDER.name);
+    MinionConfig config = ConfigLoader.getMinionConfigByName(Constant.Minion.WOLFRIDER);
+    final Minion minion = this.minionFactory1.createMinionByName(Constant.Minion.WOLFRIDER);
   }
 }

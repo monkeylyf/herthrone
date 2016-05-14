@@ -1,15 +1,17 @@
 package com.herthrone.configuration;
 
+import com.herthrone.Constant;
+
 /**
  * Created by yifeng on 4/19/16.
  */
-public interface BaseConfig {
+public interface BaseConfig <T extends Enum<T>> {
 
-  String getName();
+  T getName();
 
-  String getClassName();
+  Constant.Clazz getClassName();
 
-  String getType();
+  Constant.Type getType();
 
   int getCrystal();
 }

@@ -7,17 +7,16 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class HeroConfig implements BaseConfig {
+public class HeroConfig implements BaseConfig <Constant.Hero> {
 
-  private final String name;
-  private final String className;
+  private final Constant.Hero name;
+  private final Constant.Clazz className;
   private final String description;
   private final String heroPower;
-  private final String type = Constant.HERO;
 
   public HeroConfig(Map map) {
-    this.name = (String) map.get("name");
-    this.className = (String) map.get("class");
+    this.name = Constant.Hero.valueOf(Constant.upperCaseValue(map, "name"));
+    this.className = Constant.Clazz.valueOf(Constant.upperCaseValue(map, "class"));
     this.heroPower = (String) map.get("hero_power");
     this.description = (String) map.get("description");
   }
@@ -31,18 +30,18 @@ public class HeroConfig implements BaseConfig {
   }
 
   @Override
-  public String getName() {
+  public Constant.Hero getName() {
     return this.name;
   }
 
   @Override
-  public String getClassName() {
+  public Constant.Clazz getClassName() {
     return this.className;
   }
 
   @Override
-  public String getType() {
-    return this.type;
+  public Constant.Type getType() {
+    return Constant.Type.HERO;
   }
 
   @Override

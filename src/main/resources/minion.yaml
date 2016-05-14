@@ -1,11 +1,13 @@
-- name: Chillwind Yeti
+- name: chillwind_yeti
+  display: Chillwind Yeti
   class: Common
   attack: 4
   health: 5
   crystal: 4
   mechanics: []
 
-- name: Sen'jin Shieldmasta
+- name: senjin_shieldmasta
+  display: Sen'jin Shieldmasta
   class: Common
   attack: 3
   health: 5
@@ -14,7 +16,8 @@
     - ability: Taunt
       stats: null
 
-- name: SilverHandRecruit
+- name: silver_hand_recruit
+  display: SilverHandRecruit
   class: Paladin
   attack: 1
   health: 1
@@ -22,7 +25,8 @@
   mechanics: []
   collectible: false
 
-- name: HealingTotem
+- name: healing_totem
+  display: HealingTotem
   class: Shaman
   attack: 0
   health: 2
@@ -30,7 +34,8 @@
   mechanics: []
   collectible: false
 
-- name: SearingTotem
+- name: searing_totem
+  display: SearingTotem
   class: Shaman
   attack: 1
   health: 1
@@ -38,7 +43,8 @@
   mechanics: []
   collectible: false
 
-- name: WrathOfAirTotem
+- name: wrath_of_air_totem
+  display: WrathOfAirTotem
   class: Shaman
   attack: 0
   health: 2
@@ -46,7 +52,8 @@
   mechanics: []
   collectible: false
 
-- name: StoneclawTotem
+- name: stoneclaw_totem
+  display: StoneclawTotem
   class: Shaman
   attack: 0
   health: 2
@@ -54,7 +61,8 @@
   mechanics: []
   collectible: false
 
-- name: Wolfrider
+- name: wolfrider
+  display: Wolfrider
   class: Common
   attack: 3
   health: 1

@@ -8,18 +8,18 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class WeaponConfig implements BaseConfig {
+public class WeaponConfig implements BaseConfig<Constant.Weapon> {
 
-  private final String name;
-  private final String className;
+  private final Constant.Weapon name;
+  private final Constant.Clazz className;
   private final int attack;
   private final int durability;
   private final int crystal;
   private final boolean collectible;
 
   public WeaponConfig(Map map) {
-    this.name = (String) map.get("name");
-    this.className = (String) map.get("className");
+    this.name = Constant.Weapon.valueOf(Constant.upperCaseValue(map, "name"));
+    this.className = Constant.Clazz.valueOf(Constant.upperCaseValue(map, "class"));
     this.attack = (int) map.get("attack");
     this.durability = (int) map.get("durability");
     this.crystal = (int) map.get("crystal");
@@ -35,18 +35,18 @@ public class WeaponConfig implements BaseConfig {
   }
 
   @Override
-  public String getName() {
+  public Constant.Weapon getName() {
     return this.name;
   }
 
   @Override
-  public String getClassName() {
+  public Constant.Clazz getClassName() {
     return this.className;
   }
 
   @Override
-  public String getType() {
-    return Constant.WEAPON;
+  public Constant.Type getType() {
+    return Constant.Type.WEAPON;
   }
 
   @Override

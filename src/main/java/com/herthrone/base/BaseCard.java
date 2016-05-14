@@ -1,5 +1,6 @@
 package com.herthrone.base;
 
+import com.herthrone.Constant;
 import com.herthrone.stats.IntAttribute;
 
 /**
@@ -10,10 +11,9 @@ public interface BaseCard {
 
   String getCardName();
 
-  // TODO: return type should be enum.
-  String getType();
+  Constant.Type getType();
 
-  String getClassName();
+  Constant.Clazz getClassName();
 
   IntAttribute getCrystalManaCost();
 

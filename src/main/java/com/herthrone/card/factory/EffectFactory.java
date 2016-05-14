@@ -99,12 +99,14 @@ public class EffectFactory {
 
   private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
-    Weapon weapon = this.weaponFactory.createWeaponByName(weaponName);
-    return new EquipWeaponEffect(hero, weapon);
+    final Constant.Weapon weapon = Constant.Weapon.valueOf(weaponName.toUpperCase());
+    Weapon weaponInstance = this.weaponFactory.createWeaponByName(weapon);
+    return new EquipWeaponEffect(hero, weaponInstance);
   }
 
   private Action getSummonAction(final EffectConfig effect) {
     List<String> summonTargets = new ArrayList<>(effect.getTarget());
+    summonTargets = summonTargets.stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
     final int size = effect.getTarget().size();
     int index = 0;
     if (size > 0) {
@@ -117,7 +119,8 @@ public class EffectFactory {
       }
     }
     final String summonTargetName = summonTargets.get(index);
-    final Minion minion = this.minionFactory.createMinionByName(summonTargetName);
+    final Constant.Minion summonTarget = Constant.Minion.valueOf(summonTargetName);
+    final Minion minion = this.minionFactory.createMinionByName(summonTarget);
     return new SummonEffect(this.mySide.getBoard(), minion);
   }
 

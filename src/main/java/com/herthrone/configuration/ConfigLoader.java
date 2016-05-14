@@ -2,6 +2,7 @@ package com.herthrone.configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.herthrone.Constant;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -69,24 +70,24 @@ public class ConfigLoader {
     return noneVolatileResource;
   }
 
-  public static MinionConfig getMinionConfigByName(final String minionName) throws FileNotFoundException {
-    return cardConfigLoader.getConfigurations().get(minionName);
+  public static MinionConfig getMinionConfigByName(final Constant.Minion minion) throws FileNotFoundException {
+    return cardConfigLoader.getConfigurations().get(minion.toString());
   }
 
-  public static HeroConfig getHeroConfigByName(final String heroName) throws FileNotFoundException {
-    return heroConfigLoader.getConfigurations().get(heroName);
+  public static HeroConfig getHeroConfigByName(final Constant.Hero hero) throws FileNotFoundException {
+    return heroConfigLoader.getConfigurations().get(hero.toString());
   }
 
-  public static SpellConfig getSpellConfigByName(final String spellName) throws FileNotFoundException {
-    return spellConfigLoader.getConfigurations().get(spellName);
+  public static SpellConfig getSpellConfigByName(final Constant.Spell spell) throws FileNotFoundException {
+    return spellConfigLoader.getConfigurations().get(spell.toString());
   }
 
-  public static SpellConfig getHeroPowerConfigByName(final String heroPowerName) throws FileNotFoundException {
-    return heroPowerConfigLoader.getConfigurations().get(heroPowerName);
+  public static SpellConfig getHeroPowerConfigByName(final Constant.HeroPower heroPower) throws FileNotFoundException {
+    return heroPowerConfigLoader.getConfigurations().get(heroPower.toString());
   }
 
-  public static WeaponConfig getWeaponConfigByName(final String weaponName) throws FileNotFoundException {
-    return weaponConfigLoader.getConfigurations().get(weaponName);
+  public static WeaponConfig getWeaponConfigByName(final Constant.Weapon weapon) throws FileNotFoundException {
+    return weaponConfigLoader.getConfigurations().get(weapon.toString());
   }
 
   private static ResourceBundle loadResource() {
@@ -117,7 +118,7 @@ public class ConfigLoader {
       for (Object object : minions) {
         Map map = (Map) object;
         T config = createInstance(map);
-        builder.put(config.getName(), config);
+        builder.put(config.getName().toString(), config);
       }
       return builder.build();
     }

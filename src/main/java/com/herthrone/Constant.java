@@ -1,5 +1,8 @@
 package com.herthrone;
 
+
+import java.util.Map;
+
 /**
  * Created by yifengliu on 5/13/16.
  */
@@ -22,22 +25,30 @@ public class Constant {
   public static final String SECRET = "secret";
   public static final String WEAPON = "weapon";
 
+  public enum Attribute {
+    ARMOR,
+    ATTACK,
+    CRYSTAL,
+    HEALTH,
+    HEALTH_UPPER_BOUND;
+  }
+
   public enum Hero {
 
-    ANDUIN_WRYNN ("Anduin Wrynn", Clazz.PRIEST.name),
-    GULDAN ("Gul'dan", Clazz.WARLOCK.name),
-    JAINA_PROUDMOORE ("Jaina Proudmoore", Clazz.MAGE.name),
-    MALFURION_STORMRAGE ("Malfurion Stormrage", Clazz.DRUID.name),
-    REXXAR ("Rexxar", Clazz.HUNTER.name),
-    THRALL ("Thrall", Clazz.SHAMAN.name),
-    UTHER_LIGHTBRINGER ("Uther Lightbringer", Clazz.PALADIN.name),
-    VALEERA_SANGUINAR ("Valeera Sanguinar", Clazz.ROGUE.name),
-    GARROSH_HELLSCREAM ("Garrosh Hellscream", Clazz.WARRIOR.name);
+    ANDUIN_WRYNN ("Anduin Wrynn", Clazz.PRIEST),
+    GULDAN ("Gul'dan", Clazz.WARLOCK),
+    JAINA_PROUDMOORE ("Jaina Proudmoore", Clazz.MAGE),
+    MALFURION_STORMRAGE ("Malfurion Stormrage", Clazz.DRUID),
+    REXXAR ("Rexxar", Clazz.HUNTER),
+    THRALL ("Thrall", Clazz.SHAMAN),
+    UTHER_LIGHTBRINGER ("Uther Lightbringer", Clazz.PALADIN),
+    VALEERA_SANGUINAR ("Valeera Sanguinar", Clazz.ROGUE),
+    GARROSH_HELLSCREAM ("Garrosh Hellscream", Clazz.WARRIOR);
 
     public final String hero;
-    public final String clazz;
+    public final Clazz clazz;
 
-    Hero(final String hero, final String clazz) {
+    Hero(final String hero, final Clazz clazz) {
       this.hero = hero;
       this.clazz = clazz;
     }
@@ -45,6 +56,7 @@ public class Constant {
 
   public enum Clazz {
 
+    COMMON ("Common"),
     WARRIOR ("Warrior"),
     PRIEST ("Priest"),
     ROGUE ("Rogue"),
@@ -81,24 +93,18 @@ public class Constant {
   }
 
   public enum HeroPower {
-    ARMOR_UP ("ArmorUp"),
-    DAGGER_MASTERY ("DaggerMastery"),
-    FIRE_BLAST ("FireBlast"),
-    LESSER_HEAL ("LesserHeal"),
-    LIFE_TAP ("LifeTap"),
-    REINFORCE ("Reinforce"),
-    SHAPE_SHIFT ("Shapeshift"),
-    STEADY_SHOT ("SteadyShot"),
-    TOTEMIC_CALL ("TotemicCall");
-
-    public final String name;
-
-    HeroPower(final String name) {
-      this.name = name;
-    }
+    ARMOR_UP,
+    DAGGER_MASTERY,
+    FIRE_BLAST,
+    LESSER_HEAL,
+    LIFE_TAP,
+    REINFORCE,
+    SHAPESHIFT,
+    STEADY_SHOT,
+    TOTEMIC_CALL;
   }
 
-  public static enum Mechanic {
+  public enum Mechanic {
     BATTLECRY,
     CARD_DRAW_EFFECT,
     CHARGE,
@@ -140,7 +146,13 @@ public class Constant {
   public enum Minion {
 
     CHILLWIND_YETI ("Chillwind Yeti"),
-    WOLFRIDER ("Wolfrider");
+    SENJIN_SHIELDMASTA ("shit"),
+    WOLFRIDER ("Wolfrider"),
+    HEALING_TOTEM ("shit"),
+    SEARING_TOTEM ("shit"),
+    WRATH_OF_AIR_TOTEM ("shit"),
+    STONECLAW_TOTEM ("shit"),
+    SILVER_HAND_RECRUIT ("Wolfrider");
 
     public final String name;
 
@@ -153,18 +165,36 @@ public class Constant {
   }
 
   public enum Spell {
+    ARMOR_UP,
+    DAGGER_MASTERY,
+    FIRE_BLAST,
+    FIRE_BALL,
+    LESSER_HEAL,
+    LIFE_TAP,
+    REINFORCE,
+    SHAPESHIFT,
+    STEADY_SHOT,
+    TOTEMIC_CALL;
+  }
+
+  public enum Type {
+    HERO,
+    SPELL,
+    MINION,
+    SECRET,
+    HERO_POWER,
+    WEAPON;
   }
 
   public enum Weapon {
+    FIERY_WAR_AXE,
+    WICKED_KNIFE,
+    WICKED_BLADE,
+    TRUESILVERCHAMPION;
+  }
 
-    FIERY_WAR_AEX ("FieryWarAxe"),
-    WICKED_KNIFE ("WickedKnife");
-
-    public final String name;
-
-    Weapon(final String name) {
-      this.name = name;
-    }
-
+  public static String upperCaseValue(final Map map,final String key) {
+    final String value = (String) map.get(key);
+    return value.toUpperCase();
   }
 }

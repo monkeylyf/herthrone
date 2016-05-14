@@ -21,9 +21,9 @@ public class MinionFactory {
     this.battlefield = battlefield;
   }
 
-  public Minion createMinionByName(final String name) {
+  public Minion createMinionByName(final Constant.Minion minion) {
     try {
-      MinionConfig config = ConfigLoader.getMinionConfigByName(name);
+      MinionConfig config = ConfigLoader.getMinionConfigByName(minion);
       return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -31,11 +31,11 @@ public class MinionFactory {
     }
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name, final boolean isCollectible) {
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final Constant.Clazz className, final Constant.Minion name, final boolean isCollectible) {
     return createMinion(health, attack, crystalManaCost, className, name, isCollectible, this.battlefield);
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final String className, final String name, final boolean isCollectible, final Battlefield field) {
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final Constant.Clazz className, final Constant.Minion name, final boolean isCollectible, final Battlefield field) {
     return new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -51,16 +51,16 @@ public class MinionFactory {
 
       @Override
       public String getCardName() {
-        return name;
+        return name.toString();
       }
 
       @Override
-      public String getType() {
-        return Constant.MINION;
+      public Constant.Type getType() {
+        return Constant.Type.MINION;
       }
 
       @Override
-      public String getClassName() {
+      public Constant.Clazz getClassName() {
         return className;
       }
 

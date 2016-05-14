@@ -22,12 +22,12 @@ public class HeroFactory {
   public static final int ARMOR = 0;
   public static final int CRYSTAL_MANA_COST = 0;
 
-  public static Hero createHeroByName(final String name) throws FileNotFoundException {
-    HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(name);
-    return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, name, heroConfig.getClassName());
+  public static Hero createHeroByName(final Constant.Hero hero) throws FileNotFoundException {
+    HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
+    return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, heroConfig.getName(), heroConfig.getClassName());
   }
 
-  public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final String name, final String className) {
+  public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final Constant.Hero name, final Constant.Clazz className) {
 
     return new Hero() {
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -45,16 +45,16 @@ public class HeroFactory {
 
       @Override
       public String getCardName() {
-        return name;
+        return name.toString();
       }
 
       @Override
-      public String getType() {
-        return Constant.HERO;
+      public Constant.Type getType() {
+        return Constant.Type.HERO;
       }
 
       @Override
-      public String getClassName() {
+      public Constant.Clazz getClassName() {
         return className;
       }
 

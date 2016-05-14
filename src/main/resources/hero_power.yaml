@@ -1,42 +1,52 @@
-- name: ArmorUp
+- name: armor_up
+  display: Armor up
   class: Warrior
   crystal: 2
+  type: hero_power
   actions:
     - effect: attribute
       type: armor
       value: 2
       target: [hero]
 
-- name: DaggerMastery
+- name: dagger_mastery
+  display: Dagger Mastery
   class: Rogue
   crystal: 2
+  type: hero_power
   actions:
     - effect: weapon
-      type: WickedBlade
+      type: wicked_blade
       value: 1
       target: [hero]
 
-- name: FireBlast
+- name: fire_blast
+  display: Fire Blast
   class: Mage
   crystal: 2
+  type: hero_power
   actions:
     - effect: attribute
       type: health
       value: -1
       target: [hero, minion]
 
-- name: LesserHeal
+- name: lesser_heal
+  display: Lesser Heal
   class: Priest
   crystal: 2
+  type: hero_power
   actions:
     - effect: attribute
       type: health
       value: 2
       target: [hero, minion]
 
-- name: LifeTap
+- name: life_tap
+  display: Life Tap
   class: Warlock
   crystal: 2
+  type: hero_power
   actions:
     - effect: attribute
       type: health
@@ -47,19 +57,23 @@
       value: 1
       target: [deck]
 
-- name: Reinforce
+- name: reinforce
+  display: Reinforce
   class: Paladin
   crystal: 2
+  type: hero_power
   actions:
     - effect: summon
       type: minion
       value: 1
-      target: [SilverHandRecruit]
+      target: [silver_hand_recruit]
       unique: false
 
-- name: Shapeshift
+- name: shapeshift
+  display: Shapeshift
   class: Druid
   crystal: 2
+  type: hero_power
   actions:
     - effect: attribute
       type: attack
@@ -71,21 +85,25 @@
       value: 1
       target: [hero]
 
-- name: SteadyShot
+- name: steady_shot
+  display: SteadyShot
   class: Hunter
   crystal: 2
+  type: hero_power
   actions:
     - effect: attribute
       type: health
       value: -2
       target: [enemy_hero]
 
-- name: TotemicCall
+- name: totemic_call
+  display: TotemicCall
   class: Shaman
   crystal: 2
+  type: hero_power
   actions:
     - effect: summon
       type: minion
       value: 1
-      target: [HealingTotem, SearingTotem, WrathOfAirTotem, StoneclawTotem]
+      target: [healing_totem, searing_totem, wrath_of_air_totem, stoneclaw_totem]
       unique: true
