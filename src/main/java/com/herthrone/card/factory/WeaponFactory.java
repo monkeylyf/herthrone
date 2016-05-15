@@ -1,9 +1,11 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.Constant;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.WeaponConfig;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstType;
+import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
 import com.herthrone.stats.IntAttribute;
 
@@ -20,7 +22,7 @@ public class WeaponFactory {
     this.battlefield = battlefield;
   }
 
-  public Weapon createWeaponByName(final Constant.Weapon weapon) {
+  public Weapon createWeaponByName(final ConstWeapon weapon) {
     try {
       WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
       return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
@@ -30,7 +32,7 @@ public class WeaponFactory {
     }
   }
 
-  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final Constant.Weapon name, final Constant.Clazz className, final boolean isCollectible) {
+  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final ConstWeapon name, final ConstClass className, final boolean isCollectible) {
 
     return new Weapon() {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
@@ -43,12 +45,12 @@ public class WeaponFactory {
       }
 
       @Override
-      public Constant.Type getType() {
-        return Constant.Type.WEAPON;
+      public ConstType getType() {
+        return ConstType.WEAPON;
       }
 
       @Override
-      public Constant.Clazz getClassName() {
+      public ConstClass getClassName() {
         return className;
       }
 

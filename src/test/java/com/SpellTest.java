@@ -1,6 +1,5 @@
 package com;
 
-import com.herthrone.Constant;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
@@ -9,6 +8,10 @@ import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
+import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstHeroPower;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSpell;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
@@ -42,7 +45,7 @@ public class SpellTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(Constant.Hero.GARROSH_HELLSCREAM, Constant.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.battlefield1 = this.gm.getBattlefield1();
@@ -53,13 +56,13 @@ public class SpellTest extends TestCase {
     this.effectFactory1 = this.gm.factory1.effectFactory;
     this.effectFactory2 = this.gm.factory2.effectFactory;
 
-    this.yetiConfig = ConfigLoader.getMinionConfigByName(Constant.Minion.CHILLWIND_YETI);
-    this.minion = this.minionFactory1.createMinionByName(Constant.Minion.CHILLWIND_YETI);
+    this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
+    this.minion = this.minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
   }
 
   @Test
   public void testFireBall() throws FileNotFoundException {
-    Spell fireBall = this.gm.factory1.spellFactory.createSpellByName(Constant.Spell.FIRE_BALL);
+    Spell fireBall = this.gm.factory1.spellFactory.createSpellByName(ConstSpell.FIRE_BALL);
 
     this.effectFactory1.getActionsByConfig(fireBall, this.minion).stream().forEach(action -> action.act());
     assertEquals(this.yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue(), this.minion.getHealthAttr().getVal());
@@ -69,7 +72,7 @@ public class SpellTest extends TestCase {
   @Test
   public void testArmorUp() throws FileNotFoundException {
     assertEquals(0, this.hero1.getArmorAttr().getVal());
-    Spell armorUp = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.ARMOR_UP);
+    Spell armorUp = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.ARMOR_UP);
 
     assertEquals(0, this.hero1.getArmorAttr().getVal());
     this.effectFactory1.getActionsByConfig(armorUp, this.hero1).stream().forEach(action -> action.act());
@@ -78,7 +81,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testLesserHeal() throws FileNotFoundException {
-    Spell lesserHeal = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.LESSER_HEAL);
+    Spell lesserHeal = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.LESSER_HEAL);
     assertEquals(0, this.hero1.getHealthLoss());
     final int largeDamage = 5;
     final int healVol = lesserHeal.getEffects().get(0).getValue();
@@ -96,7 +99,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testFireBlast() throws FileNotFoundException {
-    Spell fireBlast = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.FIRE_BLAST);
+    Spell fireBlast = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.FIRE_BLAST);
     final int damage = fireBlast.getEffects().get(0).getValue();
     assertEquals(0, this.hero2.getHealthLoss());
 
@@ -109,7 +112,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testSteadyShot() throws FileNotFoundException {
-    Spell steadyShot = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.STEADY_SHOT);
+    Spell steadyShot = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.STEADY_SHOT);
 
     final int damage = steadyShot.getEffects().get(0).getValue();
     assertEquals(0, this.hero2.getHealthLoss());
@@ -123,7 +126,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testShapeshift() throws FileNotFoundException {
-    Spell shapeshift = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.SHAPESHIFT);
+    Spell shapeshift = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.SHAPESHIFT);
     final int attack = shapeshift.getEffects().get(0).getValue();
     final int armor = shapeshift.getEffects().get(1).getValue();
 
@@ -142,7 +145,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testDaggerMastery() throws FileNotFoundException {
-    Spell daggerMastery = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.DAGGER_MASTERY);
+    Spell daggerMastery = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.DAGGER_MASTERY);
     assertFalse(this.hero1.canDamage());
     this.effectFactory1.getActionsByConfig(daggerMastery, this.hero1).stream().forEach(action -> action.act());
     assertTrue(this.hero1.canDamage());
@@ -153,7 +156,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testReinforce() throws FileNotFoundException {
-    Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.REINFORCE);
+    Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.REINFORCE);
     assertEquals(0, this.battlefield1.getMySide().getBoard().size());
     this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(action -> action.act());
     assertEquals(1, this.battlefield1.getMySide().getBoard().size());
@@ -161,7 +164,7 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testTotemicCall() throws FileNotFoundException {
-    Spell totemicCall = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.TOTEMIC_CALL);
+    Spell totemicCall = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.TOTEMIC_CALL);
     final int size = totemicCall.getEffects().get(0).getTarget().size();
 
     for (int i = 0; i < size; ++i) {
@@ -175,8 +178,8 @@ public class SpellTest extends TestCase {
 
   @Test
   public void testLifeTap() throws FileNotFoundException {
-    final Spell lifeTap = this.gm.factory1.spellFactory.createHeroPowerByName(Constant.HeroPower.LIFE_TAP);
-    final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(Constant.Minion.CHILLWIND_YETI);
+    final Spell lifeTap = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.LIFE_TAP);
+    final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     final int damage = -lifeTap.getEffects().get(0).getValue();
 
     final Container<BaseCard> hand = this.battlefield1.getMySide().getHand();

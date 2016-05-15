@@ -1,11 +1,13 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.Constant;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstType;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
@@ -22,12 +24,12 @@ public class HeroFactory {
   public static final int ARMOR = 0;
   public static final int CRYSTAL_MANA_COST = 0;
 
-  public static Hero createHeroByName(final Constant.Hero hero) throws FileNotFoundException {
+  public static Hero createHeroByName(final ConstHero hero) throws FileNotFoundException {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
     return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, heroConfig.getName(), heroConfig.getClassName());
   }
 
-  public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final Constant.Hero name, final Constant.Clazz className) {
+  public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final ConstHero name, final ConstClass className) {
 
     return new Hero() {
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -49,12 +51,12 @@ public class HeroFactory {
       }
 
       @Override
-      public Constant.Type getType() {
-        return Constant.Type.HERO;
+      public ConstType getType() {
+        return ConstType.HERO;
       }
 
       @Override
-      public Constant.Clazz getClassName() {
+      public ConstClass getClassName() {
         return className;
       }
 

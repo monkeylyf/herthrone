@@ -1,25 +1,28 @@
 package com.herthrone.configuration;
 
 
-import com.herthrone.Constant;
+import com.herthrone.constant.Constant;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstType;
+import com.herthrone.constant.ConstWeapon;
 
 import java.util.Map;
 
 /**
  * Created by yifeng on 4/12/16.
  */
-public class WeaponConfig implements BaseConfig<Constant.Weapon> {
+public class WeaponConfig implements BaseConfig<ConstWeapon> {
 
-  private final Constant.Weapon name;
-  private final Constant.Clazz className;
+  private final ConstWeapon name;
+  private final ConstClass className;
   private final int attack;
   private final int durability;
   private final int crystal;
   private final boolean collectible;
 
   public WeaponConfig(Map map) {
-    this.name = Constant.Weapon.valueOf(Constant.upperCaseValue(map, "name"));
-    this.className = Constant.Clazz.valueOf(Constant.upperCaseValue(map, "class"));
+    this.name = ConstWeapon.valueOf(Constant.upperCaseValue(map, "name"));
+    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, "class"));
     this.attack = (int) map.get("attack");
     this.durability = (int) map.get("durability");
     this.crystal = (int) map.get("crystal");
@@ -35,18 +38,18 @@ public class WeaponConfig implements BaseConfig<Constant.Weapon> {
   }
 
   @Override
-  public Constant.Weapon getName() {
+  public ConstWeapon getName() {
     return this.name;
   }
 
   @Override
-  public Constant.Clazz getClassName() {
+  public ConstClass getClassName() {
     return this.className;
   }
 
   @Override
-  public Constant.Type getType() {
-    return Constant.Type.WEAPON;
+  public ConstType getType() {
+    return ConstType.WEAPON;
   }
 
   @Override

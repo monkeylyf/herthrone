@@ -2,7 +2,7 @@ package com.herthrone.configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.herthrone.Constant;
+import com.herthrone.constant.*;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -70,23 +70,23 @@ public class ConfigLoader {
     return noneVolatileResource;
   }
 
-  public static MinionConfig getMinionConfigByName(final Constant.Minion minion) throws FileNotFoundException {
+  public static MinionConfig getMinionConfigByName(final ConstMinion minion) throws FileNotFoundException {
     return cardConfigLoader.getConfigurations().get(minion.toString());
   }
 
-  public static HeroConfig getHeroConfigByName(final Constant.Hero hero) throws FileNotFoundException {
+  public static HeroConfig getHeroConfigByName(final ConstHero hero) throws FileNotFoundException {
     return heroConfigLoader.getConfigurations().get(hero.toString());
   }
 
-  public static SpellConfig getSpellConfigByName(final Constant.Spell spell) throws FileNotFoundException {
+  public static SpellConfig getSpellConfigByName(final ConstSpell spell) throws FileNotFoundException {
     return spellConfigLoader.getConfigurations().get(spell.toString());
   }
 
-  public static SpellConfig getHeroPowerConfigByName(final Constant.HeroPower heroPower) throws FileNotFoundException {
+  public static SpellConfig getHeroPowerConfigByName(final ConstHeroPower heroPower) throws FileNotFoundException {
     return heroPowerConfigLoader.getConfigurations().get(heroPower.toString());
   }
 
-  public static WeaponConfig getWeaponConfigByName(final Constant.Weapon weapon) throws FileNotFoundException {
+  public static WeaponConfig getWeaponConfigByName(final ConstWeapon weapon) throws FileNotFoundException {
     return weaponConfigLoader.getConfigurations().get(weapon.toString());
   }
 

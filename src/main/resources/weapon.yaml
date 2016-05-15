@@ -14,7 +14,7 @@
   crystal: 2
 
 - name: truesilver_champion
-  name: TruesilverChampion
+  display: TruesilverChampion
   attack: 4
   durability: 2
   actions:

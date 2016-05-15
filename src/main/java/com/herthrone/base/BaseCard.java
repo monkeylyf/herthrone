@@ -1,6 +1,7 @@
 package com.herthrone.base;
 
-import com.herthrone.Constant;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstType;
 import com.herthrone.stats.IntAttribute;
 
 /**
@@ -11,9 +12,9 @@ public interface BaseCard {
 
   String getCardName();
 
-  Constant.Type getType();
+  ConstType getType();
 
-  Constant.Clazz getClassName();
+  ConstClass getClassName();
 
   IntAttribute getCrystalManaCost();
 

@@ -1,10 +1,13 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.Constant;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstHeroPower;
+import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstType;
 import com.herthrone.stats.IntAttribute;
 
 import java.io.FileNotFoundException;
@@ -21,17 +24,17 @@ public class SpellFactory {
     this.effectFactory = effectFactory;
   }
 
-  public Spell createSpellByName(final Constant.Spell spell) throws FileNotFoundException {
+  public Spell createSpellByName(final ConstSpell spell) throws FileNotFoundException {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
     return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 
-  public Spell createHeroPowerByName(final Constant.HeroPower heroPower) throws FileNotFoundException {
+  public Spell createHeroPowerByName(final ConstHeroPower heroPower) throws FileNotFoundException {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
     return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 
-  public Spell createSpell(final Constant.Spell name, final Constant.Clazz className, final int crystal, final Constant.Type type, final List<EffectConfig> effects) {
+  public Spell createSpell(final ConstSpell name, final ConstClass className, final int crystal, final ConstType type, final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
@@ -47,12 +50,12 @@ public class SpellFactory {
       }
 
       @Override
-      public Constant.Type getType() {
+      public ConstType getType() {
         return type;
       }
 
       @Override
-      public Constant.Clazz getClassName() {
+      public ConstClass getClassName() {
         return className;
       }
 

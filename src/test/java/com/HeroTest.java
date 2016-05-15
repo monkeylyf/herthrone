@@ -1,6 +1,5 @@
 package com;
 
-import com.herthrone.Constant;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
@@ -9,6 +8,7 @@ import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
+import com.herthrone.constant.*;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -49,7 +49,7 @@ public class HeroTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(Constant.Hero.GARROSH_HELLSCREAM, Constant.Hero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.getHero1();
     this.hero2 = this.gm.getHero2();
     this.battlefield1 = this.gm.getBattlefield1();
@@ -60,10 +60,10 @@ public class HeroTest extends TestCase {
     this.effectFactory1 = this.gm.factory1.effectFactory;
     this.effectFactory2 = this.gm.factory2.effectFactory;
 
-    this.armorUp = ConfigLoader.getHeroPowerConfigByName(Constant.HeroPower.ARMOR_UP);
+    this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstHeroPower.ARMOR_UP);
 
-    this.weapon1 = this.gm.factory1.weaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, Constant.Weapon.FIERY_WAR_AXE, Constant.Clazz.WARRIOR, true);
-    this.weapon2 = this.gm.factory2.weaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, Constant.Weapon.FIERY_WAR_AXE, Constant.Clazz.WARRIOR, true);
+    this.weapon1 = this.gm.factory1.weaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
+    this.weapon2 = this.gm.factory2.weaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
   }
 
   @Test
@@ -163,7 +163,7 @@ public class HeroTest extends TestCase {
   @Test
   public void testHeroAttackMinion() {
     this.hero1.arm(this.weapon1);
-    Minion yeti = this.minionFactory2.createMinionByName(Constant.Minion.CHILLWIND_YETI);
+    Minion yeti = this.minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
     this.gm.factory1.attackFactory.getPhysicalDamageAction(yeti, this.hero1).act();
     assertEquals(0, yeti.getHealthLoss());
@@ -173,7 +173,7 @@ public class HeroTest extends TestCase {
   @Test
   public void testMinionAttackHero() {
     this.hero1.arm(this.weapon1);
-    Minion yeti = this.minionFactory2.createMinionByName(Constant.Minion.CHILLWIND_YETI);
+    Minion yeti = this.minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
     this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, yeti).act();
 
     assertEquals(this.weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());

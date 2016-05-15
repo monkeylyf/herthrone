@@ -1,7 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.Constant;
+import com.herthrone.constant.Constant;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
@@ -9,6 +9,9 @@ import com.herthrone.base.Weapon;
 import com.herthrone.card.action.*;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
+import com.herthrone.constant.ConstEffectType;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.Side;
 import com.herthrone.stats.IntAttribute;
@@ -48,17 +51,17 @@ public class EffectFactory {
   }
 
   public Action getActionsByConfig(final EffectConfig config, final Minion minion) {
-    final String effect = config.getEffect();
+    ConstEffectType effect = config.getEffect();
     switch (effect) {
-      case Constant.ATTRIBUTE:
+      case ATTRIBUTE:
         return getAttributeAction(config, minion);
-      case Constant.WEAPON:
+      case WEAPON:
         Preconditions.checkArgument(minion instanceof Hero, "Only hero can equip weapon, not " + minion.getType());
         final Hero hero = (Hero) minion;
         return getEquipWeaponAction(hero, config);
-      case Constant.SUMMON:
+      case SUMMON:
         return getSummonAction(config);
-      case Constant.DRAW:
+      case DRAW:
         return getDrawCardAction(config);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
@@ -99,7 +102,7 @@ public class EffectFactory {
 
   private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
-    final Constant.Weapon weapon = Constant.Weapon.valueOf(weaponName.toUpperCase());
+    final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
     Weapon weaponInstance = this.weaponFactory.createWeaponByName(weapon);
     return new EquipWeaponEffect(hero, weaponInstance);
   }
@@ -119,7 +122,7 @@ public class EffectFactory {
       }
     }
     final String summonTargetName = summonTargets.get(index);
-    final Constant.Minion summonTarget = Constant.Minion.valueOf(summonTargetName);
+    final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
     final Minion minion = this.minionFactory.createMinionByName(summonTarget);
     return new SummonEffect(this.mySide.getBoard(), minion);
   }

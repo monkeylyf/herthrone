@@ -1,9 +1,11 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.Constant;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstType;
 import com.herthrone.game.Battlefield;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
@@ -21,7 +23,7 @@ public class MinionFactory {
     this.battlefield = battlefield;
   }
 
-  public Minion createMinionByName(final Constant.Minion minion) {
+  public Minion createMinionByName(final ConstMinion minion) {
     try {
       MinionConfig config = ConfigLoader.getMinionConfigByName(minion);
       return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
@@ -31,11 +33,11 @@ public class MinionFactory {
     }
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final Constant.Clazz className, final Constant.Minion name, final boolean isCollectible) {
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible) {
     return createMinion(health, attack, crystalManaCost, className, name, isCollectible, this.battlefield);
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final Constant.Clazz className, final Constant.Minion name, final boolean isCollectible, final Battlefield field) {
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible, final Battlefield field) {
     return new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -55,12 +57,12 @@ public class MinionFactory {
       }
 
       @Override
-      public Constant.Type getType() {
-        return Constant.Type.MINION;
+      public ConstType getType() {
+        return ConstType.MINION;
       }
 
       @Override
-      public Constant.Clazz getClassName() {
+      public ConstClass getClassName() {
         return className;
       }
 

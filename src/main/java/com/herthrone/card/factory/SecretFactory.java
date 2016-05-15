@@ -1,7 +1,8 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.Constant;
 import com.herthrone.base.Secret;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstType;
 import com.herthrone.game.Battlefield;
 import com.herthrone.stats.IntAttribute;
 
@@ -25,12 +26,12 @@ public class SecretFactory {
       }
 
       @Override
-      public Constant.Type getType() {
-        return Constant.Type.SECRET;
+      public ConstType getType() {
+        return ConstType.SECRET;
       }
 
       @Override
-      public Constant.Clazz getClassName() {
+      public ConstClass getClassName() {
         return null;
       }
 

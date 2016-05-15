@@ -1,6 +1,5 @@
 package com.herthrone.base;
 
-import com.herthrone.Constant;
 import com.herthrone.stats.IntAttribute;
 import junit.framework.TestCase;
 

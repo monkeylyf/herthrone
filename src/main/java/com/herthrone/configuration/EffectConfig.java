@@ -1,5 +1,8 @@
 package com.herthrone.configuration;
 
+import com.herthrone.constant.Constant;
+import com.herthrone.constant.ConstEffectType;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +11,7 @@ import java.util.Map;
  */
 public class EffectConfig {
 
-  private final String effect;
+  private final ConstEffectType effect;
   private final String type;
   private final int value;
   private final List<String> target;
@@ -16,7 +19,7 @@ public class EffectConfig {
   private final boolean permanent;
 
   public EffectConfig(Map map) {
-    this.effect = (String) map.get("effect");
+    this.effect = ConstEffectType.valueOf(Constant.upperCaseValue(map, "effect"));
     this.type = (String) map.get("type");
     this.value = (int) map.get("value");
     this.target = (List) map.get("target");
@@ -24,7 +27,7 @@ public class EffectConfig {
     this.permanent = (map.containsKey("permanent")) ? (boolean) map.get("permanent") : false;
   }
 
-  public String getEffect() {
+  public ConstEffectType getEffect() {
     return this.effect;
   }
 

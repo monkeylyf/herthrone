@@ -1,16 +1,19 @@
 package com.herthrone.configuration;
 
-import com.herthrone.Constant;
+import com.herthrone.constant.Constant;
+import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstType;
 
 import java.util.Map;
 
 /**
  * Created by yifeng on 4/12/16.
  */
-public class MinionConfig implements BaseConfig <Constant.Minion> {
+public class MinionConfig implements BaseConfig <ConstMinion> {
 
-  private final Constant.Minion name;
-  private final Constant.Clazz className;
+  private final ConstMinion name;
+  private final ConstClass className;
   private final int attack;
   private final int health;
   private final int crystal;
@@ -18,8 +21,8 @@ public class MinionConfig implements BaseConfig <Constant.Minion> {
   private final boolean collectible;
 
   public MinionConfig(final Map map) {
-    this.name = Constant.Minion.valueOf(Constant.upperCaseValue(map, "name"));
-    this.className = Constant.Clazz.valueOf(Constant.upperCaseValue(map, "class"));
+    this.name = ConstMinion.valueOf(Constant.upperCaseValue(map, "name"));
+    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, "class"));
     this.attack = (int) map.get("attack");
     this.health = (int) map.get("health");
     this.crystal = (int) map.get("crystal");
@@ -44,18 +47,18 @@ public class MinionConfig implements BaseConfig <Constant.Minion> {
   }
 
   @Override
-  public Constant.Minion getName() {
+  public ConstMinion getName() {
     return this.name;
   }
 
   @Override
-  public Constant.Clazz getClassName() {
+  public ConstClass getClassName() {
     return this.className;
   }
 
   @Override
-  public Constant.Type getType() {
-    return Constant.Type.MINION;
+  public ConstType getType() {
+    return ConstType.MINION;
   }
 
   public boolean isCollectible() {
