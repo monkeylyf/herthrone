@@ -1,7 +1,6 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.constant.Constant;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
@@ -12,6 +11,7 @@ import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.Side;
 import com.herthrone.stats.IntAttribute;

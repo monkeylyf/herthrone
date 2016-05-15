@@ -1,10 +1,10 @@
 package com.herthrone.configuration;
 
 
-import com.herthrone.constant.Constant;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.constant.Constant;
 
 import java.util.Map;
 

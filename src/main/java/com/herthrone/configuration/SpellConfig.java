@@ -1,9 +1,9 @@
 package com.herthrone.configuration;
 
-import com.herthrone.constant.Constant;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
+import com.herthrone.constant.Constant;
 
 import java.util.ArrayList;
 import java.util.List;

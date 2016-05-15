@@ -15,10 +15,6 @@ public class MechanicConfig {
     this.mechanic = (String) map.get("name");
   }
 
-  public String getMechanic() {
-    return mechanic;
-  }
-
   public static Map<String, MechanicConfig> mechanicConfigFactory(Object configList) {
     final List<Map> configMaps = (List<Map>) configList;
     Map<String, MechanicConfig> configs = new HashMap<>();
@@ -27,6 +23,10 @@ public class MechanicConfig {
       configs.put(config.getMechanic(), config);
     }
     return configs;
+  }
+
+  public String getMechanic() {
+    return mechanic;
   }
 
 }

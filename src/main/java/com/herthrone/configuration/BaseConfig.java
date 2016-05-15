@@ -6,7 +6,7 @@ import com.herthrone.constant.ConstType;
 /**
  * Created by yifeng on 4/19/16.
  */
-public interface BaseConfig <T extends Enum<T>> {
+public interface BaseConfig<T extends Enum<T>> {
 
   T getName();
 

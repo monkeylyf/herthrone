@@ -19,7 +19,7 @@ public class Constant {
   public static final String HEALTH = "health";
   public static final String HEALTH_UPPER_BOUND = "health_upper_bound";
 
-  public static String upperCaseValue(final Map map,final String key) {
+  public static String upperCaseValue(final Map map, final String key) {
     final String value = (String) map.get(key);
     return value.toUpperCase();
   }
