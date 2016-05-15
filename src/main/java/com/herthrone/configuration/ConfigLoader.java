@@ -94,14 +94,6 @@ public class ConfigLoader {
     return ResourceBundle.getBundle("configuration");
   }
 
-  private static List<Object> loadYaml(final String configSignature) throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    final String configPath = String.format(ConfigLoader.pathTemplate, configSignature);
-    InputStream input = new FileInputStream(new File(configPath));
-    Iterator<Object> iterator = yaml.loadAll(input).iterator();
-    return (List) iterator.next();
-  }
-
   private abstract static class AbstractConfigLoader<T extends BaseConfig> {
     private volatile ImmutableMap<String, T> configs;
     private String configName;
@@ -113,7 +105,7 @@ public class ConfigLoader {
     abstract protected T createInstance(Map map);
 
     private ImmutableMap<String, T> loadConfiguration() throws FileNotFoundException {
-      List<Object> minions = loadYaml(configName);
+      List<Object> minions = loadYaml();
       ImmutableMap.Builder<String, T> builder = ImmutableMap.builder();
       for (Object object : minions) {
         Map map = (Map) object;
@@ -136,5 +128,12 @@ public class ConfigLoader {
       return config;
     }
 
+    private List<Object> loadYaml() throws FileNotFoundException {
+      Yaml yaml = new Yaml();
+      final String configPath = String.format(ConfigLoader.pathTemplate, this.configName);
+      InputStream input = new FileInputStream(new File(configPath));
+      Iterator<Object> iterator = yaml.loadAll(input).iterator();
+      return (List) iterator.next();
+    }
   }
 }
