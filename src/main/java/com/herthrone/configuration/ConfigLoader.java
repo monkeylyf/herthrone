@@ -2,7 +2,11 @@ package com.herthrone.configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.herthrone.constant.*;
+import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstHeroPower;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstWeapon;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;

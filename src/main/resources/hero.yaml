@@ -1,45 +1,45 @@
 - name: anduin_wrynn
   display: Anduin Wrynn
-  class: Priest
-  hero_power: LesserHeal
+  class: priest
+  hero_power: lesser_heal
   description: null
 - name: guldan
   display: Gul'dan
-  class: Warlock
-  hero_power: LifeTap
+  class: warlock
+  hero_power: life_tap
   description: null
 - name: jaina_proudmoore
   display: Jaina Proudmoore
-  class: Mage
-  hero_power: FireBlast
+  class: mage
+  hero_power: fire_blast
   description: null
 - name: malfurion_stormrage
   display: Malfurion Stormrage
-  class: Druid
-  hero_power: Shapeshift
+  class: druid
+  hero_power: shapeshift
   description: null
 - name: rexxar
   display: Rexxar
-  class: Hunter
-  hero_power: SteadyShot
+  class: hunter
+  hero_power: steady_shot
   description: null
 - name: thrall
   display: Thrall
-  class: Shaman
-  hero_power: TotemicCall
+  class: shaman
+  hero_power: totemic_call
   description: null
 - name: uther_lightbringer
   display: Uther Lightbringer
-  class: Paladin
-  hero_power: Reinforce
+  class: paladin
+  hero_power: reinforce
   description: null
 - name: valeera_sanguinar
   display: Valeera Sanguinar
-  class: Rogue
-  hero_power: DaggerMaster
+  class: rogue
+  hero_power: dagger_mastery
   description: null
 - name: garrosh_hellscream
   display: Garrosh Hellscream
-  class: Warrior
-  hero_power: ArmorUp
+  class: warrior
+  hero_power: armor_up
   description: null
