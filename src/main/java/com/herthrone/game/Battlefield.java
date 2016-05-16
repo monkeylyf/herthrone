@@ -1,34 +1,29 @@
 package com.herthrone.game;
 
 import com.herthrone.base.BaseCard;
-import com.herthrone.base.Hero;
-import com.herthrone.base.Minion;
-import com.herthrone.base.Secret;
+import com.herthrone.constant.ConstHero;
+
+import java.io.FileNotFoundException;
 
 /**
  * Created by yifeng on 4/2/16.
  */
 public class Battlefield {
 
-  private final Side mySide;
-  private final Side opponentSide;
+  public final Side mySide;
+  public final Side opponentSide;
 
-  public Battlefield(Hero hero1, Hero hero2, Container<BaseCard> hand1, Container<BaseCard> hand2, Container<BaseCard> deck1, Container<BaseCard> deck2, Container<Minion> board1, Container<Minion> board2, Container<Secret> secrets1, Container<Secret> secrets2) {
-    this.mySide = new Side(hero1, hand1, deck1, board1, secrets1);
-    this.opponentSide = new Side(hero2, hand2, deck2, board2, secrets2);
+  public Battlefield(final ConstHero hero1, final ConstHero hero2, final Container<BaseCard> deck1, final Container<BaseCard> deck2) throws FileNotFoundException {
+    this.mySide = new Side(hero1, deck1);
+    this.opponentSide = new Side(hero2, deck2);
   }
 
-  public Side getMySide() {
-    return this.mySide;
-  }
-
-  public Side getOpponentSide() {
-    return this.opponentSide;
+  private Battlefield(final Side mySide, final Side opponentSide) {
+    this.mySide = mySide;
+    this.opponentSide = opponentSide;
   }
 
   public Battlefield getMirrorBattlefield() {
-    return new Battlefield(this.opponentSide.getHero(), this.mySide.getHero(), this.opponentSide.getHand(), this.mySide.getHand(), this.opponentSide.getDeck(), this.mySide.getDeck(), this.opponentSide.getBoard(), this.mySide.getBoard(), this.opponentSide.getSecrets(), this.getMySide().getSecrets());
+    return new Battlefield(this.opponentSide, this.mySide);
   }
 }
-
-

@@ -45,9 +45,9 @@ public class SpellTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
-    this.hero1 = this.gm.getHero1();
-    this.hero2 = this.gm.getHero2();
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Container.emptyContainer(), Container.emptyContainer());
+    this.hero1 = this.gm.getBattlefield1().mySide.hero;
+    this.hero2 = this.gm.getBattlefield1().opponentSide.hero;
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 
@@ -157,9 +157,9 @@ public class SpellTest extends TestCase {
   @Test
   public void testReinforce() throws FileNotFoundException {
     Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.REINFORCE);
-    assertEquals(0, this.battlefield1.getMySide().getBoard().size());
+    assertEquals(0, this.battlefield1.mySide.minions.size());
     this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(action -> action.act());
-    assertEquals(1, this.battlefield1.getMySide().getBoard().size());
+    assertEquals(1, this.battlefield1.mySide.minions.size());
   }
 
   @Test
@@ -169,10 +169,10 @@ public class SpellTest extends TestCase {
 
     for (int i = 0; i < size; ++i) {
       this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(action -> action.act());
-      assertEquals(i + 1, this.battlefield1.getMySide().getBoard().size());
+      assertEquals(i + 1, this.battlefield1.mySide.minions.size());
     }
 
-    Set<String> totems = this.battlefield1.getMySide().getBoard().stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
+    Set<String> totems = this.battlefield1.mySide.minions.stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
     assertEquals(size, totems.size());
   }
 
@@ -182,8 +182,8 @@ public class SpellTest extends TestCase {
     final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     final int damage = -lifeTap.getEffects().get(0).getValue();
 
-    final Container<BaseCard> hand = this.battlefield1.getMySide().getHand();
-    final Container<BaseCard> deck = this.battlefield1.getMySide().getDeck();
+    final Container<BaseCard> hand = this.battlefield1.mySide.hand;
+    final Container<BaseCard> deck = this.battlefield1.mySide.deck;
 
     assertEquals(0, deck.size());
     deck.add(yeti);

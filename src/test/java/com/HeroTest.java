@@ -14,6 +14,7 @@ import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -53,9 +54,9 @@ public class HeroTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
-    this.hero1 = this.gm.getHero1();
-    this.hero2 = this.gm.getHero2();
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Container.emptyContainer(), Container.emptyContainer());
+    this.hero1 = this.gm.getBattlefield1().mySide.hero;
+    this.hero2 = this.gm.getBattlefield1().opponentSide.hero;
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 

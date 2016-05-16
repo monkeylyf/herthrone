@@ -21,14 +21,6 @@ import java.util.Collections;
  */
 public class MinionTest extends TestCase {
 
-  private Hero hero1;
-  private Hero hero2;
-  private Container<BaseCard> hand1;
-  private Container<BaseCard> hand2;
-  private Container<BaseCard> deck1;
-  private Container<BaseCard> deck2;
-  private Container<Minion> board1;
-  private Container<Minion> board2;
   private Battlefield battlefield1;
   private Battlefield battlefield2;
 
@@ -46,15 +38,7 @@ public class MinionTest extends TestCase {
 
   @Before
   public void setUp() throws FileNotFoundException {
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
-    this.hero1 = this.gm.getHero1();
-    this.hero2 = this.gm.getHero2();
-    this.hand1 = this.gm.getHand1();
-    this.hand2 = this.gm.getHand2();
-    this.deck1 = this.gm.getDeck1();
-    this.deck1 = this.gm.getDeck2();
-    this.board1 = this.gm.getBoard1();
-    this.board2 = this.gm.getBoard2();
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Container.emptyContainer(), Container.emptyContainer());
     this.battlefield1 = this.gm.getBattlefield1();
     this.battlefield2 = this.gm.getBattlefield2();
 

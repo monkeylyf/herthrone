@@ -30,16 +30,14 @@ import java.util.stream.Collectors;
  */
 public class EffectFactory {
 
-  private final Side mySide;
-  private final Side opponentSide;
+  private Battlefield battlefield;
   private final MinionFactory minionFactory;
   private final WeaponFactory weaponFactory;
 
   public EffectFactory(final MinionFactory minionFactory, final WeaponFactory weaponFactory, final Battlefield battlefield) {
     this.minionFactory = minionFactory;
     this.weaponFactory = weaponFactory;
-    this.mySide = battlefield.getMySide();
-    this.opponentSide = battlefield.getOpponentSide();
+    this.battlefield = battlefield;
   }
 
   public List<Action> getActionsByConfig(final Spell spell, final Minion minion) {
@@ -119,7 +117,7 @@ public class EffectFactory {
     if (size > 0) {
       final Random random = new Random();
       if (effect.isUnique()) {
-        List<String> uniqueMinionsOnBoard = this.mySide.getBoard().stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
+        List<String> uniqueMinionsOnBoard = this.battlefield.mySide.minions.stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
         summonTargets.removeAll(uniqueMinionsOnBoard);
       } else {
         index = random.nextInt(size);
@@ -128,12 +126,12 @@ public class EffectFactory {
     final String summonTargetName = summonTargets.get(index);
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
     final Minion minion = this.minionFactory.createMinionByName(summonTarget);
-    return new SummonEffect(this.mySide.getBoard(), minion);
+    return new SummonEffect(this.battlefield.mySide.minions, minion);
   }
 
   private Action getDrawCardAction(final EffectConfig effect) {
     // TODO: draw from own deck/opponent deck/opponent hand
-    return new MoveCardEffect(this.mySide.getHand(), this.mySide.getDeck());
+    return new MoveCardEffect(this.battlefield.mySide.hand, this.battlefield.mySide.deck);
   }
 
   public ActionFactory getDivineShieldStatusActionGenerator(final int index) {
@@ -191,9 +189,9 @@ public class EffectFactory {
   private Minion getMinionByIndex(final int index) {
     switch (index) {
       case -1:
-        return this.mySide.getHero();
+        return this.battlefield.mySide.hero;
       default:
-        return this.mySide.getBoard().get(index);
+        return this.battlefield.mySide.minions.get(index);
     }
   }
 }
