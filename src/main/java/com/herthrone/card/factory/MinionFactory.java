@@ -10,7 +10,6 @@ import com.herthrone.game.Battlefield;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
-import java.io.FileNotFoundException;
 
 /**
  * Created by yifeng on 4/13/16.
@@ -24,13 +23,8 @@ public class MinionFactory {
   }
 
   public Minion createMinionByName(final ConstMinion minion) {
-    try {
-      MinionConfig config = ConfigLoader.getMinionConfigByName(minion);
-      return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      return null;
-    }
+    MinionConfig config = ConfigLoader.getMinionConfigByName(minion);
+    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible) {

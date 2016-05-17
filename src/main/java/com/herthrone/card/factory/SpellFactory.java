@@ -10,7 +10,6 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.stats.IntAttribute;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -24,12 +23,12 @@ public class SpellFactory {
     this.effectFactory = effectFactory;
   }
 
-  public Spell createSpellByName(final ConstSpell spell) throws FileNotFoundException {
+  public Spell createSpellByName(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
     return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }
 
-  public Spell createHeroPowerByName(final ConstHeroPower heroPower) throws FileNotFoundException {
+  public Spell createHeroPowerByName(final ConstHeroPower heroPower) {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
     return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getEffects());
   }

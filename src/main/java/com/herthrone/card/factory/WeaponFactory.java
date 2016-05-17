@@ -9,8 +9,6 @@ import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
 import com.herthrone.stats.IntAttribute;
 
-import java.io.FileNotFoundException;
-
 /**
  * Created by yifeng on 4/8/16.
  */
@@ -23,13 +21,8 @@ public class WeaponFactory {
   }
 
   public Weapon createWeaponByName(final ConstWeapon weapon) {
-    try {
-      WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
-      return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      return null;
-    }
+    WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
+    return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
   }
 
   public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final ConstWeapon name, final ConstClass className, final boolean isCollectible) {

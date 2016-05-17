@@ -13,9 +13,6 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-import java.util.Collections;
-
 /**
  * Created by yifeng on 4/15/16.
  */
@@ -37,10 +34,10 @@ public class MinionTest extends TestCase {
   private GameManager gm;
 
   @Before
-  public void setUp() throws FileNotFoundException {
+  public void setUp() {
     this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Container.emptyContainer(), Container.emptyContainer());
-    this.battlefield1 = this.gm.getBattlefield1();
-    this.battlefield2 = this.gm.getBattlefield2();
+    this.battlefield1 = this.gm.battlefield1;
+    this.battlefield2 = this.gm.battlefield2;
 
     this.minionFactory1 = this.gm.factory1.minionFactory;
     this.minionFactory2 = this.gm.factory2.minionFactory;
@@ -54,7 +51,7 @@ public class MinionTest extends TestCase {
   }
 
   @Test
-  public void testMinionStats() throws FileNotFoundException {
+  public void testMinionStats() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
     assertEquals(config.getHealth(), this.minion1.getHealthAttr().getVal());
     assertEquals(config.getHealth(), this.minion2.getHealthAttr().getVal());

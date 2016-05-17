@@ -9,8 +9,6 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.stats.Crystal;
 
-import java.io.FileNotFoundException;
-
 /**
  * Created by yifeng on 4/14/16.
  */
@@ -22,7 +20,7 @@ public class Side {
   public final Container<Secret> secrets;
   public final Crystal crystal;
 
-  public Side(final ConstHero hero, final Container<BaseCard> deck) throws FileNotFoundException {
+  public Side(final ConstHero hero, final Container<BaseCard> deck) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
     this.hero = HeroFactory.createHeroByName(hero);

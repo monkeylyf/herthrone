@@ -31,6 +31,10 @@ public class Factory {
     this.attackFactory = new AttackFactory(battlefield);
   }
 
+  public BaseCard createCardInstance(final String cardName) {
+    return null;
+  }
+
   public static List<Action> singleActionToList(Action action) {
     return Arrays.asList(action);
   }

@@ -17,7 +17,6 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Side;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.ArrayList;

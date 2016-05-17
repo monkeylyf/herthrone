@@ -11,7 +11,6 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
-import java.io.FileNotFoundException;
 import java.util.Optional;
 
 /**
@@ -24,7 +23,7 @@ public class HeroFactory {
   public static final int ARMOR = 0;
   public static final int CRYSTAL_MANA_COST = 0;
 
-  public static Hero createHeroByName(final ConstHero hero) throws FileNotFoundException {
+  public static Hero createHeroByName(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
     return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, heroConfig.getName(), heroConfig.getClassName());
   }

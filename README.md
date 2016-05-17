@@ -47,6 +47,7 @@ TODO
 - Windfury
 
 7. Add logger object.
+8. Use google.true for unit tests so they can be more readable I guess.
 
 -----------
 In Progress

@@ -20,9 +20,6 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-import java.util.Collections;
-
 /**
  * Created by yifeng on 4/4/16.
  */
@@ -53,12 +50,12 @@ public class HeroTest extends TestCase {
   private GameManager gm;
 
   @Before
-  public void setUp() throws FileNotFoundException {
+  public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Container.emptyContainer(), Container.emptyContainer());
-    this.hero1 = this.gm.getBattlefield1().mySide.hero;
-    this.hero2 = this.gm.getBattlefield1().opponentSide.hero;
-    this.battlefield1 = this.gm.getBattlefield1();
-    this.battlefield2 = this.gm.getBattlefield2();
+    this.hero1 = this.gm.battlefield1.mySide.hero;
+    this.hero2 = this.gm.battlefield1.opponentSide.hero;
+    this.battlefield1 = this.gm.battlefield1;
+    this.battlefield2 = this.gm.battlefield2;
 
     this.minionFactory1 = this.gm.factory1.minionFactory;
     this.minionFactory2 = this.gm.factory2.minionFactory;
