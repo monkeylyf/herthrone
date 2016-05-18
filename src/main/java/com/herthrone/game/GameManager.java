@@ -4,12 +4,14 @@ import com.herthrone.base.BaseCard;
 import com.herthrone.base.Minion;
 import com.herthrone.card.factory.Action;
 import com.herthrone.card.factory.Factory;
+import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 /**
  * Created by yifeng on 4/14/16.
@@ -22,15 +24,24 @@ public class GameManager {
   public final Battlefield battlefield2;
   private final Queue<Action> actionQueue;
 
-  public GameManager(final ConstHero hero1, final ConstHero hero2, final Container<BaseCard> deck1, final Container<BaseCard> deck2) {
+  public GameManager(final ConstHero hero1, final ConstHero hero2, final List<String> cardNames1, final List<String> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
-    this.battlefield1 = new Battlefield(hero1, hero2, deck1, deck2);
+    this.battlefield1 = new Battlefield(hero1, hero2);
     this.battlefield2 = this.battlefield1.getMirrorBattlefield();
     this.factory1 = new Factory(this.battlefield1);
     this.factory2 = new Factory(this.battlefield2);
 
-    final List<String> deck = new ArrayList<>();
+    final List<BaseCard> cards1 = generateDeck(cardNames1, this.factory1);
+    final List<BaseCard> cards2 = generateDeck(cardNames1, this.factory2);
+
+    this.battlefield1.mySide.populateDeck(cards1);
+    this.battlefield2.mySide.populateDeck(cards2);
+
     this.actionQueue = new LinkedList<>();
+  }
+
+  private static List<BaseCard> generateDeck(final List<String> cardNames, final Factory factory) {
+    return cardNames.stream().map(cardName -> factory.createCardInstance(cardName)).collect(Collectors.toList());
   }
 
   public void playCard(final Battlefield battlefield, final int index) {

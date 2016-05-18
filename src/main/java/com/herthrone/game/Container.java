@@ -96,7 +96,4 @@ public class Container<T extends BaseCard> {
     return this.container.size();
   }
 
-  public static Container emptyContainer() {
-    return new Container();
-  }
 }

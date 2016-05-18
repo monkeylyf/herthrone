@@ -14,11 +14,12 @@ import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 /**
  * Created by yifeng on 4/4/16.
@@ -51,7 +52,7 @@ public class HeroTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Container.emptyContainer(), Container.emptyContainer());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.battlefield1.mySide.hero;
     this.hero2 = this.gm.battlefield1.opponentSide.hero;
     this.battlefield1 = this.gm.battlefield1;

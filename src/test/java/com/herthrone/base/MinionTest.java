@@ -13,6 +13,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
+
 /**
  * Created by yifeng on 4/15/16.
  */
@@ -35,7 +37,7 @@ public class MinionTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Container.emptyContainer(), Container.emptyContainer());
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
     this.battlefield1 = this.gm.battlefield1;
     this.battlefield2 = this.gm.battlefield2;
 

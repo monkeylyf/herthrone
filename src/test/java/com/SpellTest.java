@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class SpellTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Container.emptyContainer(), Container.emptyContainer());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = this.gm.battlefield1.mySide.hero;
     this.hero2 = this.gm.battlefield1.opponentSide.hero;
     this.battlefield1 = this.gm.battlefield1;
