@@ -4,14 +4,14 @@ import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
-import com.herthrone.card.factory.Factory;
+import com.herthrone.base.Spell;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.stats.Crystal;
+import com.herthrone.stats.IntAttribute;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by yifeng on 4/14/16.
@@ -23,23 +23,32 @@ public class Side {
   public final Container<Minion> minions;
   public final Container<Secret> secrets;
   public final Crystal crystal;
+  public final IntAttribute heroPowerMovePoints;
 
-  public Side(final ConstHero hero) {
+  public Spell heroPower;
+
+  public Side(final Hero hero) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
 
-    this.hero = HeroFactory.createHeroByName(hero);
+    this.hero = hero;
+    this.heroPower = null;
     this.hand = new Container<>(handCapacity);
     this.minions = new Container<>(boardCapacity);
     this.secrets = new Container<>();
     this.crystal = new Crystal();
 
     this.deck = new Container<>(deckCapacity);
+    this.heroPowerMovePoints = new IntAttribute(1);
   }
 
   public void populateDeck(final List<BaseCard> cards) {
     cards.stream().forEach(card -> this.deck.add(card));
+  }
+
+  public void setHeroPower(final Spell heroPower) {
+    this.heroPower = heroPower;
   }
 
 }

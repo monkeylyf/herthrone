@@ -6,6 +6,7 @@ import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
+import com.herthrone.card.factory.Action;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
@@ -65,7 +66,7 @@ public class SpellTest extends TestCase {
   public void testFireBall() {
     Spell fireBall = this.gm.factory1.spellFactory.createSpellByName(ConstSpell.FIRE_BALL);
 
-    this.effectFactory1.getActionsByConfig(fireBall, this.minion).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(fireBall, this.minion).stream().forEach(Action::act);
     assertThat(this.minion.getHealthAttr().getVal()).isEqualTo(this.yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
     assertTrue(this.minion.isDead());
   }
@@ -75,7 +76,7 @@ public class SpellTest extends TestCase {
     assertThat(this.hero1.getArmorAttr().getVal()).isEqualTo(0);
     Spell armorUp = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.ARMOR_UP);
 
-    this.effectFactory1.getActionsByConfig(armorUp, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(armorUp, this.hero1).stream().forEach(Action::act);
     assertThat(this.hero1.getArmorAttr().getVal()).isEqualTo(armorUp.getEffects().get(0).getValue());
   }
 
@@ -88,12 +89,12 @@ public class SpellTest extends TestCase {
     this.hero1.takeDamage(largeDamage);
     assertThat(this.hero1.getHealthLoss()).isEqualTo(largeDamage);
 
-    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(Action::act);
     assertThat(this.hero1.getHealthLoss()).isEqualTo(largeDamage - healVol);
-    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(Action::act);
     assertThat(this.hero1.getHealthLoss()).isEqualTo(largeDamage - healVol * 2);
     // Healing cannot exceed the health upper bound.
-    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(Action::act);
     assertThat(this.hero1.getHealthLoss()).isEqualTo(0);
   }
 
@@ -103,10 +104,10 @@ public class SpellTest extends TestCase {
     final int damage = fireBlast.getEffects().get(0).getValue();
     assertEquals(0, this.hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(Action::act);
     assertEquals(-damage, this.hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(Action::act);
     assertEquals(-damage * 2, this.hero2.getHealthLoss());
   }
 
@@ -117,10 +118,10 @@ public class SpellTest extends TestCase {
     final int damage = steadyShot.getEffects().get(0).getValue();
     assertEquals(0, this.hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(Action::act);
     assertEquals(-damage, this.hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(Action::act);
     assertEquals(-damage * 2, this.hero2.getHealthLoss());
   }
 
@@ -133,7 +134,7 @@ public class SpellTest extends TestCase {
     assertEquals(0, this.hero1.getAttackAttr().getVal());
     assertEquals(0, this.hero1.getArmorAttr().getVal());
 
-    this.effectFactory1.getActionsByConfig(shapeshift, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(shapeshift, this.hero1).stream().forEach(Action::act);
 
     assertEquals(attack, this.hero1.getAttackAttr().getVal());
     assertEquals(armor, this.hero1.getArmorAttr().getVal());
@@ -147,7 +148,7 @@ public class SpellTest extends TestCase {
   public void testDaggerMastery() {
     Spell daggerMastery = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.DAGGER_MASTERY);
     assertFalse(this.hero1.canDamage());
-    this.effectFactory1.getActionsByConfig(daggerMastery, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(daggerMastery, this.hero1).stream().forEach(Action::act);
     assertTrue(this.hero1.canDamage());
 
     this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
@@ -158,7 +159,7 @@ public class SpellTest extends TestCase {
   public void testReinforce() {
     Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.REINFORCE);
     assertEquals(0, this.battlefield1.mySide.minions.size());
-    this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(Action::act);
     assertEquals(1, this.battlefield1.mySide.minions.size());
   }
 
@@ -168,7 +169,7 @@ public class SpellTest extends TestCase {
     final int size = totemicCall.getEffects().get(0).getTarget().size();
 
     for (int i = 0; i < size; ++i) {
-      this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(action -> action.act());
+      this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(Action::act);
       assertEquals(i + 1, this.battlefield1.mySide.minions.size());
     }
 
@@ -191,7 +192,7 @@ public class SpellTest extends TestCase {
 
     assertEquals(0, hand.size());
     assertEquals(0, this.hero1.getHealthLoss());
-    this.effectFactory1.getActionsByConfig(lifeTap, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(lifeTap, this.hero1).stream().forEach(Action::act);
 
     assertEquals(1, hand.size());
     assertEquals(0, deck.size());

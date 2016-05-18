@@ -48,6 +48,7 @@ TODO
 
 7. Add logger object.
 8. Use google.true for unit tests so they can be more readable I guess.
+9. Define target scopes. For example, fireball can target all(enemy minions, enemy hero, minions on your own side, hero on your own side)
 
 -----------
 In Progress

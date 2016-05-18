@@ -96,4 +96,7 @@ public class Container<T extends BaseCard> {
     return this.container.size();
   }
 
+  public T remove(final int index) {
+    return this.container.remove(index);
+  }
 }

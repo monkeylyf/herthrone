@@ -3,6 +3,7 @@ package com;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
+import com.herthrone.card.factory.Action;
 import com.herthrone.card.factory.EffectFactory;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.card.factory.MinionFactory;
@@ -184,11 +185,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero1).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero1).stream().forEach(Action::act);
   }
 
   private void hero2ArmorUp() {
-    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero2).stream().forEach(action -> action.act());
+    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero2).stream().forEach(Action::act);
   }
 
   private void hero1AttackHero2() {
