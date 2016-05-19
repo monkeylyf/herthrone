@@ -23,7 +23,7 @@ public class Side {
   public final Crystal crystal;
   public final IntAttribute heroPowerMovePoints;
 
-  public int punish;
+  public int fatigue;
   public Spell heroPower;
 
   public Side(final Hero hero) {
@@ -41,7 +41,7 @@ public class Side {
     this.deck = new Container<>(deckCapacity);
     this.heroPowerMovePoints = new IntAttribute(1);
 
-    this.punish = 0;
+    this.fatigue = 0;
   }
 
   public void populateDeck(final List<BaseCard> cards) {

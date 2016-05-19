@@ -98,8 +98,8 @@ public class GameManager {
 
   void drawCard() {
     if (this.activeBattlefield.mySide.deck.isEmpty()) {
-      this.activeBattlefield.mySide.punish += 1;
-      this.activeBattlefield.mySide.hero.takeDamage(this.activeBattlefield.mySide.punish);
+      this.activeBattlefield.mySide.fatigue += 1;
+      this.activeBattlefield.mySide.hero.takeDamage(this.activeBattlefield.mySide.fatigue);
     } else {
       final BaseCard card = this.activeBattlefield.mySide.deck.top();
       this.activeBattlefield.mySide.hand.add(card);

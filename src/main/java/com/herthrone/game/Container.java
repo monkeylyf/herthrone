@@ -46,7 +46,11 @@ public class Container<T extends BaseCard> {
   }
 
   public void add(final T card) {
-    this.container.add(card);
+    if (isFull()) {
+      // TODO: logger needed here.
+    } else {
+      this.container.add(card);
+    }
   }
 
   public void add(final int index, final T card) {

@@ -1,6 +1,7 @@
 package com.herthrone.game;
 
 import com.herthrone.base.Minion;
+import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import org.junit.Before;
@@ -18,19 +19,20 @@ import static com.google.common.truth.Truth.assertThat;
 public class GameManagerTest {
 
   private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
+  private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+  private static final int HAND_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
 
   private GameManager gameManager;
   private ConstHero hero1 = ConstHero.ANDUIN_WRYNN;
   private ConstHero hero2 = ConstHero.JAINA_PROUDMOORE;
-  private final int deckSize = 10;
 
   private Side mySide;
   private Side opponentSide;
 
   @Before
   public void setUp() {
-    List<String> cards1 = Collections.nCopies(deckSize, MINION.toString());
-    List<String> cards2 = Collections.nCopies(deckSize, MINION.toString());
+    List<String> cards1 = Collections.nCopies(DECK_SIZE, MINION.toString());
+    List<String> cards2 = Collections.nCopies(DECK_SIZE, MINION.toString());
 
     gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
 
@@ -40,8 +42,8 @@ public class GameManagerTest {
 
   @Test
   public void testInitDeckSize() {
-    assertThat(mySide.deck.size()).isEqualTo(deckSize);
-    assertThat(opponentSide.deck.size()).isEqualTo(deckSize);
+    assertThat(mySide.deck.size()).isEqualTo(DECK_SIZE);
+    assertThat(opponentSide.deck.size()).isEqualTo(DECK_SIZE);
   }
 
   @Test
@@ -94,6 +96,38 @@ public class GameManagerTest {
     assertThat(mySide.hand.size()).isEqualTo(0);
     gameManager.drawCard();
     assertThat(mySide.hand.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void testOverdraw() {
+    assertThat(DECK_SIZE).isGreaterThan(HAND_SIZE);
+    while (!mySide.deck.isEmpty()) {
+      this.gameManager.drawCard();
+    }
+    assertThat(mySide.hand.size()).isEqualTo(HAND_SIZE);
+  }
+
+  @Test
+  public void testFatigue() {
+    while (!mySide.deck.isEmpty()) {
+      this.gameManager.drawCard();
+    }
+
+    assertThat(mySide.hero.getHealthLoss()).isEqualTo(0);
+    int damage = 0;
+    final int repeat = 10;
+    for (int i = 1; i <= repeat; ++i) {
+      final int healthBeforeDrawCard = mySide.hero.getHealthAttr().getVal();
+      this.gameManager.drawCard();
+      final int healthAfterDrawCard = mySide.hero.getHealthAttr().getVal();
+
+      assertThat(healthBeforeDrawCard - healthAfterDrawCard).isEqualTo(i);
+
+      damage += i;
+    }
+
+    assertThat(mySide.hero.getHealthLoss()).isEqualTo(damage);
+    assertThat(mySide.hero.isDead()).isTrue();
   }
 
   @Test
