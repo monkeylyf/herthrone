@@ -68,7 +68,7 @@ public class SpellTest extends TestCase {
 
     this.effectFactory1.getActionsByConfig(fireBall, this.minion).stream().forEach(Action::act);
     assertThat(this.minion.getHealthAttr().getVal()).isEqualTo(this.yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
-    assertTrue(this.minion.isDead());
+    assertThat(this.minion.isDead()).isTrue();
   }
 
   @Test
@@ -149,7 +149,7 @@ public class SpellTest extends TestCase {
     Spell daggerMastery = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.DAGGER_MASTERY);
     assertFalse(this.hero1.canDamage());
     this.effectFactory1.getActionsByConfig(daggerMastery, this.hero1).stream().forEach(Action::act);
-    assertTrue(this.hero1.canDamage());
+    assertThat(this.hero1.canDamage()).isTrue();
 
     this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
     assertEquals(daggerMastery.getEffects().get(0).getValue(), this.hero2.getHealthLoss());
@@ -158,22 +158,22 @@ public class SpellTest extends TestCase {
   @Test
   public void testReinforce() {
     Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.REINFORCE);
-    assertEquals(0, this.battlefield1.mySide.minions.size());
+    assertEquals(0, this.battlefield1.mySide.board.size());
     this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(Action::act);
-    assertEquals(1, this.battlefield1.mySide.minions.size());
+    assertEquals(1, this.battlefield1.mySide.board.size());
   }
 
   @Test
   public void testTotemicCall() {
     Spell totemicCall = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.TOTEMIC_CALL);
-    final int size = totemicCall.getEffects().get(0).getTarget().size();
+    final int size = totemicCall.getEffects().get(0).getChoices().size();
 
     for (int i = 0; i < size; ++i) {
       this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(Action::act);
-      assertEquals(i + 1, this.battlefield1.mySide.minions.size());
+      assertEquals(i + 1, this.battlefield1.mySide.board.size());
     }
 
-    Set<String> totems = this.battlefield1.mySide.minions.stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
+    Set<String> totems = this.battlefield1.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
     assertEquals(size, totems.size());
   }
 

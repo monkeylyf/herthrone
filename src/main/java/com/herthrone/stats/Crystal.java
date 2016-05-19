@@ -33,6 +33,18 @@ public class Crystal implements Round {
     this.crystalUpperBound = Math.min(this.crystalUpperBound + 1, Crystal.MAX_CRYSTALS);
   }
 
+  public int getCrystal() {
+    return this.crystal;
+  }
+
+  public int getCrystalUpperBound() {
+    return this.crystalUpperBound;
+  }
+
+  public int getLockedCrystal() {
+    return this.lockedCrystal;
+  }
+
   @Override
   public void nextRound() {
     increaseUpperBound();

@@ -1,7 +1,6 @@
 package com.herthrone.game;
 
 import com.herthrone.base.BaseCard;
-import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
@@ -13,7 +12,6 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstHero;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -83,7 +81,7 @@ public class GameManager {
 
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
-      this.activeBattlefield.mySide.minions.add(minion);
+      this.activeBattlefield.mySide.board.add(minion);
     } else if (card instanceof Secret) {
       Secret secret = (Secret) card;
       this.activeBattlefield.mySide.secrets.add(secret);

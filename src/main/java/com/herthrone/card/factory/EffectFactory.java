@@ -109,23 +109,23 @@ public class EffectFactory {
   }
 
   private Action getSummonAction(final EffectConfig effect) {
-    List<String> summonTargets = new ArrayList<>(effect.getTarget());
-    summonTargets = summonTargets.stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
-    final int size = effect.getTarget().size();
+    List<String> summonChoices = new ArrayList<>(effect.getChoices());
+    summonChoices = summonChoices.stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
+    final int size = effect.getChoices().size();
     int index = 0;
     if (size > 0) {
       final Random random = new Random();
       if (effect.isUnique()) {
-        List<String> uniqueMinionsOnBoard = this.battlefield.mySide.minions.stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
-        summonTargets.removeAll(uniqueMinionsOnBoard);
+        List<String> uniqueMinionsOnBoard = this.battlefield.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
+        summonChoices.removeAll(uniqueMinionsOnBoard);
       } else {
         index = random.nextInt(size);
       }
     }
-    final String summonTargetName = summonTargets.get(index);
+    final String summonTargetName = summonChoices.get(index);
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
     final Minion minion = this.minionFactory.createMinionByName(summonTarget);
-    return new SummonEffect(this.battlefield.mySide.minions, minion);
+    return new SummonEffect(this.battlefield.mySide.board, minion);
   }
 
   private Action getDrawCardAction(final EffectConfig effect) {
@@ -190,7 +190,7 @@ public class EffectFactory {
       case -1:
         return this.battlefield.mySide.hero;
       default:
-        return this.battlefield.mySide.minions.get(index);
+        return this.battlefield.mySide.board.get(index);
     }
   }
 }

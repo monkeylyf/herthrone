@@ -15,6 +15,8 @@ import org.junit.Test;
 
 import java.util.Collections;
 
+import static com.google.common.truth.Truth.assertThat;
+
 /**
  * Created by yifeng on 4/15/16.
  */
@@ -69,8 +71,9 @@ public class MinionTest extends TestCase {
     attackEachOther();
     assertEquals(this.yetiConfig.getHealth() - this.yetiConfig.getAttack() * 2, this.minion1.getHealthAttr().getVal());
     assertEquals(this.yetiConfig.getHealth() - this.yetiConfig.getAttack() * 2, this.minion2.getHealthAttr().getVal());
-    assertTrue(this.minion1.isDead());
-    assertTrue(this.minion2.isDead());
+
+    assertThat(this.minion1.isDead()).isTrue();
+    assertThat(this.minion2.isDead()).isTrue();
   }
 
   private void attackEachOther() {

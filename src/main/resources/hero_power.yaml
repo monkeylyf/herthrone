@@ -7,7 +7,9 @@
     - effect: attribute
       type: armor
       value: 2
-      target: [hero]
+      target:
+        scope: own
+        type: hero
 
 - name: dagger_mastery
   display: Dagger Mastery
@@ -18,7 +20,9 @@
     - effect: weapon
       type: wicked_blade
       value: 1
-      target: [hero]
+      target:
+        scope: own
+        type: hero
 
 - name: fire_blast
   display: Fire Blast
@@ -29,7 +33,9 @@
     - effect: attribute
       type: health
       value: -1
-      target: [hero, minion]
+      target:
+        scope: all
+        type: creature
 
 - name: lesser_heal
   display: Lesser Heal
@@ -40,7 +46,9 @@
     - effect: attribute
       type: health
       value: 2
-      target: [hero, minion]
+      target:
+        scope: all
+        type: creature
 
 - name: life_tap
   display: Life Tap
@@ -51,11 +59,15 @@
     - effect: attribute
       type: health
       value: -2
-      target: [hero]
+      target:
+        scope: own
+        type: hero
     - effect: draw
       type: card
       value: 1
-      target: [deck]
+      target:
+        scope: own
+        type: deck
 
 - name: reinforce
   display: Reinforce
@@ -66,7 +78,10 @@
     - effect: summon
       type: minion
       value: 1
-      target: [silver_hand_recruit]
+      target:
+        scope: own
+        type: board
+      choices: [silver_hand_recruit]
       unique: false
 
 - name: shapeshift
@@ -79,11 +94,15 @@
       type: attack
       permanent: false  # true by default
       value: 1
-      target: [hero]
+      target:
+        scope: own
+        type: hero
     - effect: attribute
       type: armor
       value: 1
-      target: [hero]
+      target:
+        scope: own
+        type: hero
 
 - name: steady_shot
   display: SteadyShot
@@ -94,7 +113,9 @@
     - effect: attribute
       type: health
       value: -2
-      target: [enemy_hero]
+      target:
+         scope: enemy
+         type: hero
 
 - name: totemic_call
   display: TotemicCall
@@ -105,5 +126,8 @@
     - effect: summon
       type: minion
       value: 1
-      target: [healing_totem, searing_totem, wrath_of_air_totem, stoneclaw_totem]
+      target:
+         scope: own
+         type: board
+      choices: [healing_totem, searing_totem, wrath_of_air_totem, stoneclaw_totem]
       unique: true

@@ -22,6 +22,8 @@ import org.junit.Test;
 
 import java.util.Collections;
 
+import static com.google.common.truth.Truth.assertThat;
+
 /**
  * Created by yifeng on 4/4/16.
  */
@@ -120,8 +122,8 @@ public class HeroTest extends TestCase {
     this.hero1.arm(this.weapon1);
     this.hero2.arm(this.weapon2);
 
-    assertTrue(this.hero1.canDamage());
-    assertTrue(this.hero2.canDamage());
+    assertThat(this.hero1.canDamage()).isTrue();
+    assertThat(this.hero2.canDamage()).isTrue();
 
     while (this.hero1.canDamage() || this.hero2.canDamage()) {
       if (this.hero1.canDamage()) {

@@ -6,5 +6,6 @@
     - effect: attribute
       type: health
       value: -6
-      target: [hero, minion]
-
+      target:
+        scope: all
+        type: creature

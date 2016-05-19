@@ -5,9 +5,7 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
-import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.constant.ConstHero;
 import com.herthrone.stats.Crystal;
 import com.herthrone.stats.IntAttribute;
 
@@ -20,7 +18,7 @@ public class Side {
   public final Hero hero;
   public final Container<BaseCard> hand;
   public final Container<BaseCard> deck;
-  public final Container<Minion> minions;
+  public final Container<Minion> board;
   public final Container<Secret> secrets;
   public final Crystal crystal;
   public final IntAttribute heroPowerMovePoints;
@@ -35,7 +33,7 @@ public class Side {
     this.hero = hero;
     this.heroPower = null;
     this.hand = new Container<>(handCapacity);
-    this.minions = new Container<>(boardCapacity);
+    this.board = new Container<>(boardCapacity);
     this.secrets = new Container<>();
     this.crystal = new Crystal();
 

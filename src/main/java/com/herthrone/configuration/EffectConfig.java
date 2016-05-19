@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.Constant;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,17 +15,19 @@ public class EffectConfig {
   private final ConstEffectType effect;
   private final String type;
   private final int value;
-  private final List<String> target;
   private final boolean unique;
   private final boolean permanent;
+  private final TargetConfig target;
+  private final List<String> choices;
 
   public EffectConfig(Map map) {
     this.effect = ConstEffectType.valueOf(Constant.upperCaseValue(map, "effect"));
     this.type = (String) map.get("type");
     this.value = (int) map.get("value");
-    this.target = (List) map.get("target");
     this.unique = (map.containsKey("unique")) ? (boolean) map.get("unique") : false;
     this.permanent = (map.containsKey("permanent")) ? (boolean) map.get("permanent") : false;
+    this.target = new TargetConfig((Map) map.get("target"));
+    this.choices = (map.containsKey("choices")) ? (List) map.get("choices") : Collections.emptyList();
   }
 
   public ConstEffectType getEffect() {
@@ -39,7 +42,7 @@ public class EffectConfig {
     return value;
   }
 
-  public List<String> getTarget() {
+  public TargetConfig getTarget() {
     return target;
   }
 
@@ -49,6 +52,10 @@ public class EffectConfig {
 
   public boolean isPermanent() {
     return this.permanent;
+  }
+
+  public List<String> getChoices() {
+    return this.choices;
   }
 
   public String toString() {

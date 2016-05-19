@@ -3,7 +3,7 @@ package com.herthrone.mechanic;
 /**
  * Triggered events.
  * <p>
- * Events can be triggered by different actions by user or state changes of minions.
+ * Events can be triggered by different actions by user or state changes of board.
  */
 public interface Listener {
 

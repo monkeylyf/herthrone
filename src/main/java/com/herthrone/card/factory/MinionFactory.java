@@ -114,7 +114,7 @@ public class MinionFactory {
       public void causeDamage(Minion minion) {
         minion.takeDamage(this.attackAttr.getVal());
         if (this.stealth.isOn()) {
-          // After attack, minions reveal themselves from stealth.
+          // After attack, minion reveal themselves from stealth.
           // TODO: but this is not the only way to reveal a minion in stealth.
           // http://hearthstone.gamepedia.com/Stealth
           this.stealth.reset();
