@@ -11,11 +11,15 @@ import java.util.Map;
  */
 public class TargetConfig {
 
-  private final ConstTarget target;
-  private final ConstType type;
+  public final ConstTarget scope;
+  public final ConstType type;
 
   public TargetConfig(Map map) {
-    this.target = ConstTarget.valueOf(Constant.upperCaseValue(map, "scope"));
+    this.scope = ConstTarget.valueOf(Constant.upperCaseValue(map, "scope"));
     this.type = ConstType.valueOf(Constant.upperCaseValue(map, "type"));
+  }
+
+  public String toString() {
+    return String.format("%s::%s", this.scope.toString(), this.type.toString());
   }
 }

@@ -41,6 +41,10 @@ public class Container<T extends BaseCard> {
     return this.container.size() == this.maxCapacity;
   }
 
+  public boolean isEmpty() {
+    return this.container.isEmpty();
+  }
+
   public void add(final T card) {
     this.container.add(card);
   }

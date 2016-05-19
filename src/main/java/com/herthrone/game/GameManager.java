@@ -66,7 +66,7 @@ public class GameManager {
     return factory.spellFactory.createHeroPowerByName(heroConfig.getHeroPower());
   }
 
-  private void switchTurn() {
+  void switchTurn() {
     if (this.activeBattlefield == this.battlefield1) {
       this.activeBattlefield = this.battlefield2;
       this.activeFactory = this.factory2;
@@ -76,7 +76,7 @@ public class GameManager {
     }
   }
 
-  private void playCard(final int index) {
+  void playCard(final int index) {
     final BaseCard card = this.activeBattlefield.mySide.hand.remove(index);
 
     if (card instanceof Minion) {
@@ -96,14 +96,40 @@ public class GameManager {
     }
   }
 
-  private void consumeCrystal(final int index) {
-    final BaseCard card = this.activeBattlefield.mySide.hand.get(index);
+  void drawCard() {
+    if (this.activeBattlefield.mySide.deck.isEmpty()) {
+      this.activeBattlefield.mySide.punish += 1;
+      this.activeBattlefield.mySide.hero.takeDamage(this.activeBattlefield.mySide.punish);
+    } else {
+      final BaseCard card = this.activeBattlefield.mySide.deck.top();
+      this.activeBattlefield.mySide.hand.add(card);
+    }
+  }
+
+  void playCard(final int index, final Minion target) {
+    final BaseCard card = this.activeBattlefield.mySide.hand.remove(index);
+
+    if (card instanceof Minion) {
+      Minion minion = (Minion) card;
+      this.activeBattlefield.mySide.board.add(minion);
+    } else if (card instanceof Weapon) {
+      Weapon weapon = (Weapon) card;
+      this.activeBattlefield.mySide.hero.arm(weapon);
+    } else if (card instanceof Spell) {
+      Spell spell = (Spell) card;
+      //spell.getEffects().
+    } else {
+
+    }
+  }
+
+  private void consumeCrystal(final BaseCard card) {
     final int cost = card.getCrystalManaCost().getVal();
     this.activeBattlefield.mySide.crystal.consume(cost);
   }
 
-  private void useHeroPower(final int index) {
-    this.activeFactory.effectFactory.getActionsByConfig(this.activeBattlefield.mySide.heroPower, null).stream().forEach(Action::act);
+  private void useHeroPower(final Minion minion) {
+    this.activeFactory.effectFactory.getActionsByConfig(this.activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
   }
 
 }

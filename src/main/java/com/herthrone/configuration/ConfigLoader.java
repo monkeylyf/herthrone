@@ -62,7 +62,7 @@ public class ConfigLoader {
     }
   };
 
-  public ConstType getCardTypeByName(final String cardName) {
+  public static ConstType getCardTypeByName(final String cardName) {
     if (spellConfigLoader.getConfigurations().containsKey(cardName)) {
       return ConstType.SPELL;
     } else if (minionConfigLoader.getConfigurations().containsKey(cardName)) {

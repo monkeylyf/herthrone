@@ -41,6 +41,7 @@ public class HeroFactory {
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
       private final BooleanAttribute stealth = new BooleanAttribute(false);
+      private final BooleanAttribute taunt = new BooleanAttribute(false);
 
       private Optional<Weapon> weapon = Optional.empty();
 
@@ -102,6 +103,11 @@ public class HeroFactory {
       @Override
       public BooleanAttribute getDivineShield() {
         return this.divineShield;
+      }
+
+      @Override
+      public BooleanAttribute getTaunt() {
+        return this.taunt;
       }
 
       @Override

@@ -1,7 +1,9 @@
 package com.herthrone.game;
 
+import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,18 +17,20 @@ import static com.google.common.truth.Truth.assertThat;
  */
 public class GameManagerTest {
 
-  private static GameManager gameManager;
-  private static ConstHero hero1 = ConstHero.ANDUIN_WRYNN;
-  private static ConstHero hero2 = ConstHero.JAINA_PROUDMOORE;
-  private static final int deckSize = 10;
+  private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
 
-  private static Side mySide;
-  private static Side opponentSide;
+  private GameManager gameManager;
+  private ConstHero hero1 = ConstHero.ANDUIN_WRYNN;
+  private ConstHero hero2 = ConstHero.JAINA_PROUDMOORE;
+  private final int deckSize = 10;
 
-  @BeforeClass
-  public static void beforeClass() {
-    List<String> cards1 = Collections.nCopies(deckSize, ConstMinion.CHILLWIND_YETI.toString());
-    List<String> cards2 = Collections.nCopies(deckSize, ConstMinion.CHILLWIND_YETI.toString());
+  private Side mySide;
+  private Side opponentSide;
+
+  @Before
+  public void setUp() {
+    List<String> cards1 = Collections.nCopies(deckSize, MINION.toString());
+    List<String> cards2 = Collections.nCopies(deckSize, MINION.toString());
 
     gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
 
@@ -38,6 +42,11 @@ public class GameManagerTest {
   public void testInitDeckSize() {
     assertThat(mySide.deck.size()).isEqualTo(deckSize);
     assertThat(opponentSide.deck.size()).isEqualTo(deckSize);
+  }
+
+  @Test
+  public void testInitCardsInDeck() {
+    assertThat(mySide.deck.top() instanceof Minion).isTrue();
   }
 
   @Test
@@ -78,5 +87,24 @@ public class GameManagerTest {
   public void testInitHeroPowerMovePoints() {
     assertThat(mySide.heroPowerMovePoints.getVal()).isEqualTo(1);
     assertThat(opponentSide.heroPowerMovePoints.getVal()).isEqualTo(1);
+  }
+
+  @Test
+  public void testDrawCard() {
+    assertThat(mySide.hand.size()).isEqualTo(0);
+    gameManager.drawCard();
+    assertThat(mySide.hand.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void testPlayMinionCard() {
+    gameManager.drawCard();
+
+    assertThat(mySide.hand.get(0) instanceof Minion).isTrue();
+    assertThat(mySide.hand.get(0).getCardName()).isEqualTo(MINION.toString());
+    assertThat(mySide.board.size()).isEqualTo(0);
+    gameManager.playCard(0);
+    assertThat(mySide.board.size()).isEqualTo(1);
+    assertThat(mySide.board.get(0).getCardName()).isEqualTo(MINION.toString());
   }
 }

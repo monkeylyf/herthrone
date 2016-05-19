@@ -13,21 +13,21 @@ import java.util.Map;
 public class EffectConfig {
 
   private final ConstEffectType effect;
-  private final String type;
+  private final String type;  // TODO: get rid of all String.
   private final int value;
   private final boolean unique;
   private final boolean permanent;
-  private final TargetConfig target;
   private final List<String> choices;
+  private final TargetConfig target;
 
   public EffectConfig(Map map) {
     this.effect = ConstEffectType.valueOf(Constant.upperCaseValue(map, "effect"));
     this.type = (String) map.get("type");
     this.value = (int) map.get("value");
-    this.unique = (map.containsKey("unique")) ? (boolean) map.get("unique") : false;
     this.permanent = (map.containsKey("permanent")) ? (boolean) map.get("permanent") : false;
-    this.target = new TargetConfig((Map) map.get("target"));
+    this.unique = (map.containsKey("unique")) ? (boolean) map.get("unique") : false;
     this.choices = (map.containsKey("choices")) ? (List) map.get("choices") : Collections.emptyList();
+    this.target = new TargetConfig((Map) map.get("target"));
   }
 
   public ConstEffectType getEffect() {

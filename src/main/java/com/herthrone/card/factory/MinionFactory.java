@@ -43,6 +43,7 @@ public class MinionFactory {
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
       private final BooleanAttribute stealth = new BooleanAttribute(false);
+      private final BooleanAttribute taunt = new BooleanAttribute(false);
       private final Battlefield battlefield = field;
 
       @Override
@@ -103,6 +104,11 @@ public class MinionFactory {
       @Override
       public BooleanAttribute getDivineShield() {
         return this.divineShield;
+      }
+
+      @Override
+      public BooleanAttribute getTaunt() {
+        return this.taunt;
       }
 
       @Override

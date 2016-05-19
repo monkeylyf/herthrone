@@ -2,6 +2,7 @@ package com.herthrone.card.factory;
 
 import com.herthrone.base.Secret;
 import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.game.Battlefield;
 import com.herthrone.stats.IntAttribute;
@@ -18,7 +19,7 @@ public class SecretFactory {
     this.battlefield = battlefield;
   }
 
-  public Secret createSecretByName(final String name) {
+  public Secret createSecretByName(final ConstSecret secret) {
     return new Secret() {
       @Override
       public String getCardName() {

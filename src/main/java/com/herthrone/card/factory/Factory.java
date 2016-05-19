@@ -3,6 +3,12 @@ package com.herthrone.card.factory;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
+import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSecret;
+import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstType;
+import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
 
 import java.util.Arrays;
@@ -32,7 +38,23 @@ public class Factory {
   }
 
   public BaseCard createCardInstance(final String cardName) {
-    return null;
+    ConstType type = ConfigLoader.getCardTypeByName(cardName);
+    switch (type) {
+      case MINION:
+        ConstMinion minionName = ConstMinion.valueOf(cardName);
+        return this.minionFactory.createMinionByName(minionName);
+      case WEAPON:
+        ConstWeapon weaponName = ConstWeapon.valueOf(cardName);
+        return this.weaponFactory.createWeaponByName(weaponName);
+      case SPELL:
+        ConstSpell spellName = ConstSpell.valueOf(cardName);
+        return this.spellFactory.createSpellByName(spellName);
+      case SECRET:
+        ConstSecret secretName = ConstSecret.valueOf(cardName);
+        return this.secretFactory.createSecretByName(secretName);
+      default:
+        throw new RuntimeException(String.format("Unknown type %s for card %s", type.toString(), cardName));
+    }
   }
 
   public static List<Action> singleActionToList(Action action) {
