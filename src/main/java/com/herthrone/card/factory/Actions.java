@@ -10,11 +10,6 @@ public class Actions implements Action {
 
   private final List<Action> actions;
 
-  @Override
-  public void act() {
-    this.actions.stream().forEach(Action::act);
-  }
-
   public Actions(final List<Action> actions) {
     this.actions = actions;
   }
@@ -22,4 +17,10 @@ public class Actions implements Action {
   public Actions() {
     this(new ArrayList<>());
   }
+
+  @Override
+  public void act() {
+    actions.stream().forEach(Action::act);
+  }
+
 }

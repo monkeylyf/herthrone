@@ -20,6 +20,6 @@ public class TargetConfig {
   }
 
   public String toString() {
-    return String.format("%s::%s", this.scope.toString(), this.type.toString());
+    return String.format("%s::%s", scope.toString(), type.toString());
   }
 }

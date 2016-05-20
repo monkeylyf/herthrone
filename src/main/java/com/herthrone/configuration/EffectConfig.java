@@ -31,7 +31,7 @@ public class EffectConfig {
   }
 
   public ConstEffectType getEffect() {
-    return this.effect;
+    return effect;
   }
 
   public String getType() {
@@ -51,14 +51,14 @@ public class EffectConfig {
   }
 
   public boolean isPermanent() {
-    return this.permanent;
+    return permanent;
   }
 
   public List<String> getChoices() {
-    return this.choices;
+    return choices;
   }
 
   public String toString() {
-    return String.format("Effect <%s> Type <%s> Value <%d> Targets: <%s>", this.effect, this.type, this.value, this.target);
+    return String.format("Effect <%s> Type <%s> Value <%d> Targets: <%s>", effect, type, value, target);
   }
 }

@@ -21,45 +21,45 @@ public class Crystal implements Round {
   }
 
   public boolean canPlay(final BaseCard card) {
-    return this.crystal >= card.getCrystalManaCost().getVal();
+    return crystal >= card.getCrystalManaCost().getVal();
   }
 
   public void consume(final int crystalCost) {
-    Preconditions.checkArgument(this.crystal >= crystalCost);
-    this.crystal -= crystalCost;
+    Preconditions.checkArgument(crystal >= crystalCost);
+    crystal -= crystalCost;
   }
 
   public void increaseUpperBound() {
-    this.crystalUpperBound = Math.min(this.crystalUpperBound + 1, Crystal.MAX_CRYSTALS);
+    crystalUpperBound = Math.min(crystalUpperBound + 1, Crystal.MAX_CRYSTALS);
   }
 
   public int getCrystal() {
-    return this.crystal;
+    return crystal;
   }
 
   public int getCrystalUpperBound() {
-    return this.crystalUpperBound;
+    return crystalUpperBound;
   }
 
   public int getLockedCrystal() {
-    return this.lockedCrystal;
+    return lockedCrystal;
   }
 
   @Override
   public void nextRound() {
     increaseUpperBound();
-    this.crystal = crystalUpperBound;
+    crystal = crystalUpperBound;
     applyOverload();
   }
 
   public void overload(final int val) {
     Preconditions.checkArgument(val > 0, "Overload must be positive, not " + val);
-    this.overloaded += val;
+    overloaded += val;
   }
 
   private void applyOverload() {
-    this.crystal -= this.overloaded;
-    this.lockedCrystal = this.overloaded;
-    this.overloaded = 0;
+    crystal -= overloaded;
+    lockedCrystal = overloaded;
+    overloaded = 0;
   }
 }

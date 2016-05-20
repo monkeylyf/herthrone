@@ -49,7 +49,7 @@ public class WeaponFactory {
 
       @Override
       public IntAttribute getCrystalManaCost() {
-        return this.crystalManaCostAttr;
+        return crystalManaCostAttr;
       }
 
       @Override
@@ -59,18 +59,18 @@ public class WeaponFactory {
 
       @Override
       public int use() {
-        this.durabilityAttr.decrease(1);
-        return this.attackAttr.getVal();
+        durabilityAttr.decrease(1);
+        return attackAttr.getVal();
       }
 
       @Override
       public IntAttribute getDurabilityAttr() {
-        return this.durabilityAttr;
+        return durabilityAttr;
       }
 
       @Override
       public IntAttribute getAttackAttr() {
-        return this.attackAttr;
+        return attackAttr;
       }
     };
   }

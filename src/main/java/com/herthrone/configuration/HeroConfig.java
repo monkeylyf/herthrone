@@ -26,21 +26,21 @@ public class HeroConfig implements BaseConfig<ConstHero> {
   }
 
   public ConstHeroPower getHeroPower() {
-    return this.heroPower;
+    return heroPower;
   }
 
   public String getDescription() {
-    return this.description;
+    return description;
   }
 
   @Override
   public ConstHero getName() {
-    return this.name;
+    return name;
   }
 
   @Override
   public ConstClass getClassName() {
-    return this.className;
+    return className;
   }
 
   @Override

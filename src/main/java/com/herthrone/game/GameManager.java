@@ -38,25 +38,25 @@ public class GameManager {
     this.battlefield1 = new Battlefield(
             HeroFactory.createHeroByName(hero1),
             HeroFactory.createHeroByName(hero2));
-    this.battlefield2 = this.battlefield1.getMirrorBattlefield();
-    this.factory1 = new Factory(this.battlefield1);
-    this.factory2 = new Factory(this.battlefield2);
+    this.battlefield2 = battlefield1.getMirrorBattlefield();
+    this.factory1 = new Factory(battlefield1);
+    this.factory2 = new Factory(battlefield2);
+    this.actionQueue = new LinkedList<>();
+    this.activeBattlefield = battlefield1;
+    this.activeFactory = factory1;
 
-    final List<BaseCard> cards1 = generateDeck(cardNames1, this.factory1);
-    final List<BaseCard> cards2 = generateDeck(cardNames1, this.factory2);
+    final List<BaseCard> cards1 = generateDeck(cardNames1, factory1);
+    final List<BaseCard> cards2 = generateDeck(cardNames1, factory2);
 
     final Spell heroPower1 = generateHeroPower(hero1, factory1);
     final Spell heroPower2 = generateHeroPower(hero2, factory2);
 
-    this.battlefield1.mySide.setHeroPower(heroPower1);
-    this.battlefield2.mySide.setHeroPower(heroPower2);
+    battlefield1.mySide.setHeroPower(heroPower1);
+    battlefield2.mySide.setHeroPower(heroPower2);
 
-    this.battlefield1.mySide.populateDeck(cards1);
-    this.battlefield2.mySide.populateDeck(cards2);
+    battlefield1.mySide.populateDeck(cards1);
+    battlefield2.mySide.populateDeck(cards2);
 
-    this.actionQueue = new LinkedList<>();
-    this.activeBattlefield = this.battlefield1;
-    this.activeFactory = this.factory1;
   }
 
   private static List<BaseCard> generateDeck(final List<String> cardNames, final Factory factory) {
@@ -118,11 +118,11 @@ public class GameManager {
   }
 
   void drawCard() {
-    if (this.activeBattlefield.mySide.deck.isEmpty()) {
+    if (activeBattlefield.mySide.deck.isEmpty()) {
       activeBattlefield.mySide.fatigue += 1;
-      activeBattlefield.mySide.hero.takeDamage(this.activeBattlefield.mySide.fatigue);
+      activeBattlefield.mySide.hero.takeDamage(activeBattlefield.mySide.fatigue);
     } else {
-      final BaseCard card = this.activeBattlefield.mySide.deck.top();
+      final BaseCard card = activeBattlefield.mySide.deck.top();
       activeBattlefield.mySide.hand.add(card);
     }
   }

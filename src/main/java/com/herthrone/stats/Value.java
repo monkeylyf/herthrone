@@ -16,19 +16,19 @@ public class Value {
   }
 
   public void reset() {
-    this.val = 0;
+    val = 0;
   }
 
   public void increase(final int gain) {
-    this.val += gain;
+    val += gain;
   }
 
   public void decrease(final int loss) {
-    this.val -= loss;
+    val -= loss;
   }
 
   public int getVal() {
-    return this.val;
+    return val;
   }
 
   public void setTo(final int val) {

@@ -31,29 +31,29 @@ public class MinionConfig implements BaseConfig<ConstMinion> {
   }
 
   public int getAttack() {
-    return this.attack;
+    return attack;
   }
 
   public int getHealth() {
-    return this.health;
+    return health;
   }
 
   public int getCrystal() {
-    return this.crystal;
+    return crystal;
   }
 
   public Map<String, MechanicConfig> getMechanics() {
-    return this.mechanics;
+    return mechanics;
   }
 
   @Override
   public ConstMinion getName() {
-    return this.name;
+    return name;
   }
 
   @Override
   public ConstClass getClassName() {
-    return this.className;
+    return className;
   }
 
   @Override
@@ -62,6 +62,6 @@ public class MinionConfig implements BaseConfig<ConstMinion> {
   }
 
   public boolean isCollectible() {
-    return this.collectible;
+    return collectible;
   }
 }

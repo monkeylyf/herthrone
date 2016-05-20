@@ -70,33 +70,33 @@ public class CommandLine {
     }
 
     public void listChildOptions() {
-      for (int i = 0; i < this.childOptions.size(); ++i) {
+      for (int i = 0; i < childOptions.size(); ++i) {
         // 1-based index.
-        String output = String.format(CommandNode.TEMPLATE, i + 1, this.childOptions.get(i));
+        String output = String.format(CommandNode.TEMPLATE, i + 1, childOptions.get(i));
         System.out.println(output);
       }
 
-      if (this.parent != null) {
+      if (parent != null) {
         System.out.println(String.format(CommandNode.TEMPLATE, 0, "Previous list"));
       }
     }
 
     public boolean isValidOptionNum(final int n) {
       // Either in range [1, size] or 0 when has previous list(parent).
-      return (1 <= n && n <= this.childOptions.size()) || (this.parent != null && n == 0);
+      return (1 <= n && n <= childOptions.size()) || (parent != null && n == 0);
     }
 
     private CommandNode previous() {
-      return (this.parent == null) ? this : this.parent;
+      return (parent == null) ? this : parent;
     }
 
     private CommandNode next(final int index) {
       // 1-based index.
-      return this.childOptions.get(index - 1);
+      return childOptions.get(index - 1);
     }
 
     public String toString() {
-      return (this.option == null) ? "" : this.option;
+      return (option == null) ? "" : option;
     }
 
     private int readInput() {
@@ -119,14 +119,14 @@ public class CommandLine {
     public CommandNode move() {
       final int index = readInput();
       if (index == 0) {
-        return this.previous();
+        return previous();
       } else {
-        return this.next(index);
+        return next(index);
       }
     }
 
     public boolean isLeaf() {
-      return this.childOptions.size() == 0;
+      return childOptions.size() == 0;
     }
   }
 }

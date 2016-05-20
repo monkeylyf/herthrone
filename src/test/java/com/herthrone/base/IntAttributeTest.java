@@ -11,47 +11,47 @@ public class IntAttributeTest extends TestCase {
   private IntAttribute attr;
 
   public void setUp() throws Exception {
-    this.attr = new IntAttribute(IntAttributeTest.FOUR);
+    attr = new IntAttribute(IntAttributeTest.FOUR);
   }
 
   public void testGetVal() throws Exception {
-    assertEquals(IntAttributeTest.FOUR, this.attr.getVal());
+    assertEquals(IntAttributeTest.FOUR, attr.getVal());
   }
 
   public void testSetBuff() throws Exception {
-    this.attr.buff.perm.increase(IntAttributeTest.BUFF);
-    assertEquals(IntAttributeTest.BUFF + IntAttributeTest.FOUR, this.attr.getVal());
+    attr.buff.perm.increase(IntAttributeTest.BUFF);
+    assertEquals(IntAttributeTest.BUFF + IntAttributeTest.FOUR, attr.getVal());
   }
 
   public void testResetBuff() throws Exception {
-    this.attr.buff.perm.increase(IntAttributeTest.DEBUFF);
-    assertEquals(IntAttributeTest.DEBUFF + IntAttributeTest.FOUR, this.attr.getVal());
+    attr.buff.perm.increase(IntAttributeTest.DEBUFF);
+    assertEquals(IntAttributeTest.DEBUFF + IntAttributeTest.FOUR, attr.getVal());
 
-    this.attr.buff.reset();
-    assertEquals(IntAttributeTest.FOUR, this.attr.getVal());
+    attr.buff.reset();
+    assertEquals(IntAttributeTest.FOUR, attr.getVal());
   }
 
   public void testReset() throws Exception {
     int decreaseVal = 1;
-    this.attr.decrease(decreaseVal);
-    assertEquals(IntAttributeTest.FOUR - decreaseVal, this.attr.getVal());
-    this.attr.buff.perm.increase(IntAttributeTest.BUFF);
-    assertEquals(IntAttributeTest.FOUR - decreaseVal + IntAttributeTest.BUFF, this.attr.getVal());
+    attr.decrease(decreaseVal);
+    assertEquals(IntAttributeTest.FOUR - decreaseVal, attr.getVal());
+    attr.buff.perm.increase(IntAttributeTest.BUFF);
+    assertEquals(IntAttributeTest.FOUR - decreaseVal + IntAttributeTest.BUFF, attr.getVal());
 
-    this.attr.reset();
+    attr.reset();
 
-    assertEquals(IntAttributeTest.FOUR, this.attr.getVal());
+    assertEquals(IntAttributeTest.FOUR, attr.getVal());
   }
 
   public void testIncrease() throws Exception {
     final int val = 2;
-    this.attr.increase(val);
-    assertEquals(IntAttributeTest.FOUR + val, this.attr.getVal());
+    attr.increase(val);
+    assertEquals(IntAttributeTest.FOUR + val, attr.getVal());
   }
 
   public void testDecrease() throws Exception {
     final int val = 2;
-    this.attr.decrease(val);
-    assertEquals(IntAttributeTest.FOUR - val, this.attr.getVal());
+    attr.decrease(val);
+    assertEquals(IntAttributeTest.FOUR - val, attr.getVal());
   }
 }

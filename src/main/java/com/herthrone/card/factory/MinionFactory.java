@@ -28,7 +28,7 @@ public class MinionFactory {
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible) {
-    return createMinion(health, attack, crystalManaCost, className, name, isCollectible, this.battlefield);
+    return createMinion(health, attack, crystalManaCost, className, name, isCollectible, battlefield);
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible, final Battlefield field) {
@@ -63,7 +63,7 @@ public class MinionFactory {
 
       @Override
       public IntAttribute getCrystalManaCost() {
-        return this.crystalManaCostAttr;
+        return crystalManaCostAttr;
       }
 
       @Override
@@ -73,17 +73,17 @@ public class MinionFactory {
 
       @Override
       public IntAttribute getHealthAttr() {
-        return this.healthAttr;
+        return healthAttr;
       }
 
       @Override
       public IntAttribute getHealthUpperAttr() {
-        return this.healthUpperAttr;
+        return healthUpperAttr;
       }
 
       @Override
       public IntAttribute getAttackAttr() {
-        return this.attackAttr;
+        return attackAttr;
       }
 
       @Override
@@ -93,62 +93,62 @@ public class MinionFactory {
 
       @Override
       public BooleanAttribute getDamageImmunity() {
-        return this.damageImmunity;
+        return damageImmunity;
       }
 
       @Override
       public BooleanAttribute getFrozen() {
-        return this.frozen;
+        return frozen;
       }
 
       @Override
       public BooleanAttribute getDivineShield() {
-        return this.divineShield;
+        return divineShield;
       }
 
       @Override
       public BooleanAttribute getTaunt() {
-        return this.taunt;
+        return taunt;
       }
 
       @Override
       public BooleanAttribute getStealth() {
-        return this.stealth;
+        return stealth;
       }
 
       @Override
       public void causeDamage(Minion minion) {
-        minion.takeDamage(this.attackAttr.getVal());
-        if (this.stealth.isOn()) {
+        minion.takeDamage(attackAttr.getVal());
+        if (stealth.isOn()) {
           // After attack, minion reveal themselves from stealth.
           // TODO: but this is not the only way to reveal a minion in stealth.
           // http://hearthstone.gamepedia.com/Stealth
-          this.stealth.reset();
+          stealth.reset();
         }
       }
 
       @Override
       public void takeDamage(final int damage) {
-        if (this.getDivineShield().isOn()) {
-          this.getDivineShield().reset();
+        if (getDivineShield().isOn()) {
+          getDivineShield().reset();
         } else {
-          this.healthAttr.decrease(damage);
+          healthAttr.decrease(damage);
         }
       }
 
       @Override
       public boolean canDamage() {
-        return this.attackAttr.getVal() > 0;
+        return attackAttr.getVal() > 0;
       }
 
       @Override
       public boolean isDead() {
-        return this.healthAttr.getVal() <= 0;
+        return healthAttr.getVal() <= 0;
       }
 
       @Override
       public int getHealthLoss() {
-        return this.getHealthUpperAttr().getVal() - this.getHealthAttr().getVal();
+        return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
       }
     };
   }

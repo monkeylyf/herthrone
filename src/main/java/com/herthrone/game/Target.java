@@ -22,26 +22,26 @@ public class Target {
   }
 
   public Minion toTarget(final Battlefield battlefield) {
-    switch (this.config.scope) {
+    switch (config.scope) {
       case OWN:
         return toTarget(battlefield.mySide);
       case ENEMY:
         return toTarget(battlefield.opponentSide);
       default:
-        throw new RuntimeException("Unknown scope: " + this.config.scope.toString());
+        throw new RuntimeException("Unknown scope: " + config.scope.toString());
     }
   }
 
   private Minion toTarget(final Side side) {
-    switch (this.config.type) {
+    switch (config.type) {
       case HERO:
         return side.hero;
       case MINION:
-        return side.board.get(this.index);
+        return side.board.get(index);
       case CREATURE:
-        return (this.index == -1) ? side.hero : side.board.get(this.index);
+        return (index == -1) ? side.hero : side.board.get(index);
       default:
-        throw new RuntimeException("Unknown type: " + this.config.type.toString());
+        throw new RuntimeException("Unknown type: " + config.type.toString());
     }
   }
 

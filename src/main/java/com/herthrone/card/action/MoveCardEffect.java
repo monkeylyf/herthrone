@@ -19,6 +19,6 @@ public class MoveCardEffect implements Action {
 
   @Override
   public void act() {
-    this.moveTo.add(this.moveFrom.top());
+    moveTo.add(moveFrom.top());
   }
 }

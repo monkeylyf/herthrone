@@ -40,16 +40,16 @@ public class MinionTest extends TestCase {
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
-    this.battlefield1 = this.gm.battlefield1;
-    this.battlefield2 = this.gm.battlefield2;
+    this.battlefield1 = gm.battlefield1;
+    this.battlefield2 = gm.battlefield2;
 
-    this.minionFactory1 = this.gm.factory1.minionFactory;
-    this.minionFactory2 = this.gm.factory2.minionFactory;
-    this.effectFactory1 = this.gm.factory1.effectFactory;
-    this.effectFactory2 = this.gm.factory2.effectFactory;
+    this.minionFactory1 = gm.factory1.minionFactory;
+    this.minionFactory2 = gm.factory2.minionFactory;
+    this.effectFactory1 = gm.factory1.effectFactory;
+    this.effectFactory2 = gm.factory2.effectFactory;
 
-    this.minion1 = this.minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
-    this.minion2 = this.minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    this.minion1 = minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    this.minion2 = minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
   }
@@ -57,27 +57,27 @@ public class MinionTest extends TestCase {
   @Test
   public void testMinionStats() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
-    assertEquals(config.getHealth(), this.minion1.getHealthAttr().getVal());
-    assertEquals(config.getHealth(), this.minion2.getHealthAttr().getVal());
-    assertFalse(this.minion1.isDead());
-    assertFalse(this.minion2.isDead());
+    assertEquals(config.getHealth(), minion1.getHealthAttr().getVal());
+    assertEquals(config.getHealth(), minion2.getHealthAttr().getVal());
+    assertFalse(minion1.isDead());
+    assertFalse(minion2.isDead());
   }
 
   @Test
   public void testMinionAttack() {
     attackEachOther();
-    assertEquals(this.yetiConfig.getHealth() - this.yetiConfig.getAttack(), this.minion1.getHealthAttr().getVal());
-    assertEquals(this.yetiConfig.getHealth() - this.yetiConfig.getAttack(), this.minion2.getHealthAttr().getVal());
+    assertEquals(yetiConfig.getHealth() - yetiConfig.getAttack(), minion1.getHealthAttr().getVal());
+    assertEquals(yetiConfig.getHealth() - yetiConfig.getAttack(), minion2.getHealthAttr().getVal());
     attackEachOther();
-    assertEquals(this.yetiConfig.getHealth() - this.yetiConfig.getAttack() * 2, this.minion1.getHealthAttr().getVal());
-    assertEquals(this.yetiConfig.getHealth() - this.yetiConfig.getAttack() * 2, this.minion2.getHealthAttr().getVal());
+    assertEquals(yetiConfig.getHealth() - yetiConfig.getAttack() * 2, minion1.getHealthAttr().getVal());
+    assertEquals(yetiConfig.getHealth() - yetiConfig.getAttack() * 2, minion2.getHealthAttr().getVal());
 
-    assertThat(this.minion1.isDead()).isTrue();
-    assertThat(this.minion2.isDead()).isTrue();
+    assertThat(minion1.isDead()).isTrue();
+    assertThat(minion2.isDead()).isTrue();
   }
 
   private void attackEachOther() {
-    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.minion1, this.minion2).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(minion1, minion2).act();
   }
 }
 

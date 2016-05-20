@@ -18,6 +18,6 @@ public class StatusEffect implements Action {
 
   @Override
   public void act() {
-    this.booleanAttribute.on(this.roundUntilExpire);
+    booleanAttribute.on(roundUntilExpire);
   }
 }

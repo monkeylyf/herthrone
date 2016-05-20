@@ -31,8 +31,8 @@ public class Factory {
     this.battlefield = battlefield;
     this.minionFactory = new MinionFactory(battlefield);
     this.weaponFactory = new WeaponFactory(battlefield);
-    this.effectFactory = new EffectFactory(this.minionFactory, this.weaponFactory, battlefield);
-    this.spellFactory = new SpellFactory(this.effectFactory);
+    this.effectFactory = new EffectFactory(minionFactory, weaponFactory, battlefield);
+    this.spellFactory = new SpellFactory(effectFactory);
     this.secretFactory = new SecretFactory(battlefield);
     this.attackFactory = new AttackFactory(battlefield);
   }
@@ -42,16 +42,16 @@ public class Factory {
     switch (type) {
       case MINION:
         ConstMinion minionName = ConstMinion.valueOf(cardName);
-        return this.minionFactory.createMinionByName(minionName);
+        return minionFactory.createMinionByName(minionName);
       case WEAPON:
         ConstWeapon weaponName = ConstWeapon.valueOf(cardName);
-        return this.weaponFactory.createWeaponByName(weaponName);
+        return weaponFactory.createWeaponByName(weaponName);
       case SPELL:
         ConstSpell spellName = ConstSpell.valueOf(cardName);
-        return this.spellFactory.createSpellByName(spellName);
+        return spellFactory.createSpellByName(spellName);
       case SECRET:
         ConstSecret secretName = ConstSecret.valueOf(cardName);
-        return this.secretFactory.createSecretByName(secretName);
+        return secretFactory.createSecretByName(secretName);
       default:
         throw new RuntimeException(String.format("Unknown type %s for card %s", type.toString(), cardName));
     }

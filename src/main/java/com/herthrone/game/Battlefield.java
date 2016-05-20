@@ -21,6 +21,6 @@ public class Battlefield {
   }
 
   public Battlefield getMirrorBattlefield() {
-    return new Battlefield(this.opponentSide, this.mySide);
+    return new Battlefield(opponentSide, mySide);
   }
 }

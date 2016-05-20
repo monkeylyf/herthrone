@@ -20,23 +20,23 @@ public class AuraBuff<T extends BaseCard> {
   }
 
   public void addBuff(final T card, final int buffVal) {
-    this.buffs.put(card, buffVal);
-    this.accumulatedBuffs += buffVal;
+    buffs.put(card, buffVal);
+    accumulatedBuffs += buffVal;
   }
 
   public int getBuffs() {
-    return this.accumulatedBuffs;
+    return accumulatedBuffs;
   }
 
   public void clear() {
-    this.buffs.clear();
-    this.accumulatedBuffs = 0;
+    buffs.clear();
+    accumulatedBuffs = 0;
   }
 
   public void removeBuff(T card) {
-    Integer buff = this.buffs.remove(card);
+    Integer buff = buffs.remove(card);
     if (buff != null) {
-      this.accumulatedBuffs -= buff.intValue();
+      accumulatedBuffs -= buff.intValue();
     }
   }
 }

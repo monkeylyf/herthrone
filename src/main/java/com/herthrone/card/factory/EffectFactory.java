@@ -104,7 +104,7 @@ public class EffectFactory {
   private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
-    Weapon weaponInstance = this.weaponFactory.createWeaponByName(weapon);
+    Weapon weaponInstance = weaponFactory.createWeaponByName(weapon);
     return new EquipWeaponEffect(hero, weaponInstance);
   }
 
@@ -116,7 +116,7 @@ public class EffectFactory {
     if (size > 0) {
       final Random random = new Random();
       if (effect.isUnique()) {
-        List<String> uniqueMinionsOnBoard = this.battlefield.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
+        List<String> uniqueMinionsOnBoard = battlefield.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
         summonChoices.removeAll(uniqueMinionsOnBoard);
       } else {
         index = random.nextInt(size);
@@ -124,13 +124,13 @@ public class EffectFactory {
     }
     final String summonTargetName = summonChoices.get(index);
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
-    final Minion minion = this.minionFactory.createMinionByName(summonTarget);
-    return new SummonEffect(this.battlefield.mySide.board, minion);
+    final Minion minion = minionFactory.createMinionByName(summonTarget);
+    return new SummonEffect(battlefield.mySide.board, minion);
   }
 
   private Action getDrawCardAction(final EffectConfig effect) {
     // TODO: draw from own deck/opponent deck/opponent hand
-    return new MoveCardEffect(this.battlefield.mySide.hand, this.battlefield.mySide.deck);
+    return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck);
   }
 
   public ActionFactory getDivineShieldStatusActionGenerator(final int index) {
@@ -188,9 +188,9 @@ public class EffectFactory {
   private Minion getMinionByIndex(final int index) {
     switch (index) {
       case -1:
-        return this.battlefield.mySide.hero;
+        return battlefield.mySide.hero;
       default:
-        return this.battlefield.mySide.board.get(index);
+        return battlefield.mySide.board.get(index);
     }
   }
 }

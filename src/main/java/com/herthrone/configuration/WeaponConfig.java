@@ -30,21 +30,21 @@ public class WeaponConfig implements BaseConfig<ConstWeapon> {
   }
 
   public int getAttack() {
-    return this.attack;
+    return attack;
   }
 
   public int getDurability() {
-    return this.durability;
+    return durability;
   }
 
   @Override
   public ConstWeapon getName() {
-    return this.name;
+    return name;
   }
 
   @Override
   public ConstClass getClassName() {
-    return this.className;
+    return className;
   }
 
   @Override
@@ -54,10 +54,10 @@ public class WeaponConfig implements BaseConfig<ConstWeapon> {
 
   @Override
   public int getCrystal() {
-    return this.crystal;
+    return crystal;
   }
 
   public boolean isCollectible() {
-    return this.collectible;
+    return collectible;
   }
 }

@@ -34,65 +34,65 @@ public class Container<T extends BaseCard> {
   }
 
   public int getMaxCapacity() {
-    return this.maxCapacity;
+    return maxCapacity;
   }
 
   public boolean isFull() {
-    return this.container.size() == this.maxCapacity;
+    return container.size() == maxCapacity;
   }
 
   public boolean isEmpty() {
-    return this.container.isEmpty();
+    return container.isEmpty();
   }
 
   public void add(final T card) {
     if (isFull()) {
       // TODO: logger needed here.
     } else {
-      this.container.add(card);
+      container.add(card);
     }
   }
 
   public void add(final int index, final T card) {
-    this.container.add(index, card);
+    container.add(index, card);
   }
 
   public void addToRandomPos(T card) {
     final Random random = new Random();
-    final int index = random.nextInt(this.container.size() + 1);
-    this.add(index, card);
+    final int index = random.nextInt(container.size() + 1);
+    add(index, card);
   }
 
   public void shuffle() {
-    Collections.shuffle(this.container);
+    Collections.shuffle(container);
   }
 
   public T top() {
-    return this.container.remove(this.container.size() - 1);
+    return container.remove(container.size() - 1);
   }
 
   public T get(final int index) {
-    return this.container.get(index);
+    return container.get(index);
   }
 
   public T random() {
     final Random random = new Random();
-    final int index = random.nextInt(this.container.size());
-    return this.container.remove(index);
+    final int index = random.nextInt(container.size());
+    return container.remove(index);
   }
 
   public Iterator<T> iterator() {
-    return this.container.iterator();
+    return container.iterator();
   }
 
   public Stream<T> stream() {
-    return this.container.stream();
+    return container.stream();
   }
 
   public int count(T card) {
     int count = 0;
     final String cardName = card.getCardName();
-    for (T existingCard : this.container) {
+    for (T existingCard : container) {
       if (existingCard.getCardName().equals(cardName)) {
         count += 1;
       }
@@ -101,10 +101,10 @@ public class Container<T extends BaseCard> {
   }
 
   public int size() {
-    return this.container.size();
+    return container.size();
   }
 
   public T remove(final int index) {
-    return this.container.remove(index);
+    return container.remove(index);
   }
 }

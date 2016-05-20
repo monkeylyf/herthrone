@@ -119,7 +119,7 @@ public class ConfigLoader {
     private volatile ImmutableMap<String, T> configs;
     private String configName;
 
-    public AbstractConfigLoader(String configName) {
+    public AbstractConfigLoader(final String configName) {
       this.configName = configName;
     }
 
@@ -145,13 +145,13 @@ public class ConfigLoader {
 
     public T getConfigByName(final String name) {
       T config = getConfigurations().get(name);
-      Preconditions.checkNotNull(config, String.format("% % not found", this.configName, name));
+      Preconditions.checkNotNull(config, String.format("% % not found", configName, name));
       return config;
     }
 
     private List<Object> loadYaml() {
       Yaml yaml = new Yaml();
-      final String configPath = String.format(ConfigLoader.pathTemplate, this.configName);
+      final String configPath = String.format(ConfigLoader.pathTemplate, configName);
       InputStream input = null;
       try {
         input = new FileInputStream(new File(configPath));

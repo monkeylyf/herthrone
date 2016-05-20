@@ -62,7 +62,7 @@ public class HeroFactory {
 
       @Override
       public IntAttribute getCrystalManaCost() {
-        return this.crystalManaCostAttr;
+        return crystalManaCostAttr;
       }
 
       @Override
@@ -72,98 +72,98 @@ public class HeroFactory {
 
       @Override
       public IntAttribute getHealthAttr() {
-        return this.healthAttr;
+        return healthAttr;
       }
 
       @Override
       public IntAttribute getHealthUpperAttr() {
-        return this.healthUpperAttr;
+        return healthUpperAttr;
       }
 
       @Override
       public IntAttribute getAttackAttr() {
-        return this.attackAttr;
+        return attackAttr;
       }
 
       @Override
       public IntAttribute getMovePoints() {
-        return this.movePoints;
+        return movePoints;
       }
 
       @Override
       public BooleanAttribute getDamageImmunity() {
-        return this.damageImmunity;
+        return damageImmunity;
       }
 
       @Override
       public BooleanAttribute getFrozen() {
-        return this.frozen;
+        return frozen;
       }
 
       @Override
       public BooleanAttribute getDivineShield() {
-        return this.divineShield;
+        return divineShield;
       }
 
       @Override
       public BooleanAttribute getTaunt() {
-        return this.taunt;
+        return taunt;
       }
 
       @Override
       public BooleanAttribute getStealth() {
-        return this.stealth;
+        return stealth;
       }
 
       @Override
       public IntAttribute getArmorAttr() {
-        return this.armorAttr;
+        return armorAttr;
       }
 
       @Override
       public void causeDamage(Minion attackee) {
-        attackee.takeDamage(this.weapon.get().use());
-        if (this.weapon.get().getDurabilityAttr().getVal() == 0) {
+        attackee.takeDamage(weapon.get().use());
+        if (weapon.get().getDurabilityAttr().getVal() == 0) {
           disarm();
         }
       }
 
       @Override
       public void takeDamage(int damage) {
-        if (this.armorAttr.getVal() >= damage) {
-          this.armorAttr.decrease(damage);
+        if (armorAttr.getVal() >= damage) {
+          armorAttr.decrease(damage);
         } else {
-          this.healthAttr.decrease(damage - this.armorAttr.getVal());
-          this.armorAttr.reset();
+          healthAttr.decrease(damage - armorAttr.getVal());
+          armorAttr.reset();
         }
       }
 
       @Override
-      public void arm(Weapon weapon) {
-        if (this.weapon.isPresent()) {
+      public void arm(Weapon newWeapon) {
+        if (weapon.isPresent()) {
           disarm();
         }
-        this.weapon = Optional.of(weapon);
+        weapon = Optional.of(newWeapon);
       }
 
       @Override
       public void disarm() {
-        this.weapon = Optional.empty();
+        weapon = Optional.empty();
       }
 
       @Override
       public boolean canDamage() {
-        return this.weapon.isPresent();
+        return weapon.isPresent();
       }
 
       @Override
       public boolean isDead() {
-        return this.healthAttr.getVal() <= 0;
+        return healthAttr.getVal() <= 0;
       }
 
       @Override
       public int getHealthLoss() {
-        return this.getHealthUpperAttr().getVal() - this.getHealthAttr().getVal();
+        return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
       }
     };
   }

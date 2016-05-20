@@ -56,150 +56,150 @@ public class HeroTest extends TestCase {
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
-    this.hero1 = this.gm.battlefield1.mySide.hero;
-    this.hero2 = this.gm.battlefield1.opponentSide.hero;
-    this.battlefield1 = this.gm.battlefield1;
-    this.battlefield2 = this.gm.battlefield2;
+    this.hero1 = gm.battlefield1.mySide.hero;
+    this.hero2 = gm.battlefield1.opponentSide.hero;
+    this.battlefield1 = gm.battlefield1;
+    this.battlefield2 = gm.battlefield2;
 
-    this.minionFactory1 = this.gm.factory1.minionFactory;
-    this.minionFactory2 = this.gm.factory2.minionFactory;
-    this.effectFactory1 = this.gm.factory1.effectFactory;
-    this.effectFactory2 = this.gm.factory2.effectFactory;
+    this.minionFactory1 = gm.factory1.minionFactory;
+    this.minionFactory2 = gm.factory2.minionFactory;
+    this.effectFactory1 = gm.factory1.effectFactory;
+    this.effectFactory2 = gm.factory2.effectFactory;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstHeroPower.ARMOR_UP);
 
-    this.weapon1 = this.gm.factory1.weaponFactory.createWeapon(0, this.weaponAttackVal1, this.weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
-    this.weapon2 = this.gm.factory2.weaponFactory.createWeapon(0, this.weaponAttackVal2, this.weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
+    this.weapon1 = gm.factory1.weaponFactory.createWeapon(0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
+    this.weapon2 = gm.factory2.weaponFactory.createWeapon(0, weaponAttackVal2, weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
   }
 
   @Test
   public void testHeroHealth() {
-    assertEquals(HeroFactory.HEALTH, this.hero1.getHealthAttr().getVal());
-    assertEquals(HeroFactory.HEALTH, this.hero2.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH, hero1.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH, hero2.getHealthAttr().getVal());
   }
 
   @Test
   public void testAttackAction() {
-    this.hero1.arm(weapon1);
-    this.hero2.arm(weapon2);
+    hero1.arm(weapon1);
+    hero2.arm(weapon2);
 
     hero1AttackHero2();
 
     // Even if hero2 has weapon, hero1 won't take any damage from hero2 while attacking.
-    assertEquals(HeroFactory.HEALTH, this.hero1.getHealthAttr().getVal());
-    assertEquals(HeroFactory.HEALTH - this.weaponAttackVal1, this.hero2.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH, hero1.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH - weaponAttackVal1, hero2.getHealthAttr().getVal());
 
-    assertEquals(this.weaponDurability1 - 1, this.weapon1.getDurabilityAttr().getVal());
-    assertEquals(this.weaponDurability2, this.weapon2.getDurabilityAttr().getVal());
+    assertEquals(weaponDurability1 - 1, weapon1.getDurabilityAttr().getVal());
+    assertEquals(weaponDurability2, weapon2.getDurabilityAttr().getVal());
   }
 
   @Test
   public void testAttackActionUtilWeaponExpires() {
-    this.hero1.arm(this.weapon1);
-    this.hero2.arm(this.weapon2);
+    hero1.arm(weapon1);
+    hero2.arm(weapon2);
 
-    while (this.hero1.canDamage() || this.hero2.canDamage()) {
-      if (this.hero1.canDamage()) {
+    while (hero1.canDamage() || hero2.canDamage()) {
+      if (hero1.canDamage()) {
         hero1AttackHero2();
       }
-      if (this.hero2.canDamage()) {
+      if (hero2.canDamage()) {
         hero2AttackHero1();
       }
     }
 
-    assertEquals(HeroFactory.HEALTH - this.weaponAttackVal2 * this.weaponDurability2, this.hero1.getHealthAttr().getVal());
-    assertEquals(HeroFactory.HEALTH - this.weaponAttackVal1 * this.weaponDurability1, this.hero2.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH - weaponAttackVal2 * weaponDurability2, hero1.getHealthAttr().getVal());
+    assertEquals(HeroFactory.HEALTH - weaponAttackVal1 * weaponDurability1, hero2.getHealthAttr().getVal());
 
-    assertEquals(0, this.weapon1.getDurabilityAttr().getVal());
-    assertEquals(0, this.weapon2.getDurabilityAttr().getVal());
+    assertEquals(0, weapon1.getDurabilityAttr().getVal());
+    assertEquals(0, weapon2.getDurabilityAttr().getVal());
   }
 
   @Test
   public void testCanAttack() {
-    assertFalse(this.hero1.canDamage());
-    assertFalse(this.hero2.canDamage());
+    assertFalse(hero1.canDamage());
+    assertFalse(hero2.canDamage());
 
-    this.hero1.arm(this.weapon1);
-    this.hero2.arm(this.weapon2);
+    hero1.arm(weapon1);
+    hero2.arm(weapon2);
 
-    assertThat(this.hero1.canDamage()).isTrue();
-    assertThat(this.hero2.canDamage()).isTrue();
+    assertThat(hero1.canDamage()).isTrue();
+    assertThat(hero2.canDamage()).isTrue();
 
-    while (this.hero1.canDamage() || this.hero2.canDamage()) {
-      if (this.hero1.canDamage()) {
+    while (hero1.canDamage() || hero2.canDamage()) {
+      if (hero1.canDamage()) {
         hero1AttackHero2();
       }
-      if (this.hero2.canDamage()) {
+      if (hero2.canDamage()) {
         hero2AttackHero1();
       }
     }
-    assertFalse(this.hero1.canDamage());
-    assertFalse(this.hero2.canDamage());
+    assertFalse(hero1.canDamage());
+    assertFalse(hero2.canDamage());
   }
 
   @Test
   public void testArmorUp() {
-    assertEquals(0, this.hero1.getArmorAttr().getVal());
+    assertEquals(0, hero1.getArmorAttr().getVal());
     hero1ArmorUp();
-    assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
+    assertEquals(armorGain, hero1.getArmorAttr().getVal());
     hero1ArmorUp();
-    assertEquals(this.armorGain * 2, this.hero1.getArmorAttr().getVal());
+    assertEquals(armorGain * 2, hero1.getArmorAttr().getVal());
 
-    assertEquals(0, this.hero2.getArmorAttr().getVal());
+    assertEquals(0, hero2.getArmorAttr().getVal());
     hero2ArmorUp();
-    assertEquals(this.armorGain, this.hero2.getArmorAttr().getVal());
+    assertEquals(armorGain, hero2.getArmorAttr().getVal());
     hero2ArmorUp();
-    assertEquals(this.armorGain * 2, this.hero2.getArmorAttr().getVal());
+    assertEquals(armorGain * 2, hero2.getArmorAttr().getVal());
   }
 
   @Test
   public void testArmorUpAttackMixture() {
-    assertEquals(0, this.hero1.getArmorAttr().getVal());
+    assertEquals(0, hero1.getArmorAttr().getVal());
 
-    this.hero1.arm(this.weapon1);
-    this.hero2.arm(this.weapon2);
+    hero1.arm(weapon1);
+    hero2.arm(weapon2);
 
     hero1ArmorUp();
-    assertEquals(this.armorGain, this.hero1.getArmorAttr().getVal());
+    assertEquals(armorGain, hero1.getArmorAttr().getVal());
     hero2AttackHero1();
-    assertEquals(0, this.hero1.getArmorAttr().getVal());
-    assertEquals(HeroFactory.HEALTH + this.armorGain - this.weaponAttackVal2, this.hero1.getHealthAttr().getVal());
+    assertEquals(0, hero1.getArmorAttr().getVal());
+    assertEquals(HeroFactory.HEALTH + armorGain - weaponAttackVal2, hero1.getHealthAttr().getVal());
   }
 
   @Test
   public void testHeroAttackMinion() {
-    this.hero1.arm(this.weapon1);
-    Minion yeti = this.minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    hero1.arm(weapon1);
+    Minion yeti = minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
-    this.gm.factory1.attackFactory.getPhysicalDamageAction(yeti, this.hero1).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(yeti, hero1).act();
     assertEquals(0, yeti.getHealthLoss());
-    assertEquals(yeti.getAttackAttr().getVal(), this.hero1.getHealthLoss());
+    assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());
   }
 
   @Test
   public void testMinionAttackHero() {
-    this.hero1.arm(this.weapon1);
-    Minion yeti = this.minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
-    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, yeti).act();
+    hero1.arm(weapon1);
+    Minion yeti = minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, yeti).act();
 
-    assertEquals(this.weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());
-    assertEquals(yeti.getAttackAttr().getVal(), this.hero1.getHealthLoss());
+    assertEquals(weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());
+    assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());
   }
 
   private void hero1ArmorUp() {
-    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero1).stream().forEach(Action::act);
+    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Action::act);
   }
 
   private void hero2ArmorUp() {
-    this.effectFactory1.getActionsByConfig(this.armorUp, this.hero2).stream().forEach(Action::act);
+    effectFactory1.getActionsByConfig(armorUp, hero2).stream().forEach(Action::act);
   }
 
   private void hero1AttackHero2() {
-    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2).act();
   }
 
   private void hero2AttackHero1() {
-    this.gm.factory2.attackFactory.getPhysicalDamageAction(this.hero2, this.hero1).act();
+    gm.factory2.attackFactory.getPhysicalDamageAction(hero2, hero1).act();
   }
 
 }

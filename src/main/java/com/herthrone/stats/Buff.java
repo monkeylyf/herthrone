@@ -14,11 +14,11 @@ public class Buff {
   }
 
   public int getBuffVal() {
-    return this.temp.getVal() + this.perm.getVal();
+    return temp.getVal() + perm.getVal();
   }
 
   public void reset() {
-    this.temp.reset();
-    this.perm.reset();
+    temp.reset();
+    perm.reset();
   }
 }

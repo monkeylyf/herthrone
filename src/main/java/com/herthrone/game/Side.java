@@ -45,7 +45,7 @@ public class Side {
   }
 
   public void populateDeck(final List<BaseCard> cards) {
-    cards.stream().forEach(card -> this.deck.add(card));
+    cards.stream().forEach(card -> deck.add(card));
   }
 
   public void setHeroPower(final Spell heroPower) {

@@ -48,154 +48,154 @@ public class SpellTest extends TestCase {
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
-    this.hero1 = this.gm.battlefield1.mySide.hero;
-    this.hero2 = this.gm.battlefield1.opponentSide.hero;
-    this.battlefield1 = this.gm.battlefield1;
-    this.battlefield2 = this.gm.battlefield2;
+    this.hero1 = gm.battlefield1.mySide.hero;
+    this.hero2 = gm.battlefield1.opponentSide.hero;
+    this.battlefield1 = gm.battlefield1;
+    this.battlefield2 = gm.battlefield2;
 
-    this.minionFactory1 = this.gm.factory1.minionFactory;
-    this.minionFactory2 = this.gm.factory2.minionFactory;
-    this.effectFactory1 = this.gm.factory1.effectFactory;
-    this.effectFactory2 = this.gm.factory2.effectFactory;
+    this.minionFactory1 = gm.factory1.minionFactory;
+    this.minionFactory2 = gm.factory2.minionFactory;
+    this.effectFactory1 = gm.factory1.effectFactory;
+    this.effectFactory2 = gm.factory2.effectFactory;
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
-    this.minion = this.minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    this.minion = minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
   }
 
   @Test
   public void testFireBall() {
-    Spell fireBall = this.gm.factory1.spellFactory.createSpellByName(ConstSpell.FIRE_BALL);
+    Spell fireBall = gm.factory1.spellFactory.createSpellByName(ConstSpell.FIRE_BALL);
 
-    this.effectFactory1.getActionsByConfig(fireBall, this.minion).stream().forEach(Action::act);
-    assertThat(this.minion.getHealthAttr().getVal()).isEqualTo(this.yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
-    assertThat(this.minion.isDead()).isTrue();
+    effectFactory1.getActionsByConfig(fireBall, minion).stream().forEach(Action::act);
+    assertThat(minion.getHealthAttr().getVal()).isEqualTo(yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
+    assertThat(minion.isDead()).isTrue();
   }
 
   @Test
   public void testArmorUp() {
-    assertThat(this.hero1.getArmorAttr().getVal()).isEqualTo(0);
-    Spell armorUp = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.ARMOR_UP);
+    assertThat(hero1.getArmorAttr().getVal()).isEqualTo(0);
+    Spell armorUp = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.ARMOR_UP);
 
-    this.effectFactory1.getActionsByConfig(armorUp, this.hero1).stream().forEach(Action::act);
-    assertThat(this.hero1.getArmorAttr().getVal()).isEqualTo(armorUp.getEffects().get(0).getValue());
+    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Action::act);
+    assertThat(hero1.getArmorAttr().getVal()).isEqualTo(armorUp.getEffects().get(0).getValue());
   }
 
   @Test
   public void testLesserHeal() {
-    Spell lesserHeal = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.LESSER_HEAL);
-    assertThat(this.hero1.getHealthLoss()).isEqualTo(0);
+    Spell lesserHeal = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.LESSER_HEAL);
+    assertThat(hero1.getHealthLoss()).isEqualTo(0);
     final int largeDamage = 5;
     final int healVol = lesserHeal.getEffects().get(0).getValue();
-    this.hero1.takeDamage(largeDamage);
-    assertThat(this.hero1.getHealthLoss()).isEqualTo(largeDamage);
+    hero1.takeDamage(largeDamage);
+    assertThat(hero1.getHealthLoss()).isEqualTo(largeDamage);
 
-    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(Action::act);
-    assertThat(this.hero1.getHealthLoss()).isEqualTo(largeDamage - healVol);
-    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(Action::act);
-    assertThat(this.hero1.getHealthLoss()).isEqualTo(largeDamage - healVol * 2);
+    effectFactory1.getActionsByConfig(lesserHeal, hero1).stream().forEach(Action::act);
+    assertThat(hero1.getHealthLoss()).isEqualTo(largeDamage - healVol);
+    effectFactory1.getActionsByConfig(lesserHeal, hero1).stream().forEach(Action::act);
+    assertThat(hero1.getHealthLoss()).isEqualTo(largeDamage - healVol * 2);
     // Healing cannot exceed the health upper bound.
-    this.effectFactory1.getActionsByConfig(lesserHeal, this.hero1).stream().forEach(Action::act);
-    assertThat(this.hero1.getHealthLoss()).isEqualTo(0);
+    effectFactory1.getActionsByConfig(lesserHeal, hero1).stream().forEach(Action::act);
+    assertThat(hero1.getHealthLoss()).isEqualTo(0);
   }
 
   @Test
   public void testFireBlast() {
-    Spell fireBlast = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.FIRE_BLAST);
+    Spell fireBlast = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.FIRE_BLAST);
     final int damage = fireBlast.getEffects().get(0).getValue();
-    assertEquals(0, this.hero2.getHealthLoss());
+    assertEquals(0, hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(Action::act);
-    assertEquals(-damage, this.hero2.getHealthLoss());
+    effectFactory1.getActionsByConfig(fireBlast, hero2).stream().forEach(Action::act);
+    assertEquals(-damage, hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(fireBlast, this.hero2).stream().forEach(Action::act);
-    assertEquals(-damage * 2, this.hero2.getHealthLoss());
+    effectFactory1.getActionsByConfig(fireBlast, hero2).stream().forEach(Action::act);
+    assertEquals(-damage * 2, hero2.getHealthLoss());
   }
 
   @Test
   public void testSteadyShot() {
-    Spell steadyShot = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.STEADY_SHOT);
+    Spell steadyShot = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.STEADY_SHOT);
 
     final int damage = steadyShot.getEffects().get(0).getValue();
-    assertEquals(0, this.hero2.getHealthLoss());
+    assertEquals(0, hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(Action::act);
-    assertEquals(-damage, this.hero2.getHealthLoss());
+    effectFactory1.getActionsByConfig(steadyShot, hero2).stream().forEach(Action::act);
+    assertEquals(-damage, hero2.getHealthLoss());
 
-    this.effectFactory1.getActionsByConfig(steadyShot, this.hero2).stream().forEach(Action::act);
-    assertEquals(-damage * 2, this.hero2.getHealthLoss());
+    effectFactory1.getActionsByConfig(steadyShot, hero2).stream().forEach(Action::act);
+    assertEquals(-damage * 2, hero2.getHealthLoss());
   }
 
   @Test
   public void testShapeshift() {
-    Spell shapeshift = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.SHAPESHIFT);
+    Spell shapeshift = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.SHAPESHIFT);
     final int attack = shapeshift.getEffects().get(0).getValue();
     final int armor = shapeshift.getEffects().get(1).getValue();
 
-    assertEquals(0, this.hero1.getAttackAttr().getVal());
-    assertEquals(0, this.hero1.getArmorAttr().getVal());
+    assertEquals(0, hero1.getAttackAttr().getVal());
+    assertEquals(0, hero1.getArmorAttr().getVal());
 
-    this.effectFactory1.getActionsByConfig(shapeshift, this.hero1).stream().forEach(Action::act);
+    effectFactory1.getActionsByConfig(shapeshift, hero1).stream().forEach(Action::act);
 
-    assertEquals(attack, this.hero1.getAttackAttr().getVal());
-    assertEquals(armor, this.hero1.getArmorAttr().getVal());
+    assertEquals(attack, hero1.getAttackAttr().getVal());
+    assertEquals(armor, hero1.getArmorAttr().getVal());
 
-    this.hero1.getAttackAttr().nextRound();
+    hero1.getAttackAttr().nextRound();
     // TODO:
-    //assertEquals(0, this.hero1.getAttackAttr().getVal());
+    //assertEquals(0, hero1.getAttackAttr().getVal());
   }
 
   @Test
   public void testDaggerMastery() {
-    Spell daggerMastery = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.DAGGER_MASTERY);
-    assertFalse(this.hero1.canDamage());
-    this.effectFactory1.getActionsByConfig(daggerMastery, this.hero1).stream().forEach(Action::act);
-    assertThat(this.hero1.canDamage()).isTrue();
+    Spell daggerMastery = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.DAGGER_MASTERY);
+    assertFalse(hero1.canDamage());
+    effectFactory1.getActionsByConfig(daggerMastery, hero1).stream().forEach(Action::act);
+    assertThat(hero1.canDamage()).isTrue();
 
-    this.gm.factory1.attackFactory.getPhysicalDamageAction(this.hero1, this.hero2).act();
-    assertEquals(daggerMastery.getEffects().get(0).getValue(), this.hero2.getHealthLoss());
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2).act();
+    assertEquals(daggerMastery.getEffects().get(0).getValue(), hero2.getHealthLoss());
   }
 
   @Test
   public void testReinforce() {
-    Spell reinforce = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.REINFORCE);
-    assertEquals(0, this.battlefield1.mySide.board.size());
-    this.effectFactory1.getActionsByConfig(reinforce, this.hero1).stream().forEach(Action::act);
-    assertEquals(1, this.battlefield1.mySide.board.size());
+    Spell reinforce = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.REINFORCE);
+    assertEquals(0, battlefield1.mySide.board.size());
+    effectFactory1.getActionsByConfig(reinforce, hero1).stream().forEach(Action::act);
+    assertEquals(1, battlefield1.mySide.board.size());
   }
 
   @Test
   public void testTotemicCall() {
-    Spell totemicCall = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.TOTEMIC_CALL);
+    Spell totemicCall = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.TOTEMIC_CALL);
     final int size = totemicCall.getEffects().get(0).getChoices().size();
 
     for (int i = 0; i < size; ++i) {
-      this.effectFactory1.getActionsByConfig(totemicCall, this.hero1).stream().forEach(Action::act);
-      assertEquals(i + 1, this.battlefield1.mySide.board.size());
+      effectFactory1.getActionsByConfig(totemicCall, hero1).stream().forEach(Action::act);
+      assertEquals(i + 1, battlefield1.mySide.board.size());
     }
 
-    Set<String> totems = this.battlefield1.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
+    Set<String> totems = battlefield1.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
     assertEquals(size, totems.size());
   }
 
   @Test
   public void testLifeTap() {
-    final Spell lifeTap = this.gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.LIFE_TAP);
-    final Minion yeti = this.gm.factory1.minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    final Spell lifeTap = gm.factory1.spellFactory.createHeroPowerByName(ConstHeroPower.LIFE_TAP);
+    final Minion yeti = gm.factory1.minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     final int damage = -lifeTap.getEffects().get(0).getValue();
 
-    final Container<BaseCard> hand = this.battlefield1.mySide.hand;
-    final Container<BaseCard> deck = this.battlefield1.mySide.deck;
+    final Container<BaseCard> hand = battlefield1.mySide.hand;
+    final Container<BaseCard> deck = battlefield1.mySide.deck;
 
     assertEquals(0, deck.size());
     deck.add(yeti);
     assertEquals(1, deck.size());
 
     assertEquals(0, hand.size());
-    assertEquals(0, this.hero1.getHealthLoss());
-    this.effectFactory1.getActionsByConfig(lifeTap, this.hero1).stream().forEach(Action::act);
+    assertEquals(0, hero1.getHealthLoss());
+    effectFactory1.getActionsByConfig(lifeTap, hero1).stream().forEach(Action::act);
 
     assertEquals(1, hand.size());
     assertEquals(0, deck.size());
-    assertEquals(damage, this.hero1.getHealthLoss());
+    assertEquals(damage, hero1.getHealthLoss());
   }
 }

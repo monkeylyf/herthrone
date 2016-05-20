@@ -7,7 +7,6 @@ import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -37,20 +36,20 @@ public class MechanicTest extends TestCase {
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
-    this.hero1 = this.gm.battlefield1.mySide.hero;
-    this.hero2 = this.gm.battlefield1.opponentSide.hero;
-    this.battlefield1 = this.gm.battlefield1;
-    this.battlefield2 = this.gm.battlefield2;
+    this.hero1 = gm.battlefield1.mySide.hero;
+    this.hero2 = gm.battlefield1.opponentSide.hero;
+    this.battlefield1 = gm.battlefield1;
+    this.battlefield2 = gm.battlefield2;
 
-    this.minionFactory1 = this.gm.factory1.minionFactory;
-    this.minionFactory2 = this.gm.factory2.minionFactory;
-    this.effectFactory1 = this.gm.factory1.effectFactory;
-    this.effectFactory2 = this.gm.factory2.effectFactory;
+    this.minionFactory1 = gm.factory1.minionFactory;
+    this.minionFactory2 = gm.factory2.minionFactory;
+    this.effectFactory1 = gm.factory1.effectFactory;
+    this.effectFactory2 = gm.factory2.effectFactory;
   }
 
   @Test
   public void testCharge() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.WOLFRIDER);
-    final Minion minion = this.minionFactory1.createMinionByName(ConstMinion.WOLFRIDER);
+    final Minion minion = minionFactory1.createMinionByName(ConstMinion.WOLFRIDER);
   }
 }

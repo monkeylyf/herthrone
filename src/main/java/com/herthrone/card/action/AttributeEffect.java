@@ -20,6 +20,6 @@ public class AttributeEffect implements Action {
 
   @Override
   public void act() {
-    this.attr.increase(delta);
+    attr.increase(delta);
   }
 }

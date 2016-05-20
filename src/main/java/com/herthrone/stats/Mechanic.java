@@ -15,10 +15,10 @@ public class Mechanic {
   }
 
   public boolean contains(final String mechanicName) {
-    return this.mechanics.containsKey(mechanicName);
+    return mechanics.containsKey(mechanicName);
   }
 
   public MechanicConfig get(final String mechanicName) {
-    return this.mechanics.get(mechanicName);
+    return mechanics.get(mechanicName);
   }
 }

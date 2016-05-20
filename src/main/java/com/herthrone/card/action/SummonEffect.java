@@ -20,6 +20,6 @@ public class SummonEffect implements Action {
 
   @Override
   public void act() {
-    this.board.add(minion);
+    board.add(minion);
   }
 }

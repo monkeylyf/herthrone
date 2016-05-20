@@ -16,25 +16,25 @@ public class IntAttribute implements Round {
   }
 
   public int getVal() {
-    return this.val.getVal() + this.buff.getBuffVal();
+    return val.getVal() + buff.getBuffVal();
   }
 
   public void increase(final int gain) {
-    this.val.increase(gain);
+    val.increase(gain);
   }
 
   public void decrease(final int loss) {
-    this.val.decrease(loss);
+    val.decrease(loss);
   }
 
   public void reset() {
-    this.val.setTo(this.rawVal);
-    this.buff.reset();
+    val.setTo(rawVal);
+    buff.reset();
   }
 
   @Override
   public void nextRound() {
-    this.buff.temp.reset();
+    buff.temp.reset();
   }
 
 }

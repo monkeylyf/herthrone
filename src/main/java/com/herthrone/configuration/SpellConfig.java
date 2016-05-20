@@ -31,7 +31,7 @@ public class SpellConfig implements BaseConfig<ConstSpell> {
     for (Object action : actions) {
       Map actionMap = (Map) action;
       EffectConfig config = new EffectConfig(actionMap);
-      this.effects.add(config);
+      effects.add(config);
     }
   }
 
@@ -42,12 +42,12 @@ public class SpellConfig implements BaseConfig<ConstSpell> {
 
   @Override
   public ConstSpell getName() {
-    return this.name;
+    return name;
   }
 
   @Override
   public ConstClass getClassName() {
-    return this.className;
+    return className;
   }
 
   @Override
@@ -57,6 +57,6 @@ public class SpellConfig implements BaseConfig<ConstSpell> {
 
   @Override
   public int getCrystal() {
-    return this.crystal;
+    return crystal;
   }
 }

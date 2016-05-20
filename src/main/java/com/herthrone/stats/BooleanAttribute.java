@@ -18,25 +18,25 @@ public class BooleanAttribute implements Round, Reset {
   }
 
   public void on(final double roundUntilExpire) {
-    this.on = on;
+    this.on = true;
     this.roundUntilExpire = roundUntilExpire;
   }
 
   public boolean isOn() {
-    return this.on;
+    return on;
   }
 
   @Override
   public void nextRound() {
-    this.roundUntilExpire -= 1;
-    if (this.roundUntilExpire == 0) {
+    roundUntilExpire -= 1;
+    if (roundUntilExpire == 0) {
       //reset();
     }
   }
 
   @Override
   public void reset() {
-    this.on = false;
-    this.roundUntilExpire = 0.0;
+    on = false;
+    roundUntilExpire = 0.0;
   }
 }

@@ -18,7 +18,7 @@ public class PhysicalDamage implements Action {
 
   @Override
   public void act() {
-    this.attacker.causeDamage(this.attackee);
-    this.attacker.takeDamage(this.attackee.getAttackAttr().getVal());
+    attacker.causeDamage(attackee);
+    attacker.takeDamage(attackee.getAttackAttr().getVal());
   }
 }

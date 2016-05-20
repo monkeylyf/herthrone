@@ -60,7 +60,7 @@ public class SpellFactory {
 
       @Override
       public IntAttribute getCrystalManaCost() {
-        return this.crystalManaCostAttr;
+        return crystalManaCostAttr;
       }
 
       @Override

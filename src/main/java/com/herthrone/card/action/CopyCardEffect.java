@@ -22,6 +22,6 @@ public class CopyCardEffect implements Action {
     final String cardName = cardToCopy.getCardName();
     // TODO: deep copy is not so fun. Will create createCardByName method.
     final BaseCard copiedCard = null;
-    this.container.add(copiedCard);
+    container.add(copiedCard);
   }
 }
