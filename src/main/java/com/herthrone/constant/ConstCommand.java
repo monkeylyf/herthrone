@@ -1,9 +1,9 @@
-package com.herthrone.cli;
+package com.herthrone.constant;
 
 /**
  * Created by yifengliu on 5/15/16.
  */
-public enum Command {
+public enum ConstCommand {
 
   PLAY_CARD,
   PLAY_CARD_WITH_TARGET,

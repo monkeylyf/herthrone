@@ -1,12 +1,15 @@
 package com.herthrone.game;
 
+import com.herthrone.base.BaseCard;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.stats.Crystal;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +19,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Created by yifengliu on 5/17/16.
  */
+@RunWith(JUnit4.class)
 public class GameManagerTest {
 
   private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
@@ -102,7 +106,7 @@ public class GameManagerTest {
   public void testOverdraw() {
     assertThat(DECK_SIZE).isGreaterThan(HAND_SIZE);
     while (!mySide.deck.isEmpty()) {
-      this.gameManager.drawCard();
+      gameManager.drawCard();
     }
     assertThat(mySide.hand.size()).isEqualTo(HAND_SIZE);
   }
@@ -110,7 +114,7 @@ public class GameManagerTest {
   @Test
   public void testFatigue() {
     while (!mySide.deck.isEmpty()) {
-      this.gameManager.drawCard();
+      gameManager.drawCard();
     }
 
     assertThat(mySide.hero.getHealthLoss()).isEqualTo(0);
@@ -118,7 +122,7 @@ public class GameManagerTest {
     final int repeat = 10;
     for (int i = 1; i <= repeat; ++i) {
       final int healthBeforeDrawCard = mySide.hero.getHealthAttr().getVal();
-      this.gameManager.drawCard();
+      gameManager.drawCard();
       final int healthAfterDrawCard = mySide.hero.getHealthAttr().getVal();
 
       assertThat(healthBeforeDrawCard - healthAfterDrawCard).isEqualTo(i);
@@ -131,14 +135,37 @@ public class GameManagerTest {
   }
 
   @Test
-  public void testPlayMinionCard() {
+  public void testPlayMinionCardWithProperCrystal() {
     gameManager.drawCard();
 
     assertThat(mySide.hand.get(0) instanceof Minion).isTrue();
     assertThat(mySide.hand.get(0).getCardName()).isEqualTo(MINION.toString());
     assertThat(mySide.board.size()).isEqualTo(0);
+
+    final BaseCard card = mySide.hand.get(0);
+    final int requiredCrystalCost = card.getCrystalManaCost().getVal();
+
+    while (mySide.crystal.getCrystal() < requiredCrystalCost) {
+      try {
+        gameManager.playCard(0);
+      } catch (IllegalArgumentException expected) {
+        assertThat(expected).hasMessage("Not enough mana to play " + card.getCardName());
+      }
+
+      mySide.crystal.nextRound();
+    }
+
     gameManager.playCard(0);
     assertThat(mySide.board.size()).isEqualTo(1);
     assertThat(mySide.board.get(0).getCardName()).isEqualTo(MINION.toString());
+  }
+
+  @Test
+  public void testUseHeroPower() {
+    final int damage = 2;
+    opponentSide.hero.takeDamage(damage);
+    assertThat(opponentSide.hero.getHealthLoss()).isEqualTo(damage);
+    gameManager.useHeroPower(opponentSide.hero);
+    assertThat(opponentSide.hero.getHealthLoss()).isEqualTo(0);
   }
 }

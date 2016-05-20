@@ -1,5 +1,6 @@
 package com.herthrone.game;
 
+import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
@@ -11,6 +12,7 @@ import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.stats.IntAttribute;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,27 +69,46 @@ public class GameManager {
   }
 
   void switchTurn() {
-    if (this.activeBattlefield == this.battlefield1) {
-      this.activeBattlefield = this.battlefield2;
-      this.activeFactory = this.factory2;
+    if (activeBattlefield == battlefield1) {
+      activeBattlefield = battlefield2;
+      activeFactory = factory2;
     } else {
-      this.activeBattlefield = this.battlefield1;
-      this.activeFactory = this.factory1;
+      activeBattlefield = battlefield1;
+      activeFactory = factory1;
     }
   }
 
   void playCard(final int index) {
-    final BaseCard card = this.activeBattlefield.mySide.hand.remove(index);
+    checkManaCost(index);
+    final BaseCard card = activeBattlefield.mySide.hand.remove(index);
 
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
-      this.activeBattlefield.mySide.board.add(minion);
+      activeBattlefield.mySide.board.add(minion);
     } else if (card instanceof Secret) {
       Secret secret = (Secret) card;
-      this.activeBattlefield.mySide.secrets.add(secret);
+      activeBattlefield.mySide.secrets.add(secret);
     } else if (card instanceof Weapon) {
       Weapon weapon = (Weapon) card;
-      this.activeBattlefield.mySide.hero.arm(weapon);
+      activeBattlefield.mySide.hero.arm(weapon);
+    } else if (card instanceof Spell) {
+      Spell spell = (Spell) card;
+      //spell.getEffects().
+    } else {
+
+    }
+  }
+
+  void playCard(final int index, final Minion target) {
+    checkManaCost(index);
+    final BaseCard card = activeBattlefield.mySide.hand.remove(index);
+
+    if (card instanceof Minion) {
+      Minion minion = (Minion) card;
+      activeBattlefield.mySide.board.add(minion);
+    } else if (card instanceof Weapon) {
+      Weapon weapon = (Weapon) card;
+      activeBattlefield.mySide.hero.arm(weapon);
     } else if (card instanceof Spell) {
       Spell spell = (Spell) card;
       //spell.getEffects().
@@ -98,38 +119,29 @@ public class GameManager {
 
   void drawCard() {
     if (this.activeBattlefield.mySide.deck.isEmpty()) {
-      this.activeBattlefield.mySide.fatigue += 1;
-      this.activeBattlefield.mySide.hero.takeDamage(this.activeBattlefield.mySide.fatigue);
+      activeBattlefield.mySide.fatigue += 1;
+      activeBattlefield.mySide.hero.takeDamage(this.activeBattlefield.mySide.fatigue);
     } else {
       final BaseCard card = this.activeBattlefield.mySide.deck.top();
-      this.activeBattlefield.mySide.hand.add(card);
+      activeBattlefield.mySide.hand.add(card);
     }
   }
 
-  void playCard(final int index, final Minion target) {
-    final BaseCard card = this.activeBattlefield.mySide.hand.remove(index);
-
-    if (card instanceof Minion) {
-      Minion minion = (Minion) card;
-      this.activeBattlefield.mySide.board.add(minion);
-    } else if (card instanceof Weapon) {
-      Weapon weapon = (Weapon) card;
-      this.activeBattlefield.mySide.hero.arm(weapon);
-    } else if (card instanceof Spell) {
-      Spell spell = (Spell) card;
-      //spell.getEffects().
-    } else {
-
-    }
-  }
-
-  private void consumeCrystal(final BaseCard card) {
+  void consumeCrystal(final BaseCard card) {
     final int cost = card.getCrystalManaCost().getVal();
-    this.activeBattlefield.mySide.crystal.consume(cost);
+    activeBattlefield.mySide.crystal.consume(cost);
   }
 
-  private void useHeroPower(final Minion minion) {
-    this.activeFactory.effectFactory.getActionsByConfig(this.activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
+  void useHeroPower(final Minion minion) {
+    activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
+  }
+
+  private void checkManaCost(final int index) {
+    final BaseCard card = activeBattlefield.mySide.hand.get(index);
+    final int manaCost = card.getCrystalManaCost().getVal();
+    Preconditions.checkArgument(
+            manaCost <= activeBattlefield.mySide.crystal.getCrystal(),
+            "Not enough mana to play " + card.getCardName());
   }
 
 }

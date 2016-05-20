@@ -1,4 +1,4 @@
-package com.herthrone.cli;
+package com.herthrone.game;
 
 import java.util.ArrayList;
 import java.util.List;
