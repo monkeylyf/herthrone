@@ -7,7 +7,6 @@ import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;

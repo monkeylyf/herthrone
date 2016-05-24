@@ -3,9 +3,9 @@ package com.herthrone.game;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
-import com.herthrone.stats.Crystal;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +13,7 @@ import org.junit.runners.JUnit4;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -22,10 +23,9 @@ import static com.google.common.truth.Truth.assertThat;
 @RunWith(JUnit4.class)
 public class GameManagerTest {
 
-  private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
   private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
   private static final int HAND_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
-
+  private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
   private GameManager gameManager;
   private ConstHero hero1 = ConstHero.ANDUIN_WRYNN;
   private ConstHero hero2 = ConstHero.JAINA_PROUDMOORE;
@@ -167,5 +167,70 @@ public class GameManagerTest {
     assertThat(opponentSide.hero.getHealthLoss()).isEqualTo(damage);
     gameManager.useHeroPower(opponentSide.hero);
     assertThat(opponentSide.hero.getHealthLoss()).isEqualTo(0);
+
+    try {
+      gameManager.useHeroPower(opponentSide.hero);
+    } catch (IllegalArgumentException expected) {
+      assertThat(expected).hasMessage("Cannot use hero power any more in current turn");
+    }
+  }
+
+  @Test
+  public void testSwitchTurn() {
+    final Side previousMySide = mySide;
+    final Side previousOpponentSide = opponentSide;
+
+    gameManager.switchTurn();
+
+    assertThat(gameManager.activeBattlefield.mySide).isEqualTo(previousOpponentSide);
+    assertThat(gameManager.activeBattlefield.opponentSide).isEqualTo(previousMySide);
+  }
+
+  @Test
+  public void testGenerateCommandNodes() {
+    // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
+    mySide.board.add((Minion) mySide.deck.top());
+    mySide.board.add((Minion) mySide.deck.top());
+
+    opponentSide.board.add((Minion) opponentSide.deck.top());
+
+    final int numOfMyMinions = 2;
+    final int numOfOpponentMinions = 1;
+
+    assertThat(mySide.board.size()).isEqualTo(numOfMyMinions);
+    assertThat(opponentSide.board.size()).isEqualTo(numOfOpponentMinions);
+
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    checkCommands(myRoot, numOfMyMinions);
+
+    // Switch side.
+    gameManager.switchTurn();
+
+    final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    checkCommands(opponentRoot, numOfOpponentMinions);
+  }
+
+  private void checkCommands(CommandLine.CommandNode root, final int numOfMinions) {
+    assertThat(root.childOptions.size()).isEqualTo(4);
+    List<String> childOptions = root.childOptions.stream().map(option -> option.option).collect(Collectors.toList());
+    assertThat(childOptions).containsExactly(
+            ConstCommand.END_TURN.toString(),
+            ConstCommand.MOVE_MINION.toString(),
+            ConstCommand.PLAY_CARD.toString(),
+            ConstCommand.USE_HERO_POWER.toString());
+
+    for (CommandLine.CommandNode node : root.childOptions) {
+      final String optionName = node.option;
+      if (optionName.equals(ConstCommand.END_TURN.toString())) {
+        assertThat(node.childOptions.size()).isEqualTo(0);
+      } else if (optionName.equals(ConstCommand.USE_HERO_POWER.toString())) {
+        // 1(own hero) + 2(own minions) + 1(opponent hero) + 1(opponent minion) = 5
+        assertThat(node.childOptions.size()).isEqualTo(5);
+      } else if (optionName.equals(ConstCommand.MOVE_MINION)) {
+        assertThat(node.childOptions.size()).isEqualTo(numOfMinions);
+      } else if (optionName.equals(ConstCommand.PLAY_CARD)) {
+        assertThat(node.childOptions.size()).isEqualTo(0);
+      }
+    }
   }
 }

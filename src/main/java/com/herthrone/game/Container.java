@@ -8,12 +8,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
  * Created by yifeng on 4/9/16.
  */
-public class Container<T extends BaseCard> {
+public class Container<T extends BaseCard> implements Iterator<T> {
 
   private final int maxCapacity;
   private final List<T> container;
@@ -106,5 +107,25 @@ public class Container<T extends BaseCard> {
 
   public T remove(final int index) {
     return container.remove(index);
+  }
+
+  @Override
+  public boolean hasNext() {
+    return this.container.iterator().hasNext();
+  }
+
+  @Override
+  public T next() {
+    return this.container.iterator().next();
+  }
+
+  @Override
+  public void remove() {
+    this.container.iterator().remove();
+  }
+
+  @Override
+  public void forEachRemaining(Consumer<? super T> action) {
+    this.container.forEach(action);
   }
 }

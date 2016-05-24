@@ -12,7 +12,6 @@ import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.stats.IntAttribute;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class GameManager {
   public final Battlefield battlefield2;
   private final Queue<Action> actionQueue;
 
-  private Battlefield activeBattlefield;
+  Battlefield activeBattlefield;
   private Factory activeFactory;
 
   public GameManager(final ConstHero hero1, final ConstHero hero2, final List<String> cardNames1, final List<String> cardNames2) {
@@ -133,7 +132,10 @@ public class GameManager {
   }
 
   void useHeroPower(final Minion minion) {
-    activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
+    final Side side = activeBattlefield.mySide;
+    Preconditions.checkArgument(side.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
+    activeFactory.effectFactory.getActionsByConfig(side.heroPower, minion).stream().forEach(Action::act);
+    side.heroPowerMovePoints.decrease(1);
   }
 
   private void checkManaCost(final int index) {

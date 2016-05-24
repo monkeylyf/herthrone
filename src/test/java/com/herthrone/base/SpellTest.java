@@ -1,6 +1,4 @@
-package com;
-
-import static com.google.common.truth.Truth.assertThat;
+package com.herthrone.base;
 
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;
@@ -25,6 +23,8 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Created by yifeng on 4/20/16.

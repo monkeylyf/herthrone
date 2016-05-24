@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
  */
 public class EffectFactory {
 
-  private Battlefield battlefield;
   private final MinionFactory minionFactory;
   private final WeaponFactory weaponFactory;
+  private Battlefield battlefield;
 
   public EffectFactory(final MinionFactory minionFactory, final WeaponFactory weaponFactory, final Battlefield battlefield) {
     this.minionFactory = minionFactory;

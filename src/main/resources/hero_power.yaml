@@ -29,6 +29,9 @@
   class: Mage
   crystal: 2
   type: hero_power
+  target:
+    scope: all
+    type: creature
   actions:
     - effect: attribute
       type: health
@@ -42,6 +45,9 @@
   class: Priest
   crystal: 2
   type: hero_power
+  target:
+    scope: all
+    type: creature
   actions:
     - effect: attribute
       type: health
@@ -109,12 +115,15 @@
   class: Hunter
   crystal: 2
   type: hero_power
+  target:
+     scope: opponent
+     type: hero
   actions:
     - effect: attribute
       type: health
       value: -2
       target:
-         scope: enemy
+         scope: opponent
          type: hero
 
 - name: totemic_call

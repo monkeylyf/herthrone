@@ -1,8 +1,20 @@
 package com.herthrone.game;
 
+import com.google.common.base.Optional;
+import com.herthrone.base.BaseCard;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
+import com.herthrone.configuration.TargetConfig;
+import com.herthrone.constant.ConstCommand;
+import com.herthrone.constant.ConstTarget;
+import com.herthrone.constant.ConstType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static com.herthrone.constant.ConstTarget.OPPONENT;
+import static com.herthrone.constant.ConstTarget.OWN;
 
 /**
  * Created by yifengliu on 5/15/16.
@@ -14,31 +26,99 @@ public class CommandLine {
     run(root);
   }
 
-  public static CommandNode constructCommandMenu() {
-    CommandNode root = new CommandNode(null, "");
-    CommandNode playCard = new CommandNode(root, "Play Card");
-    playCard.childOptions.add(
-            new CommandNode(playCard, "Fire Ball")
-    );
-    playCard.childOptions.add(
-            new CommandNode(playCard, "Wolfrider")
-    );
+  public static CommandNode yieldCommands(final Battlefield battlefield) {
+    final Side mySide = battlefield.mySide;
+    final Side opponentSide = battlefield.opponentSide;
 
-    CommandNode moveMinions = new CommandNode(root, "Move Minion");
-    moveMinions.childOptions.add(
-            new CommandNode(moveMinions, "Yeti")
-    );
-    moveMinions.childOptions.add(
-            new CommandNode(moveMinions, "Motherfucker")
-    );
-    root.childOptions.add(playCard);
-    root.childOptions.add(moveMinions);
-    root.childOptions.add(
-            new CommandNode(root, "Hero Power")
-    );
-    root.childOptions.add(
-            new CommandNode(root, "End Turn")
-    );
+    final CommandNode root = new CommandNode("root");
+    // Populate play card option.
+    final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
+    for (int i = 0; i < mySide.hand.size(); ++i) {
+      final BaseCard card = mySide.hand.get(i);
+      playCardNode.addChildNode(new CommandNode(card.getCardName(), i));
+    }
+    root.addChildNode(playCardNode);
+    // Populate move minions option.
+    final CommandNode moveMinions = new CommandNode(ConstCommand.MOVE_MINION.toString());
+    for (int i = 0; i < mySide.board.size(); ++i) {
+      final Minion minion = mySide.board.get(i);
+      final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i);
+      for (int j = 0; j < opponentSide.board.size(); ++j) {
+        final Minion opponentMinion = opponentSide.board.get(j);
+        moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j));
+      }
+      moveMinionCommand.addChildNode(new CommandNode(opponentSide.hero.getCardName(), -1));
+    }
+    root.addChildNode(moveMinions);
+    // Use hero power.
+    final Spell heroPower = mySide.heroPower;
+    //final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString() + ": " + heroPower.getCardName());
+    final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
+
+    scanTargets(useHeroPower, heroPower.getTargetConfig(), battlefield);
+    root.addChildNode(useHeroPower);
+    // End turn.
+    root.addChildNode(new CommandNode(ConstCommand.END_TURN.toString()));
+
+    return root;
+  }
+
+  private static void scanTargets(final CommandNode root, final Optional<TargetConfig> heroConfig, final Battlefield battlefield) {
+    if (heroConfig.isPresent()) {
+      TargetConfig config = heroConfig.get();
+      switch (config.scope) {
+        case OWN:
+          scanTargets(config, battlefield.mySide).stream().forEach(node -> root.addChildNode(node));
+          break;
+        case OPPONENT:
+          scanTargets(config, battlefield.opponentSide).stream().forEach(node -> root.addChildNode(node));
+          break;
+        case ALL:
+          scanTargets(config, battlefield.mySide).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.opponentSide).stream().forEach(node -> root.addChildNode(node));
+          break;
+        default:
+          throw new RuntimeException("Unknown scope: " + config.scope.toString());
+      }
+    }
+  }
+
+  private static List<CommandNode> scanTargets(final TargetConfig config, final Side side) {
+    List<CommandNode> nodes = new ArrayList<>();
+    switch (config.type) {
+      case HERO:
+        nodes.add(new CommandNode(side.hero.toString(), -1));
+        break;
+      case MINION:
+        for (int i = 0; i < side.board.size(); ++i) {
+          nodes.add(new CommandNode(side.board.get(i).toString(), i));
+        }
+        break;
+      case CREATURE:
+        nodes.add(new CommandNode(side.hero.toString(), -1));
+        for (int i = 0; i < side.board.size(); ++i) {
+          nodes.add(new CommandNode(side.board.get(i).toString(), i));
+        }
+        break;
+    }
+
+    return nodes;
+  }
+
+  public static CommandNode constructCommandMenu() {
+    CommandNode root = new CommandNode("root");
+    CommandNode playCard = new CommandNode("Play Card");
+    playCard.addChildNode(new CommandNode("Fire Ball"));
+    playCard.addChildNode(new CommandNode("Wolfrider"));
+
+    CommandNode moveMinions = new CommandNode("Move Minion");
+    moveMinions.addChildNode(new CommandNode("Yeti"));
+    moveMinions.addChildNode(new CommandNode("Motherfucker"));
+
+    root.addChildNode(playCard);
+    root.addChildNode(moveMinions);
+    root.addChildNode(new CommandNode("Hero Power"));
+    root.addChildNode(new CommandNode("End Turn"));
     return root;
   }
 
@@ -52,21 +132,22 @@ public class CommandLine {
     System.out.println("Your turn finished");
   }
 
-  private static class CommandNode {
+  public static class CommandNode {
 
     private static final String TEMPLATE = "%d. %s.";
-    public final CommandNode parent;
+    private CommandNode parent = null;
     public final String option;
     public final List<CommandNode> childOptions;
+    public final int index;
 
-    public CommandNode(final CommandNode parent, final String option) {
-      this.parent = parent;
+    public CommandNode(final String option, final int index) {
       this.option = option;
       this.childOptions = new ArrayList<>();
+      this.index = index;
     }
 
     public CommandNode(final String option) {
-      this(null, option);
+      this(option, -1);
     }
 
     public void listChildOptions() {
@@ -97,6 +178,11 @@ public class CommandLine {
 
     public String toString() {
       return (option == null) ? "" : option;
+    }
+
+    public void addChildNode(final CommandNode node) {
+      childOptions.add(node);
+      node.parent = this;
     }
 
     private int readInput() {

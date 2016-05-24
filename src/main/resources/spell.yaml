@@ -2,6 +2,9 @@
   display: FireBall
   class: Mage
   crystal: 4
+  target:
+    scope: all
+    type: creature
   actions:
     - effect: attribute
       type: health

@@ -1,4 +1,4 @@
-package com;
+package com.herthrone.base;
 
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;

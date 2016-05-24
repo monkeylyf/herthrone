@@ -6,7 +6,7 @@ package com.herthrone.constant;
 public enum ConstCommand {
 
   PLAY_CARD,
-  PLAY_CARD_WITH_TARGET,
+  MOVE_MINION,
   USE_HERO_POWER,
   END_TURN;
 }

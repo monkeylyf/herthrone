@@ -37,6 +37,22 @@ public class Factory {
     this.attackFactory = new AttackFactory(battlefield);
   }
 
+  public static List<Action> singleActionToList(Action action) {
+    return Arrays.asList(action);
+  }
+
+  public static boolean targetAny(BaseCard card) {
+    return targetMinion(card) || targetMinion(card);
+  }
+
+  public static boolean targetMinion(BaseCard card) {
+    return card instanceof Minion && !(card instanceof Hero);
+  }
+
+  public static boolean targetHero(BaseCard card) {
+    return card instanceof Hero;
+  }
+
   public BaseCard createCardInstance(final String cardName) {
     ConstType type = ConfigLoader.getCardTypeByName(cardName);
     switch (type) {
@@ -55,21 +71,5 @@ public class Factory {
       default:
         throw new RuntimeException(String.format("Unknown type %s for card %s", type.toString(), cardName));
     }
-  }
-
-  public static List<Action> singleActionToList(Action action) {
-    return Arrays.asList(action);
-  }
-
-  public static boolean targetAny(BaseCard card) {
-    return targetMinion(card) || targetMinion(card);
-  }
-
-  public static boolean targetMinion(BaseCard card) {
-    return card instanceof Minion && !(card instanceof Hero);
-  }
-
-  public static boolean targetHero(BaseCard card) {
-    return card instanceof Hero;
   }
 }

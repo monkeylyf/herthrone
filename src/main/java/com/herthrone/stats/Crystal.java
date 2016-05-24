@@ -25,7 +25,7 @@ public class Crystal implements Round {
   }
 
   public void consume(final int crystalCost) {
-    Preconditions.checkArgument(crystal >= crystalCost);
+    Preconditions.checkArgument(crystal >= crystalCost, "Not enough mana");
     crystal -= crystalCost;
   }
 
