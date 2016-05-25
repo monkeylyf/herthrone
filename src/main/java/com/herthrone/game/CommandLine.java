@@ -6,25 +6,18 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstCommand;
-import com.herthrone.constant.ConstTarget;
-import com.herthrone.constant.ConstType;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static com.herthrone.constant.ConstTarget.OPPONENT;
-import static com.herthrone.constant.ConstTarget.OWN;
 
 /**
  * Created by yifengliu on 5/15/16.
  */
 public class CommandLine {
 
-  public static void main(String[] args) {
-    final CommandNode root = constructCommandMenu();
-    run(root);
-  }
+  private static boolean stdoutOn = true;
 
   public static CommandNode yieldCommands(final Battlefield battlefield) {
     final Side mySide = battlefield.mySide;
@@ -48,6 +41,7 @@ public class CommandLine {
         moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j));
       }
       moveMinionCommand.addChildNode(new CommandNode(opponentSide.hero.getCardName(), -1));
+      moveMinions.addChildNode(moveMinionCommand);
     }
     root.addChildNode(moveMinions);
     // Use hero power.
@@ -105,40 +99,40 @@ public class CommandLine {
     return nodes;
   }
 
-  public static CommandNode constructCommandMenu() {
-    CommandNode root = new CommandNode("root");
-    CommandNode playCard = new CommandNode("Play Card");
-    playCard.addChildNode(new CommandNode("Fire Ball"));
-    playCard.addChildNode(new CommandNode("Wolfrider"));
-
-    CommandNode moveMinions = new CommandNode("Move Minion");
-    moveMinions.addChildNode(new CommandNode("Yeti"));
-    moveMinions.addChildNode(new CommandNode("Motherfucker"));
-
-    root.addChildNode(playCard);
-    root.addChildNode(moveMinions);
-    root.addChildNode(new CommandNode("Hero Power"));
-    root.addChildNode(new CommandNode("End Turn"));
-    return root;
+  public static CommandNode run(CommandNode cursor) {
+    return run(cursor, System.in);
   }
 
-  public static void run(CommandNode cursor) {
+  static CommandNode run(CommandNode cursor, final InputStream input) {
     boolean outOfTime = false;
+    final Scanner scanner = new Scanner(input);
     while (!cursor.isLeaf() && !outOfTime) {
       cursor.listChildOptions();
-      cursor = cursor.move();
-      System.out.println("--------------------");
+      cursor = cursor.move(scanner);
+      println("--------------------");
     }
-    System.out.println("Your turn finished");
+    println("Your turn finished");
+    scanner.close();
+    return cursor;
+  }
+
+  private static void println(final Object object) {
+    if (stdoutOn) {
+      System.out.println(object);
+    }
+  }
+
+  public static void turnOffStdout() {
+    stdoutOn = false;
   }
 
   public static class CommandNode {
 
     private static final String TEMPLATE = "%d. %s.";
-    private CommandNode parent = null;
     public final String option;
     public final List<CommandNode> childOptions;
     public final int index;
+    private CommandNode parent = null;
 
     public CommandNode(final String option, final int index) {
       this.option = option;
@@ -154,11 +148,11 @@ public class CommandLine {
       for (int i = 0; i < childOptions.size(); ++i) {
         // 1-based index.
         String output = String.format(CommandNode.TEMPLATE, i + 1, childOptions.get(i));
-        System.out.println(output);
+        println(output);
       }
 
       if (parent != null) {
-        System.out.println(String.format(CommandNode.TEMPLATE, 0, "Previous list"));
+        println(String.format(CommandNode.TEMPLATE, 0, "Previous list"));
       }
     }
 
@@ -185,25 +179,21 @@ public class CommandLine {
       node.parent = this;
     }
 
-    private int readInput() {
-      System.out.println("Enter a number:");
+    public CommandNode move(final Scanner scanner) {
+      println("Enter a number:");
+      int index = 0;
       while (true) {
-        Scanner reader = new Scanner(System.in);
         try {
-          final int index = reader.nextInt();
+          index = scanner.nextInt();
           if (isValidOptionNum(index)) {
-            return index;
+            break;
           } else {
-            System.out.println("Invalid input.");
+            println("Invalid input.");
           }
         } catch (java.util.InputMismatchException err) {
-          System.out.println("Invalid input.");
+          println("Invalid input.");
         }
       }
-    }
-
-    public CommandNode move() {
-      final int index = readInput();
       if (index == 0) {
         return previous();
       } else {
@@ -213,6 +203,10 @@ public class CommandLine {
 
     public boolean isLeaf() {
       return childOptions.size() == 0;
+    }
+
+    public String getParentType() {
+      return parent.option;
     }
   }
 }

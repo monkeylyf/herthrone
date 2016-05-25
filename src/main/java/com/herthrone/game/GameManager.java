@@ -11,6 +11,7 @@ import com.herthrone.card.factory.Factory;
 import com.herthrone.card.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
+import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 
 import java.util.LinkedList;
@@ -65,6 +66,36 @@ public class GameManager {
   private static Spell generateHeroPower(final ConstHero hero, final Factory factory) {
     final HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
     return factory.spellFactory.createHeroPowerByName(heroConfig.getHeroPower());
+  }
+
+  public void play() {
+    while (!activeBattlefield.mySide.hero.isDead() && !activeBattlefield.opponentSide.hero.isDead()) {
+      final CommandLine.CommandNode root = CommandLine.yieldCommands(activeBattlefield);
+      CommandLine.CommandNode leafNode = CommandLine.run(root);
+
+      if (!play(leafNode)) {
+        switchTurn();
+        activeBattlefield.mySide.crystal.increaseUpperBound();
+      }
+    }
+  }
+
+  boolean play(final CommandLine.CommandNode leafNode) {
+    if (leafNode.option.equals(ConstCommand.END_TURN.toString())) {
+      return true;
+    }
+
+    if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
+
+    } else if (leafNode.option.equals(ConstCommand.PLAY_CARD.toString())) {
+
+    } else if (leafNode.option.equals(ConstCommand.MOVE_MINION.toString())) {
+
+    } else {
+      throw new RuntimeException("Unknown option: " + leafNode.option.toString());
+    }
+
+    return false;
   }
 
   void switchTurn() {

@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +45,8 @@ public class GameManagerTest {
 
     mySide = gameManager.battlefield1.mySide;
     opponentSide = gameManager.battlefield1.opponentSide;
+
+    CommandLine.turnOffStdout();
   }
 
   @Test
@@ -187,15 +192,10 @@ public class GameManagerTest {
   }
 
   @Test
-  public void testGenerateCommandNodes() {
-    // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
-    mySide.board.add((Minion) mySide.deck.top());
-    mySide.board.add((Minion) mySide.deck.top());
-
-    opponentSide.board.add((Minion) opponentSide.deck.top());
-
+  public void testGenerateCommandNodes() throws IOException {
     final int numOfMyMinions = 2;
     final int numOfOpponentMinions = 1;
+    populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
 
     assertThat(mySide.board.size()).isEqualTo(numOfMyMinions);
     assertThat(opponentSide.board.size()).isEqualTo(numOfOpponentMinions);
@@ -208,6 +208,50 @@ public class GameManagerTest {
 
     final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
     checkCommands(opponentRoot, numOfOpponentMinions);
+  }
+
+  @Test
+  public void testCommandNodes() {
+    final int numOfMyMinions = 2;
+    final int numOfOpponentMinions = 1;
+    populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
+    gameManager.drawCard();
+
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    // Choose option 1 which is play card.
+    final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
+    final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);
+    assertThat(playCardLeaf.getParentType()).isEqualTo(ConstCommand.PLAY_CARD.toString());
+    assertThat(playCardLeaf.option).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
+
+    // Choose option 2 which is move minion.
+    final InputStream moveMinionInput = new ByteArrayInputStream("2\n1\n1".getBytes());
+    final CommandLine.CommandNode moveMinionLeaf = CommandLine.run(myRoot, moveMinionInput);
+    assertThat(moveMinionLeaf.getParentType()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
+    assertThat(moveMinionLeaf.index).isEqualTo(0); // TODO: 1 points to first minion, which index is 0...
+
+    // Choose option 3 which is use hero power.
+    final InputStream useHeroPowerInput = new ByteArrayInputStream("3\n1".getBytes());
+    final CommandLine.CommandNode heroPowerLeafNode = CommandLine.run(myRoot, useHeroPowerInput);
+    assertThat(heroPowerLeafNode.getParentType()).isEqualTo(ConstCommand.USE_HERO_POWER.toString());
+    assertThat(heroPowerLeafNode.option).startsWith("{hero=");
+    assertThat(heroPowerLeafNode.index).isEqualTo(-1); // TODO: 1 points to own hero, which index is -1...
+
+    // Choose option 4 which is end turn.
+    final InputStream endTurnInput = new ByteArrayInputStream("4".getBytes());
+    CommandLine.CommandNode endTurnLeafNode = CommandLine.run(myRoot, endTurnInput);
+    assertThat(endTurnLeafNode.option).isEqualTo(ConstCommand.END_TURN.toString());
+  }
+
+  private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfOpponentMinions) {
+    // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
+    for (int i = 0; i < numOfOwnMinions; ++i) {
+      mySide.board.add((Minion) mySide.deck.top());
+    }
+
+    for (int i = 0; i < numOfOpponentMinions; ++i) {
+      opponentSide.board.add((Minion) opponentSide.deck.top());
+    }
   }
 
   private void checkCommands(CommandLine.CommandNode root, final int numOfMinions) {

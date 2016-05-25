@@ -1,5 +1,6 @@
 package com.herthrone.card.factory;
 
+import com.google.common.base.Objects;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
@@ -164,6 +165,16 @@ public class HeroFactory {
       @Override
       public int getHealthLoss() {
         return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
+      }
+
+      @Override
+      public String toString() {
+        return Objects.toStringHelper(this)
+                .add("hero", getCardName())
+                .add("health", getHealthAttr().getVal())
+                .add("health_upper", getHealthUpperAttr().getVal())
+                .add("attack", (weapon.isPresent()) ? weapon.get().getAttackAttr().getVal() : 0)
+                .toString();
       }
     };
   }

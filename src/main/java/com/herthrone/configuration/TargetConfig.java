@@ -1,5 +1,6 @@
 package com.herthrone.configuration;
 
+import com.google.common.base.Objects;
 import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
@@ -20,6 +21,9 @@ public class TargetConfig {
   }
 
   public String toString() {
-    return String.format("%s::%s", scope.toString(), type.toString());
+    return Objects.toStringHelper(this)
+            .add("scope", scope)
+            .add("type", type)
+            .toString();
   }
 }
