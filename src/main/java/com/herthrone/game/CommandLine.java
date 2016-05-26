@@ -1,11 +1,13 @@
 package com.herthrone.game;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstCommand;
+import com.herthrone.constant.ConstTarget;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +30,9 @@ public class CommandLine {
     final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
     for (int i = 0; i < mySide.hand.size(); ++i) {
       final BaseCard card = mySide.hand.get(i);
-      playCardNode.addChildNode(new CommandNode(card.getCardName(), i));
+      if (mySide.crystal.getCrystal() >= card.getCrystalManaCost().getVal()) {
+        playCardNode.addChildNode(new CommandNode(card.getCardName(), i));
+      }
     }
     root.addChildNode(playCardNode);
     // Populate move minions option.
@@ -74,6 +78,24 @@ public class CommandLine {
         default:
           throw new RuntimeException("Unknown scope: " + config.scope.toString());
       }
+    }
+  }
+
+  public static Minion targetToMinion(final Battlefield battlefield, final CommandNode node) {
+    Preconditions.checkNotNull(node.getSide(), "Unknown side");
+    final Side side = targetToSide(battlefield, node);
+    return (node.index == -1) ? side.hero : side.board.get(node.index);
+  }
+
+  private static Side targetToSide(final Battlefield battlefield, final CommandNode node) {
+    Preconditions.checkNotNull(node.getSide(), "Unknown side");
+    switch (node.getSide()) {
+      case OWN:
+        return battlefield.mySide;
+      case OPPONENT:
+        return battlefield.opponentSide;
+      default:
+        throw new RuntimeException("Unknown side: " + node.getSide().toString());
     }
   }
 
@@ -133,6 +155,7 @@ public class CommandLine {
     public final List<CommandNode> childOptions;
     public final int index;
     private CommandNode parent = null;
+    private ConstTarget targetSide = null;
 
     public CommandNode(final String option, final int index) {
       this.option = option;
@@ -142,6 +165,14 @@ public class CommandLine {
 
     public CommandNode(final String option) {
       this(option, -1);
+    }
+
+    public ConstTarget getSide() {
+      return targetSide;
+    }
+
+    public void setSide(final ConstTarget side) {
+      targetSide = side;
     }
 
     public void listChildOptions() {
@@ -207,6 +238,10 @@ public class CommandLine {
 
     public String getParentType() {
       return parent.option;
+    }
+
+    public CommandNode getParent() {
+      return parent;
     }
   }
 }

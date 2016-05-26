@@ -69,33 +69,57 @@ public class GameManager {
   }
 
   public void play() {
-    while (!activeBattlefield.mySide.hero.isDead() && !activeBattlefield.opponentSide.hero.isDead()) {
-      final CommandLine.CommandNode root = CommandLine.yieldCommands(activeBattlefield);
-      CommandLine.CommandNode leafNode = CommandLine.run(root);
-
-      if (!play(leafNode)) {
-        switchTurn();
-        activeBattlefield.mySide.crystal.increaseUpperBound();
-      }
+    while (!isGameFinished()) {
+      increaseCrystalUpperBound();
+      drawCard();
+      playUtilEndTurn();
+      switchTurn();
     }
   }
 
-  boolean play(final CommandLine.CommandNode leafNode) {
+  void increaseCrystalUpperBound() {
+    activeBattlefield.mySide.crystal.increaseUpperBound();
+  }
+
+  void playUtilEndTurn() {
+    CommandLine.CommandNode leafNode = null;
+    do {
+      final CommandLine.CommandNode root = CommandLine.yieldCommands(activeBattlefield);
+      leafNode = CommandLine.run(root);
+      play(leafNode);
+      clearBoard();
+    } while (!isGameFinished() && !isTurnFinished(leafNode));
+  }
+
+  boolean isGameFinished() {
+    return !activeBattlefield.mySide.hero.isDead() && !activeBattlefield.opponentSide.hero.isDead();
+  }
+
+  boolean isTurnFinished(final CommandLine.CommandNode node) {
+    return node == null || node.option.equals(ConstCommand.END_TURN.toString());
+  }
+
+  void play(final CommandLine.CommandNode leafNode) {
     if (leafNode.option.equals(ConstCommand.END_TURN.toString())) {
-      return true;
+      return;
     }
 
     if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
-
+      // Use hero power without a specific target.
+      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield.mySide.hero).stream().forEach(Action::act);
+    } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
+      // Use hero power with a specific target.
+      final Minion minion = CommandLine.targetToMinion(activeBattlefield, leafNode);
+      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
     } else if (leafNode.option.equals(ConstCommand.PLAY_CARD.toString())) {
-
+      playCard(leafNode.index);
     } else if (leafNode.option.equals(ConstCommand.MOVE_MINION.toString())) {
-
+      final Minion attackee = CommandLine.targetToMinion(activeBattlefield, leafNode);
+      final Minion attacker = CommandLine.targetToMinion(activeBattlefield, leafNode.getParent());
+      activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee).act();
     } else {
       throw new RuntimeException("Unknown option: " + leafNode.option.toString());
     }
-
-    return false;
   }
 
   void switchTurn() {
@@ -128,6 +152,20 @@ public class GameManager {
 
     }
   }
+
+  void clearBoard() {
+    clearBoard(activeBattlefield.mySide.board);
+    clearBoard(activeBattlefield.opponentSide.board);
+  }
+
+  void clearBoard(final Container<Minion> board) {
+    for (int i = 0; i < board.size(); ++i) {
+      if (board.get(i).isDead()) {
+        board.remove(i);
+      }
+    }
+  }
+
 
   void playCard(final int index, final Minion target) {
     checkManaCost(index);
