@@ -1,5 +1,6 @@
 package com.herthrone.game;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
@@ -193,7 +194,7 @@ public class CommandLine {
     }
 
     private CommandNode previous() {
-      return (parent == null) ? this : parent;
+      return Objects.firstNonNull(parent, this);
     }
 
     private CommandNode next(final int index) {
@@ -202,7 +203,7 @@ public class CommandLine {
     }
 
     public String toString() {
-      return (option == null) ? "" : option;
+      return Objects.firstNonNull(option, "");
     }
 
     public void addChildNode(final CommandNode node) {

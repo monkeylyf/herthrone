@@ -216,6 +216,10 @@ public class GameManagerTest {
     final int numOfOpponentMinions = 1;
     populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
     gameManager.drawCard();
+    // At least 4 crystals so YETI can be played and show up as options.
+    for (int i = 0; i < 4; ++i)  {
+      mySide.crystal.nextRound();
+    }
 
     final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
     // Choose option 1 which is play card.
