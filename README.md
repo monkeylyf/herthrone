@@ -49,6 +49,7 @@ TODO
 7. Add logger object.
 8. Use google.true for unit tests so they can be more readable I guess.
 9. Define target scopes. For example, fireball can target all(enemy minions, enemy hero, minions on your own side, hero on your own side)
+10. Everybody should has its own view for both CLI and UI(json). The proper board/game should be rendered with combinations of views.
 
 -----------
 In Progress

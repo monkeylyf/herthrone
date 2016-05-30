@@ -16,6 +16,8 @@ import com.herthrone.stats.IntAttribute;
  */
 public class MinionFactory {
 
+  private static final int MINION_INIT_MOVE_POINTS = 1;
+  private static final int WINDFURY_INIT_MOVE_POINTS = 2;
   private final Battlefield battlefield;
 
   public MinionFactory(final Battlefield battlefield) {
@@ -32,13 +34,13 @@ public class MinionFactory {
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible, final Battlefield field) {
-    return new Minion() {
+    final Minion minion = new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute movePoints = new IntAttribute(1);
+      private final IntAttribute movePoints = new IntAttribute(MINION_INIT_MOVE_POINTS);
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
@@ -88,7 +90,7 @@ public class MinionFactory {
 
       @Override
       public IntAttribute getMovePoints() {
-        return null;
+        return this.movePoints;
       }
 
       @Override
@@ -142,6 +144,11 @@ public class MinionFactory {
       }
 
       @Override
+      public void nextRound() {
+        this.movePoints.nextRound();
+      }
+
+      @Override
       public boolean isDead() {
         return healthAttr.getVal() <= 0;
       }
@@ -151,5 +158,11 @@ public class MinionFactory {
         return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
       }
     };
+
+    // Minion with no charge ability waits until next turn to move.
+    final IntAttribute movePoints = minion.getMovePoints();
+    movePoints.buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
+
+    return minion;
   }
 }

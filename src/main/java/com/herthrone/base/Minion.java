@@ -2,13 +2,14 @@ package com.herthrone.base;
 
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
+import com.herthrone.stats.Round;
 
 /**
  * Created by yifeng on 4/2/16.
  */
 
 
-public interface Minion extends BaseCard {
+public interface Minion extends BaseCard, Round {
 
   IntAttribute getHealthAttr();
 

@@ -47,6 +47,16 @@ public class GameManagerTest {
     opponentSide = gameManager.battlefield1.opponentSide;
 
     CommandLine.turnOffStdout();
+
+  }
+
+  private void jumpIntoRoundFour() {
+    // At least 4 crystals so YETI can be played and show up as options.
+    for (int i = 0; i < 8; ++i)  {
+      gameManager.drawCard();
+      gameManager.activeBattlefield.mySide.crystal.nextRound();
+      gameManager.switchTurn();
+    }
   }
 
   @Test
@@ -193,6 +203,7 @@ public class GameManagerTest {
 
   @Test
   public void testGenerateCommandNodes() throws IOException {
+    jumpIntoRoundFour();
     final int numOfMyMinions = 2;
     final int numOfOpponentMinions = 1;
     populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
@@ -215,11 +226,8 @@ public class GameManagerTest {
     final int numOfMyMinions = 2;
     final int numOfOpponentMinions = 1;
     populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
-    gameManager.drawCard();
-    // At least 4 crystals so YETI can be played and show up as options.
-    for (int i = 0; i < 4; ++i)  {
-      mySide.crystal.nextRound();
-    }
+
+    jumpIntoRoundFour();
 
     final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
     // Choose option 1 which is play card.
@@ -250,11 +258,15 @@ public class GameManagerTest {
   private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfOpponentMinions) {
     // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
     for (int i = 0; i < numOfOwnMinions; ++i) {
-      mySide.board.add((Minion) mySide.deck.top());
+      final Minion minion = (Minion) mySide.deck.top();
+      minion.nextRound();
+      mySide.board.add(minion);
     }
 
     for (int i = 0; i < numOfOpponentMinions; ++i) {
-      opponentSide.board.add((Minion) opponentSide.deck.top());
+      final Minion minion = (Minion) opponentSide.deck.top();
+      minion.nextRound();
+      opponentSide.board.add(minion);
     }
   }
 

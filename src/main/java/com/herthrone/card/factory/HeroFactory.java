@@ -23,6 +23,7 @@ public class HeroFactory {
   public static final int ATTACK = 0;
   public static final int ARMOR = 0;
   public static final int CRYSTAL_MANA_COST = 0;
+  private static final int HERO_INIT_MOVE_POINTS = 1;
 
   public static Hero createHeroByName(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
@@ -31,13 +32,18 @@ public class HeroFactory {
 
   public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final ConstHero name, final ConstClass className) {
 
-    return new Hero() {
+    final Hero hero = new Hero() {
+      @Override
+      public void nextRound() {
+        this.movePoints.nextRound();
+      }
+
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute armorAttr = new IntAttribute(armor);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute movePoints = new IntAttribute(1);
+      private final IntAttribute movePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
@@ -177,5 +183,9 @@ public class HeroFactory {
                 .toString();
       }
     };
+
+
+
+    return hero;
   }
 }

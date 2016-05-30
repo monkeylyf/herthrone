@@ -35,27 +35,34 @@ public class CommandLine {
         playCardNode.addChildNode(new CommandNode(card.getCardName(), i));
       }
     }
-    root.addChildNode(playCardNode);
+    if (playCardNode.childOptions.size() != 0) {
+      root.addChildNode(playCardNode);
+    }
     // Populate move minions option.
     final CommandNode moveMinions = new CommandNode(ConstCommand.MOVE_MINION.toString());
     for (int i = 0; i < mySide.board.size(); ++i) {
       final Minion minion = mySide.board.get(i);
-      final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i);
-      for (int j = 0; j < opponentSide.board.size(); ++j) {
-        final Minion opponentMinion = opponentSide.board.get(j);
-        moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j));
+      if (minion.getMovePoints().getVal() > 0) {
+        final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i);
+        for (int j = 0; j < opponentSide.board.size(); ++j) {
+          final Minion opponentMinion = opponentSide.board.get(j);
+          moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j));
+        }
+        moveMinionCommand.addChildNode(new CommandNode(opponentSide.hero.getCardName(), -1));
+        moveMinions.addChildNode(moveMinionCommand);
       }
-      moveMinionCommand.addChildNode(new CommandNode(opponentSide.hero.getCardName(), -1));
-      moveMinions.addChildNode(moveMinionCommand);
     }
-    root.addChildNode(moveMinions);
+    if (moveMinions.childOptions.size() != 0) {
+      root.addChildNode(moveMinions);
+    }
     // Use hero power.
-    final Spell heroPower = mySide.heroPower;
-    //final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString() + ": " + heroPower.getCardName());
-    final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
+    if (battlefield.mySide.crystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
+      final Spell heroPower = mySide.heroPower;
+      final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
-    scanTargets(useHeroPower, heroPower.getTargetConfig(), battlefield);
-    root.addChildNode(useHeroPower);
+      scanTargets(useHeroPower, heroPower.getTargetConfig(), battlefield);
+      root.addChildNode(useHeroPower);
+    }
     // End turn.
     root.addChildNode(new CommandNode(ConstCommand.END_TURN.toString()));
 
@@ -134,12 +141,12 @@ public class CommandLine {
       cursor = cursor.move(scanner);
       println("--------------------");
     }
-    println("Your turn finished");
-    scanner.close();
+    // TODO: Intentionally not to close scanner because it closes System.in as well.
+    //scanner.close();
     return cursor;
   }
 
-  private static void println(final Object object) {
+  public static void println(final Object object) {
     if (stdoutOn) {
       System.out.println(object);
     }
