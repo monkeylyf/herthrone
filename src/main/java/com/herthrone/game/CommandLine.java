@@ -43,12 +43,14 @@ public class CommandLine {
     for (int i = 0; i < mySide.board.size(); ++i) {
       final Minion minion = mySide.board.get(i);
       if (minion.getMovePoints().getVal() > 0) {
-        final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i);
+        final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
-          moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j));
+          moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
         }
-        moveMinionCommand.addChildNode(new CommandNode(opponentSide.hero.getCardName(), -1));
+        final CommandNode heroNode = new CommandNode(opponentSide.hero.getCardName(), -1);
+        heroNode.setSide(ConstTarget.OPPONENT);
+        moveMinionCommand.addChildNode(heroNode);
         moveMinions.addChildNode(moveMinionCommand);
       }
     }
@@ -56,7 +58,7 @@ public class CommandLine {
       root.addChildNode(moveMinions);
     }
     // Use hero power.
-    if (battlefield.mySide.crystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
+    if (battlefield.mySide.hero.getMovePoints().getVal() > 0 && battlefield.mySide.crystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
       final Spell heroPower = mySide.heroPower;
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
@@ -74,14 +76,14 @@ public class CommandLine {
       TargetConfig config = heroConfig.get();
       switch (config.scope) {
         case OWN:
-          scanTargets(config, battlefield.mySide).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.mySide, ConstTarget.OWN).stream().forEach(node -> root.addChildNode(node));
           break;
         case OPPONENT:
-          scanTargets(config, battlefield.opponentSide).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).stream().forEach(node -> root.addChildNode(node));
           break;
         case ALL:
-          scanTargets(config, battlefield.mySide).stream().forEach(node -> root.addChildNode(node));
-          scanTargets(config, battlefield.opponentSide).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.mySide, ConstTarget.OWN).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).stream().forEach(node -> root.addChildNode(node));
           break;
         default:
           throw new RuntimeException("Unknown scope: " + config.scope.toString());
@@ -107,21 +109,21 @@ public class CommandLine {
     }
   }
 
-  private static List<CommandNode> scanTargets(final TargetConfig config, final Side side) {
+  private static List<CommandNode> scanTargets(final TargetConfig config, final Side side, final ConstTarget target) {
     List<CommandNode> nodes = new ArrayList<>();
     switch (config.type) {
       case HERO:
-        nodes.add(new CommandNode(side.hero.toString(), -1));
+        nodes.add(new CommandNode(side.hero.toString(), -1, target));
         break;
       case MINION:
         for (int i = 0; i < side.board.size(); ++i) {
-          nodes.add(new CommandNode(side.board.get(i).toString(), i));
+          nodes.add(new CommandNode(side.board.get(i).toString(), i, target));
         }
         break;
       case CREATURE:
-        nodes.add(new CommandNode(side.hero.toString(), -1));
+        nodes.add(new CommandNode(side.hero.toString(), -1, target));
         for (int i = 0; i < side.board.size(); ++i) {
-          nodes.add(new CommandNode(side.board.get(i).toString(), i));
+          nodes.add(new CommandNode(side.board.get(i).toString(), i, target));
         }
         break;
     }
@@ -165,10 +167,15 @@ public class CommandLine {
     private CommandNode parent = null;
     private ConstTarget targetSide = null;
 
-    public CommandNode(final String option, final int index) {
+    public CommandNode(final String option, final int index, final ConstTarget type) {
       this.option = option;
       this.childOptions = new ArrayList<>();
       this.index = index;
+      this.targetSide = type;
+    }
+
+    public CommandNode(final String option, final int index) {
+      this(option, index, ConstTarget.OPPONENT);
     }
 
     public CommandNode(final String option) {

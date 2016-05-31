@@ -10,7 +10,6 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
-import com.herthrone.game.Side;
 
 import java.util.Arrays;
 import java.util.List;

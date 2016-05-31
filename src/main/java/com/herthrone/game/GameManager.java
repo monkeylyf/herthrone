@@ -70,6 +70,16 @@ public class GameManager {
     return factory.spellFactory.createHeroPowerByName(heroConfig.getHeroPower());
   }
 
+  public static void main(String[] args) {
+    final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
+    List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
+    List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
+
+    final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
+    gameManager.play();
+  }
+
   public void play() {
     //int turn = 1;
     while (!isGameFinished()) {
@@ -119,18 +129,23 @@ public class GameManager {
       // Use hero power without a specific target.
       activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield.mySide.hero).stream().forEach(Action::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
+      activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Minion minion = CommandLine.targetToMinion(activeBattlefield, leafNode);
       activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
+      consumeCrystal(activeBattlefield.mySide.heroPower);
+      activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
-      final BaseCard card = activeBattlefield.mySide.board.get(leafNode.index);
+      final BaseCard card = activeBattlefield.mySide.hand.get(leafNode.index);
       playCard(leafNode.index);
       consumeCrystal(card);
-    } else if (leafNode.option.equals(ConstCommand.MOVE_MINION.toString())) {
-      final Minion attackee = CommandLine.targetToMinion(activeBattlefield, leafNode);
+    } else if (leafNode.getParent().getParentType().equals(ConstCommand.MOVE_MINION.toString())) {
       final Minion attacker = CommandLine.targetToMinion(activeBattlefield, leafNode.getParent());
+      final Minion attackee = CommandLine.targetToMinion(activeBattlefield, leafNode);
       activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee).act();
+      // Cost one move point.
+      attacker.getMovePoints().buff.temp.decrease(1);
     } else {
       throw new RuntimeException("Unknown option: " + leafNode.option.toString());
     }
@@ -183,7 +198,6 @@ public class GameManager {
     }
   }
 
-
   void playCard(final int index, final Minion target) {
     checkManaCost(index);
     final BaseCard card = activeBattlefield.mySide.hand.remove(index);
@@ -230,16 +244,5 @@ public class GameManager {
     Preconditions.checkArgument(
             manaCost <= activeBattlefield.mySide.crystal.getCrystal(),
             "Not enough mana to play " + card.getCardName());
-  }
-
-
-  public static void main(String[] args) {
-    final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-    ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-    List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
-    List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
-
-    final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-    gameManager.play();
   }
 }

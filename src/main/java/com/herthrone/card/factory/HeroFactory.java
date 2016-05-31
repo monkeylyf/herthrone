@@ -32,25 +32,25 @@ public class HeroFactory {
 
   public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final ConstHero name, final ConstClass className) {
 
-    final Hero hero = new Hero() {
-      @Override
-      public void nextRound() {
-        this.movePoints.nextRound();
-      }
-
+    return new Hero() {
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute armorAttr = new IntAttribute(armor);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
+      // TODO: For hero power. How about weapon attack move points?
       private final IntAttribute movePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
       private final BooleanAttribute stealth = new BooleanAttribute(false);
       private final BooleanAttribute taunt = new BooleanAttribute(false);
-
       private Optional<Weapon> weapon = Optional.empty();
+
+      @Override
+      public void nextRound() {
+        this.movePoints.nextRound();
+      }
 
       @Override
       public String getCardName() {
@@ -183,9 +183,5 @@ public class HeroFactory {
                 .toString();
       }
     };
-
-
-
-    return hero;
   }
 }

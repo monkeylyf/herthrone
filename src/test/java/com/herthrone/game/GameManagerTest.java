@@ -52,7 +52,7 @@ public class GameManagerTest {
 
   private void jumpIntoRoundFour() {
     // At least 4 crystals so YETI can be played and show up as options.
-    for (int i = 0; i < 8; ++i)  {
+    for (int i = 0; i < 8; ++i) {
       gameManager.drawCard();
       gameManager.activeBattlefield.mySide.crystal.nextRound();
       gameManager.switchTurn();

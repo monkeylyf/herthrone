@@ -1,6 +1,5 @@
 package com.herthrone.card.action;
 
-import com.google.common.base.Optional;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.card.factory.Action;
