@@ -1,13 +1,17 @@
 package com.herthrone.card.factory;
 
+import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
 import com.herthrone.stats.IntAttribute;
+
+import java.util.Map;
 
 /**
  * Created by yifeng on 4/8/16.
@@ -31,6 +35,17 @@ public class WeaponFactory {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute durabilityAttr = new IntAttribute(durability);
+
+      @Override
+      public Map<String, String> view() {
+        return ImmutableMap.<String, String>builder()
+                .put(Constant.CARD_NAME, getCardName())
+                .put(Constant.ATTACK, getAttackAttr().toString())
+                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+                .put(Constant.DESCRIPTION, "TODO")
+                .put(Constant.TYPE, getType().toString())
+                .build();
+      }
 
       @Override
       public String getCardName() {

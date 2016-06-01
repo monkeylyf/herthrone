@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
@@ -9,9 +10,11 @@ import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstType;
+import com.herthrone.constant.Constant;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,6 +49,20 @@ public class HeroFactory {
       private final BooleanAttribute stealth = new BooleanAttribute(false);
       private final BooleanAttribute taunt = new BooleanAttribute(false);
       private Optional<Weapon> weapon = Optional.empty();
+
+      @Override
+      public Map<String, String> view() {
+        return ImmutableMap.<String, String>builder()
+                .put(Constant.CARD_NAME, getCardName())
+                .put(Constant.HEALTH, getHealthAttr().toString())
+                .put(Constant.ARMOR, getArmorAttr().toString())
+                .put(Constant.ATTACK, getAttackAttr().toString())
+                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+                .put(Constant.DESCRIPTION, "TODO")
+                .put(Constant.TYPE, getType().toString())
+                .put(Constant.MOVE_POINTS, getMovePoints().toString())
+                .build();
+      }
 
       @Override
       public void nextRound() {

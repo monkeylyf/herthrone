@@ -18,6 +18,7 @@ import com.herthrone.constant.ConstMinion;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
@@ -106,6 +107,9 @@ public class GameManager {
     CommandLine.CommandNode leafNode = null;
     do {
       final CommandLine.CommandNode root = CommandLine.yieldCommands(activeBattlefield);
+      for (Map.Entry entry : activeBattlefield.view().entrySet()) {
+        CommandLine.println(entry.getKey() + " " + entry.getValue());
+      }
       leafNode = CommandLine.run(root);
       play(leafNode);
       clearBoard();

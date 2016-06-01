@@ -51,5 +51,4 @@ public class Side {
   public void setHeroPower(final Spell heroPower) {
     this.heroPower = heroPower;
   }
-
 }

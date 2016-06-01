@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
@@ -10,9 +11,11 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
+import com.herthrone.constant.Constant;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yifeng on 4/14/16.
@@ -39,6 +42,16 @@ public class SpellFactory {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
+
+      @Override
+      public Map<String, String> view() {
+        return ImmutableMap.<String, String>builder()
+                .put(Constant.CARD_NAME, getCardName())
+                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+                .put(Constant.DESCRIPTION, "TODO")
+                .put(Constant.TYPE, getType().toString())
+                .build();
+      }
 
       @Override
       public Optional<TargetConfig> getTargetConfig() {
