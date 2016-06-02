@@ -47,9 +47,6 @@ TODO
 - Windfury
 
 7. Add logger object.
-8. Use google.true for unit tests so they can be more readable I guess.
-9. Define target scopes. For example, fireball can target all(enemy minions, enemy hero, minions on your own side, hero on your own side)
-10. Everybody should has its own view for both CLI and UI(json). The proper board/game should be rendered with combinations of views.
 
 -----------
 In Progress
@@ -70,6 +67,9 @@ II. Buff exist only for one round(either your round or opponent round)
 III. Permanent buff until this minion dies.
 - Health will be health and health upper bound. That being said, buff health upper bound need to increase the health value as well.
 Which will be considered as two actions.
+05/19/2016 Use google.true for unit tests so they can be more readable I guess.
+05/20/2016 Define target scopes. For example, fireball can target all(enemy minions, enemy hero, minions on your own side, hero on your own side)
+06/01/2016 Everybody should has its own view for both CLI and UI(json). The proper board/game should be rendered with combinations of views.
 
 
 ---------------

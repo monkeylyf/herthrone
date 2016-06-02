@@ -32,7 +32,7 @@ public class CommandLine {
     for (int i = 0; i < mySide.hand.size(); ++i) {
       final BaseCard card = mySide.hand.get(i);
       if (mySide.crystal.getCrystal() >= card.getCrystalManaCost().getVal()) {
-        playCardNode.addChildNode(new CommandNode(card.getCardName(), i));
+        playCardNode.addChildNode(new CommandNode(card.view().toString(), i));
       }
     }
     if (playCardNode.childOptions.size() != 0) {

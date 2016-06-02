@@ -50,7 +50,7 @@ public class Battlefield implements View {
   }
 
   private Map<String, String> getOwnSideView() {
-    final ImmutableMap.Builder ownSideBuilder = buildNoHiddenSideView(mySide, ConstTarget.OWN);
+    final ImmutableMap.Builder ownSideBuilder = buildNoHiddenSideView(mySide);
 
     // Add hands as part of view.
     for (int i = 0; i < mySide.hand.size(); ++i) {
@@ -65,13 +65,13 @@ public class Battlefield implements View {
   }
 
   private Map<String, String> getOpponentSideView() {
-    return buildNoHiddenSideView(opponentSide, ConstTarget.OPPONENT)
+    return buildNoHiddenSideView(opponentSide)
             .put(Constant.HAND_SIZE, Integer.toString(opponentSide.hand.size()))
             .put(Constant.SECRET_SIZE, Integer.toString(opponentSide.secrets.size()))
             .build();
   }
 
-  private ImmutableMap.Builder<String, String> buildNoHiddenSideView(final Side side, final ConstTarget target) {
+  private ImmutableMap.Builder<String, String> buildNoHiddenSideView(final Side side) {
     final ImmutableMap.Builder sideViewBuilder = ImmutableMap.<String, String>builder();
 
     // Add here as part of view.
@@ -80,12 +80,12 @@ public class Battlefield implements View {
     sideViewBuilder.put(Constant.DECK_SIZE, Integer.toString(side.deck.size()));
     // Add board as part of view.
     for (int i = 0; i < side.board.size(); ++i) {
-      sideViewBuilder.put(Constant.MINION + i, side.board.get(i).view().toString());
+      sideViewBuilder.put(Constant.BOARD + i, side.board.get(i).view().toString());
     }
     // Add crystals as part of view.
     sideViewBuilder.put(Constant.CRYSTAL, side.crystal.toString());
     // Add hero power as part of view.
-    sideViewBuilder.put(Constant.HEROPOWER, side.heroPower);
+    sideViewBuilder.put(Constant.HEROPOWER, side.heroPower.view().toString());
 
     return sideViewBuilder;
   }

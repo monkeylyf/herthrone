@@ -234,7 +234,7 @@ public class GameManagerTest {
     final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
     final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);
     assertThat(playCardLeaf.getParentType()).isEqualTo(ConstCommand.PLAY_CARD.toString());
-    assertThat(playCardLeaf.option).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
+    assertThat(playCardLeaf.option).isEqualTo(mySide.hand.get(0).view().toString());
 
     // Choose option 2 which is move minion.
     final InputStream moveMinionInput = new ByteArrayInputStream("2\n1\n1".getBytes());

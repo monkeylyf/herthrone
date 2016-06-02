@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
@@ -15,7 +16,6 @@ import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by yifeng on 4/8/16.
@@ -48,18 +48,18 @@ public class HeroFactory {
       private final BooleanAttribute frozen = new BooleanAttribute(false);
       private final BooleanAttribute stealth = new BooleanAttribute(false);
       private final BooleanAttribute taunt = new BooleanAttribute(false);
-      private Optional<Weapon> weapon = Optional.empty();
+      private Optional<Weapon> weapon = Optional.absent();
 
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
                 .put(Constant.CARD_NAME, getCardName())
-                .put(Constant.HEALTH, getHealthAttr().toString())
+                .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
                 .put(Constant.ARMOR, getArmorAttr().toString())
+                .put(Constant.WEAPON, (getWeapon().isPresent()) ? getWeapon().toString() : "unarmed")
                 .put(Constant.ATTACK, getAttackAttr().toString())
                 .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-                .put(Constant.DESCRIPTION, "TODO")
-                .put(Constant.TYPE, getType().toString())
+                //.put(Constant.DESCRIPTION, "TODO")
                 .put(Constant.MOVE_POINTS, getMovePoints().toString())
                 .build();
       }
@@ -145,6 +145,11 @@ public class HeroFactory {
       }
 
       @Override
+      public Optional<Weapon> getWeapon() {
+        return weapon;
+      }
+
+      @Override
       public void causeDamage(Minion attackee) {
         attackee.takeDamage(weapon.get().use());
         if (weapon.get().getDurabilityAttr().getVal() == 0) {
@@ -172,7 +177,7 @@ public class HeroFactory {
 
       @Override
       public void disarm() {
-        weapon = Optional.empty();
+        weapon = Optional.absent();
       }
 
       @Override

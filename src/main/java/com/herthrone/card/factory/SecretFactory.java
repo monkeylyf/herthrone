@@ -31,7 +31,7 @@ public class SecretFactory {
                 .put(Constant.CARD_NAME, getCardName().toString())
                 .put(Constant.CRYSTAL, getCrystalManaCost().toString())
                 .put(Constant.TYPE, getType().toString())
-                .put(Constant.DESCRIPTION, "TODO")
+                //.put(Constant.DESCRIPTION, "TODO")
                 .build();
       }
 

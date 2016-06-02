@@ -62,4 +62,18 @@ public class Crystal implements Round {
     lockedCrystal = overloaded;
     overloaded = 0;
   }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
+    sb.append(getCrystal());
+    sb.append("/");
+    sb.append(getCrystalUpperBound());
+    if (getLockedCrystal() > 0) {
+      sb.append("/");
+      sb.append(getLockedCrystal());
+    }
+
+    return sb.toString();
+  }
 }

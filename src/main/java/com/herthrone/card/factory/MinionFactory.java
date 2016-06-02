@@ -56,11 +56,11 @@ public class MinionFactory {
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
                 .put(Constant.CARD_NAME, getCardName())
-                .put(Constant.HEALTH, getHealthAttr().toString())
+                .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
                 .put(Constant.ATTACK, getAttackAttr().toString())
                 .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-                .put(Constant.DESCRIPTION, "TODO")
-                .put(Constant.TYPE, getType().toString())
+                //.put(Constant.DESCRIPTION, "TODO")
+                .put(Constant.TYPE, getClassName().toString())
                 .put(Constant.MOVE_POINTS, getMovePoints().toString())
                 .build();
       }

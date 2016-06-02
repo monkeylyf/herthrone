@@ -37,4 +37,12 @@ public class IntAttribute implements Round {
     buff.temp.reset();
   }
 
+  @Override
+  public String toString() {
+    if (buff.getBuffVal() != 0) {
+      return String.format("%d(%d)", getVal(), buff.getBuffVal());
+    } else {
+      return Integer.toString(getVal());
+    }
+  }
 }
