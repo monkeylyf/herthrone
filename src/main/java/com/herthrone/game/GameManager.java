@@ -13,9 +13,8 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.constant.ConstMinion;
+import org.apache.log4j.Logger;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ import java.util.stream.Collectors;
  * Created by yifeng on 4/14/16.
  */
 public class GameManager {
+
+  static Logger logger = Logger.getLogger(GameManager.class.getName());
 
   public final Factory factory1;
   public final Factory factory2;
@@ -72,13 +73,15 @@ public class GameManager {
   }
 
   public static void main(String[] args) {
-    final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-    ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-    List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
-    List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
+    logger.debug("fuck me");
 
-    final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-    gameManager.play();
+    //final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    //ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
+    //List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
+    //List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
+
+    //final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
+    //gameManager.play();
   }
 
   public void play() {
