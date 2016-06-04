@@ -1,6 +1,6 @@
 package com.herthrone.game;
 
-import com.herthrone.base.Minion;
+import com.herthrone.base.Creature;
 import com.herthrone.configuration.TargetConfig;
 
 import java.util.ArrayList;
@@ -68,18 +68,18 @@ public class Target {
     return targets;
   }
 
-  public Minion toTarget(final Battlefield battlefield) {
+  public Creature toTargetCreature(final Battlefield battlefield) {
     switch (config.scope) {
       case OWN:
-        return toTarget(battlefield.mySide);
+        return toTargetCreature(battlefield.mySide);
       case OPPONENT:
-        return toTarget(battlefield.opponentSide);
+        return toTargetCreature(battlefield.opponentSide);
       default:
         throw new RuntimeException("Unknown scope: " + config.scope.toString());
     }
   }
 
-  private Minion toTarget(final Side side) {
+  private Creature toTargetCreature(final Side side) {
     switch (config.type) {
       case HERO:
         return side.hero;

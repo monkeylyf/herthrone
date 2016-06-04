@@ -1,6 +1,6 @@
 package com.herthrone.card.action;
 
-import com.herthrone.base.Minion;
+import com.herthrone.base.Creature;
 import com.herthrone.card.factory.Action;
 
 /**
@@ -8,10 +8,10 @@ import com.herthrone.card.factory.Action;
  */
 public class PhysicalDamage implements Action {
 
-  private final Minion attacker;
-  private final Minion attackee;
+  private final Creature attacker;
+  private final Creature attackee;
 
-  public PhysicalDamage(Minion attacker, Minion attackee) {
+  public PhysicalDamage(final Creature attacker, final Creature attackee) {
     this.attacker = attacker;
     this.attackee = attackee;
   }

@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.TargetConfig;
@@ -91,7 +92,7 @@ public class CommandLine {
     }
   }
 
-  public static Minion targetToMinion(final Battlefield battlefield, final CommandNode node) {
+  public static Creature toTargetCreature(final Battlefield battlefield, final CommandNode node) {
     Preconditions.checkNotNull(node.getSide(), "Unknown side");
     final Side side = targetToSide(battlefield, node);
     return (node.index == -1) ? side.hero : side.board.get(node.index);

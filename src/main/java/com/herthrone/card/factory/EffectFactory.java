@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.base.Preconditions;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
@@ -39,26 +40,26 @@ public class EffectFactory {
     this.battlefield = battlefield;
   }
 
-  public List<Action> getActionsByConfig(final Spell spell, final Minion minion) {
+  public List<Action> getActionsByConfig(final Spell spell, final Creature creature) {
     return spell.getEffects().stream()
-            .map(effect -> getActionsByConfig(effect, minion))
+            .map(effect -> getActionsByConfig(effect, creature))
             .collect(Collectors.toList());
   }
 
-  public List<Action> getActionsByConfig(final SpellConfig config, final Minion minion) {
+  public List<Action> getActionsByConfig(final SpellConfig config, final Creature creature) {
     return config.getEffects().stream()
-            .map(effect -> getActionsByConfig(effect, minion))
+            .map(effect -> getActionsByConfig(effect, creature))
             .collect(Collectors.toList());
   }
 
-  public Action getActionsByConfig(final EffectConfig config, final Minion minion) {
+  public Action getActionsByConfig(final EffectConfig config, final Creature creature) {
     ConstEffectType effect = config.getEffect();
     switch (effect) {
       case ATTRIBUTE:
-        return getAttributeAction(config, minion);
+        return getAttributeAction(config, creature);
       case WEAPON:
-        Preconditions.checkArgument(minion instanceof Hero, "Only hero can equip weapon, not " + minion.getType());
-        final Hero hero = (Hero) minion;
+        Preconditions.checkArgument(creature instanceof Hero, "Only hero can equip weapon, not " + creature.getType());
+        final Hero hero = (Hero) creature;
         return getEquipWeaponAction(hero, config);
       case SUMMON:
         return getSummonAction(config);
@@ -69,20 +70,20 @@ public class EffectFactory {
     }
   }
 
-  private Action getAttributeAction(final EffectConfig effect, final Minion minion) {
+  private Action getAttributeAction(final EffectConfig effect, final Creature creature) {
     final String type = effect.getType();
     switch (type) {
       case (Constant.HEALTH):
-        return getHealthAttributeAction(minion, effect);
+        return getHealthAttributeAction(creature, effect);
       case (Constant.ATTACK):
-        return getGeneralAttributeAction(minion.getAttackAttr(), effect);
+        return getGeneralAttributeAction(creature.getAttackAttr(), effect);
       case (Constant.CRYSTAL):
-        return getGeneralAttributeAction(minion.getCrystalManaCost(), effect);
+        return getGeneralAttributeAction(creature.getCrystalManaCost(), effect);
       case (Constant.HEALTH_UPPER_BOUND):
-        return getGeneralAttributeAction(minion.getHealthUpperAttr(), effect);
+        return getGeneralAttributeAction(creature.getHealthUpperAttr(), effect);
       case (Constant.ARMOR):
-        Preconditions.checkArgument(minion instanceof Hero, "Armor Attribute applies to Hero only, not " + minion.getType());
-        final Hero hero = (Hero) minion;
+        Preconditions.checkArgument(creature instanceof Hero, "Armor Attribute applies to Hero only, not " + creature.getType());
+        final Hero hero = (Hero) creature;
         return getGeneralAttributeAction(hero.getArmorAttr(), effect);
       default:
         throw new IllegalArgumentException("Unknown effect type: " + type);
@@ -94,11 +95,11 @@ public class EffectFactory {
     return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
   }
 
-  private Action getHealthAttributeAction(final Minion minion, final EffectConfig effect) {
+  private Action getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
     final int value = effect.getValue();
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
-    final int adjustChange = (value > 0) ? Math.min(value, minion.getHealthLoss()) : value;
-    return new AttributeEffect(minion.getHealthAttr(), adjustChange, effect.isPermanent());
+    final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
+    return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
   }
 
   private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
@@ -134,45 +135,45 @@ public class EffectFactory {
   }
 
   public ActionFactory getDivineShieldStatusActionGenerator(final int index) {
-    Minion minion = getMinionByIndex(index);
-    return getDivineShieldStatusActionGenerator(minion);
+    final Creature creature = getMinionByIndex(index);
+    return getDivineShieldStatusActionGenerator(creature);
   }
 
-  private ActionFactory getDivineShieldStatusActionGenerator(final Minion minion) {
+  private ActionFactory getDivineShieldStatusActionGenerator(final Creature creature) {
     return new ActionFactory() {
       @Override
       public List<Action> yieldActions() {
-        Action action = new StatusEffect(minion.getDivineShield(), 1);
+        Action action = new StatusEffect(creature.getDivineShield(), 1);
         return Factory.singleActionToList(action);
       }
     };
   }
 
   public ActionFactory getFrozenStatusActionGenerator(final int index) {
-    Minion minion = getMinionByIndex(index);
-    return getFrozenStatusActionGenerator(minion);
+    final Creature creature = getMinionByIndex(index);
+    return getFrozenStatusActionGenerator(creature);
   }
 
-  private ActionFactory getFrozenStatusActionGenerator(final Minion minion) {
+  private ActionFactory getFrozenStatusActionGenerator(final Creature creature) {
     return new ActionFactory() {
       @Override
       public List<Action> yieldActions() {
-        Action action = new StatusEffect(minion.getFrozen(), 1);
+        Action action = new StatusEffect(creature.getFrozen(), 1);
         return Factory.singleActionToList(action);
       }
     };
   }
 
   public ActionFactory getDamageImmunityStatusActionGenerator(final int index) {
-    Minion minion = getMinionByIndex(index);
-    return getDamageImmunityStatusActionGenerator(minion);
+    final Creature creature = getMinionByIndex(index);
+    return getDamageImmunityStatusActionGenerator(creature);
   }
 
-  private ActionFactory getDamageImmunityStatusActionGenerator(Minion minion) {
+  private ActionFactory getDamageImmunityStatusActionGenerator(final Creature creature) {
     return new ActionFactory() {
       @Override
       public List<Action> yieldActions() {
-        Action action = new StatusEffect(minion.getDamageImmunity(), 1);
+        Action action = new StatusEffect(creature.getDamageImmunity(), 1);
         return Factory.singleActionToList(action);
       }
     };
@@ -185,7 +186,7 @@ public class EffectFactory {
    * @param index
    * @return
    */
-  private Minion getMinionByIndex(final int index) {
+  private Creature getMinionByIndex(final int index) {
     switch (index) {
       case -1:
         return battlefield.mySide.hero;

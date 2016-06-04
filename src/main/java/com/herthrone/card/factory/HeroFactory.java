@@ -3,8 +3,8 @@ package com.herthrone.card.factory;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
-import com.herthrone.base.Minion;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
@@ -150,7 +150,7 @@ public class HeroFactory {
       }
 
       @Override
-      public void causeDamage(Minion attackee) {
+      public void causeDamage(final Creature attackee) {
         attackee.takeDamage(weapon.get().use());
         if (weapon.get().getDurabilityAttr().getVal() == 0) {
           disarm();

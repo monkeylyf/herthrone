@@ -1,6 +1,6 @@
 package com.herthrone.card.factory;
 
-import com.herthrone.base.Minion;
+import com.herthrone.base.Creature;
 import com.herthrone.card.action.PhysicalDamage;
 import com.herthrone.game.Battlefield;
 
@@ -15,7 +15,7 @@ public class AttackFactory {
     this.battlefield = battlefield;
   }
 
-  public Action getPhysicalDamageAction(final Minion attacker, final Minion attackee) {
+  public Action getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
     return new PhysicalDamage(attacker, attackee);
   }
 }

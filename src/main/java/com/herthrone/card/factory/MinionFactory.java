@@ -1,6 +1,7 @@
 package com.herthrone.card.factory;
 
 import com.google.common.collect.ImmutableMap;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
@@ -136,8 +137,8 @@ public class MinionFactory {
       }
 
       @Override
-      public void causeDamage(Minion minion) {
-        minion.takeDamage(attackAttr.getVal());
+      public void causeDamage(final Creature creature) {
+        creature.takeDamage(attackAttr.getVal());
         if (stealth.isOn()) {
           // After attack, minion reveal themselves from stealth.
           // TODO: but this is not the only way to reveal a minion in stealth.

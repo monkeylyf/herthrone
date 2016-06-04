@@ -2,6 +2,7 @@ package com.herthrone.game;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.BaseCard;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
@@ -13,8 +14,10 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMinion;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -73,15 +76,15 @@ public class GameManager {
   }
 
   public static void main(String[] args) {
-    logger.debug("fuck me");
+    logger.info("Starting game");
 
-    //final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-    //ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-    //List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
-    //List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
+    final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
+    List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
+    List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
 
-    //final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-    //gameManager.play();
+    final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
+    gameManager.play();
   }
 
   public void play() {
@@ -139,8 +142,8 @@ public class GameManager {
       activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
-      final Minion minion = CommandLine.targetToMinion(activeBattlefield, leafNode);
-      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, minion).stream().forEach(Action::act);
+      final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
+      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, creature).stream().forEach(Action::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
       activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
@@ -148,8 +151,8 @@ public class GameManager {
       playCard(leafNode.index);
       consumeCrystal(card);
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MOVE_MINION.toString())) {
-      final Minion attacker = CommandLine.targetToMinion(activeBattlefield, leafNode.getParent());
-      final Minion attackee = CommandLine.targetToMinion(activeBattlefield, leafNode);
+      final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
+      final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee).act();
       // Cost one move point.
       attacker.getMovePoints().buff.temp.decrease(1);
@@ -238,10 +241,10 @@ public class GameManager {
     activeBattlefield.mySide.crystal.consume(cost);
   }
 
-  void useHeroPower(final Minion minion) {
+  void useHeroPower(final Creature creature) {
     final Side side = activeBattlefield.mySide;
     Preconditions.checkArgument(side.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
-    activeFactory.effectFactory.getActionsByConfig(side.heroPower, minion).stream().forEach(Action::act);
+    activeFactory.effectFactory.getActionsByConfig(side.heroPower, creature).stream().forEach(Action::act);
     side.heroPowerMovePoints.decrease(1);
   }
 
