@@ -1,5 +1,7 @@
 package com.herthrone.factory;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
@@ -41,11 +43,6 @@ public class MinionFactory {
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible, final Battlefield field) {
     final Minion minion = new Minion() {
 
-      @Override
-      public void BattleCry() {
-
-      }
-
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute attackAttr = new IntAttribute(attack);
@@ -57,6 +54,25 @@ public class MinionFactory {
       private final BooleanAttribute stealth = new BooleanAttribute(false);
       private final BooleanAttribute taunt = new BooleanAttribute(false);
       private final Battlefield battlefield = field;
+
+      private Optional<Integer> seqId = Optional.absent();
+
+      @Override
+      public void BattleCry() {
+
+      }
+
+      @Override
+      public int getSequenceId() {
+        Preconditions.checkArgument(seqId.isPresent(), "Minion sequence Id not set yet");
+        return seqId.get().intValue();
+      }
+
+      @Override
+      public void setSequenceId(final int sequenceId) {
+        Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence Id already set");
+        seqId = Optional.of(sequenceId);
+      }
 
       @Override
       public Map<String, String> view() {

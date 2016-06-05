@@ -8,4 +8,8 @@ package com.herthrone.base;
 public interface Minion extends Creature {
 
   void BattleCry();
+
+  void setSequenceId(final int id);
+
+  int getSequenceId();
 }

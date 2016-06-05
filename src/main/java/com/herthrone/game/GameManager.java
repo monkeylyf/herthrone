@@ -37,6 +37,8 @@ public class GameManager {
   public final Battlefield battlefield2;
   private final Queue<Action> actionQueue;
 
+  private int seqId = 0;
+
   Battlefield activeBattlefield;
   private Factory activeFactory;
 
@@ -174,7 +176,10 @@ public class GameManager {
   void playCard(final BaseCard card) {
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
+      // Assign game board sequence id to minion.
       activeBattlefield.mySide.board.add(minion);
+      minion.setSequenceId(seqId);
+      seqId += 1;
     } else if (card instanceof Secret) {
       Secret secret = (Secret) card;
       activeBattlefield.mySide.secrets.add(secret);
