@@ -1,7 +1,7 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 import com.herthrone.base.Creature;
-import com.herthrone.card.action.PhysicalDamage;
+import com.herthrone.action.PhysicalDamage;
 import com.herthrone.game.Battlefield;
 
 /**

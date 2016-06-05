@@ -1,4 +1,4 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 /**
  * Created by yifeng on 4/5/16.

@@ -1,4 +1,4 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 import java.util.List;
 

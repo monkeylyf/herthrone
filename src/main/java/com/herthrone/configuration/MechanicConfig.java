@@ -1,5 +1,9 @@
 package com.herthrone.configuration;
 
+import com.google.common.base.Optional;
+import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.Constant;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +13,12 @@ import java.util.Map;
  */
 public class MechanicConfig {
 
-  private final String mechanic;
+  private final ConstMechanic mechanic;
+  private final Optional<EffectConfig> effect;
 
   public MechanicConfig(Map map) {
-    this.mechanic = (String) map.get("name");
+    this.mechanic = ConstMechanic.valueOf(Constant.upperCaseValue(map, "name"));
+    this.effect = map.containsKey("effect") ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
   public static Map<String, MechanicConfig> mechanicConfigFactory(Object configList) {
@@ -20,12 +26,12 @@ public class MechanicConfig {
     Map<String, MechanicConfig> configs = new HashMap<>();
     for (Map map : configMaps) {
       MechanicConfig config = new MechanicConfig(map);
-      configs.put(config.getMechanic(), config);
+      configs.put(config.getMechanic().toString(), config);
     }
     return configs;
   }
 
-  public String getMechanic() {
+  public ConstMechanic getMechanic() {
     return mechanic;
   }
 

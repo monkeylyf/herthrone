@@ -1,4 +1,4 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Weapon;

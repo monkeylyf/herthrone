@@ -1,4 +1,4 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
@@ -40,6 +40,11 @@ public class MinionFactory {
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible, final Battlefield field) {
     final Minion minion = new Minion() {
+
+      @Override
+      public void BattleCry() {
+
+      }
 
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);

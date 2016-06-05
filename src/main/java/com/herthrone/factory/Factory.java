@@ -1,4 +1,4 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 import com.herthrone.base.BaseCard;
 import com.herthrone.base.Hero;

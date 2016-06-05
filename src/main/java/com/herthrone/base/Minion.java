@@ -7,4 +7,5 @@ package com.herthrone.base;
 
 public interface Minion extends Creature {
 
+  void BattleCry();
 }

@@ -1,8 +1,8 @@
-package com.herthrone.card.action;
+package com.herthrone.action;
 
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
-import com.herthrone.card.factory.Action;
+import com.herthrone.factory.Action;
 
 
 /**

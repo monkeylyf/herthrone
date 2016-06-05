@@ -1,9 +1,9 @@
 package com.herthrone.base;
 
-import com.herthrone.card.factory.Action;
-import com.herthrone.card.factory.EffectFactory;
-import com.herthrone.card.factory.HeroFactory;
-import com.herthrone.card.factory.MinionFactory;
+import com.herthrone.factory.Action;
+import com.herthrone.factory.EffectFactory;
+import com.herthrone.factory.HeroFactory;
+import com.herthrone.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstClass;

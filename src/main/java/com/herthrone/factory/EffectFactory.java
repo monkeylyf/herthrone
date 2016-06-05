@@ -1,4 +1,4 @@
-package com.herthrone.card.factory;
+package com.herthrone.factory;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
@@ -6,11 +6,11 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
-import com.herthrone.card.action.AttributeEffect;
-import com.herthrone.card.action.EquipWeaponEffect;
-import com.herthrone.card.action.MoveCardEffect;
-import com.herthrone.card.action.StatusEffect;
-import com.herthrone.card.action.SummonEffect;
+import com.herthrone.action.AttributeEffect;
+import com.herthrone.action.EquipWeaponEffect;
+import com.herthrone.action.MoveCardEffect;
+import com.herthrone.action.StatusEffect;
+import com.herthrone.action.SummonEffect;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstEffectType;

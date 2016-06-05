@@ -4,6 +4,7 @@
   attack: 4
   health: 5
   crystal: 4
+  collectible: true
   mechanics: []
 
 - name: senjin_shieldmasta
@@ -12,39 +13,39 @@
   attack: 3
   health: 5
   crystal: 4
+  collectible: true
   mechanics:
-    - ability: Taunt
-      stats: null
+    - name: Taunt
 
 - name: silver_hand_recruit
-  display: SilverHandRecruit
+  display: SilverHand Recruit
   class: Paladin
   attack: 1
   health: 1
   crystal: 1
-  mechanics: []
   collectible: false
+  mechanics: []
 
 - name: healing_totem
-  display: HealingTotem
+  display: Healing Totem
   class: Shaman
   attack: 0
   health: 2
   crystal: 1
-  mechanics: []
   collectible: false
+  mechanics: []
 
 - name: searing_totem
-  display: SearingTotem
+  display: Searing Totem
   class: Shaman
   attack: 1
   health: 1
   crystal: 1
-  mechanics: []
   collectible: false
+  mechanics: []
 
 - name: wrath_of_air_totem
-  display: WrathOfAirTotem
+  display: Wrath Of Air Totem
   class: Shaman
   attack: 0
   health: 2
@@ -53,13 +54,14 @@
   collectible: false
 
 - name: stoneclaw_totem
-  display: StoneclawTotem
+  display: Stoneclaw Totem
   class: Shaman
   attack: 0
   health: 2
   crystal: 1
-  mechanics: []
   collectible: false
+  mechanics:
+    - name: Taunt
 
 - name: wolfrider
   display: Wolfrider
@@ -67,5 +69,22 @@
   attack: 3
   health: 1
   crystal: 3
+  collectible: true
   mechanics:
     - name: charge
+
+- name: gnomish_inventor
+  display: Gnomish Inventor
+  class: Common
+  attack: 2
+  health: 4
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: battlecry
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck

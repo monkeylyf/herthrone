@@ -1,6 +1,6 @@
-package com.herthrone.card.action;
+package com.herthrone.action;
 
-import com.herthrone.card.factory.Action;
+import com.herthrone.factory.Action;
 import com.herthrone.stats.BooleanAttribute;
 
 /**

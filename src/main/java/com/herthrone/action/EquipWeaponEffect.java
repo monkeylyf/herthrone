@@ -1,8 +1,8 @@
-package com.herthrone.card.action;
+package com.herthrone.action;
 
 import com.herthrone.base.Hero;
 import com.herthrone.base.Weapon;
-import com.herthrone.card.factory.Action;
+import com.herthrone.factory.Action;
 
 /**
  * Created by yifeng on 4/14/16.

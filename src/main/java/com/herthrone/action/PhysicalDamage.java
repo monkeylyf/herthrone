@@ -1,7 +1,7 @@
-package com.herthrone.card.action;
+package com.herthrone.action;
 
 import com.herthrone.base.Creature;
-import com.herthrone.card.factory.Action;
+import com.herthrone.factory.Action;
 
 /**
  * Created by yifeng on 4/4/16.

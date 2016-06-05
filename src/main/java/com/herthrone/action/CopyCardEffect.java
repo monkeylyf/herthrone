@@ -1,7 +1,7 @@
-package com.herthrone.card.action;
+package com.herthrone.action;
 
 import com.herthrone.base.BaseCard;
-import com.herthrone.card.factory.Action;
+import com.herthrone.factory.Action;
 import com.herthrone.game.Container;
 
 /**
