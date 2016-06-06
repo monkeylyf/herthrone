@@ -2,6 +2,7 @@ package com.herthrone.configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.herthrone.base.Config;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstMinion;
@@ -115,7 +116,7 @@ public class ConfigLoader {
     return ResourceBundle.getBundle("configuration");
   }
 
-  private abstract static class AbstractConfigLoader<T extends BaseConfig> {
+  private abstract static class AbstractConfigLoader<T extends Config> {
     private volatile ImmutableMap<String, T> configs;
     private String configName;
 

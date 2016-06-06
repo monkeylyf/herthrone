@@ -1,7 +1,8 @@
 package com.herthrone.factory;
 
-import com.herthrone.base.Creature;
 import com.herthrone.action.PhysicalDamage;
+import com.herthrone.base.Effect;
+import com.herthrone.base.Creature;
 import com.herthrone.game.Battlefield;
 
 /**
@@ -15,7 +16,7 @@ public class AttackFactory {
     this.battlefield = battlefield;
   }
 
-  public Action getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
+  public Effect getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
     return new PhysicalDamage(attacker, attackee);
   }
 }

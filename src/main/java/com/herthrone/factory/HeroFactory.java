@@ -53,20 +53,25 @@ public class HeroFactory {
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-                .put(Constant.CARD_NAME, getCardName())
-                .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
-                .put(Constant.ARMOR, getArmorAttr().toString())
-                .put(Constant.WEAPON, (getWeapon().isPresent()) ? getWeapon().toString() : "unarmed")
-                .put(Constant.ATTACK, getAttackAttr().toString())
-                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-                //.put(Constant.DESCRIPTION, "TODO")
-                .put(Constant.MOVE_POINTS, getMovePoints().toString())
-                .build();
+            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
+            .put(Constant.ARMOR, getArmorAttr().toString())
+            .put(Constant.WEAPON, (getWeapon().isPresent()) ? getWeapon().toString() : "unarmed")
+            .put(Constant.ATTACK, getAttackAttr().toString())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+            //.put(Constant.DESCRIPTION, "TODO")
+            .put(Constant.MOVE_POINTS, getMovePoints().toString())
+            .build();
       }
 
       @Override
-      public void nextRound() {
-        this.movePoints.nextRound();
+      public void endTurn() {
+        this.movePoints.endTurn();
+      }
+
+      @Override
+      public void startTurn() {
+
       }
 
       @Override
@@ -198,11 +203,11 @@ public class HeroFactory {
       @Override
       public String toString() {
         return Objects.toStringHelper(this)
-                .add("hero", getCardName())
-                .add("health", getHealthAttr().getVal())
-                .add("health_upper", getHealthUpperAttr().getVal())
-                .add("attack", (weapon.isPresent()) ? weapon.get().getAttackAttr().getVal() : 0)
-                .toString();
+            .add("hero", getCardName())
+            .add("health", getHealthAttr().getVal())
+            .add("health_upper", getHealthUpperAttr().getVal())
+            .add("attack", (weapon.isPresent()) ? weapon.get().getAttackAttr().getVal() : 0)
+            .toString();
       }
     };
   }

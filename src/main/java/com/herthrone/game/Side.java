@@ -1,12 +1,12 @@
 package com.herthrone.game;
 
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.stats.Crystal;
+import com.herthrone.stats.ManaCrystal;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class Side {
   public final Hero hero;
-  public final Container<BaseCard> hand;
-  public final Container<BaseCard> deck;
+  public final Container<Card> hand;
+  public final Container<Card> deck;
   public final Container<Minion> board;
   public final Container<Secret> secrets;
-  public final Crystal crystal;
+  public final ManaCrystal manaCrystal;
   public final IntAttribute heroPowerMovePoints;
 
   public int fatigue;
@@ -36,7 +36,7 @@ public class Side {
     this.hand = new Container<>(handCapacity);
     this.board = new Container<>(boardCapacity);
     this.secrets = new Container<>();
-    this.crystal = new Crystal();
+    this.manaCrystal = new ManaCrystal();
 
     this.deck = new Container<>(deckCapacity);
     this.heroPowerMovePoints = new IntAttribute(1);
@@ -44,7 +44,7 @@ public class Side {
     this.fatigue = 0;
   }
 
-  public void populateDeck(final List<BaseCard> cards) {
+  public void populateDeck(final List<Card> cards) {
     cards.stream().forEach(card -> deck.add(card));
   }
 

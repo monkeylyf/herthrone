@@ -1,6 +1,6 @@
 package com.herthrone.stats;
 
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by yifeng on 4/22/16.
  */
 
-public class AuraBuff<T extends BaseCard> {
+public class AuraBuff<T extends Card> {
 
   private final Map<T, Integer> buffs;
   private int accumulatedBuffs;

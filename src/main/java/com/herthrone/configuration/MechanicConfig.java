@@ -1,5 +1,6 @@
 package com.herthrone.configuration;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.Constant;
@@ -35,4 +36,15 @@ public class MechanicConfig {
     return mechanic;
   }
 
+  public Optional<EffectConfig> getEffect() {
+    return effect;
+  }
+
+  @Override
+  public String toString() {
+    return Objects.toStringHelper(this)
+        .add("mechanic", mechanic)
+        .add("effect", effect)
+        .toString();
+  }
 }

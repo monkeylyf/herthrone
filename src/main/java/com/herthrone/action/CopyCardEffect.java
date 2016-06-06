@@ -1,18 +1,18 @@
 package com.herthrone.action;
 
-import com.herthrone.base.BaseCard;
-import com.herthrone.factory.Action;
+import com.herthrone.base.Card;
+import com.herthrone.base.Effect;
 import com.herthrone.game.Container;
 
 /**
  * Created by yifeng on 4/16/16.
  */
-public class CopyCardEffect implements Action {
+public class CopyCardEffect implements Effect {
 
-  private final Container<BaseCard> container;
-  private final BaseCard cardToCopy;
+  private final Container<Card> container;
+  private final Card cardToCopy;
 
-  public CopyCardEffect(final BaseCard cardToCopy, final Container<BaseCard> container) {
+  public CopyCardEffect(final Card cardToCopy, final Container<Card> container) {
     this.cardToCopy = cardToCopy;
     this.container = container;
   }
@@ -21,7 +21,7 @@ public class CopyCardEffect implements Action {
   public void act() {
     final String cardName = cardToCopy.getCardName();
     // TODO: deep copy is not so fun. Will create createCardByName method.
-    final BaseCard copiedCard = null;
+    final Card copiedCard = null;
     container.add(copiedCard);
   }
 }

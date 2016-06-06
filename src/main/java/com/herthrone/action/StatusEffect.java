@@ -1,12 +1,12 @@
 package com.herthrone.action;
 
-import com.herthrone.factory.Action;
+import com.herthrone.base.Effect;
 import com.herthrone.stats.BooleanAttribute;
 
 /**
  * Created by yifeng on 4/15/16.
  */
-public class StatusEffect implements Action {
+public class StatusEffect implements Effect {
 
   private final BooleanAttribute booleanAttribute;
   private final double roundUntilExpire;

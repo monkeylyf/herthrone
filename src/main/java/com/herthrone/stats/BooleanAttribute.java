@@ -1,5 +1,8 @@
 package com.herthrone.stats;
 
+import com.herthrone.base.Reset;
+import com.herthrone.base.Round;
+
 /**
  * Created by yifeng on 4/14/16.
  */
@@ -27,11 +30,16 @@ public class BooleanAttribute implements Round, Reset {
   }
 
   @Override
-  public void nextRound() {
+  public void endTurn() {
     roundUntilExpire -= 1;
     if (roundUntilExpire == 0) {
       //reset();
     }
+  }
+
+  @Override
+  public void startTurn() {
+
   }
 
   @Override

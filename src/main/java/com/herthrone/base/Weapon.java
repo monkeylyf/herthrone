@@ -5,7 +5,7 @@ import com.herthrone.stats.IntAttribute;
 /**
  * Created by yifeng on 4/2/16.
  */
-public interface Weapon extends BaseCard {
+public interface Weapon extends Card {
 
   int use();
 

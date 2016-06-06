@@ -1,9 +1,9 @@
-package com.herthrone.factory;
+package com.herthrone.base;
 
 /**
  * Created by yifeng on 4/5/16.
  */
-public interface Action {
+public interface Effect {
 
   void act();
 

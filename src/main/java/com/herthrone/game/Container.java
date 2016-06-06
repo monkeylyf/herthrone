@@ -1,7 +1,7 @@
 package com.herthrone.game;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 /**
  * Created by yifeng on 4/9/16.
  */
-public class Container<T extends BaseCard> implements Iterator<T> {
+public class Container<T extends Card> implements Iterator<T> {
 
   private final int maxCapacity;
   private final List<T> container;

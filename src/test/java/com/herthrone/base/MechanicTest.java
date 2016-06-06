@@ -1,11 +1,11 @@
 package com.herthrone.base;
 
-import com.herthrone.factory.EffectFactory;
-import com.herthrone.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.factory.EffectFactory;
+import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -51,5 +51,11 @@ public class MechanicTest extends TestCase {
   public void testCharge() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.WOLFRIDER);
     final Minion minion = minionFactory1.createMinionByName(ConstMinion.WOLFRIDER);
+  }
+
+  @Test
+  public void testBattleCry() {
+    MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.GNOMISH_INVENTOR);
+    System.out.println(config.getMechanics());
   }
 }

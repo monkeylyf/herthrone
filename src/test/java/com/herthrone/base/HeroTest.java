@@ -1,9 +1,5 @@
 package com.herthrone.base;
 
-import com.herthrone.factory.Action;
-import com.herthrone.factory.EffectFactory;
-import com.herthrone.factory.HeroFactory;
-import com.herthrone.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstClass;
@@ -11,6 +7,9 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.factory.EffectFactory;
+import com.herthrone.factory.HeroFactory;
+import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -184,11 +183,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Action::act);
+    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
   }
 
   private void hero2ArmorUp() {
-    effectFactory1.getActionsByConfig(armorUp, hero2).stream().forEach(Action::act);
+    effectFactory1.getActionsByConfig(armorUp, hero2).stream().forEach(Effect::act);
   }
 
   private void hero1AttackHero2() {

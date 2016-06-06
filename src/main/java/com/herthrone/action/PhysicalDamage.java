@@ -1,12 +1,12 @@
 package com.herthrone.action;
 
+import com.herthrone.base.Effect;
 import com.herthrone.base.Creature;
-import com.herthrone.factory.Action;
 
 /**
  * Created by yifeng on 4/4/16.
  */
-public class PhysicalDamage implements Action {
+public class PhysicalDamage implements Effect {
 
   private final Creature attacker;
   private final Creature attackee;

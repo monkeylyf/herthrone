@@ -1,11 +1,11 @@
 package com.herthrone.base;
 
-import com.herthrone.factory.EffectFactory;
-import com.herthrone.factory.MinionFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.factory.EffectFactory;
+import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;

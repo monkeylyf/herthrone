@@ -8,7 +8,7 @@ import com.herthrone.stats.IntAttribute;
  * Created by yifeng on 4/2/16.
  */
 
-public interface BaseCard extends View {
+public interface Card extends View {
 
   String getCardName();
 

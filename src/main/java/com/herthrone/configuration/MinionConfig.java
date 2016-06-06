@@ -1,5 +1,6 @@
 package com.herthrone.configuration;
 
+import com.herthrone.base.Config;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
@@ -10,7 +11,7 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class MinionConfig implements BaseConfig<ConstMinion> {
+public class MinionConfig implements Config<ConstMinion> {
 
   private final ConstMinion name;
   private final ConstClass className;

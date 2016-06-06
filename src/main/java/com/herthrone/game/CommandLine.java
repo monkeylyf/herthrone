@@ -3,7 +3,7 @@ package com.herthrone.game;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
@@ -31,8 +31,8 @@ public class CommandLine {
     // Populate play card option.
     final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
     for (int i = 0; i < mySide.hand.size(); ++i) {
-      final BaseCard card = mySide.hand.get(i);
-      if (mySide.crystal.getCrystal() >= card.getCrystalManaCost().getVal()) {
+      final Card card = mySide.hand.get(i);
+      if (mySide.manaCrystal.getCrystal() >= card.getCrystalManaCost().getVal()) {
         playCardNode.addChildNode(new CommandNode(card.view().toString(), i));
       }
     }
@@ -59,7 +59,7 @@ public class CommandLine {
       root.addChildNode(moveMinions);
     }
     // Use hero power.
-    if (battlefield.mySide.hero.getMovePoints().getVal() > 0 && battlefield.mySide.crystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
+    if (battlefield.mySide.hero.getMovePoints().getVal() > 0 && battlefield.mySide.manaCrystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
       final Spell heroPower = mySide.heroPower;
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 

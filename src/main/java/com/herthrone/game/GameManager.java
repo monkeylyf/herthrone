@@ -1,27 +1,25 @@
 package com.herthrone.game;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
-import com.herthrone.factory.Action;
-import com.herthrone.factory.Factory;
-import com.herthrone.factory.HeroFactory;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.base.Effect;
+import com.herthrone.factory.Factory;
+import com.herthrone.factory.HeroFactory;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 /**
@@ -35,27 +33,25 @@ public class GameManager {
   public final Factory factory2;
   public final Battlefield battlefield1;
   public final Battlefield battlefield2;
-  private final Queue<Action> actionQueue;
-
-  private int seqId = 0;
-
+  private final ActionQueue actionQueue;
   Battlefield activeBattlefield;
+  private int seqId = 0;
   private Factory activeFactory;
 
   public GameManager(final ConstHero hero1, final ConstHero hero2, final List<String> cardNames1, final List<String> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.battlefield1 = new Battlefield(
-            HeroFactory.createHeroByName(hero1),
-            HeroFactory.createHeroByName(hero2));
+        HeroFactory.createHeroByName(hero1),
+        HeroFactory.createHeroByName(hero2));
     this.battlefield2 = battlefield1.getMirrorBattlefield();
     this.factory1 = new Factory(battlefield1);
     this.factory2 = new Factory(battlefield2);
-    this.actionQueue = new LinkedList<>();
     this.activeBattlefield = battlefield1;
     this.activeFactory = factory1;
+    this.actionQueue = new ActionQueue();
 
-    final List<BaseCard> cards1 = generateDeck(cardNames1, factory1);
-    final List<BaseCard> cards2 = generateDeck(cardNames1, factory2);
+    final List<Card> cards1 = generateDeck(cardNames1, factory1);
+    final List<Card> cards2 = generateDeck(cardNames1, factory2);
 
     final Spell heroPower1 = generateHeroPower(hero1, factory1);
     final Spell heroPower2 = generateHeroPower(hero2, factory2);
@@ -68,7 +64,7 @@ public class GameManager {
 
   }
 
-  private static List<BaseCard> generateDeck(final List<String> cardNames, final Factory factory) {
+  private static List<Card> generateDeck(final List<String> cardNames, final Factory factory) {
     return cardNames.stream().map(cardName -> factory.createCardInstance(cardName)).collect(Collectors.toList());
   }
 
@@ -103,12 +99,12 @@ public class GameManager {
   void startTurn() {
     increaseCrystalUpperBound();
     drawCard();
-    activeBattlefield.mySide.board.stream().forEach(minion -> minion.nextRound());
-    activeBattlefield.mySide.hero.nextRound();
+    activeBattlefield.mySide.board.stream().forEach(minion -> minion.endTurn());
+    activeBattlefield.mySide.hero.endTurn();
   }
 
   void increaseCrystalUpperBound() {
-    activeBattlefield.mySide.crystal.nextRound();
+    activeBattlefield.mySide.manaCrystal.endTurn();
   }
 
   void playUtilEndTurn() {
@@ -139,17 +135,17 @@ public class GameManager {
 
     if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power without a specific target.
-      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield.mySide.hero).stream().forEach(Action::act);
+      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield.mySide.hero).stream().forEach(Effect::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
       activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, creature).stream().forEach(Action::act);
+      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, creature).stream().forEach(Effect::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
       activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
-      final BaseCard card = activeBattlefield.mySide.hand.get(leafNode.index);
+      final Card card = activeBattlefield.mySide.hand.get(leafNode.index);
       playCard(leafNode.index);
       consumeCrystal(card);
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MOVE_MINION.toString())) {
@@ -173,7 +169,7 @@ public class GameManager {
     }
   }
 
-  void playCard(final BaseCard card) {
+  void playCard(final Card card) {
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
       // Assign game board sequence id to minion.
@@ -196,7 +192,7 @@ public class GameManager {
 
   void playCard(final int index) {
     checkManaCost(index);
-    final BaseCard card = activeBattlefield.mySide.hand.remove(index);
+    final Card card = activeBattlefield.mySide.hand.remove(index);
     playCard(card);
   }
 
@@ -215,7 +211,7 @@ public class GameManager {
 
   void playCard(final int index, final Minion target) {
     checkManaCost(index);
-    final BaseCard card = activeBattlefield.mySide.hand.remove(index);
+    final Card card = activeBattlefield.mySide.hand.remove(index);
 
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
@@ -236,28 +232,28 @@ public class GameManager {
       activeBattlefield.mySide.fatigue += 1;
       activeBattlefield.mySide.hero.takeDamage(activeBattlefield.mySide.fatigue);
     } else {
-      final BaseCard card = activeBattlefield.mySide.deck.top();
+      final Card card = activeBattlefield.mySide.deck.top();
       activeBattlefield.mySide.hand.add(card);
     }
   }
 
-  void consumeCrystal(final BaseCard card) {
+  void consumeCrystal(final Card card) {
     final int cost = card.getCrystalManaCost().getVal();
-    activeBattlefield.mySide.crystal.consume(cost);
+    activeBattlefield.mySide.manaCrystal.consume(cost);
   }
 
   void useHeroPower(final Creature creature) {
     final Side side = activeBattlefield.mySide;
     Preconditions.checkArgument(side.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
-    activeFactory.effectFactory.getActionsByConfig(side.heroPower, creature).stream().forEach(Action::act);
+    activeFactory.effectFactory.getActionsByConfig(side.heroPower, creature).stream().forEach(Effect::act);
     side.heroPowerMovePoints.decrease(1);
   }
 
   private void checkManaCost(final int index) {
-    final BaseCard card = activeBattlefield.mySide.hand.get(index);
+    final Card card = activeBattlefield.mySide.hand.get(index);
     final int manaCost = card.getCrystalManaCost().getVal();
     Preconditions.checkArgument(
-            manaCost <= activeBattlefield.mySide.crystal.getCrystal(),
-            "Not enough mana to play " + card.getCardName());
+        manaCost <= activeBattlefield.mySide.manaCrystal.getCrystal(),
+        "Not enough mana to play " + card.getCardName());
   }
 }

@@ -1,16 +1,17 @@
 package com.herthrone.factory;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.base.Creature;
-import com.herthrone.base.Hero;
-import com.herthrone.base.Minion;
-import com.herthrone.base.Spell;
-import com.herthrone.base.Weapon;
 import com.herthrone.action.AttributeEffect;
 import com.herthrone.action.EquipWeaponEffect;
 import com.herthrone.action.MoveCardEffect;
 import com.herthrone.action.StatusEffect;
 import com.herthrone.action.SummonEffect;
+import com.herthrone.base.Effect;
+import com.herthrone.base.Creature;
+import com.herthrone.base.Hero;
+import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
+import com.herthrone.base.Weapon;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstEffectType;
@@ -40,19 +41,19 @@ public class EffectFactory {
     this.battlefield = battlefield;
   }
 
-  public List<Action> getActionsByConfig(final Spell spell, final Creature creature) {
+  public List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
     return spell.getEffects().stream()
-            .map(effect -> getActionsByConfig(effect, creature))
-            .collect(Collectors.toList());
+        .map(effect -> getActionsByConfig(effect, creature))
+        .collect(Collectors.toList());
   }
 
-  public List<Action> getActionsByConfig(final SpellConfig config, final Creature creature) {
+  public List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
     return config.getEffects().stream()
-            .map(effect -> getActionsByConfig(effect, creature))
-            .collect(Collectors.toList());
+        .map(effect -> getActionsByConfig(effect, creature))
+        .collect(Collectors.toList());
   }
 
-  public Action getActionsByConfig(final EffectConfig config, final Creature creature) {
+  public Effect getActionsByConfig(final EffectConfig config, final Creature creature) {
     ConstEffectType effect = config.getEffect();
     switch (effect) {
       case ATTRIBUTE:
@@ -70,7 +71,7 @@ public class EffectFactory {
     }
   }
 
-  private Action getAttributeAction(final EffectConfig effect, final Creature creature) {
+  private Effect getAttributeAction(final EffectConfig effect, final Creature creature) {
     final String type = effect.getType();
     switch (type) {
       case (Constant.HEALTH):
@@ -90,26 +91,26 @@ public class EffectFactory {
     }
   }
 
-  private Action getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
+  private Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
     Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
     return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
   }
 
-  private Action getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
+  private Effect getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
     final int value = effect.getValue();
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
     final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
     return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
   }
 
-  private Action getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
+  private Effect getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
     Weapon weaponInstance = weaponFactory.createWeaponByName(weapon);
     return new EquipWeaponEffect(hero, weaponInstance);
   }
 
-  private Action getSummonAction(final EffectConfig effect) {
+  private Effect getSummonAction(final EffectConfig effect) {
     List<String> summonChoices = new ArrayList<>(effect.getChoices());
     summonChoices = summonChoices.stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
     final int size = effect.getChoices().size();
@@ -129,7 +130,7 @@ public class EffectFactory {
     return new SummonEffect(battlefield.mySide.board, minion);
   }
 
-  private Action getDrawCardAction(final EffectConfig effect) {
+  private Effect getDrawCardAction(final EffectConfig effect) {
     // TODO: draw from own deck/opponent deck/opponent hand
     return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck);
   }
@@ -142,9 +143,9 @@ public class EffectFactory {
   private ActionFactory getDivineShieldStatusActionGenerator(final Creature creature) {
     return new ActionFactory() {
       @Override
-      public List<Action> yieldActions() {
-        Action action = new StatusEffect(creature.getDivineShield(), 1);
-        return Factory.singleActionToList(action);
+      public List<Effect> yieldActions() {
+        Effect effect = new StatusEffect(creature.getDivineShield(), 1);
+        return Factory.singleActionToList(effect);
       }
     };
   }
@@ -157,9 +158,9 @@ public class EffectFactory {
   private ActionFactory getFrozenStatusActionGenerator(final Creature creature) {
     return new ActionFactory() {
       @Override
-      public List<Action> yieldActions() {
-        Action action = new StatusEffect(creature.getFrozen(), 1);
-        return Factory.singleActionToList(action);
+      public List<Effect> yieldActions() {
+        Effect effect = new StatusEffect(creature.getFrozen(), 1);
+        return Factory.singleActionToList(effect);
       }
     };
   }
@@ -172,9 +173,9 @@ public class EffectFactory {
   private ActionFactory getDamageImmunityStatusActionGenerator(final Creature creature) {
     return new ActionFactory() {
       @Override
-      public List<Action> yieldActions() {
-        Action action = new StatusEffect(creature.getDamageImmunity(), 1);
-        return Factory.singleActionToList(action);
+      public List<Effect> yieldActions() {
+        Effect effect = new StatusEffect(creature.getDamageImmunity(), 1);
+        return Factory.singleActionToList(effect);
       }
     };
   }

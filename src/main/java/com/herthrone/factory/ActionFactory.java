@@ -1,5 +1,7 @@
 package com.herthrone.factory;
 
+import com.herthrone.base.Effect;
+
 import java.util.List;
 
 /**
@@ -7,5 +9,5 @@ import java.util.List;
  */
 public interface ActionFactory {
 
-  List<Action> yieldActions();
+  List<Effect> yieldActions();
 }

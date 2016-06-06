@@ -1,12 +1,12 @@
 package com.herthrone.action;
 
-import com.herthrone.factory.Action;
+import com.herthrone.base.Effect;
 import com.herthrone.stats.IntAttribute;
 
 /**
  * Created by yifeng on 4/14/16.
  */
-public class AttributeEffect implements Action {
+public class AttributeEffect implements Effect {
 
   private final IntAttribute attr;
   private final int delta;

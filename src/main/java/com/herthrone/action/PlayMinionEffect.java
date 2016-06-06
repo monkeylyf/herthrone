@@ -1,13 +1,13 @@
 package com.herthrone.action;
 
+import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
-import com.herthrone.factory.Action;
 import com.herthrone.game.Container;
 
 /**
  * Created by yifengliu on 5/25/16.
  */
-public class PlayMinionEffect implements Action {
+public class PlayMinionEffect implements Effect {
 
   private final Minion minion;
   private final Container<Minion> board;

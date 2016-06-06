@@ -39,12 +39,12 @@ public class WeaponFactory {
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-                .put(Constant.CARD_NAME, getCardName())
-                .put(Constant.ATTACK, getAttackAttr().toString())
-                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-                //.put(Constant.DESCRIPTION, "TODO")
-                .put(Constant.TYPE, getType().toString())
-                .build();
+            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.ATTACK, getAttackAttr().toString())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+            //.put(Constant.DESCRIPTION, "TODO")
+            .put(Constant.TYPE, getType().toString())
+            .build();
       }
 
       @Override

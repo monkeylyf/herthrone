@@ -6,8 +6,11 @@ import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.EffectConfig;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
@@ -33,14 +36,21 @@ public class MinionFactory {
 
   public Minion createMinionByName(final ConstMinion minion) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minion);
-    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.isCollectible());
+    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config
+        .getClassName(), config.getName(), config.getMechanics(), config.isCollectible());
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible) {
-    return createMinion(health, attack, crystalManaCost, className, name, isCollectible, battlefield);
+  Minion createMinion(final int health, final int attack, final int crystalManaCost,
+                      final ConstClass className, final ConstMinion name,
+                      final Map<String, MechanicConfig> mechanics, final boolean isCollectible) {
+    return createMinion(health, attack, crystalManaCost, className, name, mechanics, isCollectible, battlefield);
   }
 
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final boolean isCollectible, final Battlefield field) {
+  public Minion createMinion(final int health, final int attack, final int crystalManaCost,
+                             final ConstClass className, final ConstMinion name,
+                             final Map<String, MechanicConfig> mechanics,
+                             final boolean isCollectible, final Battlefield field) {
+
     final Minion minion = new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -57,9 +67,15 @@ public class MinionFactory {
 
       private Optional<Integer> seqId = Optional.absent();
 
-      @Override
-      public void BattleCry() {
+      private Optional<EffectConfig> getMechanicEffectByName(final ConstMechanic mechanic) {
 
+        final MechanicConfig config = mechanics.get(mechanic.toString().toLowerCase());
+        return config == null ? Optional.absent() : config.getEffect();
+      }
+
+      @Override
+      public Optional<EffectConfig> BattleCry() {
+        return getMechanicEffectByName(ConstMechanic.BATTLECRY);
       }
 
       @Override
@@ -75,16 +91,21 @@ public class MinionFactory {
       }
 
       @Override
+      public void silence() {
+
+      }
+
+      @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-                .put(Constant.CARD_NAME, getCardName())
-                .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
-                .put(Constant.ATTACK, getAttackAttr().toString())
-                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-                //.put(Constant.DESCRIPTION, "TODO")
-                .put(Constant.TYPE, getClassName().toString())
-                .put(Constant.MOVE_POINTS, getMovePoints().toString())
-                .build();
+            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
+            .put(Constant.ATTACK, getAttackAttr().toString())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+            //.put(Constant.DESCRIPTION, "TODO")
+            .put(Constant.TYPE, getClassName().toString())
+            .put(Constant.MOVE_POINTS, getMovePoints().toString())
+            .build();
       }
 
       @Override
@@ -183,8 +204,13 @@ public class MinionFactory {
       }
 
       @Override
-      public void nextRound() {
-        this.movePoints.nextRound();
+      public void endTurn() {
+        this.movePoints.endTurn();
+      }
+
+      @Override
+      public void startTurn() {
+
       }
 
       @Override

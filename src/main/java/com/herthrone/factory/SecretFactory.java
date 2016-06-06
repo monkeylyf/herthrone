@@ -28,11 +28,11 @@ public class SecretFactory {
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-                .put(Constant.CARD_NAME, getCardName().toString())
-                .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-                .put(Constant.TYPE, getType().toString())
-                //.put(Constant.DESCRIPTION, "TODO")
-                .build();
+            .put(Constant.CARD_NAME, getCardName().toString())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+            .put(Constant.TYPE, getType().toString())
+            //.put(Constant.DESCRIPTION, "TODO")
+            .build();
       }
 
       @Override

@@ -1,6 +1,7 @@
 package com.herthrone.factory;
 
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Effect;
+import com.herthrone.base.Card;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
@@ -37,23 +38,23 @@ public class Factory {
     this.attackFactory = new AttackFactory(battlefield);
   }
 
-  public static List<Action> singleActionToList(Action action) {
-    return Arrays.asList(action);
+  public static List<Effect> singleActionToList(Effect effect) {
+    return Arrays.asList(effect);
   }
 
-  public static boolean targetAny(BaseCard card) {
+  public static boolean targetAny(Card card) {
     return targetMinion(card) || targetMinion(card);
   }
 
-  public static boolean targetMinion(BaseCard card) {
+  public static boolean targetMinion(Card card) {
     return card instanceof Minion && !(card instanceof Hero);
   }
 
-  public static boolean targetHero(BaseCard card) {
+  public static boolean targetHero(Card card) {
     return card instanceof Hero;
   }
 
-  public BaseCard createCardInstance(final String cardName) {
+  public Card createCardInstance(final String cardName) {
     ConstType type = ConfigLoader.getCardTypeByName(cardName);
     switch (type) {
       case MINION:

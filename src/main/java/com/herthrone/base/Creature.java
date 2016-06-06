@@ -2,12 +2,11 @@ package com.herthrone.base;
 
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
-import com.herthrone.stats.Round;
 
 /**
  * Created by yifengliu on 6/4/16.
  */
-public interface Creature extends BaseCard, Round {
+public interface Creature extends Card, Round {
 
   IntAttribute getHealthAttr();
 

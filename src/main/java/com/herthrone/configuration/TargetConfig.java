@@ -20,10 +20,11 @@ public class TargetConfig {
     this.type = ConstType.valueOf(Constant.upperCaseValue(map, "type"));
   }
 
+  @Override
   public String toString() {
     return Objects.toStringHelper(this)
-            .add("scope", scope)
-            .add("type", type)
-            .toString();
+        .add("scope", scope)
+        .add("type", type)
+        .toString();
   }
 }

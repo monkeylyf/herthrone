@@ -1,6 +1,7 @@
 package com.herthrone.configuration;
 
 import com.google.common.base.Optional;
+import com.herthrone.base.Config;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class SpellConfig implements BaseConfig<ConstSpell> {
+public class SpellConfig implements Config<ConstSpell> {
 
   private final ConstSpell name;
   private final ConstClass className;

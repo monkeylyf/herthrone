@@ -1,5 +1,7 @@
 package com.herthrone.stats;
 
+import com.herthrone.base.Round;
+
 /**
  * Created by yifeng on 4/5/16.
  */
@@ -33,8 +35,13 @@ public class IntAttribute implements Round {
   }
 
   @Override
-  public void nextRound() {
+  public void endTurn() {
     buff.temp.reset();
+  }
+
+  @Override
+  public void startTurn() {
+
   }
 
   @Override

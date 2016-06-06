@@ -1,5 +1,8 @@
 package com.herthrone.base;
 
+import com.google.common.base.Optional;
+import com.herthrone.configuration.EffectConfig;
+
 /**
  * Created by yifeng on 4/2/16.
  */
@@ -7,9 +10,11 @@ package com.herthrone.base;
 
 public interface Minion extends Creature {
 
-  void BattleCry();
+  Optional<EffectConfig> BattleCry();
+
+  int getSequenceId();
 
   void setSequenceId(final int id);
 
-  int getSequenceId();
+  void silence();
 }

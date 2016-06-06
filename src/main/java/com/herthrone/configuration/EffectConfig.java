@@ -1,5 +1,6 @@
 package com.herthrone.configuration;
 
+import com.google.common.base.Objects;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.Constant;
 
@@ -58,7 +59,13 @@ public class EffectConfig {
     return choices;
   }
 
+  @Override
   public String toString() {
-    return String.format("Effect <%s> Type <%s> Value <%d> Targets: <%s>", effect, type, value, target);
+    return Objects.toStringHelper(this)
+        .add("effect", effect)
+        .add("type", type)
+        .add("value", value)
+        .add("target", target)
+        .toString();
   }
 }

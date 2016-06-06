@@ -1,6 +1,6 @@
 package com.herthrone.game;
 
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstCommand;
@@ -54,7 +54,7 @@ public class GameManagerTest {
     // At least 4 crystals so YETI can be played and show up as options.
     for (int i = 0; i < 8; ++i) {
       gameManager.drawCard();
-      gameManager.activeBattlefield.mySide.crystal.nextRound();
+      gameManager.activeBattlefield.mySide.manaCrystal.endTurn();
       gameManager.switchTurn();
     }
   }
@@ -82,8 +82,8 @@ public class GameManagerTest {
     // turn and start and end. Different events can be triggered by starting the turn
     // and ending the turn. Crystal should increase one when starting a new turn, not ending
     // previous turn.
-    assertThat(mySide.crystal.getCrystal()).isEqualTo(1);
-    assertThat(opponentSide.crystal.getCrystal()).isEqualTo(1);
+    assertThat(mySide.manaCrystal.getCrystal()).isEqualTo(1);
+    assertThat(opponentSide.manaCrystal.getCrystal()).isEqualTo(1);
   }
 
   @Test
@@ -157,17 +157,17 @@ public class GameManagerTest {
     assertThat(mySide.hand.get(0).getCardName()).isEqualTo(MINION.toString());
     assertThat(mySide.board.size()).isEqualTo(0);
 
-    final BaseCard card = mySide.hand.get(0);
+    final Card card = mySide.hand.get(0);
     final int requiredCrystalCost = card.getCrystalManaCost().getVal();
 
-    while (mySide.crystal.getCrystal() < requiredCrystalCost) {
+    while (mySide.manaCrystal.getCrystal() < requiredCrystalCost) {
       try {
         gameManager.playCard(0);
       } catch (IllegalArgumentException expected) {
         assertThat(expected).hasMessage("Not enough mana to play " + card.getCardName());
       }
 
-      mySide.crystal.nextRound();
+      mySide.manaCrystal.endTurn();
     }
 
     gameManager.playCard(0);
@@ -259,13 +259,13 @@ public class GameManagerTest {
     // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
     for (int i = 0; i < numOfOwnMinions; ++i) {
       final Minion minion = (Minion) mySide.deck.top();
-      minion.nextRound();
+      minion.endTurn();
       mySide.board.add(minion);
     }
 
     for (int i = 0; i < numOfOpponentMinions; ++i) {
       final Minion minion = (Minion) opponentSide.deck.top();
-      minion.nextRound();
+      minion.endTurn();
       opponentSide.board.add(minion);
     }
   }
@@ -274,10 +274,10 @@ public class GameManagerTest {
     assertThat(root.childOptions.size()).isEqualTo(4);
     List<String> childOptions = root.childOptions.stream().map(option -> option.option).collect(Collectors.toList());
     assertThat(childOptions).containsExactly(
-            ConstCommand.END_TURN.toString(),
-            ConstCommand.MOVE_MINION.toString(),
-            ConstCommand.PLAY_CARD.toString(),
-            ConstCommand.USE_HERO_POWER.toString());
+        ConstCommand.END_TURN.toString(),
+        ConstCommand.MOVE_MINION.toString(),
+        ConstCommand.PLAY_CARD.toString(),
+        ConstCommand.USE_HERO_POWER.toString());
 
     for (CommandLine.CommandNode node : root.childOptions) {
       final String optionName = node.option;

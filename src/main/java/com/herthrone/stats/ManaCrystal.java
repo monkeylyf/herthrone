@@ -1,12 +1,13 @@
 package com.herthrone.stats;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.base.BaseCard;
+import com.herthrone.base.Card;
+import com.herthrone.base.Round;
 
 /**
  * Created by yifeng on 4/27/16.
  */
-public class Crystal implements Round {
+public class ManaCrystal implements Round {
 
   private static final int MAX_CRYSTALS = 10;
   private int crystal;
@@ -14,13 +15,13 @@ public class Crystal implements Round {
   private int overloaded;
   private int lockedCrystal;
 
-  public Crystal() {
+  public ManaCrystal() {
     this.crystal = 1;
     this.overloaded = 0;
     this.lockedCrystal = 0;
   }
 
-  public boolean canPlay(final BaseCard card) {
+  public boolean canPlay(final Card card) {
     return crystal >= card.getCrystalManaCost().getVal();
   }
 
@@ -30,7 +31,7 @@ public class Crystal implements Round {
   }
 
   public void increaseUpperBound() {
-    crystalUpperBound = Math.min(crystalUpperBound + 1, Crystal.MAX_CRYSTALS);
+    crystalUpperBound = Math.min(crystalUpperBound + 1, ManaCrystal.MAX_CRYSTALS);
   }
 
   public int getCrystal() {
@@ -46,10 +47,15 @@ public class Crystal implements Round {
   }
 
   @Override
-  public void nextRound() {
+  public void endTurn() {
     increaseUpperBound();
     crystal = crystalUpperBound;
     applyOverload();
+  }
+
+  @Override
+  public void startTurn() {
+
   }
 
   public void overload(final int val) {

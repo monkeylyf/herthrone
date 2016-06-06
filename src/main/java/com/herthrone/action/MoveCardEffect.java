@@ -1,18 +1,18 @@
 package com.herthrone.action;
 
-import com.herthrone.base.BaseCard;
-import com.herthrone.factory.Action;
+import com.herthrone.base.Card;
+import com.herthrone.base.Effect;
 import com.herthrone.game.Container;
 
 /**
  * Created by yifeng on 4/13/16.
  */
-public class MoveCardEffect implements Action {
+public class MoveCardEffect implements Effect {
 
-  private final Container<BaseCard> moveTo;
-  private final Container<BaseCard> moveFrom;
+  private final Container<Card> moveTo;
+  private final Container<Card> moveFrom;
 
-  public MoveCardEffect(final Container<BaseCard> moveTo, final Container<BaseCard> moveFrom) {
+  public MoveCardEffect(final Container<Card> moveTo, final Container<Card> moveFrom) {
     this.moveTo = moveTo;
     this.moveFrom = moveFrom;
   }

@@ -1,13 +1,13 @@
 package com.herthrone.action;
 
+import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Weapon;
-import com.herthrone.factory.Action;
 
 /**
  * Created by yifeng on 4/14/16.
  */
-public class EquipWeaponEffect implements Action {
+public class EquipWeaponEffect implements Effect {
 
   private final Hero hero;
   private final Weapon weapon;

@@ -1,6 +1,7 @@
 package com.herthrone.configuration;
 
 
+import com.herthrone.base.Config;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/12/16.
  */
-public class WeaponConfig implements BaseConfig<ConstWeapon> {
+public class WeaponConfig implements Config<ConstWeapon> {
 
   private final ConstWeapon name;
   private final ConstClass className;
