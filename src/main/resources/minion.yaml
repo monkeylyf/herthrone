@@ -88,3 +88,18 @@
       target:
         scope: own
         type: deck
+
+- name: loot_hoarder
+  display: Loot Hoarder
+  class: Common
+  attack: 2
+  health: 1
+  crystal: 2
+  mechanics:
+    - name: deathrattle
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck

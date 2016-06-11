@@ -1,7 +1,7 @@
 package com.herthrone.factory;
 
-import com.herthrone.base.Effect;
 import com.herthrone.base.Card;
+import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;

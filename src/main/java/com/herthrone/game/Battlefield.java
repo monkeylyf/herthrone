@@ -73,7 +73,6 @@ public class Battlefield implements View {
 
   private ImmutableMap.Builder<String, String> buildNoHiddenSideView(final Side side) {
     final ImmutableMap.Builder sideViewBuilder = ImmutableMap.<String, String>builder();
-
     // Add here as part of view.
     sideViewBuilder.put(Constant.HERO, side.hero.view().toString());
     // Add deck count as part of view.

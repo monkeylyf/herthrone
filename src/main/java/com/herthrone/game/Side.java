@@ -6,8 +6,8 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.stats.ManaCrystal;
 import com.herthrone.stats.IntAttribute;
+import com.herthrone.stats.ManaCrystal;
 
 import java.util.List;
 

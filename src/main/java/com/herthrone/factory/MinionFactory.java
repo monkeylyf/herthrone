@@ -74,8 +74,13 @@ public class MinionFactory {
       }
 
       @Override
-      public Optional<EffectConfig> BattleCry() {
+      public Optional<EffectConfig> Battlecry() {
         return getMechanicEffectByName(ConstMechanic.BATTLECRY);
+      }
+
+      @Override
+      public Optional<EffectConfig> Deathrattle() {
+        return getMechanicEffectByName(ConstMechanic.DEATHRATTLE);
       }
 
       @Override

@@ -54,7 +54,7 @@ public class MechanicTest extends TestCase {
   }
 
   @Test
-  public void testBattleCry() {
+  public void testBattlecry() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.GNOMISH_INVENTOR);
     System.out.println(config.getMechanics());
   }

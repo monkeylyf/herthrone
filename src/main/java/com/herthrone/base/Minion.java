@@ -10,7 +10,9 @@ import com.herthrone.configuration.EffectConfig;
 
 public interface Minion extends Creature {
 
-  Optional<EffectConfig> BattleCry();
+  Optional<EffectConfig> Battlecry();
+
+  Optional<EffectConfig> Deathrattle();
 
   int getSequenceId();
 

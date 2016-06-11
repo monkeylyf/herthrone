@@ -1,8 +1,8 @@
 package com.herthrone.factory;
 
 import com.herthrone.action.PhysicalDamage;
-import com.herthrone.base.Effect;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Effect;
 import com.herthrone.game.Battlefield;
 
 /**

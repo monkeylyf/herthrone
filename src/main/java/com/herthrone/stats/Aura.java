@@ -1,6 +1,7 @@
 package com.herthrone.stats;
 
 import com.herthrone.base.Card;
+import com.herthrone.base.Minion;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,22 +10,22 @@ import java.util.Map;
  * Created by yifeng on 4/22/16.
  */
 
-public class AuraBuff<T extends Card> {
+public class Aura {
 
-  private final Map<T, Integer> buffs;
+  private final Map<Minion, Integer> buffs;
   private int accumulatedBuffs;
 
-  public AuraBuff() {
+  public Aura() {
     this.buffs = new HashMap<>();
     this.accumulatedBuffs = 0;
   }
 
-  public void addBuff(final T card, final int buffVal) {
+  public void add(final Minion card, final int buffVal) {
     buffs.put(card, buffVal);
     accumulatedBuffs += buffVal;
   }
 
-  public int getBuffs() {
+  public int get() {
     return accumulatedBuffs;
   }
 
@@ -33,7 +34,7 @@ public class AuraBuff<T extends Card> {
     accumulatedBuffs = 0;
   }
 
-  public void removeBuff(T card) {
+  public void remove(final Minion card) {
     Integer buff = buffs.remove(card);
     if (buff != null) {
       accumulatedBuffs -= buff.intValue();

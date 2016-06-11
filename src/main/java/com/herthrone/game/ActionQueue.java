@@ -23,9 +23,10 @@ public class ActionQueue {
 
   public void enqueue(final Effect effect) {
     queue.add(effect);
+    executeUntilEmpty();
   }
 
-  public void execute() {
+  private void executeUntilEmpty() {
     while (!queue.isEmpty()) {
       final Effect effect = queue.remove();
       effect.act();
