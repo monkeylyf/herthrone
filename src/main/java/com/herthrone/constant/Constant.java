@@ -36,4 +36,5 @@ public class Constant {
     final String value = (String) map.get(key);
     return value.toUpperCase();
   }
+
 }

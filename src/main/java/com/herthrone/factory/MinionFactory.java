@@ -42,13 +42,13 @@ public class MinionFactory {
 
   Minion createMinion(final int health, final int attack, final int crystalManaCost,
                       final ConstClass className, final ConstMinion name,
-                      final Map<String, MechanicConfig> mechanics, final boolean isCollectible) {
+                      final Map<ConstMechanic, MechanicConfig> mechanics, final boolean isCollectible) {
     return createMinion(health, attack, crystalManaCost, className, name, mechanics, isCollectible, battlefield);
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost,
                              final ConstClass className, final ConstMinion name,
-                             final Map<String, MechanicConfig> mechanics,
+                             final Map<ConstMechanic, MechanicConfig> mechanics,
                              final boolean isCollectible, final Battlefield field) {
 
     final Minion minion = new Minion() {
@@ -229,9 +229,12 @@ public class MinionFactory {
       }
     };
 
-    // Minion with no charge ability waits until next turn to move.
-    final IntAttribute movePoints = minion.getMovePoints();
-    movePoints.buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
+    final MechanicConfig charge = mechanics.get(ConstMechanic.CHARGE);
+    if (charge == null) {
+      // Minion with no charge ability waits until next turn to move.
+      final IntAttribute movePoints = minion.getMovePoints();
+      movePoints.buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
+    }
 
     return minion;
   }

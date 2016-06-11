@@ -1,7 +1,9 @@
 package com.herthrone.configuration;
 
+import com.google.common.base.Optional;
 import com.herthrone.base.Config;
 import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
@@ -18,7 +20,7 @@ public class MinionConfig implements Config<ConstMinion> {
   private final int attack;
   private final int health;
   private final int crystal;
-  private final Map<String, MechanicConfig> mechanics;
+  private final Map<ConstMechanic, MechanicConfig> mechanics;
   private final boolean collectible;
 
   public MinionConfig(final Map map) {
@@ -43,8 +45,13 @@ public class MinionConfig implements Config<ConstMinion> {
     return crystal;
   }
 
-  public Map<String, MechanicConfig> getMechanics() {
+  public Map<ConstMechanic, MechanicConfig> getMechanics() {
     return mechanics;
+  }
+
+  public Optional<MechanicConfig> getMechanic(final ConstMechanic mechanic) {
+    final MechanicConfig config = mechanics.get(mechanic);
+    return Optional.fromNullable(config);
   }
 
   @Override

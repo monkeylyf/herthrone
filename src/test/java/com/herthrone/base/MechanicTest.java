@@ -1,8 +1,11 @@
 package com.herthrone.base;
 
+import com.google.common.base.Optional;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
@@ -13,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Created by yifengliu on 5/10/16.
@@ -49,13 +54,17 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testCharge() {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.WOLFRIDER);
-    final Minion minion = minionFactory1.createMinionByName(ConstMinion.WOLFRIDER);
+    final ConstMinion minionName = ConstMinion.WOLFRIDER;
+    final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
+    final Optional<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
+    assertThat(mechanic.isPresent()).isTrue();
+    final Minion minion = minionFactory1.createMinionByName(minionName);
+    assertThat(minion.getMovePoints().getVal()).isGreaterThan(0);
   }
 
   @Test
   public void testBattlecry() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.GNOMISH_INVENTOR);
-    System.out.println(config.getMechanics());
+    ConstMechanic.lowerValueOf("charge");
   }
 }

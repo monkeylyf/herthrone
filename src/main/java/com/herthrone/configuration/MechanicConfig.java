@@ -22,12 +22,12 @@ public class MechanicConfig {
     this.effect = map.containsKey("effect") ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
-  public static Map<String, MechanicConfig> mechanicConfigFactory(Object configList) {
+  public static Map<ConstMechanic, MechanicConfig> mechanicConfigFactory(Object configList) {
     final List<Map> configMaps = (List<Map>) configList;
-    Map<String, MechanicConfig> configs = new HashMap<>();
+    Map<ConstMechanic, MechanicConfig> configs = new HashMap<>();
     for (Map map : configMaps) {
       MechanicConfig config = new MechanicConfig(map);
-      configs.put(config.getMechanic().toString(), config);
+      configs.put(config.getMechanic(), config);
     }
     return configs;
   }

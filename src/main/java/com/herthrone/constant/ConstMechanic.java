@@ -1,5 +1,7 @@
 package com.herthrone.constant;
 
+import com.herthrone.configuration.MechanicConfig;
+
 /**
  * Created by yifengliu on 5/15/16.
  */
@@ -39,5 +41,20 @@ public enum ConstMechanic {
   TAKE_CONTROL,
   TRANSFORM,
   TRIGGERED_EFFECT,
-  WINDFURY,
+  WINDFURY;
+
+  public static ConstMechanic lowerValueOf(final String lowerCaseName) {
+    for (ConstMechanic mechanic : values()) {
+      if (mechanic.lowerName().equals(lowerCaseName)) {
+        return mechanic;
+      }
+    }
+    throw new IllegalArgumentException(String.format("No enum constant %s.%s", MechanicConfig
+            .class.toString(),
+        lowerCaseName));
+  }
+
+  public String lowerName() {
+    return name().toLowerCase();
+  }
 }
