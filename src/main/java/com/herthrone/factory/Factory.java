@@ -1,14 +1,14 @@
 package com.herthrone.factory;
 
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import com.herthrone.base.Card;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
-import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
-import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
 
@@ -54,23 +54,29 @@ public class Factory {
     return card instanceof Hero;
   }
 
-  public Card createCardInstance(final String cardName) {
-    ConstType type = ConfigLoader.getCardTypeByName(cardName);
-    switch (type) {
-      case MINION:
-        ConstMinion minionName = ConstMinion.valueOf(cardName);
-        return minionFactory.createMinionByName(minionName);
-      case WEAPON:
-        ConstWeapon weaponName = ConstWeapon.valueOf(cardName);
-        return weaponFactory.createWeaponByName(weaponName);
-      case SPELL:
-        ConstSpell spellName = ConstSpell.valueOf(cardName);
-        return spellFactory.createSpellByName(spellName);
-      case SECRET:
-        ConstSecret secretName = ConstSecret.valueOf(cardName);
-        return secretFactory.createSecretByName(secretName);
-      default:
-        throw new RuntimeException(String.format("Unknown type %s for card %s", type.toString(), cardName));
+  public Card createCardInstance(final Enum cardName) {
+    final String name = cardName.toString();
+
+    Optional<ConstMinion> constMinion = Enums.getIfPresent(ConstMinion.class, name);
+    if (constMinion.isPresent()) {
+      return minionFactory.createMinionByName(constMinion.get());
     }
+
+    Optional<ConstWeapon> constWeapon = Enums.getIfPresent(ConstWeapon.class, name);
+    if (constWeapon.isPresent()) {
+      return weaponFactory.createWeaponByName(constWeapon.get());
+    }
+
+    Optional<ConstSpell> constSpell = Enums.getIfPresent(ConstSpell.class, name);
+    if (constSpell.isPresent()) {
+      return spellFactory.createSpellByName(constSpell.get());
+    }
+
+    Optional<ConstSecret> constSecret = Enums.getIfPresent(ConstSecret.class, name);
+    if (constSecret.isPresent()) {
+      return secretFactory.createSecretByName(constSecret.get());
+    }
+
+    throw new RuntimeException(String.format("Unknown card %s", name));
   }
 }

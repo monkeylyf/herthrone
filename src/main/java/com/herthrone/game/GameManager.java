@@ -38,7 +38,8 @@ public class GameManager {
   private int seqId = 0;
   private Factory activeFactory;
 
-  public GameManager(final ConstHero hero1, final ConstHero hero2, final List<String> cardNames1, final List<String> cardNames2) {
+  public GameManager(final ConstHero hero1, final ConstHero hero2, final List<Enum> cardNames1,
+                     final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.battlefield1 = new Battlefield(
         HeroFactory.createHeroByName(hero1),
@@ -64,7 +65,7 @@ public class GameManager {
 
   }
 
-  private static List<Card> generateDeck(final List<String> cardNames, final Factory factory) {
+  private static List<Card> generateDeck(final List<Enum> cardNames, final Factory factory) {
     return cardNames.stream().map(cardName -> factory.createCardInstance(cardName)).collect(Collectors.toList());
   }
 
@@ -78,8 +79,8 @@ public class GameManager {
 
     final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
     ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-    List<String> cards1 = Collections.nCopies(deck_size, MINION.toString());
-    List<String> cards2 = Collections.nCopies(deck_size, MINION.toString());
+    List<Enum> cards1 = Collections.nCopies(deck_size, MINION);
+    List<Enum> cards2 = Collections.nCopies(deck_size, MINION);
 
     final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
     gameManager.play();

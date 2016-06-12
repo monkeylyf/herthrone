@@ -38,8 +38,8 @@ public class GameManagerTest {
 
   @Before
   public void setUp() {
-    List<String> cards1 = Collections.nCopies(DECK_SIZE, MINION.toString());
-    List<String> cards2 = Collections.nCopies(DECK_SIZE, MINION.toString());
+    List<Enum> cards1 = Collections.nCopies(DECK_SIZE, MINION);
+    List<Enum> cards2 = Collections.nCopies(DECK_SIZE, MINION);
 
     gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
 

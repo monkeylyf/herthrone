@@ -3,7 +3,7 @@ package com.herthrone.configuration;
 import com.herthrone.base.Config;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.constant.ConstHeroPower;
+import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 
@@ -17,16 +17,16 @@ public class HeroConfig implements Config<ConstHero> {
   private final ConstHero name;
   private final ConstClass className;
   private final String description;
-  private final ConstHeroPower heroPower;
+  private final ConstSpell heroPower;
 
   public HeroConfig(Map map) {
     this.name = ConstHero.valueOf(Constant.upperCaseValue(map, "name"));
     this.className = ConstClass.valueOf(Constant.upperCaseValue(map, "class"));
-    this.heroPower = ConstHeroPower.valueOf(Constant.upperCaseValue(map, "hero_power"));
+    this.heroPower = ConstSpell.valueOf(Constant.upperCaseValue(map, "hero_power"));
     this.description = (String) map.get("description");
   }
 
-  public ConstHeroPower getHeroPower() {
+  public ConstSpell getHeroPower() {
     return heroPower;
   }
 

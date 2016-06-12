@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Config;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
@@ -63,7 +62,7 @@ public class ConfigLoader {
     }
   };
 
-  public static ConstType getCardTypeByName(final String cardName) {
+  public static ConstType getCardTypeByName(final Enum cardName) {
     if (spellConfigLoader.getConfigurations().containsKey(cardName)) {
       return ConstType.SPELL;
     } else if (minionConfigLoader.getConfigurations().containsKey(cardName)) {
@@ -93,23 +92,23 @@ public class ConfigLoader {
   }
 
   public static MinionConfig getMinionConfigByName(final ConstMinion minion) {
-    return minionConfigLoader.getConfigurations().get(minion.toString());
+    return minionConfigLoader.getConfigurations().get(minion);
   }
 
   public static HeroConfig getHeroConfigByName(final ConstHero hero) {
-    return heroConfigLoader.getConfigurations().get(hero.toString());
+    return heroConfigLoader.getConfigurations().get(hero);
   }
 
   public static SpellConfig getSpellConfigByName(final ConstSpell spell) {
-    return spellConfigLoader.getConfigurations().get(spell.toString());
+    return spellConfigLoader.getConfigurations().get(spell);
   }
 
-  public static SpellConfig getHeroPowerConfigByName(final ConstHeroPower heroPower) {
-    return heroPowerConfigLoader.getConfigurations().get(heroPower.toString());
+  public static SpellConfig getHeroPowerConfigByName(final ConstSpell heroPower) {
+    return heroPowerConfigLoader.getConfigurations().get(heroPower);
   }
 
   public static WeaponConfig getWeaponConfigByName(final ConstWeapon weapon) {
-    return weaponConfigLoader.getConfigurations().get(weapon.toString());
+    return weaponConfigLoader.getConfigurations().get(weapon);
   }
 
   private static ResourceBundle loadResource() {
@@ -117,7 +116,7 @@ public class ConfigLoader {
   }
 
   private abstract static class AbstractConfigLoader<T extends Config> {
-    private volatile ImmutableMap<String, T> configs;
+    private volatile ImmutableMap<Enum, T> configs;
     private String configName;
 
     public AbstractConfigLoader(final String configName) {
@@ -126,18 +125,18 @@ public class ConfigLoader {
 
     abstract protected T createInstance(Map map);
 
-    private ImmutableMap<String, T> loadConfiguration() {
-      List<Object> minions = loadYaml();
-      ImmutableMap.Builder<String, T> builder = ImmutableMap.builder();
-      for (Object object : minions) {
-        Map map = (Map) object;
-        T config = createInstance(map);
-        builder.put(config.getName().toString(), config);
+    private ImmutableMap<Enum, T> loadConfiguration() {
+      List<Object> configSection = loadYaml();
+      ImmutableMap.Builder<Enum, T> builder = ImmutableMap.builder();
+      for (Object object : configSection) {
+        final Map map = (Map) object;
+        final T config = createInstance(map);
+        builder.put(config.getName(), config);
       }
       return builder.build();
     }
 
-    public synchronized ImmutableMap<String, T> getConfigurations() {
+    public synchronized ImmutableMap<Enum, T> getConfigurations() {
       if (configs == null) {
         configs = loadConfiguration();
       }

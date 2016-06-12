@@ -6,9 +6,9 @@ import com.herthrone.constant.ConstType;
 /**
  * Created by yifeng on 4/19/16.
  */
-public interface Config<T extends Enum<T>> {
+public interface Config<E extends Enum<E>> {
 
-  T getName();
+  E getName();
 
   ConstClass getClassName();
 

@@ -8,7 +8,6 @@ import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
-import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
@@ -30,15 +29,31 @@ public class SpellFactory {
 
   public Spell createSpellByName(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
-    return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getTargetConfig(), config.getEffects());
+    return createSpell(
+        config.getName(),
+        config.getClassName(),
+        config.getCrystal(),
+        config.getType(),
+        config.getTargetConfig(),
+        config.getEffects()
+    );
   }
 
-  public Spell createHeroPowerByName(final ConstHeroPower heroPower) {
+  public Spell createHeroPowerByName(final ConstSpell heroPower) {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
-    return createSpell(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getTargetConfig(), config.getEffects());
+    return createSpell(
+        config.getName(),
+        config.getClassName(),
+        config.getCrystal(),
+        config.getType(),
+        config.getTargetConfig(),
+        config.getEffects()
+    );
   }
 
-  public Spell createSpell(final ConstSpell name, final ConstClass className, final int crystal, final ConstType type, final Optional<TargetConfig> targetConfig, final List<EffectConfig> effects) {
+  public Spell createSpell(final ConstSpell name, final ConstClass className, final int crystal,
+                           final ConstType type, final Optional<TargetConfig> targetConfig,
+                           final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);

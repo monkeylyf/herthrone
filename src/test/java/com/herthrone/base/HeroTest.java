@@ -4,8 +4,8 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.constant.ConstHeroPower;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
@@ -62,7 +62,7 @@ public class HeroTest extends TestCase {
     this.effectFactory1 = gm.factory1.effectFactory;
     this.effectFactory2 = gm.factory2.effectFactory;
 
-    this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstHeroPower.ARMOR_UP);
+    this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
 
     this.weapon1 = gm.factory1.weaponFactory.createWeapon(0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
     this.weapon2 = gm.factory2.weaponFactory.createWeapon(0, weaponAttackVal2, weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
