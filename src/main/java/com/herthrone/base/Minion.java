@@ -2,6 +2,7 @@ package com.herthrone.base;
 
 import com.google.common.base.Optional;
 import com.herthrone.configuration.EffectConfig;
+import com.herthrone.stats.EffectMechanics;
 
 /**
  * Created by yifeng on 4/2/16.
@@ -10,9 +11,7 @@ import com.herthrone.configuration.EffectConfig;
 
 public interface Minion extends Creature {
 
-  Optional<EffectConfig> Battlecry();
-
-  Optional<EffectConfig> Deathrattle();
+  EffectMechanics getEffectMechanics();
 
   int getSequenceId();
 

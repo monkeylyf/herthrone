@@ -42,19 +42,4 @@ public enum ConstMechanic {
   TRANSFORM,
   TRIGGERED_EFFECT,
   WINDFURY;
-
-  public static ConstMechanic lowerValueOf(final String lowerCaseName) {
-    for (ConstMechanic mechanic : values()) {
-      if (mechanic.lowerName().equals(lowerCaseName)) {
-        return mechanic;
-      }
-    }
-    throw new IllegalArgumentException(String.format("No enum constant %s.%s", MechanicConfig
-            .class.toString(),
-        lowerCaseName));
-  }
-
-  public String lowerName() {
-    return name().toLowerCase();
-  }
 }

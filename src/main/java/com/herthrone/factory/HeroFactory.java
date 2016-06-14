@@ -14,6 +14,7 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.stats.BooleanAttribute;
+import com.herthrone.stats.BooleanMechanics;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.Map;
@@ -31,11 +32,14 @@ public class HeroFactory {
 
   public static Hero createHeroByName(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
-    return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR, HeroFactory.CRYSTAL_MANA_COST, heroConfig.getName(), heroConfig.getClassName());
+    return HeroFactory.createHero(HeroFactory.HEALTH, HeroFactory.ATTACK, HeroFactory.ARMOR,
+                                  HeroFactory.CRYSTAL_MANA_COST, heroConfig.getName(),
+                                  heroConfig.getClassName());
   }
 
-  public static Hero createHero(final int health, final int attack, final int armor, final int crystalManaCost, final ConstHero name, final ConstClass className) {
-
+  public static Hero createHero(final int health, final int attack, final int armor,
+                                final int crystalManaCost, final ConstHero name,
+                                final ConstClass className) {
     return new Hero() {
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
@@ -44,9 +48,7 @@ public class HeroFactory {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
       private final IntAttribute attackMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final IntAttribute heroPowerMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
-      private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
-      private final BooleanAttribute divineShield = new BooleanAttribute(false);
-      private final BooleanAttribute frozen = new BooleanAttribute(false);
+      private final BooleanMechanics booleanMechanics = new BooleanMechanics();
       private Optional<Weapon> weapon = Optional.absent();
 
       @Override
@@ -119,8 +121,8 @@ public class HeroFactory {
       }
 
       @Override
-      public Optional<BooleanAttribute> getBooleanAttribute(ConstMechanic mechanic) {
-        return null;
+      public BooleanMechanics getBooleanMechanics() {
+        return booleanMechanics;
       }
 
       @Override

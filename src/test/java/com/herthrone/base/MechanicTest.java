@@ -65,6 +65,6 @@ public class MechanicTest extends TestCase {
   @Test
   public void testBattlecry() {
     MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.GNOMISH_INVENTOR);
-    ConstMechanic.lowerValueOf("charge");
+    //ConstMechanic.lowerValueOf("charge");
   }
 }
