@@ -10,6 +10,7 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.stats.BooleanAttribute;
@@ -41,13 +42,11 @@ public class HeroFactory {
       private final IntAttribute armorAttr = new IntAttribute(armor);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      // TODO: For hero power. How about weapon attack move points?
-      private final IntAttribute movePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
+      private final IntAttribute attackMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
+      private final IntAttribute heroPowerMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanAttribute damageImmunity = new BooleanAttribute(false);
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
-      private final BooleanAttribute stealth = new BooleanAttribute(false);
-      private final BooleanAttribute taunt = new BooleanAttribute(false);
       private Optional<Weapon> weapon = Optional.absent();
 
       @Override
@@ -60,13 +59,13 @@ public class HeroFactory {
             .put(Constant.ATTACK, getAttackAttr().toString())
             .put(Constant.CRYSTAL, getCrystalManaCost().toString())
             //.put(Constant.DESCRIPTION, "TODO")
-            .put(Constant.MOVE_POINTS, getMovePoints().toString())
+            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
             .build();
       }
 
       @Override
       public void endTurn() {
-        this.movePoints.endTurn();
+        this.attackMovePoints.endTurn();
       }
 
       @Override
@@ -115,38 +114,23 @@ public class HeroFactory {
       }
 
       @Override
-      public IntAttribute getMovePoints() {
-        return movePoints;
+      public IntAttribute getAttackMovePoints() {
+        return attackMovePoints;
       }
 
       @Override
-      public BooleanAttribute getDamageImmunity() {
-        return damageImmunity;
-      }
-
-      @Override
-      public BooleanAttribute getFrozen() {
-        return frozen;
-      }
-
-      @Override
-      public BooleanAttribute getDivineShield() {
-        return divineShield;
-      }
-
-      @Override
-      public BooleanAttribute getTaunt() {
-        return taunt;
-      }
-
-      @Override
-      public BooleanAttribute getStealth() {
-        return stealth;
+      public Optional<BooleanAttribute> getBooleanAttribute(ConstMechanic mechanic) {
+        return null;
       }
 
       @Override
       public IntAttribute getArmorAttr() {
         return armorAttr;
+      }
+
+      @Override
+      public IntAttribute getHeroPowerMovePoints() {
+        return heroPowerMovePoints;
       }
 
       @Override

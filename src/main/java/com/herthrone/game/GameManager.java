@@ -138,13 +138,13 @@ public class GameManager {
       // Use hero power without a specific target.
       activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield.mySide.hero).stream().forEach(Effect::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
-      activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
+      activeBattlefield.mySide.hero.getAttackMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, creature).stream().forEach(Effect::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
-      activeBattlefield.mySide.hero.getMovePoints().buff.temp.decrease(1);
+      activeBattlefield.mySide.hero.getAttackMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
       final Card card = activeBattlefield.mySide.hand.get(leafNode.index);
       playCard(leafNode.index);
@@ -154,7 +154,7 @@ public class GameManager {
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee).act();
       // Cost one move point.
-      attacker.getMovePoints().buff.temp.decrease(1);
+      attacker.getAttackMovePoints().buff.temp.decrease(1);
     } else {
       throw new RuntimeException("Unknown option: " + leafNode.option.toString());
     }

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.herthrone.action.AttributeEffect;
 import com.herthrone.action.EquipWeaponEffect;
 import com.herthrone.action.MoveCardEffect;
-import com.herthrone.action.StatusEffect;
 import com.herthrone.action.SummonEffect;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
@@ -133,51 +132,6 @@ public class EffectFactory {
   private Effect getDrawCardAction(final EffectConfig effect) {
     // TODO: draw from own deck/opponent deck/opponent hand
     return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck);
-  }
-
-  public ActionFactory getDivineShieldStatusActionGenerator(final int index) {
-    final Creature creature = getMinionByIndex(index);
-    return getDivineShieldStatusActionGenerator(creature);
-  }
-
-  private ActionFactory getDivineShieldStatusActionGenerator(final Creature creature) {
-    return new ActionFactory() {
-      @Override
-      public List<Effect> yieldActions() {
-        Effect effect = new StatusEffect(creature.getDivineShield(), 1);
-        return Factory.singleActionToList(effect);
-      }
-    };
-  }
-
-  public ActionFactory getFrozenStatusActionGenerator(final int index) {
-    final Creature creature = getMinionByIndex(index);
-    return getFrozenStatusActionGenerator(creature);
-  }
-
-  private ActionFactory getFrozenStatusActionGenerator(final Creature creature) {
-    return new ActionFactory() {
-      @Override
-      public List<Effect> yieldActions() {
-        Effect effect = new StatusEffect(creature.getFrozen(), 1);
-        return Factory.singleActionToList(effect);
-      }
-    };
-  }
-
-  public ActionFactory getDamageImmunityStatusActionGenerator(final int index) {
-    final Creature creature = getMinionByIndex(index);
-    return getDamageImmunityStatusActionGenerator(creature);
-  }
-
-  private ActionFactory getDamageImmunityStatusActionGenerator(final Creature creature) {
-    return new ActionFactory() {
-      @Override
-      public List<Effect> yieldActions() {
-        Effect effect = new StatusEffect(creature.getDamageImmunity(), 1);
-        return Factory.singleActionToList(effect);
-      }
-    };
   }
 
   /**

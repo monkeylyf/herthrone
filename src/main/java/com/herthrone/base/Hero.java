@@ -10,6 +10,8 @@ public interface Hero extends Creature {
 
   IntAttribute getArmorAttr();
 
+  IntAttribute getHeroPowerMovePoints();
+
   Optional<Weapon> getWeapon();
 
   void arm(Weapon weapon);

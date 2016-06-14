@@ -59,7 +59,7 @@ public class MechanicTest extends TestCase {
     final Optional<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
     assertThat(mechanic.isPresent()).isTrue();
     final Minion minion = minionFactory1.createMinionByName(minionName);
-    assertThat(minion.getMovePoints().getVal()).isGreaterThan(0);
+    assertThat(minion.getAttackMovePoints().getVal()).isGreaterThan(0);
   }
 
   @Test

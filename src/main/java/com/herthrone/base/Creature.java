@@ -1,5 +1,7 @@
 package com.herthrone.base;
 
+import com.google.common.base.Optional;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
@@ -14,17 +16,9 @@ public interface Creature extends Card, Round {
 
   IntAttribute getAttackAttr();
 
-  IntAttribute getMovePoints();
+  IntAttribute getAttackMovePoints();
 
-  BooleanAttribute getDamageImmunity();
-
-  BooleanAttribute getFrozen();
-
-  BooleanAttribute getDivineShield();
-
-  BooleanAttribute getTaunt();
-
-  BooleanAttribute getStealth();
+  Optional<BooleanAttribute> getBooleanAttribute(final ConstMechanic mechanic);
 
   void causeDamage(final Creature creature);
 

@@ -43,7 +43,7 @@ public class CommandLine {
     final CommandNode moveMinions = new CommandNode(ConstCommand.MOVE_MINION.toString());
     for (int i = 0; i < mySide.board.size(); ++i) {
       final Minion minion = mySide.board.get(i);
-      if (minion.getMovePoints().getVal() > 0) {
+      if (minion.getAttackMovePoints().getVal() > 0) {
         final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
@@ -59,7 +59,7 @@ public class CommandLine {
       root.addChildNode(moveMinions);
     }
     // Use hero power.
-    if (battlefield.mySide.hero.getMovePoints().getVal() > 0 && battlefield.mySide.manaCrystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
+    if (battlefield.mySide.hero.getAttackMovePoints().getVal() > 0 && battlefield.mySide.manaCrystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
       final Spell heroPower = mySide.heroPower;
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 

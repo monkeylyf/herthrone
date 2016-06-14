@@ -20,6 +20,10 @@ public class BooleanAttribute implements Round, Reset {
     this(on, Double.POSITIVE_INFINITY);
   }
 
+  public BooleanAttribute() {
+    this(true);
+  }
+
   public void on(final double roundUntilExpire) {
     this.on = true;
     this.roundUntilExpire = roundUntilExpire;

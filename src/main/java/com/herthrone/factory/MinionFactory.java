@@ -18,6 +18,7 @@ import com.herthrone.game.Battlefield;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.IntAttribute;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -29,6 +30,7 @@ public class MinionFactory {
   private static final int MINION_INIT_MOVE_POINTS = 1;
   private static final int WINDFURY_INIT_MOVE_POINTS = 2;
   private final Battlefield battlefield;
+
 
   public MinionFactory(final Battlefield battlefield) {
     this.battlefield = battlefield;
@@ -62,7 +64,7 @@ public class MinionFactory {
       private final BooleanAttribute divineShield = new BooleanAttribute(false);
       private final BooleanAttribute frozen = new BooleanAttribute(false);
       private final BooleanAttribute stealth = new BooleanAttribute(false);
-      private final BooleanAttribute taunt = new BooleanAttribute(false);
+      private final Map<ConstMechanic, BooleanAttribute> booleanAttributeMap = new HashMap<>();
       private final Battlefield battlefield = field;
 
       private Optional<Integer> seqId = Optional.absent();
@@ -109,7 +111,7 @@ public class MinionFactory {
             .put(Constant.CRYSTAL, getCrystalManaCost().toString())
             //.put(Constant.DESCRIPTION, "TODO")
             .put(Constant.TYPE, getClassName().toString())
-            .put(Constant.MOVE_POINTS, getMovePoints().toString())
+            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
             .build();
       }
 
@@ -154,50 +156,29 @@ public class MinionFactory {
       }
 
       @Override
-      public IntAttribute getMovePoints() {
+      public IntAttribute getAttackMovePoints() {
         return this.movePoints;
       }
 
       @Override
-      public BooleanAttribute getDamageImmunity() {
-        return damageImmunity;
-      }
-
-      @Override
-      public BooleanAttribute getFrozen() {
-        return frozen;
-      }
-
-      @Override
-      public BooleanAttribute getDivineShield() {
-        return divineShield;
-      }
-
-      @Override
-      public BooleanAttribute getTaunt() {
-        return taunt;
-      }
-
-      @Override
-      public BooleanAttribute getStealth() {
-        return stealth;
+      public Optional<BooleanAttribute> getBooleanAttribute(final ConstMechanic mechanic) {
+        final BooleanAttribute booleanAttribute = booleanAttributeMap.get(mechanic);
+        return Optional.fromNullable(booleanAttribute);
       }
 
       @Override
       public void causeDamage(final Creature creature) {
         creature.takeDamage(attackAttr.getVal());
-        if (stealth.isOn()) {
-          // After attack, minion reveal themselves from stealth.
-          // TODO: but this is not the only way to reveal a minion in stealth.
-          // http://hearthstone.gamepedia.com/Stealth
-          stealth.reset();
-        }
+        // TODO: but this is not the only way to reveal a minion in stealth.
+        // http://hearthstone.gamepedia.com/Stealth
+        resetBooleanAttributeIfPresent(ConstMechanic.STEALTH);
       }
 
       @Override
       public void takeDamage(final int damage) {
-        if (getDivineShield().isOn()) {
-          getDivineShield().reset();
+        final ConstMechanic divineShield = ConstMechanic.DIVINE_SHIELD;
+        if (hasBooleanAttribute(divineShield)) {
+          resetBooleanAttributeIfPresent(divineShield);
         } else {
           healthAttr.decrease(damage);
         }
@@ -218,6 +199,23 @@ public class MinionFactory {
 
       }
 
+      protected void resetBooleanAttributeIfPresent(final ConstMechanic mechanic) {
+        Optional<BooleanAttribute> booleanAttributeOptional = getBooleanAttribute(mechanic);
+        if (booleanAttributeOptional.isPresent()) {
+          booleanAttributeOptional.get().reset();
+        }
+      }
+
+      private boolean hasBooleanAttribute(final ConstMechanic mechanic) {
+        return booleanAttributeMap.containsKey(mechanic);
+      }
+
+      private void setBooleanAttribute(final ConstMechanic mechanic) {
+        if (!booleanAttributeMap.containsKey(mechanic)) {
+          booleanAttributeMap.put(mechanic, new BooleanAttribute());
+        }
+      }
+
       @Override
       public boolean isDead() {
         return healthAttr.getVal() <= 0;
@@ -232,10 +230,13 @@ public class MinionFactory {
     final MechanicConfig charge = mechanics.get(ConstMechanic.CHARGE);
     if (charge == null) {
       // Minion with no charge ability waits until next turn to move.
-      final IntAttribute movePoints = minion.getMovePoints();
+      final IntAttribute movePoints = minion.getAttackMovePoints();
       movePoints.buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
     }
 
+    //final MechanicConfig divineShield = mechanics.get(ConstMechanic.)
     return minion;
+
   }
+
 }
