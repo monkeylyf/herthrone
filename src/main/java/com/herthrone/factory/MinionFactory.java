@@ -85,6 +85,7 @@ public class MinionFactory {
       public void setSequenceId(final int sequenceId) {
         Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence Id already set");
         seqId = Optional.of(sequenceId);
+        logger.debug(String.format("%s ID set to %d", getCardName(), sequenceId));
       }
 
       @Override

@@ -34,8 +34,6 @@ public class MechanicTest extends TestCase {
   private EffectFactory effectFactory1;
   private EffectFactory effectFactory2;
 
-  private MinionConfig yetiConfig;
-  private Minion minion;
   private GameManager gm;
 
   @Before
@@ -64,6 +62,20 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testBattlecry() {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(ConstMinion.GNOMISH_INVENTOR);
+    final Minion yeti = minionFactory1.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    battlefield1.mySide.deck.add(yeti);
+
+    assertThat(battlefield1.mySide.deck.size()).isEqualTo(1);
+    assertThat(battlefield1.mySide.board.size()).isEqualTo(0);
+    assertThat(battlefield1.mySide.hand.size()).isEqualTo(0);
+
+    final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
+    final Minion minion = minionFactory1.createMinionByName(minionName);
+
+    gm.playCard(minion);
+
+    assertThat(battlefield1.mySide.deck.size()).isEqualTo(0);
+    assertThat(battlefield1.mySide.board.size()).isEqualTo(1);
+    assertThat(battlefield1.mySide.hand.size()).isEqualTo(1);
   }
 }

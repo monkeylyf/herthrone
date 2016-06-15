@@ -1,5 +1,7 @@
 package com.herthrone.game;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -10,8 +12,10 @@ import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.Factory;
 import com.herthrone.factory.HeroFactory;
@@ -87,13 +91,15 @@ public class GameManager {
   }
 
   public void play() {
-    //int turn = 1;
+    int turn = 1;
     while (!isGameFinished()) {
+      logger.debug("Turn #." + turn);
+      logger.debug("Round #." + (turn + 1) / 2);
       startTurn();
       playUtilEndTurn();
       CommandLine.println("Your turn is finished.");
       switchTurn();
-      //turn += 1;
+      turn += 1;
     }
   }
 
@@ -128,6 +134,8 @@ public class GameManager {
   boolean isTurnFinished(final CommandLine.CommandNode node) {
     return node == null || node.option.equals(ConstCommand.END_TURN.toString());
   }
+
+  void battlecry(final Card card) {}
 
   void play(final CommandLine.CommandNode leafNode) {
     if (leafNode.option.equals(ConstCommand.END_TURN.toString())) {
@@ -170,13 +178,20 @@ public class GameManager {
     }
   }
 
-  void playCard(final Card card) {
+  public void playCard(final Card card) {
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
       // Assign game board sequence id to minion.
       activeBattlefield.mySide.board.add(minion);
       minion.setSequenceId(seqId);
       seqId += 1;
+
+      Optional<MechanicConfig> battlecry = minion.getEffectMechanics().get(ConstMechanic.BATTLECRY);
+      if (battlecry.isPresent()) {
+        Effect effect = activeFactory.effectFactory.getEffectByMechanic(battlecry.get(), Optional
+            .absent());
+        effect.act();
+      }
     } else if (card instanceof Secret) {
       Secret secret = (Secret) card;
       activeBattlefield.mySide.secrets.add(secret);

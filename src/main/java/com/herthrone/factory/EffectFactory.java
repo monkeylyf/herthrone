@@ -1,5 +1,6 @@
 package com.herthrone.factory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.action.AttributeEffect;
 import com.herthrone.action.EquipWeaponEffect;
@@ -12,9 +13,12 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.EffectConfig;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
@@ -38,6 +42,13 @@ public class EffectFactory {
     this.minionFactory = minionFactory;
     this.weaponFactory = weaponFactory;
     this.battlefield = battlefield;
+  }
+
+  public Effect getEffectByMechanic(final MechanicConfig mechanic, Optional<Creature>
+      target) {
+    final Optional<EffectConfig> config = mechanic.getEffect();
+    Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
+    return getActionsByConfig(config.get(), null);
   }
 
   public List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
@@ -131,6 +142,10 @@ public class EffectFactory {
 
   private Effect getDrawCardAction(final EffectConfig effect) {
     // TODO: draw from own deck/opponent deck/opponent hand
+    final TargetConfig target = effect.getTarget();
+    switch (target.type) {
+
+    }
     return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck);
   }
 
