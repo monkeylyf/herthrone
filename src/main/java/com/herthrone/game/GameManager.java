@@ -1,6 +1,5 @@
 package com.herthrone.game;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
@@ -135,7 +134,8 @@ public class GameManager {
     return node == null || node.option.equals(ConstCommand.END_TURN.toString());
   }
 
-  void battlecry(final Card card) {}
+  void battlecry(final Card card) {
+  }
 
   void play(final CommandLine.CommandNode leafNode) {
     if (leafNode.option.equals(ConstCommand.END_TURN.toString())) {
@@ -245,8 +245,7 @@ public class GameManager {
 
   void drawCard() {
     if (activeBattlefield.mySide.deck.isEmpty()) {
-      activeBattlefield.mySide.fatigue += 1;
-      activeBattlefield.mySide.hero.takeDamage(activeBattlefield.mySide.fatigue);
+      activeBattlefield.mySide.takeFatigueDamage();
     } else {
       final Card card = activeBattlefield.mySide.deck.top();
       activeBattlefield.mySide.hand.add(card);

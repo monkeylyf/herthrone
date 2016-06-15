@@ -18,7 +18,6 @@ import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMinion;
-import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
@@ -38,7 +37,8 @@ public class EffectFactory {
   private final WeaponFactory weaponFactory;
   private Battlefield battlefield;
 
-  public EffectFactory(final MinionFactory minionFactory, final WeaponFactory weaponFactory, final Battlefield battlefield) {
+  public EffectFactory(final MinionFactory minionFactory, final WeaponFactory weaponFactory,
+                       final Battlefield battlefield) {
     this.minionFactory = minionFactory;
     this.weaponFactory = weaponFactory;
     this.battlefield = battlefield;
@@ -69,7 +69,8 @@ public class EffectFactory {
       case ATTRIBUTE:
         return getAttributeAction(config, creature);
       case WEAPON:
-        Preconditions.checkArgument(creature instanceof Hero, "Only hero can equip weapon, not " + creature.getType());
+        Preconditions.checkArgument(
+            creature instanceof Hero, creature.getType() + " can not equip weapon");
         final Hero hero = (Hero) creature;
         return getEquipWeaponAction(hero, config);
       case SUMMON:
@@ -93,7 +94,8 @@ public class EffectFactory {
       case (Constant.HEALTH_UPPER_BOUND):
         return getGeneralAttributeAction(creature.getHealthUpperAttr(), effect);
       case (Constant.ARMOR):
-        Preconditions.checkArgument(creature instanceof Hero, "Armor Attribute applies to Hero only, not " + creature.getType());
+        Preconditions.checkArgument(
+            creature instanceof Hero, "Armor Attribute does not applies to " + creature.getType());
         final Hero hero = (Hero) creature;
         return getGeneralAttributeAction(hero.getArmorAttr(), effect);
       default:
@@ -122,13 +124,15 @@ public class EffectFactory {
 
   private Effect getSummonAction(final EffectConfig effect) {
     List<String> summonChoices = new ArrayList<>(effect.getChoices());
-    summonChoices = summonChoices.stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
+    summonChoices = summonChoices.stream()
+        .map(name -> name.toUpperCase()).collect(Collectors.toList());
     final int size = effect.getChoices().size();
     int index = 0;
     if (size > 0) {
       final Random random = new Random();
       if (effect.isUnique()) {
-        List<String> uniqueMinionsOnBoard = battlefield.mySide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toList());
+        List<String> uniqueMinionsOnBoard = battlefield.mySide.board.stream()
+            .map(minion -> minion.getCardName()).collect(Collectors.toList());
         summonChoices.removeAll(uniqueMinionsOnBoard);
       } else {
         index = random.nextInt(size);
@@ -146,7 +150,8 @@ public class EffectFactory {
     switch (target.type) {
 
     }
-    return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck);
+    return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck, battlefield
+        .mySide);
   }
 
   /**

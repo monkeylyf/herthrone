@@ -74,8 +74,29 @@ public class MechanicTest extends TestCase {
 
     gm.playCard(minion);
 
+    assertThat(battlefield1.mySide.board.get(0).getCardName()).isEqualTo(minionName.toString());
     assertThat(battlefield1.mySide.deck.size()).isEqualTo(0);
     assertThat(battlefield1.mySide.board.size()).isEqualTo(1);
     assertThat(battlefield1.mySide.hand.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void testBattlecryDrawCardWithFatigue() {
+    assertThat(battlefield1.mySide.deck.size()).isEqualTo(0);
+    assertThat(battlefield1.mySide.board.size()).isEqualTo(0);
+    assertThat(battlefield1.mySide.hand.size()).isEqualTo(0);
+    assertThat(battlefield1.mySide.hero.getHealthLoss()).isEqualTo(0);
+
+    final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
+    final Minion minion = minionFactory1.createMinionByName(ConstMinion.GNOMISH_INVENTOR);
+
+    gm.playCard(minion);
+
+    assertThat(battlefield1.mySide.board.get(0).getCardName()).isEqualTo(minionName.toString());
+    assertThat(battlefield1.mySide.deck.size()).isEqualTo(0);
+    assertThat(battlefield1.mySide.board.size()).isEqualTo(1);
+    assertThat(battlefield1.mySide.hand.size()).isEqualTo(0);
+    // Battlecry draw card causing fatigue damage.
+    assertThat(battlefield1.mySide.hero.getHealthLoss()).isEqualTo(1);
   }
 }
