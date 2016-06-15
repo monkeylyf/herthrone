@@ -1,7 +1,5 @@
 package com.herthrone.base;
 
-import com.google.common.base.Optional;
-import com.herthrone.configuration.EffectConfig;
 import com.herthrone.stats.EffectMechanics;
 
 /**

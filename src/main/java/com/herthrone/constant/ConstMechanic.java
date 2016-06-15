@@ -1,14 +1,28 @@
 package com.herthrone.constant;
 
-import com.herthrone.configuration.MechanicConfig;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by yifengliu on 5/15/16.
  */
 public enum ConstMechanic {
+  // Boolean mechanics.
+  CHARGE(true),
+  DIVINE_SHIELD(true),
+  ELUSIVE(true),
+  ENRAGE(true),
+  FORGETFUl(true),
+  FREEZE(true),
+  IMMUNE(true),
+  POISON(true),
+  STEALTH(true),
+  TAUNT(true),
+  WINDFURY(true),
+  // Effect mechanisc.
   BATTLECRY,
   CARD_DRAW_EFFECT,
-  CHARGE,
   CHOOSE_ONE,
   COMBO,
   COPY_EFFECT,
@@ -16,30 +30,38 @@ public enum ConstMechanic {
   DEATHRATTLE,
   DESTROY_EFFECT,
   DISCARD_EFFECT,
-  DIVINE_SHIELD,
-  ELUSIVE,
-  ENRAGE,
   EQUIP,
-  FORGETFUl,
-  FREEZE,
   GENERATE_EFFECT,
-  IMMUNE,
   INSPIRE,
   JOUST,
   MIND_CONTROL_EFFECT,
   OVERLOAD,
-  POISON,
   RESTORE_HEALTH,
   RETURN_EFFECT,
   SECRET,
   SHUFFLE_INTO_DECK,
   SILENCE,
   SPELL_DAMAGE,
-  STEALTH,
   SUMMON,
-  TAUNT,
   TAKE_CONTROL,
   TRANSFORM,
-  TRIGGERED_EFFECT,
-  WINDFURY;
+  TRIGGERED_EFFECT;
+
+  private boolean isBooleanMechanics;
+
+  ConstMechanic(final boolean isBooleanMechanisc) {
+    this.isBooleanMechanics = isBooleanMechanisc;
+  }
+
+  ConstMechanic() {
+    this(false);
+  }
+
+  public static List<ConstMechanic> getBooleanMechanics() {
+    return Arrays.stream(values()).filter(m -> m.isBooleanMechanics).collect(Collectors.toList());
+  }
+
+  public static List<ConstMechanic> getEffectMechanics() {
+    return Arrays.stream(values()).filter(m -> !m.isBooleanMechanics).collect(Collectors.toList());
+  }
 }

@@ -1,8 +1,5 @@
 package com.herthrone.base;
 
-import com.google.common.base.Optional;
-import com.herthrone.constant.ConstMechanic;
-import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
 import com.herthrone.stats.IntAttribute;
 

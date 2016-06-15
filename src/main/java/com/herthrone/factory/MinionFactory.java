@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstClass;
@@ -19,6 +18,7 @@ import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
 import com.herthrone.stats.EffectMechanics;
 import com.herthrone.stats.IntAttribute;
+import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +31,7 @@ public class MinionFactory {
 
   private static final int MINION_INIT_MOVE_POINTS = 1;
   private static final int WINDFURY_INIT_MOVE_POINTS = 2;
+  static Logger logger = Logger.getLogger(MinionFactory.class.getName());
   private final Battlefield battlefield;
 
 
@@ -48,7 +49,7 @@ public class MinionFactory {
                       final ConstClass className, final ConstMinion name,
                       final Map<ConstMechanic, MechanicConfig> mechanics, final boolean isCollectible) {
     return createMinion(health, attack, crystalManaCost,
-                        className, name, mechanics, isCollectible, battlefield);
+        className, name, mechanics, isCollectible, battlefield);
   }
 
   public Minion createMinion(final int health, final int attack, final int crystalManaCost,
@@ -63,16 +64,11 @@ public class MinionFactory {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
       private final IntAttribute movePoints = new IntAttribute(MINION_INIT_MOVE_POINTS);
       private final Map<ConstMechanic, BooleanAttribute> booleanAttributeMap = new HashMap<>();
-      private final BooleanMechanics booleanMechanics = new BooleanMechanics();
-      private final EffectMechanics effectMechanics = new EffectMechanics();
+      private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
+      private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
       private final Battlefield battlefield = field;
 
       private Optional<Integer> seqId = Optional.absent();
-
-      private Optional<EffectConfig> getMechanicEffectByName(final ConstMechanic mechanic) {
-        final MechanicConfig config = mechanics.get(mechanic.toString().toLowerCase());
-        return config == null ? Optional.absent() : config.getEffect();
-      }
 
       @Override
       public EffectMechanics getEffectMechanics() {
@@ -164,15 +160,16 @@ public class MinionFactory {
         creature.takeDamage(attackAttr.getVal());
         // TODO: but this is not the only way to reveal a minion in stealth.
         // http://hearthstone.gamepedia.com/Stealth
-        booleanMechanics.resetBooleanAttributeIfPresent(ConstMechanic.STEALTH);
+        booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
       }
 
       @Override
       public void takeDamage(final int damage) {
-        final Optional<BooleanAttribute> divineShield = booleanMechanics.getBooleanAttribute(
+        final Optional<BooleanAttribute> divineShield = booleanMechanics.get(
             ConstMechanic.DIVINE_SHIELD);
         if (divineShield.isPresent()) {
-          divineShield.get().reset();
+          logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
+          booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
         } else {
           healthAttr.decrease(damage);
         }
@@ -209,9 +206,7 @@ public class MinionFactory {
       minion.getAttackMovePoints().buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
     }
 
-
     //final MechanicConfig divineShield = mechanics.get(ConstMechanic.)
     return minion;
   }
-
 }

@@ -51,4 +51,9 @@ public class BooleanAttribute implements Round, Reset {
     on = false;
     roundUntilExpire = 0.0;
   }
+
+  @Override
+  public String toString() {
+    return String.valueOf(on);
+  }
 }
