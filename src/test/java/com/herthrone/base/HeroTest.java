@@ -89,6 +89,10 @@ public class HeroTest extends TestCase {
     assertEquals(weaponDurability2, weapon2.getDurabilityAttr().getVal());
   }
 
+  private void hero1AttackHero2() {
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2).act();
+  }
+
   @Test
   public void testAttackActionUtilWeaponExpires() {
     hero1.arm(weapon1);
@@ -108,6 +112,10 @@ public class HeroTest extends TestCase {
 
     assertEquals(0, weapon1.getDurabilityAttr().getVal());
     assertEquals(0, weapon2.getDurabilityAttr().getVal());
+  }
+
+  private void hero2AttackHero1() {
+    gm.factory2.attackFactory.getPhysicalDamageAction(hero2, hero1).act();
   }
 
   @Test
@@ -148,6 +156,14 @@ public class HeroTest extends TestCase {
     assertEquals(armorGain * 2, hero2.getArmorAttr().getVal());
   }
 
+  private void hero1ArmorUp() {
+    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
+  }
+
+  private void hero2ArmorUp() {
+    effectFactory1.getActionsByConfig(armorUp, hero2).stream().forEach(Effect::act);
+  }
+
   @Test
   public void testArmorUpAttackMixture() {
     assertEquals(0, hero1.getArmorAttr().getVal());
@@ -180,22 +196,6 @@ public class HeroTest extends TestCase {
 
     assertEquals(weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());
     assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());
-  }
-
-  private void hero1ArmorUp() {
-    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
-  }
-
-  private void hero2ArmorUp() {
-    effectFactory1.getActionsByConfig(armorUp, hero2).stream().forEach(Effect::act);
-  }
-
-  private void hero1AttackHero2() {
-    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2).act();
-  }
-
-  private void hero2AttackHero1() {
-    gm.factory2.attackFactory.getPhysicalDamageAction(hero2, hero1).act();
   }
 
 }

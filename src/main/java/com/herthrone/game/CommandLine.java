@@ -10,6 +10,7 @@ import com.herthrone.base.Spell;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstTarget;
+import com.herthrone.constant.ConstType;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,7 +48,10 @@ public class CommandLine {
         final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
-          moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
+          if (GameManager.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
+            moveMinionCommand.addChildNode(
+                new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
+          }
         }
         final CommandNode heroNode = new CommandNode(opponentSide.hero.getCardName(), -1);
         heroNode.setSide(ConstTarget.OPPONENT);
@@ -92,24 +96,6 @@ public class CommandLine {
     }
   }
 
-  public static Creature toTargetCreature(final Battlefield battlefield, final CommandNode node) {
-    Preconditions.checkNotNull(node.getSide(), "Unknown side");
-    final Side side = targetToSide(battlefield, node);
-    return (node.index == -1) ? side.hero : side.board.get(node.index);
-  }
-
-  private static Side targetToSide(final Battlefield battlefield, final CommandNode node) {
-    Preconditions.checkNotNull(node.getSide(), "Unknown side");
-    switch (node.getSide()) {
-      case OWN:
-        return battlefield.mySide;
-      case OPPONENT:
-        return battlefield.opponentSide;
-      default:
-        throw new RuntimeException("Unknown side: " + node.getSide().toString());
-    }
-  }
-
   private static List<CommandNode> scanTargets(final TargetConfig config, final Side side, final ConstTarget target) {
     List<CommandNode> nodes = new ArrayList<>();
     switch (config.type) {
@@ -130,6 +116,24 @@ public class CommandLine {
     }
 
     return nodes;
+  }
+
+  public static Creature toTargetCreature(final Battlefield battlefield, final CommandNode node) {
+    Preconditions.checkNotNull(node.getSide(), "Unknown side");
+    final Side side = targetToSide(battlefield, node);
+    return (node.index == -1) ? side.hero : side.board.get(node.index);
+  }
+
+  private static Side targetToSide(final Battlefield battlefield, final CommandNode node) {
+    Preconditions.checkNotNull(node.getSide(), "Unknown side");
+    switch (node.getSide()) {
+      case OWN:
+        return battlefield.mySide;
+      case OPPONENT:
+        return battlefield.opponentSide;
+      default:
+        throw new RuntimeException("Unknown side: " + node.getSide().toString());
+    }
   }
 
   public static CommandNode run(CommandNode cursor) {
@@ -168,19 +172,19 @@ public class CommandLine {
     private CommandNode parent = null;
     private ConstTarget targetSide = null;
 
-    public CommandNode(final String option, final int index, final ConstTarget type) {
-      this.option = option;
-      this.childOptions = new ArrayList<>();
-      this.index = index;
-      this.targetSide = type;
+    public CommandNode(final String option) {
+      this(option, -1);
     }
 
     public CommandNode(final String option, final int index) {
       this(option, index, ConstTarget.OPPONENT);
     }
 
-    public CommandNode(final String option) {
-      this(option, -1);
+    public CommandNode(final String option, final int index, final ConstTarget type) {
+      this.option = option;
+      this.childOptions = new ArrayList<>();
+      this.index = index;
+      this.targetSide = type;
     }
 
     public ConstTarget getSide() {
@@ -201,20 +205,6 @@ public class CommandLine {
       if (parent != null) {
         println(String.format(CommandNode.TEMPLATE, 0, "Previous list"));
       }
-    }
-
-    public boolean isValidOptionNum(final int n) {
-      // Either in range [1, size] or 0 when has previous list(parent).
-      return (1 <= n && n <= childOptions.size()) || (parent != null && n == 0);
-    }
-
-    private CommandNode previous() {
-      return Objects.firstNonNull(parent, this);
-    }
-
-    private CommandNode next(final int index) {
-      // 1-based index.
-      return childOptions.get(index - 1);
     }
 
     public String toString() {
@@ -246,6 +236,20 @@ public class CommandLine {
       } else {
         return next(index);
       }
+    }
+
+    public boolean isValidOptionNum(final int n) {
+      // Either in range [1, size] or 0 when has previous list(parent).
+      return (1 <= n && n <= childOptions.size()) || (parent != null && n == 0);
+    }
+
+    private CommandNode previous() {
+      return Objects.firstNonNull(parent, this);
+    }
+
+    private CommandNode next(final int index) {
+      // 1-based index.
+      return childOptions.get(index - 1);
     }
 
     public boolean isLeaf() {

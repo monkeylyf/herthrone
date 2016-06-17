@@ -1,5 +1,6 @@
 package com.herthrone.stats;
 
+import com.google.common.base.Optional;
 import com.herthrone.base.Reset;
 import com.herthrone.base.Round;
 
@@ -11,26 +12,30 @@ public class BooleanAttribute implements Round, Reset {
   private boolean on;
   private double roundUntilExpire;
 
-  public BooleanAttribute(final boolean on, final double roundUntilExpire) {
-    this.on = on;
-    this.roundUntilExpire = roundUntilExpire;
+  public BooleanAttribute() {
+    this(true);
   }
 
   public BooleanAttribute(final boolean on) {
     this(on, Double.POSITIVE_INFINITY);
   }
 
-  public BooleanAttribute() {
-    this(true);
+  public BooleanAttribute(final boolean on, final double roundUntilExpire) {
+    this.on = on;
+    this.roundUntilExpire = roundUntilExpire;
+  }
+
+  public static boolean isOn(Optional<BooleanAttribute> booleanAttributeOptional) {
+    return booleanAttributeOptional.isPresent() && booleanAttributeOptional.get().isOn();
+  }
+
+  public boolean isOn() {
+    return on;
   }
 
   public void on(final double roundUntilExpire) {
     this.on = true;
     this.roundUntilExpire = roundUntilExpire;
-  }
-
-  public boolean isOn() {
-    return on;
   }
 
   @Override

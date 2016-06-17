@@ -91,6 +91,10 @@ public class ConfigLoader {
     return noneVolatileResource;
   }
 
+  private static ResourceBundle loadResource() {
+    return ResourceBundle.getBundle("configuration");
+  }
+
   public static MinionConfig getMinionConfigByName(final ConstMinion minion) {
     return minionConfigLoader.getConfigurations().get(minion);
   }
@@ -111,10 +115,6 @@ public class ConfigLoader {
     return weaponConfigLoader.getConfigurations().get(weapon);
   }
 
-  private static ResourceBundle loadResource() {
-    return ResourceBundle.getBundle("configuration");
-  }
-
   private abstract static class AbstractConfigLoader<T extends Config> {
     private volatile ImmutableMap<Enum, T> configs;
     private String configName;
@@ -123,7 +123,18 @@ public class ConfigLoader {
       this.configName = configName;
     }
 
-    abstract protected T createInstance(Map map);
+    public T getConfigByName(final String name) {
+      T config = getConfigurations().get(name);
+      Preconditions.checkNotNull(config, String.format("% % not found", configName, name));
+      return config;
+    }
+
+    public synchronized ImmutableMap<Enum, T> getConfigurations() {
+      if (configs == null) {
+        configs = loadConfiguration();
+      }
+      return configs;
+    }
 
     private ImmutableMap<Enum, T> loadConfiguration() {
       List<Object> configSection = loadYaml();
@@ -134,19 +145,6 @@ public class ConfigLoader {
         builder.put(config.getName(), config);
       }
       return builder.build();
-    }
-
-    public synchronized ImmutableMap<Enum, T> getConfigurations() {
-      if (configs == null) {
-        configs = loadConfiguration();
-      }
-      return configs;
-    }
-
-    public T getConfigByName(final String name) {
-      T config = getConfigurations().get(name);
-      Preconditions.checkNotNull(config, String.format("% % not found", configName, name));
-      return config;
     }
 
     private List<Object> loadYaml() {
@@ -162,6 +160,8 @@ public class ConfigLoader {
       Iterator<Object> iterator = yaml.loadAll(input).iterator();
       return (List) iterator.next();
     }
+
+    abstract protected T createInstance(Map map);
 
   }
 }

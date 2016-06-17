@@ -64,16 +64,6 @@ public class HeroFactory {
       }
 
       @Override
-      public void endTurn() {
-        this.attackMovePoints.endTurn();
-      }
-
-      @Override
-      public void startTurn() {
-
-      }
-
-      @Override
       public String getCardName() {
         return name.toString();
       }
@@ -124,21 +114,6 @@ public class HeroFactory {
       }
 
       @Override
-      public IntAttribute getArmorAttr() {
-        return armorAttr;
-      }
-
-      @Override
-      public IntAttribute getHeroPowerMovePoints() {
-        return heroPowerMovePoints;
-      }
-
-      @Override
-      public Optional<Weapon> getWeapon() {
-        return weapon;
-      }
-
-      @Override
       public void causeDamage(final Creature attackee) {
         attackee.takeDamage(weapon.get().use());
         if (weapon.get().getDurabilityAttr().getVal() == 0) {
@@ -157,6 +132,36 @@ public class HeroFactory {
       }
 
       @Override
+      public boolean canDamage() {
+        return weapon.isPresent();
+      }
+
+      @Override
+      public boolean isDead() {
+        return healthAttr.getVal() <= 0;
+      }
+
+      @Override
+      public int getHealthLoss() {
+        return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
+      }
+
+      @Override
+      public IntAttribute getArmorAttr() {
+        return armorAttr;
+      }
+
+      @Override
+      public IntAttribute getHeroPowerMovePoints() {
+        return heroPowerMovePoints;
+      }
+
+      @Override
+      public Optional<Weapon> getWeapon() {
+        return weapon;
+      }
+
+      @Override
       public void arm(Weapon newWeapon) {
         if (weapon.isPresent()) {
           disarm();
@@ -170,18 +175,13 @@ public class HeroFactory {
       }
 
       @Override
-      public boolean canDamage() {
-        return weapon.isPresent();
+      public void endTurn() {
+        this.attackMovePoints.endTurn();
       }
 
       @Override
-      public boolean isDead() {
-        return healthAttr.getVal() <= 0;
-      }
+      public void startTurn() {
 
-      @Override
-      public int getHealthLoss() {
-        return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
       }
 
       @Override

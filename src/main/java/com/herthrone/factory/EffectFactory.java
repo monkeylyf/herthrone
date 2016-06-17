@@ -51,18 +51,6 @@ public class EffectFactory {
     return getActionsByConfig(config.get(), null);
   }
 
-  public List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
-    return spell.getEffects().stream()
-        .map(effect -> getActionsByConfig(effect, creature))
-        .collect(Collectors.toList());
-  }
-
-  public List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
-    return config.getEffects().stream()
-        .map(effect -> getActionsByConfig(effect, creature))
-        .collect(Collectors.toList());
-  }
-
   public Effect getActionsByConfig(final EffectConfig config, final Creature creature) {
     ConstEffectType effect = config.getEffect();
     switch (effect) {
@@ -103,18 +91,6 @@ public class EffectFactory {
     }
   }
 
-  private Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
-    Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
-    return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
-  }
-
-  private Effect getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
-    final int value = effect.getValue();
-    Preconditions.checkArgument(value != 0, "Health change must be non-zero");
-    final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
-    return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
-  }
-
   private Effect getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
@@ -152,6 +128,30 @@ public class EffectFactory {
     }
     return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck, battlefield
         .mySide);
+  }
+
+  private Effect getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
+    final int value = effect.getValue();
+    Preconditions.checkArgument(value != 0, "Health change must be non-zero");
+    final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
+    return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
+  }
+
+  private Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
+    Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
+    return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
+  }
+
+  public List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
+    return spell.getEffects().stream()
+        .map(effect -> getActionsByConfig(effect, creature))
+        .collect(Collectors.toList());
+  }
+
+  public List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
+    return config.getEffects().stream()
+        .map(effect -> getActionsByConfig(effect, creature))
+        .collect(Collectors.toList());
   }
 
   /**

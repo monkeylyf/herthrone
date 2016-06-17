@@ -12,6 +12,8 @@ public interface Card extends View {
 
   String getCardName();
 
+  //String getCardDisplayName();
+
   ConstType getType();
 
   ConstClass getClassName();

@@ -1,6 +1,6 @@
 - name: fire_ball
   display: FireBall
-  class: Mage
+  class: mage
   crystal: 4
   target:
     scope: all

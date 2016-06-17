@@ -19,14 +19,14 @@ public class Container<T extends Card> implements Iterator<T> {
   private final int maxCapacity;
   private final List<T> container;
 
+  public Container(final int maxCapacity) {
+    this(new ArrayList<T>(maxCapacity), maxCapacity);
+  }
+
   public Container(final List<T> container, final int maxCapacity) {
     Preconditions.checkArgument(container.size() <= maxCapacity, "Container size larger that max capacity: " + maxCapacity);
     this.container = container;
     this.maxCapacity = maxCapacity;
-  }
-
-  public Container(final int maxCapacity) {
-    this(new ArrayList<T>(maxCapacity), maxCapacity);
   }
 
   public Container() {
@@ -36,10 +36,6 @@ public class Container<T extends Card> implements Iterator<T> {
 
   public int getMaxCapacity() {
     return maxCapacity;
-  }
-
-  public boolean isFull() {
-    return container.size() == maxCapacity;
   }
 
   public boolean isEmpty() {
@@ -54,14 +50,18 @@ public class Container<T extends Card> implements Iterator<T> {
     }
   }
 
-  public void add(final int index, final T card) {
-    container.add(index, card);
+  public boolean isFull() {
+    return container.size() == maxCapacity;
   }
 
   public void addToRandomPos(T card) {
     final Random random = new Random();
     final int index = random.nextInt(container.size() + 1);
     add(index, card);
+  }
+
+  public void add(final int index, final T card) {
+    container.add(index, card);
   }
 
   public void shuffle() {

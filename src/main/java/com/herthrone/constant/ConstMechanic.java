@@ -13,8 +13,10 @@ public enum ConstMechanic {
   DIVINE_SHIELD(true),
   ELUSIVE(true),
   ENRAGE(true),
-  FORGETFUl(true),
+  FORGETFUL(true),
   FREEZE(true),
+  // Consequence of being hit by a minion has freeze ability.
+  FROZEN(true),
   IMMUNE(true),
   POISON(true),
   STEALTH(true),
@@ -49,12 +51,12 @@ public enum ConstMechanic {
 
   private boolean isBooleanMechanics;
 
-  ConstMechanic(final boolean isBooleanMechanisc) {
-    this.isBooleanMechanics = isBooleanMechanisc;
-  }
-
   ConstMechanic() {
     this(false);
+  }
+
+  ConstMechanic(final boolean isBooleanMechanisc) {
+    this.isBooleanMechanics = isBooleanMechanisc;
   }
 
   public static List<ConstMechanic> getBooleanMechanics() {

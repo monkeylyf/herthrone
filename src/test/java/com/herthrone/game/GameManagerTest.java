@@ -50,15 +50,6 @@ public class GameManagerTest {
 
   }
 
-  private void jumpIntoRoundFour() {
-    // At least 4 crystals so YETI can be played and show up as options.
-    for (int i = 0; i < 8; ++i) {
-      gameManager.drawCard();
-      gameManager.activeBattlefield.mySide.manaCrystal.endTurn();
-      gameManager.switchTurn();
-    }
-  }
-
   @Test
   public void testInitDeckSize() {
     assertThat(mySide.deck.size()).isEqualTo(DECK_SIZE);
@@ -221,38 +212,13 @@ public class GameManagerTest {
     checkCommands(opponentRoot, numOfOpponentMinions);
   }
 
-  @Test
-  public void testCommandNodes() {
-    final int numOfMyMinions = 2;
-    final int numOfOpponentMinions = 1;
-    populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
-
-    jumpIntoRoundFour();
-
-    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
-    // Choose option 1 which is play card.
-    final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
-    final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);
-    assertThat(playCardLeaf.getParentType()).isEqualTo(ConstCommand.PLAY_CARD.toString());
-    assertThat(playCardLeaf.option).isEqualTo(mySide.hand.get(0).view().toString());
-
-    // Choose option 2 which is move minion.
-    final InputStream moveMinionInput = new ByteArrayInputStream("2\n1\n1".getBytes());
-    final CommandLine.CommandNode moveMinionLeaf = CommandLine.run(myRoot, moveMinionInput);
-    assertThat(moveMinionLeaf.getParentType()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
-    assertThat(moveMinionLeaf.index).isEqualTo(0); // TODO: 1 points to first minion, which index is 0...
-
-    // Choose option 3 which is use hero power.
-    final InputStream useHeroPowerInput = new ByteArrayInputStream("3\n1".getBytes());
-    final CommandLine.CommandNode heroPowerLeafNode = CommandLine.run(myRoot, useHeroPowerInput);
-    assertThat(heroPowerLeafNode.getParentType()).isEqualTo(ConstCommand.USE_HERO_POWER.toString());
-    assertThat(heroPowerLeafNode.option).startsWith("{hero=");
-    assertThat(heroPowerLeafNode.index).isEqualTo(-1); // TODO: 1 points to own hero, which index is -1...
-
-    // Choose option 4 which is end turn.
-    final InputStream endTurnInput = new ByteArrayInputStream("4".getBytes());
-    CommandLine.CommandNode endTurnLeafNode = CommandLine.run(myRoot, endTurnInput);
-    assertThat(endTurnLeafNode.option).isEqualTo(ConstCommand.END_TURN.toString());
+  private void jumpIntoRoundFour() {
+    // At least 4 crystals so YETI can be played and show up as options.
+    for (int i = 0; i < 8; ++i) {
+      gameManager.drawCard();
+      gameManager.activeBattlefield.mySide.manaCrystal.endTurn();
+      gameManager.switchTurn();
+    }
   }
 
   private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfOpponentMinions) {
@@ -292,5 +258,39 @@ public class GameManagerTest {
         assertThat(node.childOptions.size()).isEqualTo(0);
       }
     }
+  }
+
+  @Test
+  public void testCommandNodes() {
+    final int numOfMyMinions = 2;
+    final int numOfOpponentMinions = 1;
+    populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
+
+    jumpIntoRoundFour();
+
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    // Choose option 1 which is play card.
+    final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
+    final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);
+    assertThat(playCardLeaf.getParentType()).isEqualTo(ConstCommand.PLAY_CARD.toString());
+    assertThat(playCardLeaf.option).isEqualTo(mySide.hand.get(0).view().toString());
+
+    // Choose option 2 which is move minion.
+    final InputStream moveMinionInput = new ByteArrayInputStream("2\n1\n1".getBytes());
+    final CommandLine.CommandNode moveMinionLeaf = CommandLine.run(myRoot, moveMinionInput);
+    assertThat(moveMinionLeaf.getParentType()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
+    assertThat(moveMinionLeaf.index).isEqualTo(0); // TODO: 1 points to first minion, which index is 0...
+
+    // Choose option 3 which is use hero power.
+    final InputStream useHeroPowerInput = new ByteArrayInputStream("3\n1".getBytes());
+    final CommandLine.CommandNode heroPowerLeafNode = CommandLine.run(myRoot, useHeroPowerInput);
+    assertThat(heroPowerLeafNode.getParentType()).isEqualTo(ConstCommand.USE_HERO_POWER.toString());
+    assertThat(heroPowerLeafNode.option).startsWith("{hero=");
+    assertThat(heroPowerLeafNode.index).isEqualTo(-1); // TODO: 1 points to own hero, which index is -1...
+
+    // Choose option 4 which is end turn.
+    final InputStream endTurnInput = new ByteArrayInputStream("4".getBytes());
+    CommandLine.CommandNode endTurnLeafNode = CommandLine.run(myRoot, endTurnInput);
+    assertThat(endTurnLeafNode.option).isEqualTo(ConstCommand.END_TURN.toString());
   }
 }

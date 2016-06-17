@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
+import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
@@ -16,8 +17,10 @@ import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstType;
 import com.herthrone.factory.Factory;
 import com.herthrone.factory.HeroFactory;
+import com.herthrone.stats.BooleanAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -102,15 +105,15 @@ public class GameManager {
     }
   }
 
+  boolean isGameFinished() {
+    return activeBattlefield.mySide.hero.isDead() || activeBattlefield.opponentSide.hero.isDead();
+  }
+
   void startTurn() {
     increaseCrystalUpperBound();
     drawCard();
     activeBattlefield.mySide.board.stream().forEach(minion -> minion.endTurn());
     activeBattlefield.mySide.hero.endTurn();
-  }
-
-  void increaseCrystalUpperBound() {
-    activeBattlefield.mySide.manaCrystal.endTurn();
   }
 
   void playUtilEndTurn() {
@@ -126,15 +129,27 @@ public class GameManager {
     } while (!isGameFinished() && !isTurnFinished(leafNode));
   }
 
-  boolean isGameFinished() {
-    return activeBattlefield.mySide.hero.isDead() || activeBattlefield.opponentSide.hero.isDead();
+  void switchTurn() {
+    if (activeBattlefield == battlefield1) {
+      activeBattlefield = battlefield2;
+      activeFactory = factory2;
+    } else {
+      activeBattlefield = battlefield1;
+      activeFactory = factory1;
+    }
   }
 
-  boolean isTurnFinished(final CommandLine.CommandNode node) {
-    return node == null || node.option.equals(ConstCommand.END_TURN.toString());
+  void increaseCrystalUpperBound() {
+    activeBattlefield.mySide.manaCrystal.endTurn();
   }
 
-  void battlecry(final Card card) {
+  void drawCard() {
+    if (activeBattlefield.mySide.deck.isEmpty()) {
+      activeBattlefield.mySide.takeFatigueDamage();
+    } else {
+      final Card card = activeBattlefield.mySide.deck.top();
+      activeBattlefield.mySide.hand.add(card);
+    }
   }
 
   void play(final CommandLine.CommandNode leafNode) {
@@ -168,14 +183,40 @@ public class GameManager {
     }
   }
 
-  void switchTurn() {
-    if (activeBattlefield == battlefield1) {
-      activeBattlefield = battlefield2;
-      activeFactory = factory2;
-    } else {
-      activeBattlefield = battlefield1;
-      activeFactory = factory1;
+  void clearBoard() {
+    clearBoard(activeBattlefield.mySide.board);
+    clearBoard(activeBattlefield.opponentSide.board);
+  }
+
+  boolean isTurnFinished(final CommandLine.CommandNode node) {
+    return node == null || node.option.equals(ConstCommand.END_TURN.toString());
+  }
+
+  void consumeCrystal(final Card card) {
+    final int cost = card.getCrystalManaCost().getVal();
+    activeBattlefield.mySide.manaCrystal.consume(cost);
+  }
+
+  void playCard(final int index) {
+    checkManaCost(index);
+    final Card card = activeBattlefield.mySide.hand.remove(index);
+    playCard(card);
+  }
+
+  void clearBoard(final Container<Minion> board) {
+    for (int i = 0; i < board.size(); ++i) {
+      if (board.get(i).isDead()) {
+        board.remove(i);
+      }
     }
+  }
+
+  private void checkManaCost(final int index) {
+    final Card card = activeBattlefield.mySide.hand.get(index);
+    final int manaCost = card.getCrystalManaCost().getVal();
+    Preconditions.checkArgument(
+        manaCost <= activeBattlefield.mySide.manaCrystal.getCrystal(),
+        "Not enough mana to play " + card.getCardName());
   }
 
   public void playCard(final Card card) {
@@ -206,23 +247,67 @@ public class GameManager {
     }
   }
 
-  void playCard(final int index) {
-    checkManaCost(index);
-    final Card card = activeBattlefield.mySide.hand.remove(index);
-    playCard(card);
-  }
-
-  void clearBoard() {
-    clearBoard(activeBattlefield.mySide.board);
-    clearBoard(activeBattlefield.opponentSide.board);
-  }
-
-  void clearBoard(final Container<Minion> board) {
-    for (int i = 0; i < board.size(); ++i) {
-      if (board.get(i).isDead()) {
-        board.remove(i);
-      }
+  public static boolean isMinionTargetable(final Minion minion, final Container<Minion> board,
+                                           final ConstType type) {
+    switch (type) {
+      case ATTACK:
+        return isMinionTargetableByAttack(minion, board);
+      case SPELL:
+        return isMinionTargetableBySpell(minion, board);
+      default:
+        throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
     }
+  }
+
+  private static boolean isMinionTargetableByAttack(final Minion minion, final Container<Minion>
+      board) {
+    // A stealth minion can not be targeted, even it is a taunt minion.
+    final Optional<BooleanAttribute> stealth = minion.getBooleanMechanics().get(ConstMechanic
+        .STEALTH);
+    if (BooleanAttribute.isOn(stealth)) {
+      return false;
+    }
+
+    // A taunt minion is targetable.
+    final Optional<BooleanAttribute> taunt = minion.getBooleanMechanics().get(ConstMechanic.TAUNT);
+    if (BooleanAttribute.isOn(taunt)) {
+      return true;
+    }
+
+    // If there is any other minion on the board has taunt ability, this minion cannot be targeted.
+    return !board.stream().anyMatch(
+        m -> BooleanAttribute.isOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
+  }
+
+  private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion>
+      board) {
+    final Optional<BooleanAttribute> elusive = minion.getBooleanMechanics().get(
+        ConstMechanic.ELUSIVE);
+    return !BooleanAttribute.isOn(elusive);
+  }
+
+  public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board,
+                                         final ConstType type) {
+    switch (type) {
+      case ATTACK:
+        return isHeroTargetableByAttack(hero, board);
+      case SPELL:
+        return isHeroTargetableBySpell(hero, board);
+      default:
+        throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
+    }
+  }
+
+  private static boolean isHeroTargetableByAttack(final Hero hero, final Container<Minion> board) {
+    return !board.stream().anyMatch(
+        m -> BooleanAttribute.isOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
+  }
+
+  private static boolean isHeroTargetableBySpell(final Hero hero, final Container<Minion> board) {
+    return true;
+  }
+
+  void battlecry(final Card card) {
   }
 
   void playCard(final int index, final Minion target) {
@@ -243,20 +328,6 @@ public class GameManager {
     }
   }
 
-  void drawCard() {
-    if (activeBattlefield.mySide.deck.isEmpty()) {
-      activeBattlefield.mySide.takeFatigueDamage();
-    } else {
-      final Card card = activeBattlefield.mySide.deck.top();
-      activeBattlefield.mySide.hand.add(card);
-    }
-  }
-
-  void consumeCrystal(final Card card) {
-    final int cost = card.getCrystalManaCost().getVal();
-    activeBattlefield.mySide.manaCrystal.consume(cost);
-  }
-
   void useHeroPower(final Creature creature) {
     final Side side = activeBattlefield.mySide;
     Preconditions.checkArgument(side.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
@@ -264,11 +335,4 @@ public class GameManager {
     side.heroPowerMovePoints.decrease(1);
   }
 
-  private void checkManaCost(final int index) {
-    final Card card = activeBattlefield.mySide.hand.get(index);
-    final int manaCost = card.getCrystalManaCost().getVal();
-    Preconditions.checkArgument(
-        manaCost <= activeBattlefield.mySide.manaCrystal.getCrystal(),
-        "Not enough mana to play " + card.getCardName());
-  }
 }

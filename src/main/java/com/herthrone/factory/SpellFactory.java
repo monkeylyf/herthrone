@@ -39,18 +39,6 @@ public class SpellFactory {
     );
   }
 
-  public Spell createHeroPowerByName(final ConstSpell heroPower) {
-    SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
-    return createSpell(
-        config.getName(),
-        config.getClassName(),
-        config.getCrystal(),
-        config.getType(),
-        config.getTargetConfig(),
-        config.getEffects()
-    );
-  }
-
   public Spell createSpell(final ConstSpell name, final ConstClass className, final int crystal,
                            final ConstType type, final Optional<TargetConfig> targetConfig,
                            final List<EffectConfig> effects) {
@@ -66,16 +54,6 @@ public class SpellFactory {
             //.put(Constant.DESCRIPTION, "TODO")
             .put(Constant.TYPE, getType().toString())
             .build();
-      }
-
-      @Override
-      public Optional<TargetConfig> getTargetConfig() {
-        return targetConfig;
-      }
-
-      @Override
-      public List<EffectConfig> getEffects() {
-        return effects;
       }
 
       @Override
@@ -102,7 +80,29 @@ public class SpellFactory {
       public boolean isCollectible() {
         return true;
       }
+
+      @Override
+      public Optional<TargetConfig> getTargetConfig() {
+        return targetConfig;
+      }
+
+      @Override
+      public List<EffectConfig> getEffects() {
+        return effects;
+      }
     };
+  }
+
+  public Spell createHeroPowerByName(final ConstSpell heroPower) {
+    SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
+    return createSpell(
+        config.getName(),
+        config.getClassName(),
+        config.getCrystal(),
+        config.getType(),
+        config.getTargetConfig(),
+        config.getEffects()
+    );
   }
 
 }

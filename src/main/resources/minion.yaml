@@ -1,6 +1,6 @@
 - name: chillwind_yeti
   display: Chillwind Yeti
-  class: Common
+  class: neutral
   attack: 4
   health: 5
   crystal: 4
@@ -9,7 +9,7 @@
 
 - name: senjin_shieldmasta
   display: Sen'jin Shieldmasta
-  class: Common
+  class: neutral
   attack: 3
   health: 5
   crystal: 4
@@ -19,7 +19,7 @@
 
 - name: silver_hand_recruit
   display: SilverHand Recruit
-  class: Paladin
+  class: paladin
   attack: 1
   health: 1
   crystal: 1
@@ -28,7 +28,7 @@
 
 - name: healing_totem
   display: Healing Totem
-  class: Shaman
+  class: shaman
   attack: 0
   health: 2
   crystal: 1
@@ -37,7 +37,7 @@
 
 - name: searing_totem
   display: Searing Totem
-  class: Shaman
+  class: shaman
   attack: 1
   health: 1
   crystal: 1
@@ -46,7 +46,7 @@
 
 - name: wrath_of_air_totem
   display: Wrath Of Air Totem
-  class: Shaman
+  class: shaman
   attack: 0
   health: 2
   crystal: 1
@@ -55,7 +55,7 @@
 
 - name: stoneclaw_totem
   display: Stoneclaw Totem
-  class: Shaman
+  class: shaman
   attack: 0
   health: 2
   crystal: 1
@@ -65,7 +65,7 @@
 
 - name: wolfrider
   display: Wolfrider
-  class: Common
+  class: neutral
   attack: 3
   health: 1
   crystal: 3
@@ -75,7 +75,7 @@
 
 - name: gnomish_inventor
   display: Gnomish Inventor
-  class: Common
+  class: neutral
   attack: 2
   health: 4
   crystal: 4
@@ -91,7 +91,7 @@
 
 - name: loot_hoarder
   display: Loot Hoarder
-  class: Common
+  class: neutral
   attack: 2
   health: 1
   crystal: 2
@@ -103,3 +103,24 @@
       target:
         scope: own
         type: deck
+
+- name: faerie_dragon
+  display: Faerie Dragon
+  class: neutral
+  type: dragon
+  attack: 3
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: elusive
+
+- name: ironfur_Grizzly
+  display: Ironfur Grizzly
+  class: neutral
+  type: beast
+  attack: 3
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: taunt
+

@@ -17,10 +17,6 @@ public class IntAttribute implements Round {
     this.buff = new Buff();
   }
 
-  public int getVal() {
-    return val.getVal() + buff.getBuffVal();
-  }
-
   public void increase(final int gain) {
     val.increase(gain);
   }
@@ -51,5 +47,9 @@ public class IntAttribute implements Round {
     } else {
       return Integer.toString(getVal());
     }
+  }
+
+  public int getVal() {
+    return val.getVal() + buff.getBuffVal();
   }
 }

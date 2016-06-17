@@ -12,12 +12,12 @@ public class EffectPack implements Effect {
 
   private final List<Effect> effects;
 
-  public EffectPack(final List<Effect> effects) {
-    this.effects = effects;
-  }
-
   public EffectPack() {
     this(new ArrayList<>());
+  }
+
+  public EffectPack(final List<Effect> effects) {
+    this.effects = effects;
   }
 
   @Override

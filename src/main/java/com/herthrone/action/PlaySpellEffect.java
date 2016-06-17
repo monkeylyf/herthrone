@@ -13,13 +13,13 @@ public class PlaySpellEffect implements Effect {
   private final Spell spell;
   private final Minion target;
 
+  public PlaySpellEffect(final Spell spell) {
+    this(spell, null);
+  }
+
   public PlaySpellEffect(final Spell spell, final Minion target) {
     this.spell = spell;
     this.target = target;
-  }
-
-  public PlaySpellEffect(final Spell spell) {
-    this(spell, null);
   }
 
   @Override

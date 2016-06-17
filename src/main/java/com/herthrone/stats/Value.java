@@ -7,12 +7,12 @@ public class Value {
 
   private int val;
 
-  public Value(final int val) {
-    this.val = val;
-  }
-
   public Value() {
     this(0);
+  }
+
+  public Value(final int val) {
+    this.val = val;
   }
 
   public void reset() {

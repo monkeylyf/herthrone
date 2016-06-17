@@ -20,7 +20,6 @@ import com.herthrone.stats.EffectMechanics;
 import com.herthrone.stats.IntAttribute;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -63,7 +62,6 @@ public class MinionFactory {
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
       private final IntAttribute movePoints = new IntAttribute(MINION_INIT_MOVE_POINTS);
-      private final Map<ConstMechanic, BooleanAttribute> booleanAttributeMap = new HashMap<>();
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
       private final Battlefield battlefield = field;
@@ -94,19 +92,6 @@ public class MinionFactory {
       }
 
       @Override
-      public Map<String, String> view() {
-        return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
-            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
-            .put(Constant.ATTACK, getAttackAttr().toString())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            //.put(Constant.DESCRIPTION, "TODO")
-            .put(Constant.TYPE, getClassName().toString())
-            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
-            .build();
-      }
-
-      @Override
       public String getCardName() {
         return name.toString();
       }
@@ -129,6 +114,19 @@ public class MinionFactory {
       @Override
       public boolean isCollectible() {
         return isCollectible;
+      }
+
+      @Override
+      public Map<String, String> view() {
+        return ImmutableMap.<String, String>builder()
+            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
+            .put(Constant.ATTACK, getAttackAttr().toString())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+            //.put(Constant.DESCRIPTION, "TODO")
+            .put(Constant.TYPE, getClassName().toString())
+            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
+            .build();
       }
 
       @Override
@@ -158,10 +156,10 @@ public class MinionFactory {
 
       @Override
       public void causeDamage(final Creature creature) {
-        creature.takeDamage(attackAttr.getVal());
         // TODO: but this is not the only way to reveal a minion in stealth.
         // http://hearthstone.gamepedia.com/Stealth
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
+        creature.takeDamage(attackAttr.getVal());
       }
 
       @Override
@@ -182,16 +180,6 @@ public class MinionFactory {
       }
 
       @Override
-      public void endTurn() {
-        this.movePoints.endTurn();
-      }
-
-      @Override
-      public void startTurn() {
-
-      }
-
-      @Override
       public boolean isDead() {
         return healthAttr.getVal() <= 0;
       }
@@ -200,14 +188,28 @@ public class MinionFactory {
       public int getHealthLoss() {
         return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
       }
+
+      @Override
+      public void endTurn() {
+        this.movePoints.endTurn();
+      }
+
+      @Override
+      public void startTurn() {
+
+      }
     };
 
     if (!mechanics.containsKey(ConstMechanic.CHARGE)) {
       // Minion with no charge ability waits until next turn to move.
+      // TODO: also when a minion switch side due to TAKE_CONTROLL effect, the CHARGE also apply
+      // the right after it switches side.
       minion.getAttackMovePoints().buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
     }
 
     //final MechanicConfig divineShield = mechanics.get(ConstMechanic.)
     return minion;
   }
+
+
 }

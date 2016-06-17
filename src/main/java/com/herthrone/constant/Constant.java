@@ -32,6 +32,10 @@ public class Constant {
   public static final String MOVE_POINTS = "move_points";
   public static final String HEALTH_UPPER_BOUND = "health_upper_bound";
 
+  public static String upperCaseValue(final Map map, final String key, final String defaultValue) {
+    return map.containsKey(key) ? upperCaseValue(map, key) : defaultValue;
+  }
+
   public static String upperCaseValue(final Map map, final String key) {
     final String value = (String) map.get(key);
     return value.toUpperCase();

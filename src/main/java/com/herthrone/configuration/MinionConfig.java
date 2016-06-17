@@ -15,22 +15,35 @@ import java.util.Map;
  */
 public class MinionConfig implements Config<ConstMinion> {
 
+  private static final String NAME_FIELD = "name";
+  private static final String CLASS_FIELD = "class";
+  private static final String DISPLAY_FIELD = "display";
+  private static final String ATTACK_FIELD = "attack";
+  private static final String TYPE_FIELD = "type";
+  private static final String HEALTH_FIELD = "health";
+  private static final String CRYSTAL_FIELD = "crystal";
+  private static final String MECHANICS_FIELD = "mechanics";
+  private static final String COLLECTIBLE_FIELD = "collectible";
   private final ConstMinion name;
   private final ConstClass className;
+  private final String displayName;
   private final int attack;
   private final int health;
   private final int crystal;
+  private final ConstType type;
   private final Map<ConstMechanic, MechanicConfig> mechanics;
   private final boolean collectible;
 
   public MinionConfig(final Map map) {
-    this.name = ConstMinion.valueOf(Constant.upperCaseValue(map, "name"));
-    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, "class"));
-    this.attack = (int) map.get("attack");
-    this.health = (int) map.get("health");
-    this.crystal = (int) map.get("crystal");
-    this.mechanics = MechanicConfig.mechanicConfigFactory(map.get("mechanics"));
-    this.collectible = map.containsKey("collectible") && (Boolean) map.get("collectible");
+    this.name = ConstMinion.valueOf(Constant.upperCaseValue(map, NAME_FIELD));
+    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, CLASS_FIELD));
+    this.displayName = (String) map.get(DISPLAY_FIELD);
+    this.attack = (int) map.get(ATTACK_FIELD);
+    this.health = (int) map.get(HEALTH_FIELD);
+    this.crystal = (int) map.get(CRYSTAL_FIELD);
+    this.type = ConstType.valueOf(Constant.upperCaseValue(map, TYPE_FIELD, ConstType.GENERAL.toString()));
+    this.mechanics = MechanicConfig.mechanicConfigFactory(map.get(MECHANICS_FIELD));
+    this.collectible = map.containsKey(COLLECTIBLE_FIELD) && (Boolean) map.get(COLLECTIBLE_FIELD);
   }
 
   public int getAttack() {
@@ -39,10 +52,6 @@ public class MinionConfig implements Config<ConstMinion> {
 
   public int getHealth() {
     return health;
-  }
-
-  public int getCrystal() {
-    return crystal;
   }
 
   public Map<ConstMechanic, MechanicConfig> getMechanics() {
@@ -67,6 +76,10 @@ public class MinionConfig implements Config<ConstMinion> {
   @Override
   public ConstType getType() {
     return ConstType.MINION;
+  }
+
+  public int getCrystal() {
+    return crystal;
   }
 
   public boolean isCollectible() {

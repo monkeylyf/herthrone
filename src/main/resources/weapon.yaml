@@ -2,7 +2,7 @@
   display: WickedBlade
   attack: 1
   durability: 2
-  class: Rogue
+  class: rogue
   crystal: 1
   collectible: false
 
@@ -10,7 +10,7 @@
   display: FieryWarAxe
   attack: 3
   durability: 2
-  class: Warrior
+  class: warrior
   crystal: 2
 
 - name: truesilver_champion
@@ -22,5 +22,5 @@
       type: health
       value: 2
       target: [hero]
-  class: Paladin
+  class: paladin
   crystal: 4

@@ -30,27 +30,21 @@ public class ManaCrystal implements Round {
     crystal -= crystalCost;
   }
 
-  public void increaseUpperBound() {
-    crystalUpperBound = Math.min(crystalUpperBound + 1, ManaCrystal.MAX_CRYSTALS);
-  }
-
-  public int getCrystal() {
-    return crystal;
-  }
-
-  public int getCrystalUpperBound() {
-    return crystalUpperBound;
-  }
-
-  public int getLockedCrystal() {
-    return lockedCrystal;
-  }
-
   @Override
   public void endTurn() {
     increaseUpperBound();
     crystal = crystalUpperBound;
     applyOverload();
+  }
+
+  public void increaseUpperBound() {
+    crystalUpperBound = Math.min(crystalUpperBound + 1, ManaCrystal.MAX_CRYSTALS);
+  }
+
+  private void applyOverload() {
+    crystal -= overloaded;
+    lockedCrystal = overloaded;
+    overloaded = 0;
   }
 
   @Override
@@ -61,12 +55,6 @@ public class ManaCrystal implements Round {
   public void overload(final int val) {
     Preconditions.checkArgument(val > 0, "Overload must be positive, not " + val);
     overloaded += val;
-  }
-
-  private void applyOverload() {
-    crystal -= overloaded;
-    lockedCrystal = overloaded;
-    overloaded = 0;
   }
 
   @Override
@@ -81,5 +69,17 @@ public class ManaCrystal implements Round {
     }
 
     return sb.toString();
+  }
+
+  public int getCrystal() {
+    return crystal;
+  }
+
+  public int getCrystalUpperBound() {
+    return crystalUpperBound;
+  }
+
+  public int getLockedCrystal() {
+    return lockedCrystal;
   }
 }
