@@ -159,14 +159,20 @@ public class MinionFactory {
         // TODO: but this is not the only way to reveal a minion in stealth.
         // http://hearthstone.gamepedia.com/Stealth
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
+        final int healthLoss = creature.getHealthLoss();
         creature.takeDamage(attackAttr.getVal());
+
+        final Optional<BooleanAttribute> freeze = booleanMechanics.get(ConstMechanic.FREEZE);
+        if (BooleanAttribute.isPresentAndOn(freeze) && healthLoss != creature.getHealthLoss()) {
+          creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
+        }
       }
 
       @Override
       public void takeDamage(final int damage) {
         final Optional<BooleanAttribute> divineShield = booleanMechanics.get(
             ConstMechanic.DIVINE_SHIELD);
-        if (divineShield.isPresent()) {
+        if (BooleanAttribute.isPresentAndOn(divineShield)) {
           logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
           booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
         } else {

@@ -124,3 +124,20 @@
   mechanics:
     - name: taunt
 
+- name: water_elemental
+  display: Water Elemental
+  class: mage
+  attack: 3
+  health: 6
+  crystal: 4
+  mechanics:
+    - name: freeze
+
+- name: scarlet_crusader
+  display: Scarlet Crusader
+  class: mage
+  attack: 3
+  health: 1
+  crystal: 3
+  mechanics:
+    - name: divine_shield

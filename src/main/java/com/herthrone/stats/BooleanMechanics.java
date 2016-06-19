@@ -33,6 +33,10 @@ public class BooleanMechanics {
     );
   }
 
+  public static boolean isOn(final Optional<BooleanAttribute> booleanAttributeOptional) {
+    return booleanAttributeOptional.isPresent() && booleanAttributeOptional.get().isOn();
+  }
+
   public Optional<BooleanAttribute> get(final ConstMechanic mechanic) {
     final BooleanAttribute booleanAttribute = booleanAttributeMap.get(mechanic);
     return Optional.fromNullable(booleanAttribute);
@@ -47,6 +51,14 @@ public class BooleanMechanics {
 
   public boolean has(final ConstMechanic mechanic) {
     return booleanAttributeMap.containsKey(mechanic);
+  }
+
+  public void initialize(final ConstMechanic mechanic) {
+    booleanAttributeMap.put(mechanic, new BooleanAttribute());
+  }
+
+  public void initialize(final ConstMechanic mechanic, final double roundUntilExpire) {
+    booleanAttributeMap.put(mechanic, new BooleanAttribute(roundUntilExpire));
   }
 
   @Override

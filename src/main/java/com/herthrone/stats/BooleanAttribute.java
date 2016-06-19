@@ -25,7 +25,15 @@ public class BooleanAttribute implements Round, Reset {
     this.roundUntilExpire = roundUntilExpire;
   }
 
-  public static boolean isOn(Optional<BooleanAttribute> booleanAttributeOptional) {
+  public BooleanAttribute(final double roundUntilExpire) {
+    this(true, roundUntilExpire);
+  }
+
+  public static boolean isAbsentOrOff(Optional<BooleanAttribute> booleanAttributeOptional) {
+    return !isPresentAndOn(booleanAttributeOptional);
+  }
+
+  public static boolean isPresentAndOn(Optional<BooleanAttribute> booleanAttributeOptional) {
     return booleanAttributeOptional.isPresent() && booleanAttributeOptional.get().isOn();
   }
 

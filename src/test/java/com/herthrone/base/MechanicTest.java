@@ -8,11 +8,13 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
+import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
+import com.herthrone.stats.BooleanAttribute;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +30,7 @@ public class MechanicTest extends TestCase {
 
   private Hero hero;
   private Side side;
+  private AttackFactory attackFactory;
   private Battlefield battlefield;
   private MinionFactory minionFactory;
   private EffectFactory effectFactory;
@@ -40,6 +43,7 @@ public class MechanicTest extends TestCase {
     this.side = gm.battlefield1.mySide;
     this.hero = side.hero;
     this.battlefield = gm.battlefield1;
+    this.attackFactory = gm.factory1.attackFactory;
     this.minionFactory = gm.factory1.minionFactory;
     this.effectFactory = gm.factory1.effectFactory;
   }
@@ -116,5 +120,48 @@ public class MechanicTest extends TestCase {
     assertThat(GameManager.isHeroTargetable(hero, side.board, ConstType.ATTACK)).isFalse();
     assertThat(GameManager.isMinionTargetable(senjin, side.board, ConstType.ATTACK)).isTrue();
     assertThat(GameManager.isMinionTargetable(grizzly, side.board, ConstType.ATTACK)).isTrue();
+  }
+
+  @Test
+  public void testDivineShield() {
+    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
+
+    assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent()).isTrue();
+    final BooleanAttribute divineShield = scarletCrusader.getBooleanMechanics().get(ConstMechanic
+        .DIVINE_SHIELD).get();
+    assertThat(divineShield.isOn()).isTrue();
+
+    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader).act();
+
+    // Yeti takes damage. Crusader takes no damage because of divine shield.
+    assertThat(divineShield.isOn()).isFalse();
+    assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
+    assertThat(yeti.getHealthLoss()).isGreaterThan(0);
+
+    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader).act();
+
+    // Crusader has no more divine shield and takes damage.
+    assertThat(scarletCrusader.isDead()).isTrue();
+    assertThat(yeti.isDead()).isTrue();
+  }
+
+  @Test
+  public void testFreeze() {
+    final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
+    final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
+    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+
+    // Scarlet crusader has divine shield so take no damage. No damage no frozen.
+    attackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader).act();
+    assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
+    assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.FROZEN).isPresent()).isFalse();
+
+    // Yeti takes damage and gets frozen.
+    attackFactory.getPhysicalDamageAction(waterElemental, yeti).act();
+    final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
+    assertThat(yeti.getHealthLoss()).isGreaterThan(0);
+    assertThat(frozen.isPresent()).isTrue();
+    assertThat(frozen.get().isOn()).isTrue();
   }
 }

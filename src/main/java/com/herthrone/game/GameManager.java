@@ -264,26 +264,26 @@ public class GameManager {
     // A stealth minion can not be targeted, even it is a taunt minion.
     final Optional<BooleanAttribute> stealth = minion.getBooleanMechanics().get(ConstMechanic
         .STEALTH);
-    if (BooleanAttribute.isOn(stealth)) {
+    if (BooleanAttribute.isPresentAndOn(stealth)) {
       return false;
     }
 
     // A taunt minion is targetable.
     final Optional<BooleanAttribute> taunt = minion.getBooleanMechanics().get(ConstMechanic.TAUNT);
-    if (BooleanAttribute.isOn(taunt)) {
+    if (BooleanAttribute.isPresentAndOn(taunt)) {
       return true;
     }
 
     // If there is any other minion on the board has taunt ability, this minion cannot be targeted.
     return !board.stream().anyMatch(
-        m -> BooleanAttribute.isOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
+        m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
   }
 
   private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion>
       board) {
     final Optional<BooleanAttribute> elusive = minion.getBooleanMechanics().get(
         ConstMechanic.ELUSIVE);
-    return !BooleanAttribute.isOn(elusive);
+    return !BooleanAttribute.isPresentAndOn(elusive);
   }
 
   public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board,
@@ -300,14 +300,11 @@ public class GameManager {
 
   private static boolean isHeroTargetableByAttack(final Hero hero, final Container<Minion> board) {
     return !board.stream().anyMatch(
-        m -> BooleanAttribute.isOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
+        m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
   }
 
   private static boolean isHeroTargetableBySpell(final Hero hero, final Container<Minion> board) {
     return true;
-  }
-
-  void battlecry(final Card card) {
   }
 
   void playCard(final int index, final Minion target) {
