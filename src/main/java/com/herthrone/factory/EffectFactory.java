@@ -21,11 +21,10 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
+import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.stats.IntAttribute;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -99,22 +98,18 @@ public class EffectFactory {
   }
 
   private Effect getSummonAction(final EffectConfig effect) {
-    List<String> summonChoices = new ArrayList<>(effect.getChoices());
-    summonChoices = summonChoices.stream()
+    List<String> summonChoices = effect.getChoices().stream()
         .map(name -> name.toUpperCase()).collect(Collectors.toList());
-    final int size = effect.getChoices().size();
-    int index = 0;
-    if (size > 0) {
-      final Random random = new Random();
-      if (effect.isUnique()) {
-        List<String> uniqueMinionsOnBoard = battlefield.mySide.board.stream()
-            .map(minion -> minion.getCardName()).collect(Collectors.toList());
-        summonChoices.removeAll(uniqueMinionsOnBoard);
-      } else {
-        index = random.nextInt(size);
-      }
+    String summonTargetName;
+    if (effect.isUnique()) {
+      // Summon candidates must be non-existing on the board to avoid dups.
+      final List<Creature> existingCreatures = battlefield.mySide.board.stream()
+          .map(m -> (Creature) m).collect(Collectors.toList());
+      summonTargetName = RandomMinionGenerator.randomUnique(
+          summonChoices, existingCreatures);
+    } else {
+      summonTargetName = RandomMinionGenerator.randomOne(summonChoices);
     }
-    final String summonTargetName = summonChoices.get(index);
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
     final Minion minion = minionFactory.createMinionByName(summonTarget);
     return new SummonEffect(battlefield.mySide.board, minion);

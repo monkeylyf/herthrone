@@ -1,6 +1,7 @@
 package com.herthrone.game;
 
 import com.herthrone.base.Card;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Secret;
@@ -10,6 +11,7 @@ import com.herthrone.stats.IntAttribute;
 import com.herthrone.stats.ManaCrystal;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,5 +60,23 @@ public class Side {
 
   public void setHeroPower(final Spell heroPower) {
     this.heroPower = heroPower;
+  }
+
+  public boolean hasCreature(final Creature creature) {
+    if (creature instanceof Hero) {
+      return (Hero) creature == hero;
+    } else {
+      return board.contains((Minion) creature);
+    }
+  }
+
+  public List<Creature> allCreatures() {
+    List<Creature> allCreatures = new ArrayList<>();
+    allCreatures.add(hero);
+    for (int i = 0; i < board.size(); ++i) {
+      allCreatures.add(board.get(i));
+    }
+
+    return allCreatures;
   }
 }

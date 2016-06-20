@@ -1,6 +1,7 @@
 package com.herthrone.game;
 
 import com.google.common.collect.ImmutableMap;
+import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.View;
 import com.herthrone.constant.ConstTarget;
@@ -89,4 +90,13 @@ public class Battlefield implements View {
     return sideViewBuilder;
   }
 
+  public Side getSideCreatureIsOn(final Creature creature) {
+    if (mySide.hasCreature(creature)) {
+      return mySide;
+    } else if (opponentSide.hasCreature(creature)) {
+      return opponentSide;
+    } else {
+      throw new RuntimeException(String.format("Minion %s is not on the board", creature.toString()));
+    }
+  }
 }

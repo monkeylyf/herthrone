@@ -101,6 +101,14 @@ public class Container<T extends Card> implements Iterator<T> {
     return count;
   }
 
+  public List<T> asList() {
+    return container;
+  }
+
+  public boolean contains(final T card) {
+    return container.stream().anyMatch(c -> c == card);
+  }
+
   public int size() {
     return container.size();
   }

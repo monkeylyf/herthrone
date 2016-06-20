@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 /**
  * Created by yifengliu on 5/15/16.
+ * <p>
+ * http://hearthstone.gamepedia.com/<mechanicName>
  */
 public enum ConstMechanic {
   // Boolean mechanics.

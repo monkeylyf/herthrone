@@ -14,12 +14,14 @@ import java.util.Map;
  */
 public class MechanicConfig {
 
+  private static final String NAME = "name";
+  private static final String EFFECT = "effect";
   private final ConstMechanic mechanic;
   private final Optional<EffectConfig> effect;
 
   public MechanicConfig(Map map) {
-    this.mechanic = ConstMechanic.valueOf(Constant.upperCaseValue(map, "name"));
-    this.effect = map.containsKey("effect") ? Optional.of(new EffectConfig(map)) : Optional.absent();
+    this.mechanic = ConstMechanic.valueOf(Constant.upperCaseValue(map, NAME));
+    this.effect = map.containsKey(EFFECT) ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
   public static Map<ConstMechanic, MechanicConfig> mechanicConfigFactory(Object configList) {
@@ -43,8 +45,8 @@ public class MechanicConfig {
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
-        .add("mechanic", mechanic)
-        .add("effect", effect)
+        .add(NAME, mechanic)
+        .add(EFFECT, effect)
         .toString();
   }
 }

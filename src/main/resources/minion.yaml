@@ -159,3 +159,12 @@
   crystal: 3
   mechanics:
     - name: poison
+
+- name: ogre_brute
+  display: Ogre Brute
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 3
+  mechanics:
+    - name: forgetful

@@ -249,13 +249,17 @@ public class GameManager {
 
   public static boolean isMinionTargetable(final Minion minion, final Container<Minion> board,
                                            final ConstType type) {
-    switch (type) {
-      case ATTACK:
-        return isMinionTargetableByAttack(minion, board);
-      case SPELL:
-        return isMinionTargetableBySpell(minion, board);
-      default:
-        throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
+    if (BooleanAttribute.isPresentAndOn(minion.getBooleanMechanics().get(ConstMechanic.IMMUNE))) {
+      return false;
+    } else {
+      switch (type) {
+        case ATTACK:
+          return isMinionTargetableByAttack(minion, board);
+        case SPELL:
+          return isMinionTargetableBySpell(minion, board);
+        default:
+          throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
+      }
     }
   }
 
@@ -288,13 +292,17 @@ public class GameManager {
 
   public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board,
                                          final ConstType type) {
-    switch (type) {
-      case ATTACK:
-        return isHeroTargetableByAttack(hero, board);
-      case SPELL:
-        return isHeroTargetableBySpell(hero, board);
-      default:
-        throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
+    if (BooleanAttribute.isPresentAndOn(hero.getBooleanMechanics().get(ConstMechanic.IMMUNE))) {
+      return false;
+    } else {
+      switch (type) {
+        case ATTACK:
+          return isHeroTargetableByAttack(hero, board);
+        case SPELL:
+          return isHeroTargetableBySpell(hero, board);
+        default:
+          throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
+      }
     }
   }
 

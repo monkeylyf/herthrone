@@ -1,6 +1,7 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Range;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
@@ -37,6 +38,8 @@ public class MechanicTest extends TestCase {
 
   private GameManager gm;
 
+  private Minion yeti;
+
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
@@ -46,6 +49,8 @@ public class MechanicTest extends TestCase {
     this.attackFactory = gm.factory1.attackFactory;
     this.minionFactory = gm.factory1.minionFactory;
     this.effectFactory = gm.factory1.effectFactory;
+
+    this.yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
   }
 
   @Test
@@ -60,7 +65,6 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testBattlecry() {
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     side.deck.add(yeti);
 
     assertThat(side.deck.size()).isEqualTo(1);
@@ -103,13 +107,11 @@ public class MechanicTest extends TestCase {
     final Minion faerieDragon = minionFactory.createMinionByName(ConstMinion.FAERIE_DRAGON);
     assertThat(GameManager.isMinionTargetable(faerieDragon, side.board, ConstType.SPELL)).isFalse();
 
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     assertThat(GameManager.isMinionTargetable(yeti, side.board, ConstType.SPELL)).isTrue();
   }
 
   @Test
   public void testTaunt() {
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     final Minion senjin = minionFactory.createMinionByName(ConstMinion.SENJIN_SHIELDMASTA);
     final Minion grizzly = minionFactory.createMinionByName(ConstMinion.IRONFUR_GRIZZLY);
     side.board.add(yeti);
@@ -168,7 +170,6 @@ public class MechanicTest extends TestCase {
   public void testFreeze() {
     final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
     final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
     // Scarlet crusader has divine shield so take no damage. No damage no frozen.
     attackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader).act();
@@ -186,7 +187,6 @@ public class MechanicTest extends TestCase {
   @Test
   public void testFrozen() {
     final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
     attackFactory.getPhysicalDamageAction(yeti, waterElemental).act();
     final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
@@ -199,6 +199,8 @@ public class MechanicTest extends TestCase {
         .FROZEN);
 
     assertThat(heroFrozen.isPresent()).isTrue();
+
+    // TODO: next round the frozen bool attribute should be unset(when startRound).
   }
 
   @Test
@@ -211,7 +213,6 @@ public class MechanicTest extends TestCase {
     assertThat(hero.isDead()).isFalse();
 
     // Point triggers destroy on Minion when minion is damaged.
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
     attackFactory.getPhysicalDamageAction(emperorCobra, yeti).act();
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
@@ -222,5 +223,55 @@ public class MechanicTest extends TestCase {
     attackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader).act();
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
+  }
+
+  @Test
+  public void testImmune() {
+    // No minions so far has default immune mechanic yet.
+    // Init IMMUNE for Yeti.
+    yeti.getBooleanMechanics().initialize(ConstMechanic.IMMUNE);
+    assertThat(GameManager.isMinionTargetable(yeti, gm.battlefield1.mySide.board, ConstType.ATTACK))
+        .isFalse();
+    assertThat(GameManager.isMinionTargetable(yeti, gm.battlefield1.mySide.board, ConstType.SPELL))
+        .isFalse();
+
+    // Test Hero immune.
+    hero.getBooleanMechanics().initialize(ConstMechanic.IMMUNE);
+    assertThat(GameManager.isHeroTargetable(hero, gm.battlefield1.mySide.board, ConstType.ATTACK))
+        .isFalse();
+    assertThat(GameManager.isHeroTargetable(hero, gm.battlefield1.mySide.board, ConstType.SPELL))
+        .isFalse();
+  }
+
+  @Test
+  public void testForgetful() {
+    final Minion ogreBrute = minionFactory.createMinionByName(ConstMinion.OGRE_BRUTE);
+    final int attackVal = ogreBrute.getAttackAttr().getVal();
+    final int minionNum = 5;
+    final Side opponentSide = battlefield.opponentSide;
+    for (int i = 0; i < minionNum; ++i) {
+      opponentSide.board.add(minionFactory.createMinionByName(
+          ConstMinion.CHILLWIND_YETI));
+    }
+    final int total = 10000;
+    // TODO: find another way to test randomness or not to test it at all.
+    final double jitter = .10;
+    final double forgetfulFactor = .5;
+
+    for (int i = 0; i < total; ++i) {
+      attackFactory.getPhysicalDamageAction(ogreBrute, opponentSide.hero).act();
+    }
+    Range<Double> mainTargetGotAttackedNumRange = Range.closed(
+        total * forgetfulFactor * (1 - jitter),
+        total * forgetfulFactor * (1 + jitter));
+    Range<Double> otherTargetsGotAttackedNumRange = Range.closed(
+        total * forgetfulFactor * (1 - jitter) / minionNum,
+        total * forgetfulFactor * (1 + jitter) / minionNum);
+    final double numOfHeroGotAttacked = opponentSide.hero.getHealthLoss() / attackVal;
+    assertThat(mainTargetGotAttackedNumRange.contains(numOfHeroGotAttacked)).isTrue();
+    for (int i = 0; i < minionNum; ++i) {
+      final double numGetAttacked = opponentSide.board.get(i).getHealthLoss() / attackVal;
+      assertThat(otherTargetsGotAttackedNumRange.contains(numGetAttacked)).isTrue();
+    }
   }
 }

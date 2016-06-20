@@ -13,6 +13,13 @@ import java.util.Map;
  */
 public class EffectConfig {
 
+  private static final String TYPE = "type";
+  private static final String EFFECT = "effect";
+  private static final String VALUE = "value";
+  private static final String PERMANENT = "permanent";
+  private static final String UNIQUE = "unique";
+  private static final String CHOICES = "choices";
+  private static final String TARGET = "target";
   private final ConstEffectType effect;
   private final String type;  // TODO: get rid of all String.
   private final int value;
@@ -22,13 +29,13 @@ public class EffectConfig {
   private final TargetConfig target;
 
   public EffectConfig(Map map) {
-    this.effect = ConstEffectType.valueOf(Constant.upperCaseValue(map, "effect"));
-    this.type = (String) map.get("type");
-    this.value = (int) map.get("value");
-    this.permanent = (map.containsKey("permanent")) ? (boolean) map.get("permanent") : false;
-    this.unique = (map.containsKey("unique")) ? (boolean) map.get("unique") : false;
-    this.choices = (map.containsKey("choices")) ? (List) map.get("choices") : Collections.emptyList();
-    this.target = new TargetConfig((Map) map.get("target"));
+    this.effect = ConstEffectType.valueOf(Constant.upperCaseValue(map, EFFECT));
+    this.type = (String) map.get(TYPE);
+    this.value = (int) map.get(VALUE);
+    this.permanent = (map.containsKey(PERMANENT)) ? (boolean) map.get(PERMANENT) : false;
+    this.unique = (map.containsKey(UNIQUE)) ? (boolean) map.get(UNIQUE) : false;
+    this.choices = ((map.containsKey(CHOICES)) ? (List) map.get(CHOICES) : Collections.emptyList());
+    this.target = new TargetConfig((Map) map.get(TARGET));
   }
 
   public ConstEffectType getEffect() {
