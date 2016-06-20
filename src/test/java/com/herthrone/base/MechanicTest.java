@@ -147,6 +147,24 @@ public class MechanicTest extends TestCase {
   }
 
   @Test
+  public void testStealth() {
+    final Minion stoneclawTotem = minionFactory.createMinionByName(ConstMinion.STONECLAW_TOTEM);
+    final Minion worgenInfiltrator = minionFactory.createMinionByName(ConstMinion
+        .WORGEN_INFILTRATOR);
+
+    final Optional<BooleanAttribute> stealth = worgenInfiltrator.getBooleanMechanics().get
+        (ConstMechanic.STEALTH);
+    assertThat(stealth.isPresent()).isTrue();
+    assertThat(stealth.get().isOn()).isTrue();
+
+    attackFactory.getPhysicalDamageAction(worgenInfiltrator, stoneclawTotem).act();
+
+    // Stealth deactivated after attack.
+    assertThat(stealth.isPresent()).isTrue();
+    assertThat(stealth.get().isOn()).isFalse();
+  }
+
+  @Test
   public void testFreeze() {
     final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
     final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);

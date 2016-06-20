@@ -141,3 +141,12 @@
   crystal: 3
   mechanics:
     - name: divine_shield
+
+- name: worgen_infiltrator
+  display: Worgen Infiltrator
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  mechanics:
+    - name: stealth
