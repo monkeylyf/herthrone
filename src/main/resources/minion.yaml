@@ -168,3 +168,12 @@
   crystal: 3
   mechanics:
     - name: forgetful
+
+- name: windfury_harpy
+  display: Windfury Harpy
+  class: neutral
+  attack: 4
+  health: 6
+  crystal: 6
+  mechanics:
+    - name: windfury

@@ -61,7 +61,9 @@ public class MinionFactory {
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute movePoints = new IntAttribute(MINION_INIT_MOVE_POINTS);
+      private final IntAttribute movePoints = new IntAttribute(
+          mechanics.containsKey(ConstMechanic.WINDFURY) ?
+              WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
       private final Battlefield battlefield = field;
@@ -228,12 +230,10 @@ public class MinionFactory {
       // Minion with no charge ability waits until next turn to move.
       // TODO: also when a minion switch side due to TAKE_CONTROLL effect, the CHARGE also apply
       // the right after it switches side.
-      minion.getAttackMovePoints().buff.temp.setTo(-MINION_INIT_MOVE_POINTS);
+      minion.getAttackMovePoints().buff.temp.decrease(minion.getAttackMovePoints().getVal());
     }
 
-    //final MechanicConfig divineShield = mechanics.get(ConstMechanic.)
     return minion;
   }
-
 
 }

@@ -274,4 +274,11 @@ public class MechanicTest extends TestCase {
       assertThat(otherTargetsGotAttackedNumRange.contains(numGetAttacked)).isTrue();
     }
   }
+
+  @Test
+  public void testWindFury() {
+    final Minion harpy = minionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY);
+    harpy.getAttackMovePoints().reset();
+    assertThat(harpy.getAttackMovePoints().getVal()).isEqualTo(2);
+  }
 }

@@ -16,15 +16,15 @@ public enum ConstMechanic {
   ELUSIVE(true),
   ENRAGE(true),
   FORGETFUL(true),
-  FREEZE(true),
-  // Consequence of being hit by a minion has freeze ability.
+  FREEZE(true), // Consequence of being hit by a minion has freeze ability.
   FROZEN(true),
   IMMUNE(true),
   POISON(true),
   STEALTH(true),
   TAUNT(true),
   WINDFURY(true),
-  // Effect mechanisc.
+
+  // Effect mechanics.
   BATTLECRY,
   CARD_DRAW_EFFECT,
   CHOOSE_ONE,
