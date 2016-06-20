@@ -16,4 +16,6 @@ public interface Minion extends Creature {
   void setSequenceId(final int id);
 
   void silence();
+
+  void destroy();
 }

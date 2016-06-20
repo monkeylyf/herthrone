@@ -10,8 +10,10 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
+import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
 import com.herthrone.stats.IntAttribute;
 
@@ -122,13 +124,15 @@ public class HeroFactory {
       }
 
       @Override
-      public void takeDamage(int damage) {
+      public boolean takeDamage(int damage) {
+        final int healthBeforeDamage = getHealthLoss();
         if (armorAttr.getVal() >= damage) {
           armorAttr.decrease(damage);
         } else {
           healthAttr.decrease(damage - armorAttr.getVal());
           armorAttr.reset();
         }
+        return healthBeforeDamage != getHealthLoss();
       }
 
       @Override
@@ -139,6 +143,13 @@ public class HeroFactory {
       @Override
       public boolean isDead() {
         return healthAttr.getVal() <= 0;
+      }
+
+      @Override
+      public boolean canMove() {
+        return attackMovePoints.getVal() > 0 &&
+            weapon.isPresent() &&
+            BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.FROZEN));
       }
 
       @Override

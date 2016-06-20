@@ -20,11 +20,13 @@ public interface Creature extends Card, Round {
 
   void causeDamage(final Creature creature);
 
-  void takeDamage(final int damage);
+  boolean takeDamage(final int damage);
 
   boolean canDamage();
 
   boolean isDead();
+
+  boolean canMove();
 
   int getHealthLoss();
 }

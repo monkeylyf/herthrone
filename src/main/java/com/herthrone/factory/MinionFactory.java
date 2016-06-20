@@ -92,6 +92,12 @@ public class MinionFactory {
       }
 
       @Override
+      public void destroy() {
+        final int health = healthAttr.getVal();
+        healthAttr.decrease(health);
+      }
+
+      @Override
       public String getCardName() {
         return name.toString();
       }
@@ -159,24 +165,30 @@ public class MinionFactory {
         // TODO: but this is not the only way to reveal a minion in stealth.
         // http://hearthstone.gamepedia.com/Stealth
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
-        final int healthLoss = creature.getHealthLoss();
-        creature.takeDamage(attackAttr.getVal());
+        boolean isDamaged = creature.takeDamage(attackAttr.getVal());
 
-        final Optional<BooleanAttribute> freeze = booleanMechanics.get(ConstMechanic.FREEZE);
-        if (BooleanAttribute.isPresentAndOn(freeze) && healthLoss != creature.getHealthLoss()) {
+        if (isDamaged && BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.FREEZE))) {
           creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
+        }
+
+        if (isDamaged &&
+            BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
+            creature instanceof Minion) {
+          ((Minion) creature).destroy();
         }
       }
 
       @Override
-      public void takeDamage(final int damage) {
+      public boolean takeDamage(final int damage) {
         final Optional<BooleanAttribute> divineShield = booleanMechanics.get(
             ConstMechanic.DIVINE_SHIELD);
         if (BooleanAttribute.isPresentAndOn(divineShield)) {
           logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
           booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
+          return false;
         } else {
           healthAttr.decrease(damage);
+          return true;
         }
       }
 
@@ -188,6 +200,12 @@ public class MinionFactory {
       @Override
       public boolean isDead() {
         return healthAttr.getVal() <= 0;
+      }
+
+      @Override
+      public boolean canMove() {
+        return movePoints.getVal() > 0 &&
+            BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
       }
 
       @Override

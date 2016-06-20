@@ -44,7 +44,7 @@ public class CommandLine {
     final CommandNode moveMinions = new CommandNode(ConstCommand.MOVE_MINION.toString());
     for (int i = 0; i < mySide.board.size(); ++i) {
       final Minion minion = mySide.board.get(i);
-      if (minion.getAttackMovePoints().getVal() > 0) {
+      if (minion.canMove()) {
         final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
@@ -58,6 +58,9 @@ public class CommandLine {
         moveMinionCommand.addChildNode(heroNode);
         moveMinions.addChildNode(moveMinionCommand);
       }
+    }
+    if (mySide.hero.canMove()) {
+      // TODO: add hero as an legit attack move.
     }
     if (moveMinions.childOptions.size() != 0) {
       root.addChildNode(moveMinions);

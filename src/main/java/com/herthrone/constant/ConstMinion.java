@@ -5,6 +5,7 @@ package com.herthrone.constant;
  */
 public enum ConstMinion {
   CHILLWIND_YETI,
+  EMPEROR_COBRA,
   FAERIE_DRAGON,
   GNOMISH_INVENTOR,
   HEALING_TOTEM,

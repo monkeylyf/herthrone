@@ -150,3 +150,12 @@
   crystal: 1
   mechanics:
     - name: stealth
+
+- name: emperor_cobra
+  display: Emperor Cobra
+  class: neutral
+  attack: 2
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: poison

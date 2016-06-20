@@ -182,4 +182,45 @@ public class MechanicTest extends TestCase {
     assertThat(frozen.isPresent()).isTrue();
     assertThat(frozen.get().isOn()).isTrue();
   }
+
+  @Test
+  public void testFrozen() {
+    final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
+    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+
+    attackFactory.getPhysicalDamageAction(yeti, waterElemental).act();
+    final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
+    assertThat(frozen.isPresent()).isTrue();
+    assertThat(frozen.get().isOn()).isTrue();
+
+    attackFactory.getPhysicalDamageAction(waterElemental, hero).act();
+
+    final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics().get(ConstMechanic
+        .FROZEN);
+
+    assertThat(heroFrozen.isPresent()).isTrue();
+  }
+
+  @Test
+  public void testPoison() {
+    Minion emperorCobra = minionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA);
+    attackFactory.getPhysicalDamageAction(emperorCobra, hero).act();
+
+    // Poison does not trigger destroy on Hero.
+    assertThat(emperorCobra.getHealthLoss()).isEqualTo(0);
+    assertThat(hero.isDead()).isFalse();
+
+    // Point triggers destroy on Minion when minion is damaged.
+    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    attackFactory.getPhysicalDamageAction(emperorCobra, yeti).act();
+    assertThat(emperorCobra.isDead()).isTrue();
+    assertThat(yeti.getHealthLoss()).isGreaterThan(0);
+    assertThat(yeti.isDead()).isTrue();
+
+    final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
+    emperorCobra = minionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA);
+    attackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader).act();
+    assertThat(emperorCobra.isDead()).isTrue();
+    assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
+  }
 }
