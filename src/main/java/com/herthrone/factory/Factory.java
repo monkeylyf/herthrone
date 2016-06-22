@@ -22,7 +22,6 @@ import java.util.List;
 public class Factory {
 
   public final MinionFactory minionFactory;
-  public final SpellFactory spellFactory;
   public final WeaponFactory weaponFactory;
   public final SecretFactory secretFactory;
   public final EffectFactory effectFactory;
@@ -32,7 +31,6 @@ public class Factory {
     this.minionFactory = new MinionFactory(battlefield);
     this.weaponFactory = new WeaponFactory(battlefield);
     this.effectFactory = new EffectFactory(minionFactory, weaponFactory, battlefield);
-    this.spellFactory = new SpellFactory(effectFactory);
     this.secretFactory = new SecretFactory(battlefield);
     this.attackFactory = new AttackFactory(battlefield);
   }
@@ -52,7 +50,7 @@ public class Factory {
 
     Optional<ConstSpell> constSpell = Enums.getIfPresent(ConstSpell.class, name);
     if (constSpell.isPresent()) {
-      return spellFactory.createSpellByName(constSpell.get());
+      return SpellFactory.createSpellByName(constSpell.get());
     }
 
     Optional<ConstSecret> constSecret = Enums.getIfPresent(ConstSecret.class, name);

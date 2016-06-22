@@ -21,13 +21,7 @@ import java.util.Map;
  */
 public class SpellFactory {
 
-  private final EffectFactory effectFactory;
-
-  public SpellFactory(final EffectFactory effectFactory) {
-    this.effectFactory = effectFactory;
-  }
-
-  public Spell createSpellByName(final ConstSpell spell) {
+  public static Spell createSpellByName(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
     return createSpell(
         config.getName(),
@@ -39,9 +33,10 @@ public class SpellFactory {
     );
   }
 
-  public Spell createSpell(final ConstSpell name, final ConstClass className, final int crystal,
-                           final ConstType type, final Optional<TargetConfig> targetConfig,
-                           final List<EffectConfig> effects) {
+  public static Spell createSpell(final ConstSpell name, final ConstClass className,
+                                  final int crystal, final ConstType type,
+                                  final Optional<TargetConfig> targetConfig,
+                                  final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
@@ -93,7 +88,7 @@ public class SpellFactory {
     };
   }
 
-  public Spell createHeroPowerByName(final ConstSpell heroPower) {
+  public static Spell createHeroPowerByName(final ConstSpell heroPower) {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
     return createSpell(
         config.getName(),

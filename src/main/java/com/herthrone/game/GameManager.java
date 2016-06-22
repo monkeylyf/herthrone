@@ -20,6 +20,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.factory.Factory;
 import com.herthrone.factory.HeroFactory;
+import com.herthrone.factory.SpellFactory;
 import com.herthrone.stats.BooleanAttribute;
 import org.apache.log4j.Logger;
 
@@ -75,7 +76,7 @@ public class GameManager {
 
   private static Spell generateHeroPower(final ConstHero hero, final Factory factory) {
     final HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
-    return factory.spellFactory.createHeroPowerByName(heroConfig.getHeroPower());
+    return SpellFactory.createHeroPowerByName(heroConfig.getHeroPower());
   }
 
   public static void main(String[] args) {

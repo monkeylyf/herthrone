@@ -16,6 +16,8 @@ public interface Hero extends Creature {
 
   void arm(Weapon weapon);
 
+  Spell getHeroPower();
+
   void disarm();
 
 }

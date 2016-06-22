@@ -14,6 +14,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.Side;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
 import com.herthrone.stats.EffectMechanics;
@@ -169,14 +170,15 @@ public class MinionFactory {
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
         boolean isDamaged = creature.takeDamage(attackAttr.getVal());
 
-        if (isDamaged && BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.FREEZE))) {
-          creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
-        }
+        if (isDamaged) {
+          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.FREEZE))) {
+            creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
+          }
 
-        if (isDamaged &&
-            BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
-            creature instanceof Minion) {
-          ((Minion) creature).destroy();
+          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
+              creature instanceof Minion) {
+            ((Minion) creature).destroy();
+          }
         }
       }
 
@@ -191,6 +193,16 @@ public class MinionFactory {
         } else {
           healthAttr.decrease(damage);
           return true;
+        }
+      }
+
+      @Override
+      public void death() {
+        final Side side = battlefield.getSideCreatureIsOn(this);
+        side.board.remove(this);
+
+        Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
+        if (deathrattleConfig.isPresent()) {
         }
       }
 

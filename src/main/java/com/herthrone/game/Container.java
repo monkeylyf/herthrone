@@ -117,6 +117,11 @@ public class Container<T extends Card> implements Iterator<T> {
     return container.remove(index);
   }
 
+  public void remove(final T card) {
+    final boolean foundAndRemoved = container.remove(card);
+    Preconditions.checkArgument(foundAndRemoved);
+  }
+
   @Override
   public boolean hasNext() {
     return this.container.iterator().hasNext();

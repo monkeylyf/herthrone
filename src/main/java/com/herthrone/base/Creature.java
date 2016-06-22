@@ -26,6 +26,8 @@ public interface Creature extends Card, Round {
 
   boolean isDead();
 
+  void death();
+
   boolean canMove();
 
   int getHealthLoss();
