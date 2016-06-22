@@ -173,7 +173,7 @@ public class GameManager {
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MOVE_MINION.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee).act();
+      activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee);
       // Cost one move point.
       attacker.getAttackMovePoints().buff.temp.decrease(1);
     } else {

@@ -76,7 +76,7 @@ public class MinionTest extends TestCase {
   }
 
   private void attackEachOther() {
-    gm.factory1.attackFactory.getPhysicalDamageAction(minion1, minion2).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(minion1, minion2);
   }
 }
 

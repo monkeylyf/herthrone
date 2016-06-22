@@ -23,13 +23,15 @@ public class AttackFactory {
     this.battlefield = battlefield;
   }
 
-  public Effect getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
+  public void getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
+    Effect effect;
     if (attacker.getBooleanMechanics().has(ConstMechanic.FORGETFUL)) {
       final Side opponentSide = battlefield.getSideCreatureIsOn(attackee);
-      return getForgetfulPhysicalDamageAction(attacker, attackee, opponentSide);
+      effect = getForgetfulPhysicalDamageAction(attacker, attackee, opponentSide);
     } else {
-      return new PhysicalDamageEffect(attacker, attackee);
+      effect = new PhysicalDamageEffect(attacker, attackee);
     }
+    battlefield.getEffectQueue().enqueue(effect);
   }
 
   private Effect getForgetfulPhysicalDamageAction(final Creature attacker, final Creature attackee,

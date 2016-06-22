@@ -64,25 +64,6 @@ public class MechanicTest extends TestCase {
   }
 
   @Test
-  public void testBattlecry() {
-    side.deck.add(yeti);
-
-    assertThat(side.deck.size()).isEqualTo(1);
-    assertThat(side.board.size()).isEqualTo(0);
-    assertThat(side.hand.size()).isEqualTo(0);
-
-    final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = minionFactory.createMinionByName(minionName);
-
-    gm.playCard(minion);
-
-    assertThat(side.board.get(0).getCardName()).isEqualTo(minionName.toString());
-    assertThat(side.deck.size()).isEqualTo(0);
-    assertThat(side.board.size()).isEqualTo(1);
-    assertThat(side.hand.size()).isEqualTo(1);
-  }
-
-  @Test
   public void testBattlecryDrawCardWithFatigue() {
     assertThat(side.deck.size()).isEqualTo(0);
     assertThat(side.board.size()).isEqualTo(0);
@@ -134,14 +115,14 @@ public class MechanicTest extends TestCase {
         .DIVINE_SHIELD).get();
     assertThat(divineShield.isOn()).isTrue();
 
-    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader).act();
+    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
 
     // Yeti takes damage. Crusader takes no damage because of divine shield.
     assertThat(divineShield.isOn()).isFalse();
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
 
-    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader).act();
+    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
 
     // Crusader has no more divine shield and takes damage.
     assertThat(scarletCrusader.isDead()).isTrue();
@@ -159,7 +140,7 @@ public class MechanicTest extends TestCase {
     assertThat(stealth.isPresent()).isTrue();
     assertThat(stealth.get().isOn()).isTrue();
 
-    attackFactory.getPhysicalDamageAction(worgenInfiltrator, stoneclawTotem).act();
+    attackFactory.getPhysicalDamageAction(worgenInfiltrator, stoneclawTotem);
 
     // Stealth deactivated after attack.
     assertThat(stealth.isPresent()).isTrue();
@@ -172,12 +153,12 @@ public class MechanicTest extends TestCase {
     final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
 
     // Scarlet crusader has divine shield so take no damage. No damage no frozen.
-    attackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader).act();
+    attackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader);
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
     assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.FROZEN).isPresent()).isFalse();
 
     // Yeti takes damage and gets frozen.
-    attackFactory.getPhysicalDamageAction(waterElemental, yeti).act();
+    attackFactory.getPhysicalDamageAction(waterElemental, yeti);
     final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
     assertThat(frozen.isPresent()).isTrue();
@@ -188,12 +169,12 @@ public class MechanicTest extends TestCase {
   public void testFrozen() {
     final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
 
-    attackFactory.getPhysicalDamageAction(yeti, waterElemental).act();
+    attackFactory.getPhysicalDamageAction(yeti, waterElemental);
     final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
     assertThat(frozen.isPresent()).isTrue();
     assertThat(frozen.get().isOn()).isTrue();
 
-    attackFactory.getPhysicalDamageAction(waterElemental, hero).act();
+    attackFactory.getPhysicalDamageAction(waterElemental, hero);
 
     final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics().get(ConstMechanic
         .FROZEN);
@@ -206,21 +187,21 @@ public class MechanicTest extends TestCase {
   @Test
   public void testPoison() {
     Minion emperorCobra = minionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA);
-    attackFactory.getPhysicalDamageAction(emperorCobra, hero).act();
+    attackFactory.getPhysicalDamageAction(emperorCobra, hero);
 
     // Poison does not trigger destroy on Hero.
     assertThat(emperorCobra.getHealthLoss()).isEqualTo(0);
     assertThat(hero.isDead()).isFalse();
 
     // Point triggers destroy on Minion when minion is damaged.
-    attackFactory.getPhysicalDamageAction(emperorCobra, yeti).act();
+    attackFactory.getPhysicalDamageAction(emperorCobra, yeti);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
     final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
     emperorCobra = minionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA);
-    attackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader).act();
+    attackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
   }
@@ -259,7 +240,7 @@ public class MechanicTest extends TestCase {
     final double forgetfulFactor = .5;
 
     for (int i = 0; i < total; ++i) {
-      attackFactory.getPhysicalDamageAction(ogreBrute, opponentSide.hero).act();
+      attackFactory.getPhysicalDamageAction(ogreBrute, opponentSide.hero);
     }
     Range<Double> mainTargetGotAttackedNumRange = Range.closed(
         total * forgetfulFactor * (1 - jitter),
@@ -280,5 +261,29 @@ public class MechanicTest extends TestCase {
     final Minion harpy = minionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY);
     harpy.getAttackMovePoints().reset();
     assertThat(harpy.getAttackMovePoints().getVal()).isEqualTo(2);
+  }
+
+  @Test
+  public void testBattlecry() {
+    side.deck.add(yeti);
+
+    assertThat(side.deck.size()).isEqualTo(1);
+    assertThat(side.board.size()).isEqualTo(0);
+    assertThat(side.hand.size()).isEqualTo(0);
+
+    final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
+    final Minion minion = minionFactory.createMinionByName(minionName);
+
+    gm.playCard(minion);
+
+    assertThat(side.board.get(0).getCardName()).isEqualTo(minionName.toString());
+    assertThat(side.deck.size()).isEqualTo(0);
+    assertThat(side.board.size()).isEqualTo(1);
+    assertThat(side.hand.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void testDeathrattle() {
+
   }
 }

@@ -139,7 +139,7 @@ public class SpellTest extends TestCase {
     effectFactory.getActionsByConfig(daggerMastery, hero1).stream().forEach(Effect::act);
     assertThat(hero1.canDamage()).isTrue();
 
-    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2);
     assertThat(daggerMastery.getEffects().get(0).getValue()).isEqualTo(hero2.getHealthLoss());
   }
 

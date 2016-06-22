@@ -94,7 +94,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1AttackHero2() {
-    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2);
   }
 
   @Test
@@ -119,7 +119,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero2AttackHero1() {
-    gm.factory2.attackFactory.getPhysicalDamageAction(hero2, hero1).act();
+    gm.factory2.attackFactory.getPhysicalDamageAction(hero2, hero1);
   }
 
   @Test
@@ -187,7 +187,7 @@ public class HeroTest extends TestCase {
     hero1.arm(weapon1);
     Minion yeti = minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
-    gm.factory1.attackFactory.getPhysicalDamageAction(yeti, hero1).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(yeti, hero1);
     assertEquals(0, yeti.getHealthLoss());
     assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());
   }
@@ -196,7 +196,7 @@ public class HeroTest extends TestCase {
   public void testMinionAttackHero() {
     hero1.arm(weapon1);
     Minion yeti = minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
-    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, yeti).act();
+    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, yeti);
 
     assertEquals(weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());
     assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());
