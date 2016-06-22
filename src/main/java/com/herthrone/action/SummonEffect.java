@@ -2,6 +2,7 @@ package com.herthrone.action;
 
 import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
+import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Container;
 
 
@@ -16,6 +17,11 @@ public class SummonEffect implements Effect {
   public SummonEffect(final Container<Minion> board, final Minion minion) {
     this.board = board;
     this.minion = minion;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.SUMMON;
   }
 
   @Override

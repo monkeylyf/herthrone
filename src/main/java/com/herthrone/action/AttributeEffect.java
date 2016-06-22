@@ -1,6 +1,7 @@
 package com.herthrone.action;
 
 import com.herthrone.base.Effect;
+import com.herthrone.constant.ConstEffectType;
 import com.herthrone.stats.IntAttribute;
 
 /**
@@ -16,6 +17,11 @@ public class AttributeEffect implements Effect {
     this.attr = attr;
     this.delta = delta;
     this.permanent = permanent;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.ATTRIBUTE;
   }
 
   @Override

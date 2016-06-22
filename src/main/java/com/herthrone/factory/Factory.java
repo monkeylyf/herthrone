@@ -12,6 +12,7 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.game.Battlefield;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,32 +27,14 @@ public class Factory {
   public final SecretFactory secretFactory;
   public final EffectFactory effectFactory;
   public final AttackFactory attackFactory;
-  private final Battlefield battlefield;
 
   public Factory(final Battlefield battlefield) {
-    this.battlefield = battlefield;
     this.minionFactory = new MinionFactory(battlefield);
     this.weaponFactory = new WeaponFactory(battlefield);
     this.effectFactory = new EffectFactory(minionFactory, weaponFactory, battlefield);
     this.spellFactory = new SpellFactory(effectFactory);
     this.secretFactory = new SecretFactory(battlefield);
     this.attackFactory = new AttackFactory(battlefield);
-  }
-
-  public static List<Effect> singleActionToList(Effect effect) {
-    return Arrays.asList(effect);
-  }
-
-  public static boolean targetAny(Card card) {
-    return targetMinion(card) || targetMinion(card);
-  }
-
-  public static boolean targetMinion(Card card) {
-    return card instanceof Minion && !(card instanceof Hero);
-  }
-
-  public static boolean targetHero(Card card) {
-    return card instanceof Hero;
   }
 
   public Card createCardInstance(final Enum cardName) {

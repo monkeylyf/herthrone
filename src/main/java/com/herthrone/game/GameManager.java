@@ -39,7 +39,6 @@ public class GameManager {
   public final Factory factory2;
   public final Battlefield battlefield1;
   public final Battlefield battlefield2;
-  private final ActionQueue actionQueue;
   Battlefield activeBattlefield;
   private int seqId = 0;
   private Factory activeFactory;
@@ -55,7 +54,6 @@ public class GameManager {
     this.factory2 = new Factory(battlefield2);
     this.activeBattlefield = battlefield1;
     this.activeFactory = factory1;
-    this.actionQueue = new ActionQueue();
 
     final List<Card> cards1 = generateDeck(cardNames1, factory1);
     final List<Card> cards2 = generateDeck(cardNames1, factory2);
@@ -201,6 +199,7 @@ public class GameManager {
     checkManaCost(index);
     final Card card = activeBattlefield.mySide.hand.remove(index);
     playCard(card);
+    activeBattlefield.mySide.incrementPlayedCardCount();
   }
 
   void clearBoard(final Container<Minion> board) {

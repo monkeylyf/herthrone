@@ -2,6 +2,7 @@ package com.herthrone.action;
 
 import com.herthrone.base.Card;
 import com.herthrone.base.Effect;
+import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Container;
 
 /**
@@ -15,6 +16,11 @@ public class CopyCardEffect implements Effect {
   public CopyCardEffect(final Card cardToCopy, final Container<Card> container) {
     this.cardToCopy = cardToCopy;
     this.container = container;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.COPY_CARD;
   }
 
   @Override

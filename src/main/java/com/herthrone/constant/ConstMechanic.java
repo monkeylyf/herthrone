@@ -23,7 +23,6 @@ public enum ConstMechanic {
   STEALTH(true),
   TAUNT(true),
   WINDFURY(true),
-
   // Effect mechanics.
   BATTLECRY,
   CARD_DRAW_EFFECT,

@@ -7,12 +7,15 @@ Interface design and refactoring
 ----
 TODO
 ----
-3. ActionManager that receive various of actions and trigger them conditionally, or trigger other conditional actions, like secrets
-5. Design of cards mechanism
+Improve CLI and dummy view
+
+-----------
+In Progress
+-----------
+Design and implement effect card mechanics
 
 - Battlecry
 - Card draw effect
-- Charge
 - Choose One
 - Combo
 - Copy effect
@@ -20,19 +23,13 @@ TODO
 - Deathrattle
 - Destroy effect
 - Discard effect
-- Divine shield
-- Elusive
 - Enrage
 - Equip
-- Forgetful
-- Freeze
 - Generate effect
-- Immune
 - Inspire
 - Joust
 - Mind control effect
 - Overload
-- Poison
 - Restore Health
 - Return effect
 - Secret
@@ -40,20 +37,11 @@ TODO
 - Silence
 - Spell damage
 - Summon
-- Taunt
 - Take control
 - Transform
 - Triggered effect
-- Windfury
 
-7. Add logger object.
 
------------
-In Progress
------------
-Design of cards mechanism
-
-- Stealth
 
 ----
 Done
@@ -65,11 +53,14 @@ Actually it's a little bit complicated than I thought. Buff is can be done in th
 I. Buff other minion when a minion with such effect is on the board
 II. Buff exist only for one round(either your round or opponent round)
 III. Permanent buff until this minion dies.
-- Health will be health and health upper bound. That being said, buff health upper bound need to increase the health value as well.
+Health will be health and health upper bound. That being said, buff health upper bound need to increase the health value as well.
 Which will be considered as two actions.
+05/10/2016 Get rid of all the abstract class.
 05/19/2016 Use google.true for unit tests so they can be more readable I guess.
 05/20/2016 Define target scopes. For example, fireball can target all(enemy minions, enemy hero, minions on your own side, hero on your own side)
 06/01/2016 Everybody should has its own view for both CLI and UI(json). The proper board/game should be rendered with combinations of views.
+06/10/2016 Add logger object
+06/20/2016 Implement boolean type of card mechanics like: Charge/Divine shield/Elusive/Forgetful/Freeze/Frozen/Immune/Poison/Taunt/Windfury
 
 
 ---------------
@@ -78,5 +69,6 @@ Invalid and Why
 Decide the way of defining a card. I don't think it's a good way to define a class(Card) in a dynamic way(loading raw stats from json) in Java. But on the other hand
 I will go with the json/property file way to avoid tons of boilerplate code to repeatedly implementing the interfaces with same way
 
-1.5. Get rid of all the abstract class.
-4. Create Hero/Spell/Minion/HeroPower stats in properties file.(yaml because of the complexity of a card stats and mechanism)
+Create Hero/Spell/Minion/HeroPower stats in properties file.(yaml because of the complexity of a card stats and mechanism)
+
+ActionManager that receive various of actions and trigger them conditionally, or trigger other conditional actions, like secrets(Let's implement it first)

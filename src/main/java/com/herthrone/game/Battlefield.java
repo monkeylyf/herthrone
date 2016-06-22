@@ -16,19 +16,26 @@ public class Battlefield implements View {
 
   public final Side mySide;
   public final Side opponentSide;
+  private final ActionQueue actionQueue;
 
   public Battlefield(final Hero hero1, final Hero hero2) {
     this.mySide = new Side(hero1);
     this.opponentSide = new Side(hero2);
+    this.actionQueue = new ActionQueue();
   }
 
-  private Battlefield(final Side mySide, final Side opponentSide) {
+  private Battlefield(final Side mySide, final Side opponentSide, final ActionQueue actionQueue) {
     this.mySide = mySide;
     this.opponentSide = opponentSide;
+    this.actionQueue = actionQueue;
   }
 
   public Battlefield getMirrorBattlefield() {
-    return new Battlefield(opponentSide, mySide);
+    return new Battlefield(opponentSide, mySide, actionQueue);
+  }
+
+  public ActionQueue getActionQueue() {
+    return actionQueue;
   }
 
   @Override

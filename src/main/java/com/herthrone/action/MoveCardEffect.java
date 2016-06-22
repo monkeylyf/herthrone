@@ -2,6 +2,7 @@ package com.herthrone.action;
 
 import com.herthrone.base.Card;
 import com.herthrone.base.Effect;
+import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
 
@@ -19,6 +20,11 @@ public class MoveCardEffect implements Effect {
     this.moveTo = moveTo;
     this.moveFrom = moveFrom;
     this.side = side;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.MOVE_CARD;
   }
 
   @Override

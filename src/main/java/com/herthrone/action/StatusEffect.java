@@ -1,6 +1,7 @@
 package com.herthrone.action;
 
 import com.herthrone.base.Effect;
+import com.herthrone.constant.ConstEffectType;
 import com.herthrone.stats.BooleanAttribute;
 
 /**
@@ -14,6 +15,11 @@ public class StatusEffect implements Effect {
   public StatusEffect(final BooleanAttribute booleanAttribute, final double roundUntilExpire) {
     this.booleanAttribute = booleanAttribute;
     this.roundUntilExpire = roundUntilExpire;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.STATUS;
   }
 
   @Override

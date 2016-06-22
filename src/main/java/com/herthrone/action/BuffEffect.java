@@ -1,6 +1,7 @@
 package com.herthrone.action;
 
 import com.herthrone.base.Effect;
+import com.herthrone.constant.ConstEffectType;
 import com.herthrone.stats.IntAttribute;
 import com.herthrone.stats.Value;
 
@@ -23,6 +24,11 @@ public class BuffEffect implements Effect {
     this.attr = attr;
     this.buffDelta = setToValue - attr.getVal();
     this.permanent = true;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.BUFF;
   }
 
   @Override

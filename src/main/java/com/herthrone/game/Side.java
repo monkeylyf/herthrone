@@ -4,6 +4,7 @@ import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
+import com.herthrone.base.Reset;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class Side {
+public class Side implements Reset {
 
   static Logger logger = Logger.getLogger(Side.class.getName());
   public final Hero hero;
@@ -29,6 +30,7 @@ public class Side {
   public final IntAttribute heroPowerMovePoints;
   public Spell heroPower;
   private int fatigue;
+  private int numCardPlayThisRound;
 
   public Side(final Hero hero) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
@@ -46,6 +48,7 @@ public class Side {
     this.heroPowerMovePoints = new IntAttribute(1);
 
     this.fatigue = 0;
+    this.numCardPlayThisRound = 0;
   }
 
   public void populateDeck(final List<Card> cards) {
@@ -64,7 +67,7 @@ public class Side {
 
   public boolean hasCreature(final Creature creature) {
     if (creature instanceof Hero) {
-      return (Hero) creature == hero;
+      return creature == hero;
     } else {
       return board.contains((Minion) creature);
     }
@@ -78,5 +81,14 @@ public class Side {
     }
 
     return allCreatures;
+  }
+
+  public void incrementPlayedCardCount() {
+    numCardPlayThisRound += 1;
+  }
+
+  @Override
+  public void reset() {
+    numCardPlayThisRound = 0;
   }
 }
