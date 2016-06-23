@@ -10,7 +10,6 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.factory.AttackFactory;
-import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
@@ -31,26 +30,24 @@ public class MechanicTest extends TestCase {
 
   private Hero hero;
   private Side side;
-  private AttackFactory attackFactory;
   private Battlefield battlefield;
-  private MinionFactory minionFactory;
-  private EffectFactory effectFactory;
-
+  private Minion yeti;
+  private Minion waterElemental;
+  private Minion scarletCrusader;
   private GameManager gm;
 
-  private Minion yeti;
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
+        Collections.emptyList(), Collections.emptyList());
     this.side = gm.battlefield1.mySide;
     this.hero = side.hero;
     this.battlefield = gm.battlefield1;
-    this.attackFactory = gm.factory1.attackFactory;
-    this.minionFactory = gm.factory1.minionFactory;
-    this.effectFactory = gm.factory1.effectFactory;
 
-    this.yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, side);
+    this.waterElemental = MinionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL, side);
+    this.scarletCrusader = MinionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER, side);
   }
 
   @Test
@@ -59,7 +56,7 @@ public class MechanicTest extends TestCase {
     final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     final Optional<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
     assertThat(mechanic.isPresent()).isTrue();
-    final Minion minion = minionFactory.createMinionByName(minionName);
+    final Minion minion = MinionFactory.createMinionByName(minionName);
     assertThat(minion.getAttackMovePoints().getVal()).isGreaterThan(0);
   }
 
@@ -71,7 +68,7 @@ public class MechanicTest extends TestCase {
     assertThat(side.hero.getHealthLoss()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = minionFactory.createMinionByName(ConstMinion.GNOMISH_INVENTOR);
+    final Minion minion = MinionFactory.createMinionByName(minionName, side);
 
     gm.playCard(minion);
 
@@ -85,7 +82,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testElusive() {
-    final Minion faerieDragon = minionFactory.createMinionByName(ConstMinion.FAERIE_DRAGON);
+    final Minion faerieDragon = MinionFactory.createMinionByName(ConstMinion.FAERIE_DRAGON);
     assertThat(GameManager.isMinionTargetable(faerieDragon, side.board, ConstType.SPELL)).isFalse();
 
     assertThat(GameManager.isMinionTargetable(yeti, side.board, ConstType.SPELL)).isTrue();
@@ -93,8 +90,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testTaunt() {
-    final Minion senjin = minionFactory.createMinionByName(ConstMinion.SENJIN_SHIELDMASTA);
-    final Minion grizzly = minionFactory.createMinionByName(ConstMinion.IRONFUR_GRIZZLY);
+    final Minion senjin = MinionFactory.createMinionByName(ConstMinion.SENJIN_SHIELDMASTA);
+    final Minion grizzly = MinionFactory.createMinionByName(ConstMinion.IRONFUR_GRIZZLY);
     side.board.add(yeti);
     side.board.add(senjin);
     side.board.add(grizzly);
@@ -107,22 +104,19 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDivineShield() {
-    final Minion yeti = minionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
-    final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
-
     assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent()).isTrue();
     final BooleanAttribute divineShield = scarletCrusader.getBooleanMechanics().get(ConstMechanic
         .DIVINE_SHIELD).get();
     assertThat(divineShield.isOn()).isTrue();
 
-    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
+    AttackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
 
     // Yeti takes damage. Crusader takes no damage because of divine shield.
     assertThat(divineShield.isOn()).isFalse();
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
 
-    attackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
+    AttackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
 
     // Crusader has no more divine shield and takes damage.
     assertThat(scarletCrusader.isDead()).isTrue();
@@ -131,16 +125,17 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testStealth() {
-    final Minion stoneclawTotem = minionFactory.createMinionByName(ConstMinion.STONECLAW_TOTEM);
-    final Minion worgenInfiltrator = minionFactory.createMinionByName(ConstMinion
-        .WORGEN_INFILTRATOR);
+    final Minion stoneclawTotem = MinionFactory.createMinionByName(
+        ConstMinion.STONECLAW_TOTEM, side);
+    final Minion worgenInfiltrator = MinionFactory.createMinionByName(
+        ConstMinion.WORGEN_INFILTRATOR, side);
 
     final Optional<BooleanAttribute> stealth = worgenInfiltrator.getBooleanMechanics().get
         (ConstMechanic.STEALTH);
     assertThat(stealth.isPresent()).isTrue();
     assertThat(stealth.get().isOn()).isTrue();
 
-    attackFactory.getPhysicalDamageAction(worgenInfiltrator, stoneclawTotem);
+    AttackFactory.getPhysicalDamageAction(worgenInfiltrator, stoneclawTotem);
 
     // Stealth deactivated after attack.
     assertThat(stealth.isPresent()).isTrue();
@@ -149,16 +144,13 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testFreeze() {
-    final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
-    final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
-
     // Scarlet crusader has divine shield so take no damage. No damage no frozen.
-    attackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader);
+    AttackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader);
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
     assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.FROZEN).isPresent()).isFalse();
 
     // Yeti takes damage and gets frozen.
-    attackFactory.getPhysicalDamageAction(waterElemental, yeti);
+    AttackFactory.getPhysicalDamageAction(waterElemental, yeti);
     final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
     assertThat(frozen.isPresent()).isTrue();
@@ -167,14 +159,12 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testFrozen() {
-    final Minion waterElemental = minionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL);
-
-    attackFactory.getPhysicalDamageAction(yeti, waterElemental);
+    AttackFactory.getPhysicalDamageAction(yeti, waterElemental);
     final Optional<BooleanAttribute> frozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
     assertThat(frozen.isPresent()).isTrue();
     assertThat(frozen.get().isOn()).isTrue();
 
-    attackFactory.getPhysicalDamageAction(waterElemental, hero);
+    AttackFactory.getPhysicalDamageAction(waterElemental, hero);
 
     final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics().get(ConstMechanic
         .FROZEN);
@@ -186,22 +176,21 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testPoison() {
-    Minion emperorCobra = minionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA);
-    attackFactory.getPhysicalDamageAction(emperorCobra, hero);
+    Minion emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, side);
+    AttackFactory.getPhysicalDamageAction(emperorCobra, hero);
 
     // Poison does not trigger destroy on Hero.
     assertThat(emperorCobra.getHealthLoss()).isEqualTo(0);
     assertThat(hero.isDead()).isFalse();
 
     // Point triggers destroy on Minion when minion is damaged.
-    attackFactory.getPhysicalDamageAction(emperorCobra, yeti);
+    AttackFactory.getPhysicalDamageAction(emperorCobra, yeti);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
-    final Minion scarletCrusader = minionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER);
-    emperorCobra = minionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA);
-    attackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
+    emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, side);
+    AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
   }
@@ -226,13 +215,12 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testForgetful() {
-    final Minion ogreBrute = minionFactory.createMinionByName(ConstMinion.OGRE_BRUTE);
+    final Minion ogreBrute = MinionFactory.createMinionByName(ConstMinion.OGRE_BRUTE, side);
     final int attackVal = ogreBrute.getAttackAttr().getVal();
     final int minionNum = 5;
     final Side opponentSide = battlefield.opponentSide;
     for (int i = 0; i < minionNum; ++i) {
-      opponentSide.board.add(minionFactory.createMinionByName(
-          ConstMinion.CHILLWIND_YETI));
+      opponentSide.board.add(MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, side));
     }
     final int total = 10000;
     // TODO: find another way to test randomness or not to test it at all.
@@ -240,7 +228,7 @@ public class MechanicTest extends TestCase {
     final double forgetfulFactor = .5;
 
     for (int i = 0; i < total; ++i) {
-      attackFactory.getPhysicalDamageAction(ogreBrute, opponentSide.hero);
+      AttackFactory.getPhysicalDamageAction(ogreBrute, opponentSide.hero);
     }
     Range<Double> mainTargetGotAttackedNumRange = Range.closed(
         total * forgetfulFactor * (1 - jitter),
@@ -258,7 +246,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testWindFury() {
-    final Minion harpy = minionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY);
+    final Minion harpy = MinionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY, side);
     harpy.getAttackMovePoints().reset();
     assertThat(harpy.getAttackMovePoints().getVal()).isEqualTo(2);
   }
@@ -272,7 +260,7 @@ public class MechanicTest extends TestCase {
     assertThat(side.hand.size()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = minionFactory.createMinionByName(minionName);
+    final Minion minion = MinionFactory.createMinionByName(minionName, side);
 
     gm.playCard(minion);
 

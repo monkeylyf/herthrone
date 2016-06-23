@@ -8,7 +8,7 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
-import com.herthrone.game.Battlefield;
+import com.herthrone.game.Binder;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.Map;
@@ -18,23 +18,20 @@ import java.util.Map;
  */
 public class WeaponFactory {
 
-  private Battlefield battlefield;
-
-  public WeaponFactory(final Battlefield battlefield) {
-    this.battlefield = battlefield;
-  }
-
-  public Weapon createWeaponByName(final ConstWeapon weapon) {
+  public static Weapon createWeaponByName(final ConstWeapon weapon) {
     WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
     return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
   }
 
-  public Weapon createWeapon(final int crystalManaCost, final int attack, final int durability, final ConstWeapon name, final ConstClass className, final boolean isCollectible) {
+  public static Weapon createWeapon(final int crystalManaCost, final int attack,
+                                    final int durability, final ConstWeapon name,
+                                    final ConstClass className, final boolean isCollectible) {
 
     return new Weapon() {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute durabilityAttr = new IntAttribute(durability);
+      private final Binder binder = new Binder();
 
       @Override
       public Map<String, String> view() {
@@ -70,6 +67,11 @@ public class WeaponFactory {
       @Override
       public boolean isCollectible() {
         return isCollectible;
+      }
+
+      @Override
+      public Binder getBinder() {
+        return binder;
       }
 
       @Override

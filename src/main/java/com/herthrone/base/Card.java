@@ -2,6 +2,7 @@ package com.herthrone.base;
 
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
+import com.herthrone.game.Binder;
 import com.herthrone.stats.IntAttribute;
 
 /**
@@ -21,4 +22,6 @@ public interface Card extends View {
   IntAttribute getCrystalManaCost();
 
   boolean isCollectible();
+
+  Binder getBinder();
 }

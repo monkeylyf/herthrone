@@ -31,13 +31,15 @@ public class Side implements Reset {
   public Spell heroPower;
   private int fatigue;
   private int numCardPlayThisRound;
+  private EffectQueue effectQueue;
 
-  public Side(final Hero hero) {
+  public Side(final Hero hero, final EffectQueue effectQueue) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
 
     this.hero = hero;
+    hero.getBinder().bind(this);
     this.heroPower = null;
     this.hand = new Container<>(handCapacity);
     this.board = new Container<>(boardCapacity);
@@ -49,6 +51,7 @@ public class Side implements Reset {
 
     this.fatigue = 0;
     this.numCardPlayThisRound = 0;
+    this.effectQueue = effectQueue;
   }
 
   public void populateDeck(final List<Card> cards) {
@@ -87,8 +90,13 @@ public class Side implements Reset {
     numCardPlayThisRound += 1;
   }
 
+  public EffectQueue getEffectQueue() {
+    return effectQueue;
+  }
+
   @Override
   public void reset() {
     numCardPlayThisRound = 0;
   }
+
 }

@@ -19,9 +19,9 @@ public class Battlefield implements View {
   private final EffectQueue effectQueue;
 
   public Battlefield(final Hero hero1, final Hero hero2) {
-    this.mySide = new Side(hero1);
-    this.opponentSide = new Side(hero2);
     this.effectQueue = new EffectQueue();
+    this.mySide = new Side(hero1, effectQueue);
+    this.opponentSide = new Side(hero2, effectQueue);
   }
 
   private Battlefield(final Side mySide, final Side opponentSide, final EffectQueue effectQueue) {

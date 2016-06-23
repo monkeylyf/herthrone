@@ -18,4 +18,5 @@ public interface Minion extends Creature {
   void silence();
 
   void destroy();
+
 }

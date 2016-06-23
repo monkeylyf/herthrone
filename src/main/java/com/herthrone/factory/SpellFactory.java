@@ -11,6 +11,7 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
+import com.herthrone.game.Binder;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.List;
@@ -33,13 +34,14 @@ public class SpellFactory {
     );
   }
 
-  public static Spell createSpell(final ConstSpell name, final ConstClass className,
-                                  final int crystal, final ConstType type,
-                                  final Optional<TargetConfig> targetConfig,
-                                  final List<EffectConfig> effects) {
+  private static Spell createSpell(final ConstSpell name, final ConstClass className,
+                                   final int crystal, final ConstType type,
+                                   final Optional<TargetConfig> targetConfig,
+                                   final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
+      private final Binder binder = new Binder();
 
       @Override
       public Map<String, String> view() {
@@ -74,6 +76,11 @@ public class SpellFactory {
       @Override
       public boolean isCollectible() {
         return true;
+      }
+
+      @Override
+      public Binder getBinder() {
+        return binder;
       }
 
       @Override

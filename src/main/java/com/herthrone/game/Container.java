@@ -24,7 +24,8 @@ public class Container<T extends Card> implements Iterator<T> {
   }
 
   public Container(final List<T> container, final int maxCapacity) {
-    Preconditions.checkArgument(container.size() <= maxCapacity, "Container size larger that max capacity: " + maxCapacity);
+    Preconditions.checkArgument(
+        container.size() <= maxCapacity, "Container size larger that max capacity: " + maxCapacity);
     this.container = container;
     this.maxCapacity = maxCapacity;
   }
@@ -32,10 +33,6 @@ public class Container<T extends Card> implements Iterator<T> {
   public Container() {
     this.maxCapacity = Integer.MAX_VALUE;
     this.container = new ArrayList<>();
-  }
-
-  public int getMaxCapacity() {
-    return maxCapacity;
   }
 
   public boolean isEmpty() {

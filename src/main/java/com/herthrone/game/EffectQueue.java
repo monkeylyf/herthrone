@@ -28,6 +28,13 @@ public class EffectQueue {
     executeUntilEmpty();
   }
 
+  private void executeUntilEmpty() {
+    while (!queue.isEmpty()) {
+      final Effect effect = queue.remove();
+      effect.act();
+    }
+  }
+
   public void enqueue(final List<Effect> effects) {
     logger.debug(String.format("Enqueuing %d effects", effects.size()));
     effects.stream().forEach(e -> {
@@ -35,12 +42,5 @@ public class EffectQueue {
       queue.add(e);
     });
     executeUntilEmpty();
-  }
-
-  private void executeUntilEmpty() {
-    while (!queue.isEmpty()) {
-      final Effect effect = queue.remove();
-      effect.act();
-    }
   }
 }

@@ -18,6 +18,8 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
+import com.herthrone.factory.AttackFactory;
+import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.Factory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.SpellFactory;
@@ -36,13 +38,10 @@ public class GameManager {
 
   static Logger logger = Logger.getLogger(GameManager.class.getName());
 
-  public final Factory factory1;
-  public final Factory factory2;
   public final Battlefield battlefield1;
   public final Battlefield battlefield2;
   Battlefield activeBattlefield;
   private int seqId = 0;
-  private Factory activeFactory;
 
   public GameManager(final ConstHero hero1, final ConstHero hero2, final List<Enum> cardNames1,
                      final List<Enum> cardNames2) {
@@ -51,16 +50,13 @@ public class GameManager {
         HeroFactory.createHeroByName(hero1),
         HeroFactory.createHeroByName(hero2));
     this.battlefield2 = battlefield1.getMirrorBattlefield();
-    this.factory1 = new Factory(battlefield1);
-    this.factory2 = new Factory(battlefield2);
     this.activeBattlefield = battlefield1;
-    this.activeFactory = factory1;
 
-    final List<Card> cards1 = generateDeck(cardNames1, factory1);
-    final List<Card> cards2 = generateDeck(cardNames1, factory2);
+    final List<Card> cards1 = generateDeck(cardNames1);
+    final List<Card> cards2 = generateDeck(cardNames2);
 
-    final Spell heroPower1 = generateHeroPower(hero1, factory1);
-    final Spell heroPower2 = generateHeroPower(hero2, factory2);
+    final Spell heroPower1 = generateHeroPower(hero1);
+    final Spell heroPower2 = generateHeroPower(hero2);
 
     battlefield1.mySide.setHeroPower(heroPower1);
     battlefield2.mySide.setHeroPower(heroPower2);
@@ -70,11 +66,12 @@ public class GameManager {
 
   }
 
-  private static List<Card> generateDeck(final List<Enum> cardNames, final Factory factory) {
-    return cardNames.stream().map(cardName -> factory.createCardInstance(cardName)).collect(Collectors.toList());
+  private static List<Card> generateDeck(final List<Enum> cardNames) {
+    return cardNames.stream().map(cardName -> Factory.createCardInstance(cardName)).collect
+        (Collectors.toList());
   }
 
-  private static Spell generateHeroPower(final ConstHero hero, final Factory factory) {
+  private static Spell generateHeroPower(final ConstHero hero) {
     final HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
     return SpellFactory.createHeroPowerByName(heroConfig.getHeroPower());
   }
@@ -131,10 +128,8 @@ public class GameManager {
   void switchTurn() {
     if (activeBattlefield == battlefield1) {
       activeBattlefield = battlefield2;
-      activeFactory = factory2;
     } else {
       activeBattlefield = battlefield1;
-      activeFactory = factory1;
     }
   }
 
@@ -158,13 +153,15 @@ public class GameManager {
 
     if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power without a specific target.
-      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield.mySide.hero).stream().forEach(Effect::act);
+      EffectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, activeBattlefield
+          .mySide.hero).stream().forEach(Effect::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
       activeBattlefield.mySide.hero.getAttackMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      activeFactory.effectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, creature).stream().forEach(Effect::act);
+      EffectFactory.getActionsByConfig(activeBattlefield.mySide.heroPower, creature).stream()
+          .forEach(Effect::act);
       consumeCrystal(activeBattlefield.mySide.heroPower);
       activeBattlefield.mySide.hero.getAttackMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
@@ -174,7 +171,7 @@ public class GameManager {
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MOVE_MINION.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      activeFactory.attackFactory.getPhysicalDamageAction(attacker, attackee);
+      AttackFactory.getPhysicalDamageAction(attacker, attackee);
       // Cost one move point.
       attacker.getAttackMovePoints().buff.temp.decrease(1);
     } else {
@@ -229,8 +226,7 @@ public class GameManager {
 
       Optional<MechanicConfig> battlecry = minion.getEffectMechanics().get(ConstMechanic.BATTLECRY);
       if (battlecry.isPresent()) {
-        Effect effect = activeFactory.effectFactory.getEffectByMechanic(battlecry.get(), Optional
-            .absent());
+        Effect effect = EffectFactory.getEffectByMechanic(battlecry.get(), Optional.of(minion));
         effect.act();
       }
     } else if (card instanceof Secret) {
@@ -336,7 +332,7 @@ public class GameManager {
   void useHeroPower(final Creature creature) {
     final Side side = activeBattlefield.mySide;
     Preconditions.checkArgument(side.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
-    activeFactory.effectFactory.getActionsByConfig(side.heroPower, creature).stream().forEach(Effect::act);
+    EffectFactory.getActionsByConfig(side.heroPower, creature).stream().forEach(Effect::act);
     side.heroPowerMovePoints.decrease(1);
   }
 

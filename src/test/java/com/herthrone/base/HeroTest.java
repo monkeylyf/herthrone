@@ -7,10 +7,11 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.game.Battlefield;
+import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -25,7 +26,6 @@ import static com.google.common.truth.Truth.assertThat;
  */
 public class HeroTest extends TestCase {
 
-
   private final int weaponAttackVal1 = 2;
   private final int weaponAttackVal2 = 3;
   private final int weaponDurability1 = 2;
@@ -34,19 +34,10 @@ public class HeroTest extends TestCase {
 
   private Hero hero1;
   private Hero hero2;
-  private Battlefield battlefield1;
-  private Battlefield battlefield2;
-
-  private MinionFactory minionFactory1;
-  private MinionFactory minionFactory2;
-  private EffectFactory effectFactory1;
-  private EffectFactory effectFactory2;
-
+  private Minion yeti;
   private SpellConfig armorUp;
-
   private Weapon weapon1;
   private Weapon weapon2;
-
   private GameManager gm;
 
   @Before
@@ -56,19 +47,13 @@ public class HeroTest extends TestCase {
         Collections.emptyList(), Collections.emptyList());
     this.hero1 = gm.battlefield1.mySide.hero;
     this.hero2 = gm.battlefield1.opponentSide.hero;
-    this.battlefield1 = gm.battlefield1;
-    this.battlefield2 = gm.battlefield2;
-
-    this.minionFactory1 = gm.factory1.minionFactory;
-    this.minionFactory2 = gm.factory2.minionFactory;
-    this.effectFactory1 = gm.factory1.effectFactory;
-    this.effectFactory2 = gm.factory2.effectFactory;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
+    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, gm.battlefield1.mySide);
 
-    this.weapon1 = gm.factory1.weaponFactory.createWeapon(
+    this.weapon1 = WeaponFactory.createWeapon(
         0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
-    this.weapon2 = gm.factory2.weaponFactory.createWeapon(
+    this.weapon2 = WeaponFactory.createWeapon(
         0, weaponAttackVal2, weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
   }
 
@@ -94,7 +79,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1AttackHero2() {
-    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, hero2);
+    AttackFactory.getPhysicalDamageAction(hero1, hero2);
   }
 
   @Test
@@ -119,7 +104,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero2AttackHero1() {
-    gm.factory2.attackFactory.getPhysicalDamageAction(hero2, hero1);
+    AttackFactory.getPhysicalDamageAction(hero2, hero1);
   }
 
   @Test
@@ -161,11 +146,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    effectFactory1.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
+    EffectFactory.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
   }
 
   private void hero2ArmorUp() {
-    effectFactory1.getActionsByConfig(armorUp, hero2).stream().forEach(Effect::act);
+    EffectFactory.getActionsByConfig(armorUp, hero2).stream().forEach(Effect::act);
   }
 
   @Test
@@ -185,9 +170,8 @@ public class HeroTest extends TestCase {
   @Test
   public void testHeroAttackMinion() {
     hero1.arm(weapon1);
-    Minion yeti = minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
 
-    gm.factory1.attackFactory.getPhysicalDamageAction(yeti, hero1);
+    AttackFactory.getPhysicalDamageAction(yeti, hero1);
     assertEquals(0, yeti.getHealthLoss());
     assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());
   }
@@ -195,8 +179,7 @@ public class HeroTest extends TestCase {
   @Test
   public void testMinionAttackHero() {
     hero1.arm(weapon1);
-    Minion yeti = minionFactory2.createMinionByName(ConstMinion.CHILLWIND_YETI);
-    gm.factory1.attackFactory.getPhysicalDamageAction(hero1, yeti);
+    AttackFactory.getPhysicalDamageAction(hero1, yeti);
 
     assertEquals(weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());
     assertEquals(yeti.getAttackAttr().getVal(), hero1.getHealthLoss());

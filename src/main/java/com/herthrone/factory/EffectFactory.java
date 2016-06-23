@@ -20,7 +20,7 @@ import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
-import com.herthrone.game.Battlefield;
+import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.stats.IntAttribute;
 
@@ -32,25 +32,14 @@ import java.util.stream.Collectors;
  */
 public class EffectFactory {
 
-  private final MinionFactory minionFactory;
-  private final WeaponFactory weaponFactory;
-  private Battlefield battlefield;
-
-  public EffectFactory(final MinionFactory minionFactory, final WeaponFactory weaponFactory,
-                       final Battlefield battlefield) {
-    this.minionFactory = minionFactory;
-    this.weaponFactory = weaponFactory;
-    this.battlefield = battlefield;
-  }
-
-  public Effect getEffectByMechanic(final MechanicConfig mechanic, Optional<Creature>
+  public static Effect getEffectByMechanic(final MechanicConfig mechanic, Optional<Creature>
       target) {
     final Optional<EffectConfig> config = mechanic.getEffect();
     Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
-    return getActionsByConfig(config.get(), null);
+    return getActionsByConfig(config.get(), target.get());
   }
 
-  public Effect getActionsByConfig(final EffectConfig config, final Creature creature) {
+  public static Effect getActionsByConfig(final EffectConfig config, final Creature creature) {
     ConstEffectType effect = config.getEffect();
     switch (effect) {
       case ATTRIBUTE:
@@ -61,15 +50,15 @@ public class EffectFactory {
         final Hero hero = (Hero) creature;
         return getEquipWeaponAction(hero, config);
       case SUMMON:
-        return getSummonAction(config);
+        return getSummonAction(config, creature.getBinder().getSide());
       case DRAW:
-        return getDrawCardAction(config);
+        return getDrawCardAction(config, creature.getBinder().getSide());
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
   }
 
-  private Effect getAttributeAction(final EffectConfig effect, final Creature creature) {
+  private static Effect getAttributeAction(final EffectConfig effect, final Creature creature) {
     final String type = effect.getType();
     switch (type) {
       case (Constant.HEALTH):
@@ -90,20 +79,20 @@ public class EffectFactory {
     }
   }
 
-  private Effect getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
+  private static Effect getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
-    Weapon weaponInstance = weaponFactory.createWeaponByName(weapon);
+    Weapon weaponInstance = WeaponFactory.createWeaponByName(weapon);
     return new EquipWeaponEffect(hero, weaponInstance);
   }
 
-  private Effect getSummonAction(final EffectConfig effect) {
+  private static Effect getSummonAction(final EffectConfig effect, final Side side) {
     List<String> summonChoices = effect.getChoices().stream()
         .map(name -> name.toUpperCase()).collect(Collectors.toList());
     String summonTargetName;
     if (effect.isUnique()) {
       // Summon candidates must be non-existing on the board to avoid dups.
-      final List<Creature> existingCreatures = battlefield.mySide.board.stream()
+      final List<Creature> existingCreatures = side.board.stream()
           .map(m -> (Creature) m).collect(Collectors.toList());
       summonTargetName = RandomMinionGenerator.randomUnique(
           summonChoices, existingCreatures);
@@ -111,57 +100,43 @@ public class EffectFactory {
       summonTargetName = RandomMinionGenerator.randomOne(summonChoices);
     }
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
-    final Minion minion = minionFactory.createMinionByName(summonTarget);
-    return new SummonEffect(battlefield.mySide.board, minion);
+    final Minion minion = MinionFactory.createMinionByName(summonTarget);
+    return new SummonEffect(side.board, minion);
   }
 
-  private Effect getDrawCardAction(final EffectConfig effect) {
+  private static Effect getDrawCardAction(final EffectConfig effect, final Side side) {
     // TODO: draw from own deck/opponent deck/opponent hand
     final TargetConfig target = effect.getTarget();
     switch (target.type) {
 
     }
-    return new MoveCardEffect(battlefield.mySide.hand, battlefield.mySide.deck, battlefield
-        .mySide);
+    return new MoveCardEffect(side.hand, side.deck, side);
   }
 
-  private Effect getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
+  private static Effect getHealthAttributeAction(final Creature creature, final EffectConfig
+      effect) {
     final int value = effect.getValue();
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
     final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
     return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
   }
 
-  private Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
+  private static Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig
+      effect) {
     Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
     return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
   }
 
-  public List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
+  public static List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
     return spell.getEffects().stream()
         .map(effect -> getActionsByConfig(effect, creature))
         .collect(Collectors.toList());
   }
 
-  public List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
+  public static List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
     return config.getEffects().stream()
         .map(effect -> getActionsByConfig(effect, creature))
         .collect(Collectors.toList());
   }
 
-  /**
-   * Return Minion/Hero by given index.
-   * -1 indicates hero; otherwise it's the index of board.
-   *
-   * @param index
-   * @return
-   */
-  private Creature getMinionByIndex(final int index) {
-    switch (index) {
-      case -1:
-        return battlefield.mySide.hero;
-      default:
-        return battlefield.mySide.board.get(index);
-    }
-  }
 }

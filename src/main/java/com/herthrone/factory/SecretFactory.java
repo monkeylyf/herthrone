@@ -6,7 +6,7 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
-import com.herthrone.game.Battlefield;
+import com.herthrone.game.Binder;
 import com.herthrone.stats.IntAttribute;
 
 import java.util.Map;
@@ -16,15 +16,11 @@ import java.util.Map;
  */
 public class SecretFactory {
 
-
-  private final Battlefield battlefield;
-
-  public SecretFactory(final Battlefield battlefield) {
-    this.battlefield = battlefield;
-  }
-
-  public Secret createSecretByName(final ConstSecret secret) {
+  public static Secret createSecretByName(final ConstSecret secret) {
     return new Secret() {
+
+      private final Binder binder = new Binder();
+
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
@@ -58,6 +54,11 @@ public class SecretFactory {
       @Override
       public boolean isCollectible() {
         return true;
+      }
+
+      @Override
+      public Binder getBinder() {
+        return binder;
       }
     };
   }

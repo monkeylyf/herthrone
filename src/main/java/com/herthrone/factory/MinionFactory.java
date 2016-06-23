@@ -13,7 +13,7 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
-import com.herthrone.game.Battlefield;
+import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
@@ -32,30 +32,23 @@ public class MinionFactory {
   private static final int MINION_INIT_MOVE_POINTS = 1;
   private static final int WINDFURY_INIT_MOVE_POINTS = 2;
   static Logger logger = Logger.getLogger(MinionFactory.class.getName());
-  private final Battlefield battlefield;
 
-
-  public MinionFactory(final Battlefield battlefield) {
-    this.battlefield = battlefield;
+  public static Minion createMinionByName(final ConstMinion minionName, final Side side) {
+    final Minion minion = createMinionByName(minionName);
+    minion.getBinder().bind(side);
+    return minion;
   }
 
-  public Minion createMinionByName(final ConstMinion minion) {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(minion);
+  public static Minion createMinionByName(final ConstMinion minionName) {
+    MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config
         .getClassName(), config.getName(), config.getMechanics(), config.isCollectible());
   }
 
-  Minion createMinion(final int health, final int attack, final int crystalManaCost,
-                      final ConstClass className, final ConstMinion name,
-                      final Map<ConstMechanic, MechanicConfig> mechanics, final boolean isCollectible) {
-    return createMinion(health, attack, crystalManaCost,
-        className, name, mechanics, isCollectible, battlefield);
-  }
-
-  public Minion createMinion(final int health, final int attack, final int crystalManaCost,
-                             final ConstClass className, final ConstMinion name,
-                             final Map<ConstMechanic, MechanicConfig> mechanics,
-                             final boolean isCollectible, final Battlefield field) {
+  private static Minion createMinion(final int health, final int attack, final int crystalManaCost,
+                                     final ConstClass className, final ConstMinion name,
+                                     final Map<ConstMechanic, MechanicConfig> mechanics,
+                                     final boolean isCollectible) {
     final Minion minion = new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -67,7 +60,7 @@ public class MinionFactory {
               WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
-      private final Battlefield battlefield = field;
+      private final Binder binder = new Binder();
 
       private Optional<Integer> seqId = Optional.absent();
 
@@ -123,6 +116,11 @@ public class MinionFactory {
       @Override
       public boolean isCollectible() {
         return isCollectible;
+      }
+
+      @Override
+      public Binder getBinder() {
+        return binder;
       }
 
       @Override
@@ -197,16 +195,6 @@ public class MinionFactory {
       }
 
       @Override
-      public void death() {
-        final Side side = battlefield.getSideCreatureIsOn(this);
-        side.board.remove(this);
-
-        Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
-        if (deathrattleConfig.isPresent()) {
-        }
-      }
-
-      @Override
       public boolean canDamage() {
         return attackAttr.getVal() > 0;
       }
@@ -214,6 +202,16 @@ public class MinionFactory {
       @Override
       public boolean isDead() {
         return healthAttr.getVal() <= 0;
+      }
+
+      @Override
+      public void death() {
+        //final Side side = battlefield.getSideCreatureIsOn(this);
+        //side.board.remove(this);
+
+        //Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
+        //if (deathrattleConfig.isPresent()) {
+        //}
       }
 
       @Override

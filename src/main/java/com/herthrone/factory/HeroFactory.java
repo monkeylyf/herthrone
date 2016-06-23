@@ -14,6 +14,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
+import com.herthrone.game.Binder;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
 import com.herthrone.stats.IntAttribute;
@@ -43,8 +44,9 @@ public class HeroFactory {
       private final IntAttribute attackMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final IntAttribute heroPowerMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics();
-      private Optional<Weapon> weaponOptional = Optional.absent();
+      private final Binder binder = new Binder();
       private Spell heroPower = null;
+      private Optional<Weapon> weaponOptional = Optional.absent();
 
       @Override
       public Map<String, String> view() {
@@ -83,6 +85,11 @@ public class HeroFactory {
       @Override
       public boolean isCollectible() {
         return false;
+      }
+
+      @Override
+      public Binder getBinder() {
+        return binder;
       }
 
       @Override
@@ -182,7 +189,7 @@ public class HeroFactory {
 
       @Override
       public Spell getHeroPower() {
-        return null;
+        return heroPower;
       }
 
       @Override
