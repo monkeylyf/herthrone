@@ -4,6 +4,7 @@ import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.constant.ConstEffectType;
+import com.herthrone.factory.EffectFactory;
 
 
 /**
@@ -30,6 +31,6 @@ public class CastSpellEffect implements Effect {
 
   @Override
   public void act() {
-    // TODO: need factory here...
+    EffectFactory.getActionsByConfig(spell, target).stream().forEach(Effect::act);
   }
 }

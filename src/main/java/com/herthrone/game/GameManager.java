@@ -306,14 +306,9 @@ public class GameManager {
       Minion minion = (Minion) card;
       // Assign game board sequence id to minion.
       activeSide.board.add(minion);
+      minion.playOnBoard(activeSide.board, minion);
       minion.setSequenceId(seqId);
       seqId += 1;
-
-      Optional<MechanicConfig> battlecry = minion.getEffectMechanics().get(ConstMechanic.BATTLECRY);
-      if (battlecry.isPresent()) {
-        Effect effect = EffectFactory.getEffectByMechanic(battlecry.get(), Optional.of(minion));
-        effect.act();
-      }
     } else if (card instanceof Secret) {
       Secret secret = (Secret) card;
       activeSide.secrets.add(secret);

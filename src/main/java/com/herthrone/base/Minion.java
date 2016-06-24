@@ -1,5 +1,6 @@
 package com.herthrone.base;
 
+import com.herthrone.game.Container;
 import com.herthrone.stats.EffectMechanics;
 
 /**
@@ -19,4 +20,5 @@ public interface Minion extends Creature {
 
   void destroy();
 
+  void playOnBoard(final Container<Minion> board, final Minion minion);
 }

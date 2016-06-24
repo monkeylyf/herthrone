@@ -124,9 +124,7 @@ public class GameManagerTest {
       final int healthBeforeDrawCard = gm.activeSide.hero.getHealthAttr().getVal();
       gm.drawCard();
       final int healthAfterDrawCard = gm.activeSide.hero.getHealthAttr().getVal();
-
       assertThat(healthBeforeDrawCard - healthAfterDrawCard).isEqualTo(i);
-
       damage += i;
     }
 

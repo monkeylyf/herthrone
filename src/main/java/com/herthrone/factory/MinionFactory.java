@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
@@ -14,6 +15,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
+import com.herthrone.game.Container;
 import com.herthrone.game.Side;
 import com.herthrone.stats.BooleanAttribute;
 import com.herthrone.stats.BooleanMechanics;
@@ -42,23 +44,17 @@ public class MinionFactory {
   public static Minion createMinionByName(final ConstMinion minionName) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
-    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config
-        .getClassName(), config.getName(), config.getMechanics(), config.isCollectible());
+    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.getMechanics(), config.isCollectible());
   }
 
-  private static Minion createMinion(final int health, final int attack, final int crystalManaCost,
-                                     final ConstClass className, final ConstMinion name,
-                                     final Map<ConstMechanic, MechanicConfig> mechanics,
-                                     final boolean isCollectible) {
+  private static Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final Map<ConstMechanic, MechanicConfig> mechanics, final boolean isCollectible) {
     final Minion minion = new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute movePoints = new IntAttribute(
-          mechanics.containsKey(ConstMechanic.WINDFURY) ?
-              WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
+      private final IntAttribute movePoints = new IntAttribute(mechanics.containsKey(ConstMechanic.WINDFURY) ? WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
       private final Binder binder = new Binder();
@@ -95,6 +91,17 @@ public class MinionFactory {
       }
 
       @Override
+      public void playOnBoard(final Container<Minion> board, final Minion minion) {
+        // TODO: I am passing minion only because if I don't, using "this" as the reference to minion
+        // will mess up the intellij reformat code functionality...wtf??
+        Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
+        if (battlecry.isPresent()) {
+          final Effect effect = EffectFactory.getEffectByMechanic(battlecry.get(), Optional.of(minion));
+          effect.act();
+        }
+      }
+
+      @Override
       public String getCardName() {
         return name.toString();
       }
@@ -126,15 +133,9 @@ public class MinionFactory {
 
       @Override
       public Map<String, String> view() {
-        return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
-            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
-            .put(Constant.ATTACK, getAttackAttr().toString())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+        return ImmutableMap.<String, String>builder().put(Constant.CARD_NAME, getCardName()).put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString()).put(Constant.ATTACK, getAttackAttr().toString()).put(Constant.CRYSTAL, getCrystalManaCost().toString())
             //.put(Constant.DESCRIPTION, "TODO")
-            .put(Constant.TYPE, getClassName().toString())
-            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
-            .build();
+            .put(Constant.TYPE, getClassName().toString()).put(Constant.MOVE_POINTS, getAttackMovePoints().toString()).build();
       }
 
       @Override
@@ -174,8 +175,7 @@ public class MinionFactory {
             creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
           }
 
-          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
-              creature instanceof Minion) {
+          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) && creature instanceof Minion) {
             ((Minion) creature).destroy();
           }
         }
@@ -183,8 +183,7 @@ public class MinionFactory {
 
       @Override
       public boolean takeDamage(final int damage) {
-        final Optional<BooleanAttribute> divineShield = booleanMechanics.get(
-            ConstMechanic.DIVINE_SHIELD);
+        final Optional<BooleanAttribute> divineShield = booleanMechanics.get(ConstMechanic.DIVINE_SHIELD);
         if (BooleanAttribute.isPresentAndOn(divineShield)) {
           logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
           booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
@@ -217,8 +216,7 @@ public class MinionFactory {
 
       @Override
       public boolean canMove() {
-        return movePoints.getVal() > 0 &&
-            BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
+        return movePoints.getVal() > 0 && BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
       }
 
       @Override
