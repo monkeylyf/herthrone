@@ -12,6 +12,7 @@ import com.herthrone.configuration.HeroConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
@@ -31,10 +32,12 @@ public class HeroFactory {
 
   public static Hero createHeroByName(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
-    return HeroFactory.createHero(HeroFactory.HEALTH, heroConfig.getName(), heroConfig.getClassName());
+    return HeroFactory.createHero(
+        HeroFactory.HEALTH, heroConfig.getName(), heroConfig.getHeroPower(), heroConfig.getClassName());
   }
 
-  public static Hero createHero(final int health, final ConstHero name, final ConstClass className) {
+  public static Hero createHero(final int health, final ConstHero name, final ConstSpell
+      heroPowerName, final ConstClass className) {
     return new Hero() {
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
@@ -45,7 +48,7 @@ public class HeroFactory {
       private final IntAttribute heroPowerMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics();
       private final Binder binder = new Binder();
-      private Spell heroPower = null;
+      private Spell heroPower = SpellFactory.createHeroPowerByName(heroPowerName);
       private Optional<Weapon> weaponOptional = Optional.absent();
 
       @Override
@@ -190,6 +193,11 @@ public class HeroFactory {
       @Override
       public Spell getHeroPower() {
         return heroPower;
+      }
+
+      @Override
+      public void UpdateHeroPower(final Spell heroPower) {
+        this.heroPower = heroPower;
       }
 
       @Override

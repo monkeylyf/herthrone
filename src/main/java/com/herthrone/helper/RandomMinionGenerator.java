@@ -22,6 +22,7 @@ public class RandomMinionGenerator {
   public static Creature randomExcept(final List<Creature> creatures, final Creature
       exceptionCreature) {
     Preconditions.checkArgument(creatures.size() > 0, "Expects non-empty list");
+    Preconditions.checkArgument(creatures.contains(exceptionCreature), "Invalid creature pool");
     final int size = creatures.size();
     Creature candidate;
     do {

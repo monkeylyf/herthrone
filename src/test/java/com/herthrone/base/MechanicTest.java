@@ -42,9 +42,9 @@ public class MechanicTest extends TestCase {
   public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
         Collections.emptyList(), Collections.emptyList());
-    this.side = gm.battlefield1.mySide;
+    this.side = gm.activeBattlefield.mySide;
     this.hero = side.hero;
-    this.battlefield = gm.battlefield1;
+    this.battlefield = gm.activeBattlefield;
 
     this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, side);
     this.waterElemental = MinionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL, side);
@@ -120,9 +120,10 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDivineShield() {
-    assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent()).isTrue();
-    final BooleanAttribute divineShield = scarletCrusader.getBooleanMechanics().get(ConstMechanic
-        .DIVINE_SHIELD).get();
+    assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent())
+        .isTrue();
+    final BooleanAttribute divineShield = scarletCrusader.getBooleanMechanics().get(
+        ConstMechanic.DIVINE_SHIELD).get();
     assertThat(divineShield.isOn()).isTrue();
 
     AttackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
@@ -216,16 +217,16 @@ public class MechanicTest extends TestCase {
     // No minions so far has default immune mechanic yet.
     // Init IMMUNE for Yeti.
     yeti.getBooleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(GameManager.isMinionTargetable(yeti, gm.battlefield1.mySide.board, ConstType.ATTACK))
+    assertThat(GameManager.isMinionTargetable(yeti, gm.activeBattlefield.mySide.board, ConstType.ATTACK))
         .isFalse();
-    assertThat(GameManager.isMinionTargetable(yeti, gm.battlefield1.mySide.board, ConstType.SPELL))
+    assertThat(GameManager.isMinionTargetable(yeti, gm.activeBattlefield.mySide.board, ConstType.SPELL))
         .isFalse();
 
     // Test Hero immune.
     hero.getBooleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(GameManager.isHeroTargetable(hero, gm.battlefield1.mySide.board, ConstType.ATTACK))
+    assertThat(GameManager.isHeroTargetable(hero, gm.activeBattlefield.mySide.board, ConstType.ATTACK))
         .isFalse();
-    assertThat(GameManager.isHeroTargetable(hero, gm.battlefield1.mySide.board, ConstType.SPELL))
+    assertThat(GameManager.isHeroTargetable(hero, gm.activeBattlefield.mySide.board, ConstType.SPELL))
         .isFalse();
   }
 
@@ -236,7 +237,8 @@ public class MechanicTest extends TestCase {
     final int minionNum = 5;
     final Side opponentSide = battlefield.opponentSide;
     for (int i = 0; i < minionNum; ++i) {
-      opponentSide.board.add(MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, side));
+      opponentSide.board.add(
+          MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, opponentSide));
     }
     final int total = 10000;
     // TODO: find another way to test randomness or not to test it at all.

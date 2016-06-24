@@ -45,11 +45,11 @@ public class HeroTest extends TestCase {
     this.gm = new GameManager(
         ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
         Collections.emptyList(), Collections.emptyList());
-    this.hero1 = gm.battlefield1.mySide.hero;
-    this.hero2 = gm.battlefield1.opponentSide.hero;
+    this.hero1 = gm.activeSide.hero;
+    this.hero2 = gm.inactiveSide.hero;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
-    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, gm.battlefield1.mySide);
+    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
 
     this.weapon1 = WeaponFactory.createWeapon(
         0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
@@ -96,11 +96,13 @@ public class HeroTest extends TestCase {
       }
     }
 
-    assertEquals(HeroFactory.HEALTH - weaponAttackVal2 * weaponDurability2, hero1.getHealthAttr().getVal());
-    assertEquals(HeroFactory.HEALTH - weaponAttackVal1 * weaponDurability1, hero2.getHealthAttr().getVal());
+    assertThat(hero1.getHealthAttr().getVal())
+        .isEqualTo(HeroFactory.HEALTH - weaponAttackVal2 * weaponDurability2);
+    assertThat(hero2.getHealthAttr().getVal())
+        .isEqualTo(HeroFactory.HEALTH - weaponAttackVal1 * weaponDurability1);
 
     assertThat(weapon1.getDurabilityAttr().getVal()).isEqualTo(0);
-    assertEquals(0, weapon2.getDurabilityAttr().getVal());
+    assertThat(weapon2.getDurabilityAttr().getVal()).isEqualTo(0);
   }
 
   private void hero2AttackHero1() {
@@ -109,8 +111,8 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testCanAttack() {
-    assertFalse(hero1.canDamage());
-    assertFalse(hero2.canDamage());
+    assertThat(hero1.canDamage()).isFalse();
+    assertThat(hero2.canDamage()).isFalse();
 
     hero1.arm(weapon1);
     hero2.arm(weapon2);
@@ -126,8 +128,8 @@ public class HeroTest extends TestCase {
         hero2AttackHero1();
       }
     }
-    assertFalse(hero1.canDamage());
-    assertFalse(hero2.canDamage());
+    assertThat(hero1.canDamage()).isFalse();
+    assertThat(hero2.canDamage()).isFalse();
   }
 
   @Test

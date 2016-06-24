@@ -16,19 +16,15 @@ public class AttackFactory {
   static Logger logger = Logger.getLogger(AttackFactory.class.getName());
 
   public static void getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
-    Effect effect;
-    if (attacker.getBooleanMechanics().has(ConstMechanic.FORGETFUL)) {
-      effect = getForgetfulPhysicalDamageAction(attacker, attackee);
-    } else {
-      effect = new PhysicalDamageEffect(attacker, attackee);
-    }
+    final Effect effect = attacker.getBooleanMechanics().has(ConstMechanic.FORGETFUL) ?
+        getForgetfulPhysicalDamageAction(attacker, attackee) :
+        new PhysicalDamageEffect(attacker, attackee);
     attacker.getBinder().getSide().getEffectQueue().enqueue(effect);
   }
 
   private static Effect getForgetfulPhysicalDamageAction(final Creature attacker,
                                                          final Creature attackee) {
     final boolean isForgetfulToPickNewTarget = RandomMinionGenerator.getBool();
-
     if (isForgetfulToPickNewTarget) {
       logger.debug("Forgetful triggered");
       final Creature substituteAttackee = RandomMinionGenerator.randomExcept(

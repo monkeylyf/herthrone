@@ -29,22 +29,16 @@ public class GameManagerTest {
   private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
   private static final int HAND_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
   private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-  private GameManager gameManager;
+  private GameManager gm;
   private ConstHero hero1 = ConstHero.ANDUIN_WRYNN;
   private ConstHero hero2 = ConstHero.JAINA_PROUDMOORE;
-
-  private Side mySide;
-  private Side opponentSide;
 
   @Before
   public void setUp() {
     List<Enum> cards1 = Collections.nCopies(DECK_SIZE, MINION);
     List<Enum> cards2 = Collections.nCopies(DECK_SIZE, MINION);
 
-    gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-
-    mySide = gameManager.battlefield1.mySide;
-    opponentSide = gameManager.battlefield1.opponentSide;
+    gm = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
 
     CommandLine.turnOffStdout();
 
@@ -52,19 +46,19 @@ public class GameManagerTest {
 
   @Test
   public void testInitDeckSize() {
-    assertThat(mySide.deck.size()).isEqualTo(DECK_SIZE);
-    assertThat(opponentSide.deck.size()).isEqualTo(DECK_SIZE);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(DECK_SIZE);
+    assertThat(gm.inactiveSide.deck.size()).isEqualTo(DECK_SIZE);
   }
 
   @Test
   public void testInitCardsInDeck() {
-    assertThat(mySide.deck.top() instanceof Minion).isTrue();
+    assertThat(gm.activeSide.deck.top() instanceof Minion).isTrue();
   }
 
   @Test
   public void testInitHero() {
-    assertThat(mySide.hero.getCardName()).isEqualTo(hero1.toString());
-    assertThat(opponentSide.hero.getCardName()).isEqualTo(hero2.toString());
+    assertThat(gm.activeSide.hero.getCardName()).isEqualTo(hero1.toString());
+    assertThat(gm.inactiveSide.hero.getCardName()).isEqualTo(hero2.toString());
   }
 
   @Test
@@ -73,109 +67,109 @@ public class GameManagerTest {
     // turn and start and end. Different events can be triggered by starting the turn
     // and ending the turn. Crystal should increase one when starting a new turn, not ending
     // previous turn.
-    assertThat(mySide.manaCrystal.getCrystal()).isEqualTo(1);
-    assertThat(opponentSide.manaCrystal.getCrystal()).isEqualTo(1);
+    assertThat(gm.activeSide.manaCrystal.getCrystal()).isEqualTo(1);
+    assertThat(gm.inactiveSide.manaCrystal.getCrystal()).isEqualTo(1);
   }
 
   @Test
   public void testInitHandSize() {
-    assertThat(mySide.hand.size()).isEqualTo(0);
-    assertThat(opponentSide.hand.size()).isEqualTo(0);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(0);
+    assertThat(gm.inactiveSide.hand.size()).isEqualTo(0);
   }
 
   @Test
   public void testInitBoardSize() {
-    assertThat(mySide.board.size()).isEqualTo(0);
-    assertThat(opponentSide.board.size()).isEqualTo(0);
+    assertThat(gm.activeSide.board.size()).isEqualTo(0);
+    assertThat(gm.inactiveSide.board.size()).isEqualTo(0);
   }
 
   @Test
   public void testInitSecretSize() {
-    assertThat(mySide.secrets.size()).isEqualTo(0);
-    assertThat(opponentSide.secrets.size()).isEqualTo(0);
+    assertThat(gm.activeSide.secrets.size()).isEqualTo(0);
+    assertThat(gm.inactiveSide.secrets.size()).isEqualTo(0);
   }
 
   @Test
   public void testInitHeroPowerMovePoints() {
-    assertThat(mySide.heroPowerMovePoints.getVal()).isEqualTo(1);
-    assertThat(opponentSide.heroPowerMovePoints.getVal()).isEqualTo(1);
+    assertThat(gm.activeSide.heroPowerMovePoints.getVal()).isEqualTo(1);
+    assertThat(gm.inactiveSide.heroPowerMovePoints.getVal()).isEqualTo(1);
   }
 
   @Test
   public void testDrawCard() {
-    assertThat(mySide.hand.size()).isEqualTo(0);
-    gameManager.drawCard();
-    assertThat(mySide.hand.size()).isEqualTo(1);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(0);
+    gm.drawCard();
+    assertThat(gm.activeSide.hand.size()).isEqualTo(1);
   }
 
   @Test
   public void testOverdraw() {
     assertThat(DECK_SIZE).isGreaterThan(HAND_SIZE);
-    while (!mySide.deck.isEmpty()) {
-      gameManager.drawCard();
+    while (!gm.activeSide.deck.isEmpty()) {
+      gm.drawCard();
     }
-    assertThat(mySide.hand.size()).isEqualTo(HAND_SIZE);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(HAND_SIZE);
   }
 
   @Test
   public void testFatigue() {
-    while (!mySide.deck.isEmpty()) {
-      gameManager.drawCard();
+    while (!gm.activeSide.deck.isEmpty()) {
+      gm.drawCard();
     }
 
-    assertThat(mySide.hero.getHealthLoss()).isEqualTo(0);
+    assertThat(gm.activeSide.hero.getHealthLoss()).isEqualTo(0);
     int damage = 0;
     final int repeat = 10;
     for (int i = 1; i <= repeat; ++i) {
-      final int healthBeforeDrawCard = mySide.hero.getHealthAttr().getVal();
-      gameManager.drawCard();
-      final int healthAfterDrawCard = mySide.hero.getHealthAttr().getVal();
+      final int healthBeforeDrawCard = gm.activeSide.hero.getHealthAttr().getVal();
+      gm.drawCard();
+      final int healthAfterDrawCard = gm.activeSide.hero.getHealthAttr().getVal();
 
       assertThat(healthBeforeDrawCard - healthAfterDrawCard).isEqualTo(i);
 
       damage += i;
     }
 
-    assertThat(mySide.hero.getHealthLoss()).isEqualTo(damage);
-    assertThat(mySide.hero.isDead()).isTrue();
+    assertThat(gm.activeSide.hero.getHealthLoss()).isEqualTo(damage);
+    assertThat(gm.activeSide.hero.isDead()).isTrue();
   }
 
   @Test
   public void testPlayMinionCardWithProperCrystal() {
-    gameManager.drawCard();
+    gm.drawCard();
 
-    assertThat(mySide.hand.get(0) instanceof Minion).isTrue();
-    assertThat(mySide.hand.get(0).getCardName()).isEqualTo(MINION.toString());
-    assertThat(mySide.board.size()).isEqualTo(0);
+    assertThat(gm.activeSide.hand.get(0) instanceof Minion).isTrue();
+    assertThat(gm.activeSide.hand.get(0).getCardName()).isEqualTo(MINION.toString());
+    assertThat(gm.activeSide.board.size()).isEqualTo(0);
 
-    final Card card = mySide.hand.get(0);
+    final Card card = gm.activeSide.hand.get(0);
     final int requiredCrystalCost = card.getCrystalManaCost().getVal();
 
-    while (mySide.manaCrystal.getCrystal() < requiredCrystalCost) {
+    while (gm.activeSide.manaCrystal.getCrystal() < requiredCrystalCost) {
       try {
-        gameManager.playCard(0);
+        gm.playCard(0);
       } catch (IllegalArgumentException expected) {
-        assertThat(expected).hasMessage("Not enough mana to play " + card.getCardName());
+        assertThat(expected).hasMessage("Not enough mana for: " + card.getCardName());
       }
 
-      mySide.manaCrystal.endTurn();
+      gm.activeSide.manaCrystal.endTurn();
     }
 
-    gameManager.playCard(0);
-    assertThat(mySide.board.size()).isEqualTo(1);
-    assertThat(mySide.board.get(0).getCardName()).isEqualTo(MINION.toString());
+    gm.playCard(0);
+    assertThat(gm.activeSide.board.size()).isEqualTo(1);
+    assertThat(gm.activeSide.board.get(0).getCardName()).isEqualTo(MINION.toString());
   }
 
   @Test
   public void testUseHeroPower() {
     final int damage = 2;
-    opponentSide.hero.takeDamage(damage);
-    assertThat(opponentSide.hero.getHealthLoss()).isEqualTo(damage);
-    gameManager.useHeroPower(opponentSide.hero);
-    assertThat(opponentSide.hero.getHealthLoss()).isEqualTo(0);
+    gm.inactiveSide.hero.takeDamage(damage);
+    assertThat(gm.inactiveSide.hero.getHealthLoss()).isEqualTo(damage);
+    gm.useHeroPower(gm.inactiveSide.hero);
+    assertThat(gm.inactiveSide.hero.getHealthLoss()).isEqualTo(0);
 
     try {
-      gameManager.useHeroPower(opponentSide.hero);
+      gm.useHeroPower(gm.inactiveSide.hero);
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("Cannot use hero power any more in current turn");
     }
@@ -183,13 +177,13 @@ public class GameManagerTest {
 
   @Test
   public void testSwitchTurn() {
-    final Side previousMySide = mySide;
-    final Side previousOpponentSide = opponentSide;
+    final Side previousMySide = gm.activeSide;
+    final Side previousOpponentSide = gm.inactiveSide;
 
-    gameManager.switchTurn();
+    gm.switchTurn();
 
-    assertThat(gameManager.activeBattlefield.mySide).isEqualTo(previousOpponentSide);
-    assertThat(gameManager.activeBattlefield.opponentSide).isEqualTo(previousMySide);
+    assertThat(gm.activeSide).isEqualTo(previousOpponentSide);
+    assertThat(gm.inactiveSide).isEqualTo(previousMySide);
   }
 
   @Test
@@ -199,40 +193,40 @@ public class GameManagerTest {
     final int numOfOpponentMinions = 1;
     populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
 
-    assertThat(mySide.board.size()).isEqualTo(numOfMyMinions);
-    assertThat(opponentSide.board.size()).isEqualTo(numOfOpponentMinions);
+    assertThat(gm.activeSide.board.size()).isEqualTo(numOfMyMinions);
+    assertThat(gm.inactiveSide.board.size()).isEqualTo(numOfOpponentMinions);
 
-    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gm.activeBattlefield);
     checkCommands(myRoot, numOfMyMinions);
 
     // Switch side.
-    gameManager.switchTurn();
+    gm.switchTurn();
 
-    final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(gm.activeBattlefield);
     checkCommands(opponentRoot, numOfOpponentMinions);
   }
 
   private void jumpIntoRoundFour() {
     // At least 4 crystals so YETI can be played and show up as options.
     for (int i = 0; i < 8; ++i) {
-      gameManager.drawCard();
-      gameManager.activeBattlefield.mySide.manaCrystal.endTurn();
-      gameManager.switchTurn();
+      gm.drawCard();
+      gm.activeSide.manaCrystal.endTurn();
+      gm.switchTurn();
     }
   }
 
   private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfOpponentMinions) {
     // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
     for (int i = 0; i < numOfOwnMinions; ++i) {
-      final Minion minion = (Minion) mySide.deck.top();
+      final Minion minion = (Minion) gm.activeSide.deck.top();
       minion.endTurn();
-      mySide.board.add(minion);
+      gm.activeSide.board.add(minion);
     }
 
     for (int i = 0; i < numOfOpponentMinions; ++i) {
-      final Minion minion = (Minion) opponentSide.deck.top();
+      final Minion minion = (Minion) gm.inactiveSide.deck.top();
       minion.endTurn();
-      opponentSide.board.add(minion);
+      gm.inactiveSide.board.add(minion);
     }
   }
 
@@ -268,12 +262,12 @@ public class GameManagerTest {
 
     jumpIntoRoundFour();
 
-    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gameManager.activeBattlefield);
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(gm.activeBattlefield);
     // Choose option 1 which is play card.
     final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
     final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);
     assertThat(playCardLeaf.getParentType()).isEqualTo(ConstCommand.PLAY_CARD.toString());
-    assertThat(playCardLeaf.option).isEqualTo(mySide.hand.get(0).view().toString());
+    assertThat(playCardLeaf.option).isEqualTo(gm.activeSide.hand.get(0).view().toString());
 
     // Choose option 2 which is move minion.
     final InputStream moveMinionInput = new ByteArrayInputStream("2\n1\n1".getBytes());

@@ -18,6 +18,8 @@ public interface Hero extends Creature {
 
   Spell getHeroPower();
 
+  void UpdateHeroPower(final Spell heroPower);
+
   void disarm();
 
 }

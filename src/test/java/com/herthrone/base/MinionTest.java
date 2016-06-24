@@ -6,7 +6,6 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.game.Battlefield;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -21,8 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
  */
 public class MinionTest extends TestCase {
 
-  private Battlefield battlefield1;
-  private Battlefield battlefield2;
   private Minion minion1;
   private Minion minion2;
   private MinionConfig yetiConfig;
@@ -32,14 +29,12 @@ public class MinionTest extends TestCase {
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
-    this.battlefield1 = gm.battlefield1;
-    this.battlefield2 = gm.battlefield2;
     this.minionName = ConstMinion.CHILLWIND_YETI;
 
     this.minion1 = MinionFactory.createMinionByName(minionName);
-    minion1.getBinder().bind(battlefield1.mySide);
+    minion1.getBinder().bind(gm.activeSide);
     this.minion2 = MinionFactory.createMinionByName(minionName);
-    minion2.getBinder().bind(battlefield2.mySide);
+    minion2.getBinder().bind(gm.inactiveSide);
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(minionName);
   }

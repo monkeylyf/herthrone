@@ -66,8 +66,9 @@ public class CommandLine {
       root.addChildNode(moveMinions);
     }
     // Use hero power.
-    if (battlefield.mySide.hero.getAttackMovePoints().getVal() > 0 && battlefield.mySide.manaCrystal.getCrystal() >= battlefield.mySide.heroPower.getCrystalManaCost().getVal()) {
-      final Spell heroPower = mySide.heroPower;
+    if (battlefield.mySide.hero.getAttackMovePoints().getVal() > 0 &&
+        battlefield.mySide.manaCrystal.getCrystal() >= battlefield.mySide.hero.getHeroPower().getCrystalManaCost().getVal()) {
+      final Spell heroPower = mySide.hero.getHeroPower();
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
       scanTargets(useHeroPower, heroPower.getTargetConfig(), battlefield);

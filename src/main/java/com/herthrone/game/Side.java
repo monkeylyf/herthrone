@@ -6,7 +6,6 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Reset;
 import com.herthrone.base.Secret;
-import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.stats.IntAttribute;
 import com.herthrone.stats.ManaCrystal;
@@ -28,10 +27,9 @@ public class Side implements Reset {
   public final Container<Secret> secrets;
   public final ManaCrystal manaCrystal;
   public final IntAttribute heroPowerMovePoints;
-  public Spell heroPower;
+  private EffectQueue effectQueue;
   private int fatigue;
   private int numCardPlayThisRound;
-  private EffectQueue effectQueue;
 
   public Side(final Hero hero, final EffectQueue effectQueue) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
@@ -40,7 +38,6 @@ public class Side implements Reset {
 
     this.hero = hero;
     hero.getBinder().bind(this);
-    this.heroPower = null;
     this.hand = new Container<>(handCapacity);
     this.board = new Container<>(boardCapacity);
     this.secrets = new Container<>();
@@ -54,18 +51,14 @@ public class Side implements Reset {
     this.effectQueue = effectQueue;
   }
 
-  public void populateDeck(final List<Card> cards) {
-    cards.stream().forEach(card -> deck.add(card));
+  public void populateDeck(final List<Enum> cards) {
+    cards.stream().forEach(card -> deck.add(GameManager.createCardInstance(card)));
   }
 
   public void takeFatigueDamage() {
     fatigue += 1;
     logger.debug(String.format("Increase fatigue to %d", fatigue));
     hero.takeDamage(fatigue);
-  }
-
-  public void setHeroPower(final Spell heroPower) {
-    this.heroPower = heroPower;
   }
 
   public boolean hasCreature(final Creature creature) {

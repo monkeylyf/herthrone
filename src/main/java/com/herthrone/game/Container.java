@@ -2,6 +2,7 @@ package com.herthrone.game;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,8 @@ import java.util.stream.Stream;
  * Created by yifeng on 4/9/16.
  */
 public class Container<T extends Card> implements Iterator<T> {
+
+  static Logger logger = Logger.getLogger(Container.class.getName());
 
   private final int maxCapacity;
   private final List<T> container;
@@ -31,27 +34,30 @@ public class Container<T extends Card> implements Iterator<T> {
   }
 
   public Container() {
-    this.maxCapacity = Integer.MAX_VALUE;
     this.container = new ArrayList<>();
+    this.maxCapacity = Integer.MAX_VALUE;
   }
 
   public boolean isEmpty() {
     return container.isEmpty();
   }
 
-  public void add(final T card) {
-    if (isFull()) {
-      // TODO: logger needed here.
-    } else {
+  public boolean add(final T card) {
+    final boolean willCardBeAdded = !isFull();
+    if (willCardBeAdded) {
       container.add(card);
+    } else {
+      logger.debug(String.format("Container is already full with size %d", container.size()));
+      logger.debug(String.format("Card %s not added", card.getCardName()));
     }
+    return willCardBeAdded;
   }
 
   public boolean isFull() {
     return container.size() == maxCapacity;
   }
 
-  public void addToRandomPos(T card) {
+  public void addToRandomPos(final T card) {
     final Random random = new Random();
     final int index = random.nextInt(container.size() + 1);
     add(index, card);
@@ -87,7 +93,7 @@ public class Container<T extends Card> implements Iterator<T> {
     return container.stream();
   }
 
-  public int count(T card) {
+  public int count(final T card) {
     int count = 0;
     final String cardName = card.getCardName();
     for (T existingCard : container) {

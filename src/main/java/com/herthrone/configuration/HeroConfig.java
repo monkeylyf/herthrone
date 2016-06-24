@@ -14,16 +14,20 @@ import java.util.Map;
  */
 public class HeroConfig implements Config<ConstHero> {
 
+  private static final String NAME = "name";
+  private static final String CLASS = "class";
+  private static final String HERO_POWER = "hero_power";
+  private static final String DESCRIPTION = "description";
   private final ConstHero name;
   private final ConstClass className;
   private final String description;
   private final ConstSpell heroPower;
 
   public HeroConfig(Map map) {
-    this.name = ConstHero.valueOf(Constant.upperCaseValue(map, "name"));
-    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, "class"));
-    this.heroPower = ConstSpell.valueOf(Constant.upperCaseValue(map, "hero_power"));
-    this.description = (String) map.get("description");
+    this.name = ConstHero.valueOf(Constant.upperCaseValue(map, NAME));
+    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, CLASS));
+    this.heroPower = ConstSpell.valueOf(Constant.upperCaseValue(map, HERO_POWER));
+    this.description = (String) map.get(DESCRIPTION);
   }
 
   public ConstSpell getHeroPower() {
