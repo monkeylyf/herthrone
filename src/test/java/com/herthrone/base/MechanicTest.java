@@ -30,25 +30,25 @@ import static com.google.common.truth.Truth.assertThat;
 public class MechanicTest extends TestCase {
 
   private Hero hero;
-  private Side side;
-  private Battlefield battlefield;
   private Minion yeti;
   private Minion waterElemental;
   private Minion scarletCrusader;
   private GameManager gm;
+  private Side activeSide;
+  private Side inactiveSide;
 
 
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
         Collections.emptyList(), Collections.emptyList());
-    this.side = gm.activeBattlefield.mySide;
-    this.hero = side.hero;
-    this.battlefield = gm.activeBattlefield;
+    this.hero = gm.activeSide.hero;
+    this.activeSide = gm.activeSide;
+    this.inactiveSide = gm.inactiveSide;
 
-    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, side);
-    this.waterElemental = MinionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL, side);
-    this.scarletCrusader = MinionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER, side);
+    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, activeSide);
+    this.waterElemental = MinionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL, activeSide);
+    this.scarletCrusader = MinionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER, activeSide);
   }
 
   @Test
@@ -63,30 +63,31 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testBattlecryDrawCardWithFatigue() {
-    assertThat(side.deck.size()).isEqualTo(0);
-    assertThat(side.board.size()).isEqualTo(0);
-    assertThat(side.hand.size()).isEqualTo(0);
-    assertThat(side.hero.getHealthLoss()).isEqualTo(0);
+    assertThat(activeSide.deck.size()).isEqualTo(0);
+    assertThat(activeSide.board.size()).isEqualTo(0);
+    assertThat(activeSide.hand.size()).isEqualTo(0);
+    assertThat(activeSide.hero.getHealthLoss()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.createMinionByName(minionName, side);
+    final Minion minion = MinionFactory.createMinionByName(minionName, activeSide);
 
     gm.playCard(minion);
 
-    assertThat(side.board.get(0).getCardName()).isEqualTo(minionName.toString());
-    assertThat(side.deck.size()).isEqualTo(0);
-    assertThat(side.board.size()).isEqualTo(1);
-    assertThat(side.hand.size()).isEqualTo(0);
+    assertThat(activeSide.board.get(0).getCardName()).isEqualTo(minionName.toString());
+    assertThat(activeSide.deck.size()).isEqualTo(0);
+    assertThat(activeSide.board.size()).isEqualTo(1);
+    assertThat(activeSide.hand.size()).isEqualTo(0);
     // Battlecry draw card causing fatigue damage.
-    assertThat(side.hero.getHealthLoss()).isEqualTo(1);
+    assertThat(activeSide.hero.getHealthLoss()).isEqualTo(1);
   }
 
   @Test
   public void testElusive() {
     final Minion faerieDragon = MinionFactory.createMinionByName(ConstMinion.FAERIE_DRAGON);
-    assertThat(GameManager.isMinionTargetable(faerieDragon, side.board, ConstType.SPELL)).isFalse();
+    assertThat(GameManager.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL))
+        .isFalse();
 
-    assertThat(GameManager.isMinionTargetable(yeti, side.board, ConstType.SPELL)).isTrue();
+    assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isTrue();
   }
 
   @Test
@@ -97,7 +98,7 @@ public class MechanicTest extends TestCase {
     // Let jungle panther be both stealth and taunt.
     junglePanther.getBooleanMechanics().initialize(ConstMechanic.TAUNT);
 
-    final Container<Minion> board = side.board;
+    final Container<Minion> board = activeSide.board;
 
     board.add(yeti);
     board.add(senjin);
@@ -143,9 +144,9 @@ public class MechanicTest extends TestCase {
   @Test
   public void testStealth() {
     final Minion stoneclawTotem = MinionFactory.createMinionByName(
-        ConstMinion.STONECLAW_TOTEM, side);
+        ConstMinion.STONECLAW_TOTEM, activeSide);
     final Minion worgenInfiltrator = MinionFactory.createMinionByName(
-        ConstMinion.WORGEN_INFILTRATOR, side);
+        ConstMinion.WORGEN_INFILTRATOR, activeSide);
 
     final Optional<BooleanAttribute> stealth = worgenInfiltrator.getBooleanMechanics().get
         (ConstMechanic.STEALTH);
@@ -183,8 +184,8 @@ public class MechanicTest extends TestCase {
 
     AttackFactory.getPhysicalDamageAction(waterElemental, hero);
 
-    final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics().get(ConstMechanic
-        .FROZEN);
+    final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics()
+        .get(ConstMechanic.FROZEN);
 
     assertThat(heroFrozen.isPresent()).isTrue();
 
@@ -193,7 +194,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testPoison() {
-    Minion emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, side);
+    Minion emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, activeSide);
     AttackFactory.getPhysicalDamageAction(emperorCobra, hero);
 
     // Poison does not trigger destroy on Hero.
@@ -206,7 +207,7 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
-    emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, side);
+    emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, activeSide);
     AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.getHealthLoss()).isEqualTo(0);
@@ -217,28 +218,23 @@ public class MechanicTest extends TestCase {
     // No minions so far has default immune mechanic yet.
     // Init IMMUNE for Yeti.
     yeti.getBooleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(GameManager.isMinionTargetable(yeti, gm.activeBattlefield.mySide.board, ConstType.ATTACK))
-        .isFalse();
-    assertThat(GameManager.isMinionTargetable(yeti, gm.activeBattlefield.mySide.board, ConstType.SPELL))
-        .isFalse();
+    assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.ATTACK)).isFalse();
+    assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isFalse();
 
     // Test Hero immune.
     hero.getBooleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(GameManager.isHeroTargetable(hero, gm.activeBattlefield.mySide.board, ConstType.ATTACK))
-        .isFalse();
-    assertThat(GameManager.isHeroTargetable(hero, gm.activeBattlefield.mySide.board, ConstType.SPELL))
-        .isFalse();
+    assertThat(GameManager.isHeroTargetable(hero, activeSide.board, ConstType.ATTACK)).isFalse();
+    assertThat(GameManager.isHeroTargetable(hero, activeSide.board, ConstType.SPELL)).isFalse();
   }
 
   @Test
   public void testForgetful() {
-    final Minion ogreBrute = MinionFactory.createMinionByName(ConstMinion.OGRE_BRUTE, side);
+    final Minion ogreBrute = MinionFactory.createMinionByName(ConstMinion.OGRE_BRUTE, activeSide);
     final int attackVal = ogreBrute.getAttackAttr().getVal();
     final int minionNum = 5;
-    final Side opponentSide = battlefield.opponentSide;
     for (int i = 0; i < minionNum; ++i) {
-      opponentSide.board.add(
-          MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, opponentSide));
+      inactiveSide.board.add(
+          MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, inactiveSide));
     }
     final int total = 10000;
     // TODO: find another way to test randomness or not to test it at all.
@@ -246,7 +242,7 @@ public class MechanicTest extends TestCase {
     final double forgetfulFactor = .5;
 
     for (int i = 0; i < total; ++i) {
-      AttackFactory.getPhysicalDamageAction(ogreBrute, opponentSide.hero);
+      AttackFactory.getPhysicalDamageAction(ogreBrute, inactiveSide.hero);
     }
     Range<Double> mainTargetGotAttackedNumRange = Range.closed(
         total * forgetfulFactor * (1 - jitter),
@@ -254,38 +250,38 @@ public class MechanicTest extends TestCase {
     Range<Double> otherTargetsGotAttackedNumRange = Range.closed(
         total * forgetfulFactor * (1 - jitter) / minionNum,
         total * forgetfulFactor * (1 + jitter) / minionNum);
-    final double numOfHeroGotAttacked = opponentSide.hero.getHealthLoss() / attackVal;
+    final double numOfHeroGotAttacked = inactiveSide.hero.getHealthLoss() / attackVal;
     assertThat(mainTargetGotAttackedNumRange.contains(numOfHeroGotAttacked)).isTrue();
     for (int i = 0; i < minionNum; ++i) {
-      final double numGetAttacked = opponentSide.board.get(i).getHealthLoss() / attackVal;
+      final double numGetAttacked = inactiveSide.board.get(i).getHealthLoss() / attackVal;
       assertThat(otherTargetsGotAttackedNumRange.contains(numGetAttacked)).isTrue();
     }
   }
 
   @Test
   public void testWindFury() {
-    final Minion harpy = MinionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY, side);
+    final Minion harpy = MinionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY, activeSide);
     harpy.getAttackMovePoints().reset();
     assertThat(harpy.getAttackMovePoints().getVal()).isEqualTo(2);
   }
 
   @Test
   public void testBattlecry() {
-    side.deck.add(yeti);
+    activeSide.deck.add(yeti);
 
-    assertThat(side.deck.size()).isEqualTo(1);
-    assertThat(side.board.size()).isEqualTo(0);
-    assertThat(side.hand.size()).isEqualTo(0);
+    assertThat(activeSide.deck.size()).isEqualTo(1);
+    assertThat(activeSide.board.size()).isEqualTo(0);
+    assertThat(activeSide.hand.size()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.createMinionByName(minionName, side);
+    final Minion minion = MinionFactory.createMinionByName(minionName, activeSide);
 
     gm.playCard(minion);
 
-    assertThat(side.board.get(0).getCardName()).isEqualTo(minionName.toString());
-    assertThat(side.deck.size()).isEqualTo(0);
-    assertThat(side.board.size()).isEqualTo(1);
-    assertThat(side.hand.size()).isEqualTo(1);
+    assertThat(activeSide.board.get(0).getCardName()).isEqualTo(minionName.toString());
+    assertThat(activeSide.deck.size()).isEqualTo(0);
+    assertThat(activeSide.board.size()).isEqualTo(1);
+    assertThat(activeSide.hand.size()).isEqualTo(1);
   }
 
   @Test
