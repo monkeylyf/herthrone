@@ -12,6 +12,7 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Battlefield;
+import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
 import com.herthrone.stats.BooleanAttribute;
@@ -92,14 +93,29 @@ public class MechanicTest extends TestCase {
   public void testTaunt() {
     final Minion senjin = MinionFactory.createMinionByName(ConstMinion.SENJIN_SHIELDMASTA);
     final Minion grizzly = MinionFactory.createMinionByName(ConstMinion.IRONFUR_GRIZZLY);
-    side.board.add(yeti);
-    side.board.add(senjin);
-    side.board.add(grizzly);
+    final Minion junglePanther = MinionFactory.createMinionByName(ConstMinion.JUNGLE_PANTHER);
+    // Let jungle panther be both stealth and taunt.
+    junglePanther.getBooleanMechanics().initialize(ConstMechanic.TAUNT);
 
-    assertThat(GameManager.isMinionTargetable(yeti, side.board, ConstType.ATTACK)).isFalse();
-    assertThat(GameManager.isHeroTargetable(hero, side.board, ConstType.ATTACK)).isFalse();
-    assertThat(GameManager.isMinionTargetable(senjin, side.board, ConstType.ATTACK)).isTrue();
-    assertThat(GameManager.isMinionTargetable(grizzly, side.board, ConstType.ATTACK)).isTrue();
+    final Container<Minion> board = side.board;
+
+    board.add(yeti);
+    board.add(senjin);
+    board.add(grizzly);
+
+    assertThat(GameManager.isMinionTargetable(yeti, board, ConstType.ATTACK)).isFalse();
+    assertThat(GameManager.isHeroTargetable(hero, board, ConstType.ATTACK)).isFalse();
+    assertThat(GameManager.isMinionTargetable(senjin, board, ConstType.ATTACK)).isTrue();
+    assertThat(GameManager.isMinionTargetable(grizzly, board, ConstType.ATTACK)).isTrue();
+
+    board.remove(senjin);
+    board.remove(grizzly);
+    board.add(junglePanther);
+
+    // Yeti and another minion with both stealth and taunt on board. Yeti should be targetable
+    // because stealth prevents taunt prevents Yeti being targeted.
+    assertThat(GameManager.isMinionTargetable(yeti, board, ConstType.ATTACK)).isTrue();
+    assertThat(GameManager.isMinionTargetable(junglePanther, board, ConstType.ATTACK)).isFalse();
   }
 
   @Test

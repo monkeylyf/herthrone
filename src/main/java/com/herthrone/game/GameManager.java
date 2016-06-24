@@ -274,9 +274,11 @@ public class GameManager {
       return true;
     }
 
-    // If there is any other minion on the board has taunt ability, this minion cannot be targeted.
+    // If there is any other minions on the board with taunt but not stealth ability, this minion
+    // cannot be targeted.
     return !board.stream().anyMatch(
-        m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
+        m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)) &&
+             BooleanAttribute.isAbsentOrOff(m.getBooleanMechanics().get(ConstMechanic.STEALTH)));
   }
 
   private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion>

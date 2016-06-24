@@ -177,3 +177,12 @@
   crystal: 6
   mechanics:
     - name: windfury
+
+- name: jungle_panther
+  display: Jungle Panther
+  class: neutral
+  attack: 4
+  health: 2
+  crystal: 3
+  mechanics:
+    - name: stealth

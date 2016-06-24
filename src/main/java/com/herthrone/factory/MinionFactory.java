@@ -41,6 +41,7 @@ public class MinionFactory {
 
   public static Minion createMinionByName(final ConstMinion minionName) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
+    Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
     return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config
         .getClassName(), config.getName(), config.getMechanics(), config.isCollectible());
   }
