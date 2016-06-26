@@ -11,7 +11,6 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.game.Battlefield;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
@@ -46,11 +45,11 @@ public class MechanicTest extends TestCase {
     this.activeSide = gm.activeSide;
     this.inactiveSide = gm.inactiveSide;
 
-    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, activeSide);
+    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, activeSide);
     activeSide.board.add(yeti);
-    this.waterElemental = MinionFactory.createMinionByName(ConstMinion.WATER_ELEMENTAL, activeSide);
+    this.waterElemental = MinionFactory.create(ConstMinion.WATER_ELEMENTAL, activeSide);
     activeSide.board.add(waterElemental);
-    this.scarletCrusader = MinionFactory.createMinionByName(ConstMinion.SCARLET_CRUSADER, activeSide);
+    this.scarletCrusader = MinionFactory.create(ConstMinion.SCARLET_CRUSADER, activeSide);
     activeSide.board.add(scarletCrusader);
   }
 
@@ -60,7 +59,7 @@ public class MechanicTest extends TestCase {
     final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     final Optional<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
     assertThat(mechanic.isPresent()).isTrue();
-    final Minion minion = MinionFactory.createMinionByName(minionName);
+    final Minion minion = MinionFactory.create(minionName);
     assertThat(minion.getAttackMovePoints().getVal()).isGreaterThan(0);
   }
 
@@ -72,7 +71,7 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.hero.getHealthLoss()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.createMinionByName(minionName, activeSide);
+    final Minion minion = MinionFactory.create(minionName, activeSide);
 
     gm.playCard(minion);
 
@@ -86,7 +85,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testElusive() {
-    final Minion faerieDragon = MinionFactory.createMinionByName(ConstMinion.FAERIE_DRAGON);
+    final Minion faerieDragon = MinionFactory.create(ConstMinion.FAERIE_DRAGON);
     assertThat(GameManager.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL))
         .isFalse();
 
@@ -95,9 +94,9 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testTaunt() {
-    final Minion senjin = MinionFactory.createMinionByName(ConstMinion.SENJIN_SHIELDMASTA);
-    final Minion grizzly = MinionFactory.createMinionByName(ConstMinion.IRONFUR_GRIZZLY);
-    final Minion junglePanther = MinionFactory.createMinionByName(ConstMinion.JUNGLE_PANTHER);
+    final Minion senjin = MinionFactory.create(ConstMinion.SENJIN_SHIELDMASTA);
+    final Minion grizzly = MinionFactory.create(ConstMinion.IRONFUR_GRIZZLY);
+    final Minion junglePanther = MinionFactory.create(ConstMinion.JUNGLE_PANTHER);
     // Let jungle panther be both stealth and taunt.
     junglePanther.getBooleanMechanics().initialize(ConstMechanic.TAUNT);
 
@@ -146,10 +145,10 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testStealth() {
-    final Minion stoneclawTotem = MinionFactory.createMinionByName(
+    final Minion stoneclawTotem = MinionFactory.create(
         ConstMinion.STONECLAW_TOTEM, activeSide);
     activeSide.board.add(stoneclawTotem);
-    final Minion worgenInfiltrator = MinionFactory.createMinionByName(
+    final Minion worgenInfiltrator = MinionFactory.create(
         ConstMinion.WORGEN_INFILTRATOR, activeSide);
     activeSide.board.add(worgenInfiltrator);
 
@@ -199,7 +198,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testPoison() {
-    Minion emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, activeSide);
+    Minion emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA, activeSide);
     activeSide.board.add(emperorCobra);
 
     AttackFactory.getPhysicalDamageAction(emperorCobra, hero);
@@ -214,7 +213,7 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.getHealthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
-    emperorCobra = MinionFactory.createMinionByName(ConstMinion.EMPEROR_COBRA, activeSide);
+    emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA, activeSide);
     activeSide.board.add(emperorCobra);
     AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
@@ -237,7 +236,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testForgetful() {
-    final Minion ogreBrute = MinionFactory.createMinionByName(ConstMinion.OGRE_BRUTE, activeSide);
+    final Minion ogreBrute = MinionFactory.create(ConstMinion.OGRE_BRUTE, activeSide);
     activeSide.board.add(ogreBrute);
     final int attackVal = ogreBrute.getAttackAttr().getVal();
     final int minionNum = 5;
@@ -245,7 +244,7 @@ public class MechanicTest extends TestCase {
     final int buffHealth = total * 10;
     for (int i = 0; i < minionNum; ++i) {
       // Buff Yeti health enough so that it doesn't die and gets removed from board.
-      final Minion yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, inactiveSide);
+      final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, inactiveSide);
       yeti.getHealthAttr().buff.temp.increase(buffHealth);
       inactiveSide.board.add(yeti);
     }
@@ -273,20 +272,21 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testWindFury() {
-    final Minion harpy = MinionFactory.createMinionByName(ConstMinion.WINDFURY_HARPY, activeSide);
+    final Minion harpy = MinionFactory.create(ConstMinion.WINDFURY_HARPY, activeSide);
     harpy.getAttackMovePoints().reset();
     assertThat(harpy.getAttackMovePoints().getVal()).isEqualTo(2);
   }
 
   @Test
   public void testBattlecry() {
-    activeSide.deck.add(yeti);
+    final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
+    activeSide.deck.add(MinionFactory.create(minionInDeck));
 
     assertThat(activeSide.deck.size()).isEqualTo(1);
     assertThat(activeSide.hand.size()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.createMinionByName(minionName, activeSide);
+    final Minion minion = MinionFactory.create(minionName, activeSide);
 
     int boardSize = activeSide.board.size();
     gm.playCard(minion);
@@ -295,10 +295,24 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.board.get(boardSize).getCardName()).isEqualTo(minionName.toString());
     assertThat(activeSide.deck.size()).isEqualTo(0);
     assertThat(activeSide.hand.size()).isEqualTo(1);
+    assertThat(activeSide.hand.get(0).getCardName()).isEqualTo(minionInDeck.toString());
   }
 
   @Test
   public void testDeathrattle() {
+    final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
+    activeSide.deck.add(MinionFactory.create(minionInDeck));
 
+    final Minion lootHoarder = MinionFactory.create(ConstMinion.LOOT_HOARDER, activeSide);
+    activeSide.board.add(lootHoarder);
+    final int boardSize = activeSide.board.size();
+
+    assertThat(activeSide.deck.size()).isEqualTo(1);
+    assertThat(activeSide.hand.size()).isEqualTo(0);
+
+    lootHoarder.takeDamage(1);
+    assertThat(activeSide.board.size()).isEqualTo(boardSize - 1);
+    assertThat(activeSide.hand.size()).isEqualTo(1);
+    assertThat(activeSide.hand.get(0).getCardName()).isEqualTo(minionInDeck.toString());
   }
 }

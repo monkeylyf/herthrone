@@ -18,14 +18,14 @@ import java.util.Map;
  */
 public class WeaponFactory {
 
-  public static Weapon createWeaponByName(final ConstWeapon weapon) {
+  public static Weapon create(final ConstWeapon weapon) {
     WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
-    return createWeapon(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
+    return create(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.isCollectible());
   }
 
-  public static Weapon createWeapon(final int crystalManaCost, final int attack,
-                                    final int durability, final ConstWeapon name,
-                                    final ConstClass className, final boolean isCollectible) {
+  public static Weapon create(final int crystalManaCost, final int attack,
+                              final int durability, final ConstWeapon name,
+                              final ConstClass className, final boolean isCollectible) {
 
     return new Weapon() {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);

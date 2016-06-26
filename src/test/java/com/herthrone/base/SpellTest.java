@@ -39,12 +39,12 @@ public class SpellTest extends TestCase {
     this.hero2 = gm.inactiveSide.hero;
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
-    this.minion = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    this.minion = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
   }
 
   @Test
   public void testFireBall() {
-    final Spell fireBall = SpellFactory.createSpellByName(ConstSpell.FIRE_BALL);
+    final Spell fireBall = SpellFactory.create(ConstSpell.FIRE_BALL);
 
     EffectFactory.getActionsByConfig(fireBall, minion).stream().forEach(Effect::act);
     assertThat(minion.getHealthAttr().getVal()).isEqualTo(
@@ -165,7 +165,7 @@ public class SpellTest extends TestCase {
   @Test
   public void testLifeTap() {
     final Spell lifeTap = SpellFactory.createHeroPowerByName(ConstSpell.LIFE_TAP);
-    final Minion yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI);
+    final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     final int damage = -lifeTap.getEffects().get(0).getValue();
 
     assertThat(gm.activeSide.deck.size()).isEqualTo(0);

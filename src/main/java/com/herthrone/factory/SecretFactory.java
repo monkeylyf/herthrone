@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class SecretFactory {
 
-  public static Secret createSecretByName(final ConstSecret secret) {
+  public static Secret create(final ConstSecret secret) {
     return new Secret() {
 
       private final Binder binder = new Binder();

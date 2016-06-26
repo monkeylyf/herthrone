@@ -12,7 +12,6 @@ import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
@@ -53,7 +52,7 @@ public class GameManager {
                      final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.battlefield1 = new Battlefield(
-        HeroFactory.createHeroByName(hero1), HeroFactory.createHeroByName(hero2));
+        HeroFactory.create(hero1), HeroFactory.create(hero2));
     this.battlefield2 = battlefield1.getMirrorBattlefield();
     this.activeBattlefield = battlefield1;
     this.activeSide = battlefield1.mySide;
@@ -68,22 +67,22 @@ public class GameManager {
 
     Optional<ConstMinion> constMinion = Enums.getIfPresent(ConstMinion.class, name);
     if (constMinion.isPresent()) {
-      return MinionFactory.createMinionByName(constMinion.get());
+      return MinionFactory.create(constMinion.get());
     }
 
     Optional<ConstWeapon> constWeapon = Enums.getIfPresent(ConstWeapon.class, name);
     if (constWeapon.isPresent()) {
-      return WeaponFactory.createWeaponByName(constWeapon.get());
+      return WeaponFactory.create(constWeapon.get());
     }
 
     Optional<ConstSpell> constSpell = Enums.getIfPresent(ConstSpell.class, name);
     if (constSpell.isPresent()) {
-      return SpellFactory.createSpellByName(constSpell.get());
+      return SpellFactory.create(constSpell.get());
     }
 
     Optional<ConstSecret> constSecret = Enums.getIfPresent(ConstSecret.class, name);
     if (constSecret.isPresent()) {
-      return SecretFactory.createSecretByName(constSecret.get());
+      return SecretFactory.create(constSecret.get());
     }
 
     throw new RuntimeException(String.format("Unknown card %s", name));

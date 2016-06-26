@@ -94,7 +94,7 @@ public class EffectFactory {
   private static Effect getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.getType();
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
-    Weapon weaponInstance = WeaponFactory.createWeaponByName(weapon);
+    Weapon weaponInstance = WeaponFactory.create(weapon);
     return new EquipWeaponEffect(hero, weaponInstance);
   }
 
@@ -112,7 +112,7 @@ public class EffectFactory {
       summonTargetName = RandomMinionGenerator.randomOne(summonChoices);
     }
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
-    final Minion minion = MinionFactory.createMinionByName(summonTarget);
+    final Minion minion = MinionFactory.create(summonTarget);
     return new SummonEffect(side.board, minion);
   }
 

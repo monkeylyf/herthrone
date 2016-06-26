@@ -49,11 +49,11 @@ public class HeroTest extends TestCase {
     this.hero2 = gm.inactiveSide.hero;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
-    this.yeti = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
+    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
 
-    this.weapon1 = WeaponFactory.createWeapon(
+    this.weapon1 = WeaponFactory.create(
         0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
-    this.weapon2 = WeaponFactory.createWeapon(
+    this.weapon2 = WeaponFactory.create(
         0, weaponAttackVal2, weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
   }
 

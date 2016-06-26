@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
  */
 public class AttackFactory {
 
+  // TODO: move it under effectFactory. Attack belongs to the concept of effects.
   static Logger logger = Logger.getLogger(AttackFactory.class.getName());
 
   public static void getPhysicalDamageAction(final Creature attacker, final Creature attackee) {

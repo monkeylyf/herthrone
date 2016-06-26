@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
@@ -35,13 +34,13 @@ public class MinionFactory {
   private static final int WINDFURY_INIT_MOVE_POINTS = 2;
   static Logger logger = Logger.getLogger(MinionFactory.class.getName());
 
-  public static Minion createMinionByName(final ConstMinion minionName, final Side side) {
-    final Minion minion = createMinionByName(minionName);
+  public static Minion create(final ConstMinion minionName, final Side side) {
+    final Minion minion = create(minionName);
     minion.getBinder().bind(side);
     return minion;
   }
 
-  public static Minion createMinionByName(final ConstMinion minionName) {
+  public static Minion create(final ConstMinion minionName) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
     return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.getMechanics(), config.isCollectible());

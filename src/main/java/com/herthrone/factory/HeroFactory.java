@@ -30,13 +30,13 @@ public class HeroFactory {
   public static final int HEALTH = 30;
   private static final int HERO_INIT_MOVE_POINTS = 1;
 
-  public static Hero createHeroByName(final ConstHero hero) {
+  public static Hero create(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
-    return HeroFactory.createHero(
+    return HeroFactory.create(
         HeroFactory.HEALTH, heroConfig.getName(), heroConfig.getHeroPower(), heroConfig.getClassName());
   }
 
-  public static Hero createHero(final int health, final ConstHero name, final ConstSpell
+  public static Hero create(final int health, final ConstHero name, final ConstSpell
       heroPowerName, final ConstClass className) {
     return new Hero() {
       private final IntAttribute healthAttr = new IntAttribute(health);

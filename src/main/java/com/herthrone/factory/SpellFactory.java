@@ -22,9 +22,9 @@ import java.util.Map;
  */
 public class SpellFactory {
 
-  public static Spell createSpellByName(final ConstSpell spell) {
+  public static Spell create(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
-    return createSpell(
+    return create(
         config.getName(),
         config.getClassName(),
         config.getCrystal(),
@@ -34,10 +34,10 @@ public class SpellFactory {
     );
   }
 
-  private static Spell createSpell(final ConstSpell name, final ConstClass className,
-                                   final int crystal, final ConstType type,
-                                   final Optional<TargetConfig> targetConfig,
-                                   final List<EffectConfig> effects) {
+  private static Spell create(final ConstSpell name, final ConstClass className,
+                              final int crystal, final ConstType type,
+                              final Optional<TargetConfig> targetConfig,
+                              final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
@@ -97,7 +97,7 @@ public class SpellFactory {
 
   public static Spell createHeroPowerByName(final ConstSpell heroPower) {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
-    return createSpell(
+    return create(
         config.getName(),
         config.getClassName(),
         config.getCrystal(),
