@@ -7,6 +7,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.GameManager;
+import com.herthrone.game.Side;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,32 +21,29 @@ import static com.google.common.truth.Truth.assertThat;
  */
 public class MinionTest extends TestCase {
 
-  private Minion minion1;
-  private Minion minion2;
+  private Minion yeti1;
+  private Minion yeti2;
   private MinionConfig yetiConfig;
-  private ConstMinion minionName;
   private GameManager gm;
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
-    this.minionName = ConstMinion.CHILLWIND_YETI;
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN,
+        Collections.emptyList(), Collections.emptyList());
+    this.yeti1 = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, gm.activeSide);
+    gm.activeSide.board.add(yeti1);
+    this.yeti2 = MinionFactory.createMinionByName(ConstMinion.CHILLWIND_YETI, gm.inactiveSide);
+    gm.inactiveSide.board.add(yeti2);
 
-    this.minion1 = MinionFactory.createMinionByName(minionName);
-    minion1.getBinder().bind(gm.activeSide);
-    this.minion2 = MinionFactory.createMinionByName(minionName);
-    minion2.getBinder().bind(gm.inactiveSide);
-
-    this.yetiConfig = ConfigLoader.getMinionConfigByName(minionName);
+    this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
   }
 
   @Test
   public void testMinionStats() {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
-    assertEquals(config.getHealth(), minion1.getHealthAttr().getVal());
-    assertEquals(config.getHealth(), minion2.getHealthAttr().getVal());
-    assertFalse(minion1.isDead());
-    assertFalse(minion2.isDead());
+    assertEquals(yetiConfig.getHealth(), yeti1.getHealthAttr().getVal());
+    assertEquals(yetiConfig.getHealth(), yeti2.getHealthAttr().getVal());
+    assertFalse(yeti1.isDead());
+    assertFalse(yeti2.isDead());
   }
 
   @Test
@@ -53,18 +51,18 @@ public class MinionTest extends TestCase {
     final int health = yetiConfig.getHealth();
     final int attack = yetiConfig.getAttack();
     attackEachOther();
-    assertThat(minion1.getHealthAttr().getVal()).isEqualTo(health - attack);
-    assertThat(minion2.getHealthAttr().getVal()).isEqualTo(health - attack);
+    assertThat(yeti1.getHealthAttr().getVal()).isEqualTo(health - attack);
+    assertThat(yeti2.getHealthAttr().getVal()).isEqualTo(health - attack);
     attackEachOther();
-    assertThat(minion1.getHealthAttr().getVal()).isEqualTo(health - 2 * attack);
-    assertThat(minion2.getHealthAttr().getVal()).isEqualTo(health - 2 * attack);
+    assertThat(yeti1.getHealthAttr().getVal()).isEqualTo(health - 2 * attack);
+    assertThat(yeti2.getHealthAttr().getVal()).isEqualTo(health - 2 * attack);
 
-    assertThat(minion1.isDead()).isTrue();
-    assertThat(minion2.isDead()).isTrue();
+    assertThat(yeti1.isDead()).isTrue();
+    assertThat(yeti2.isDead()).isTrue();
   }
 
   private void attackEachOther() {
-    AttackFactory.getPhysicalDamageAction(minion1, minion2);
+    AttackFactory.getPhysicalDamageAction(yeti1, yeti2);
   }
 }
 

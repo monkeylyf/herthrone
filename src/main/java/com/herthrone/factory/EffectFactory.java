@@ -23,6 +23,7 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.stats.IntAttribute;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,11 +33,22 @@ import java.util.stream.Collectors;
  */
 public class EffectFactory {
 
-  public static Effect getEffectByMechanic(final MechanicConfig mechanic, Optional<Creature>
-      target) {
+  static Logger logger = Logger.getLogger(EffectFactory.class.getName());
+
+  public static Effect pipeMechanicEffect(final MechanicConfig mechanic, final Creature target) {
     final Optional<EffectConfig> config = mechanic.getEffect();
     Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
-    return getActionsByConfig(config.get(), target.get());
+    return getActionsByConfig(config.get(), target);
+  }
+
+  public static void pipeMechanicEffectIfPresent(final Optional<MechanicConfig> mechanicConfigOptional,
+                                                 final Creature target) {
+    if (mechanicConfigOptional.isPresent()) {
+      final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
+      logger.debug("Triggering " + mechanicConfig.getMechanic().toString());
+      Effect effect = pipeMechanicEffect(mechanicConfig, target);
+      target.getBinder().getSide().getEffectQueue().enqueue(effect);
+    }
   }
 
   public static Effect getActionsByConfig(final EffectConfig config, final Creature creature) {

@@ -95,10 +95,7 @@ public class MinionFactory {
         // TODO: I am passing minion only because if I don't, using "this" as the reference to minion
         // will mess up the intellij reformat code functionality...wtf??
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
-        if (battlecry.isPresent()) {
-          final Effect effect = EffectFactory.getEffectByMechanic(battlecry.get(), Optional.of(minion));
-          effect.act();
-        }
+        EffectFactory.pipeMechanicEffectIfPresent(battlecry, minion);
       }
 
       @Override
@@ -169,7 +166,6 @@ public class MinionFactory {
         // http://hearthstone.gamepedia.com/Stealth
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
         boolean isDamaged = creature.takeDamage(attackAttr.getVal());
-
         if (isDamaged) {
           if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.FREEZE))) {
             creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
@@ -184,14 +180,19 @@ public class MinionFactory {
       @Override
       public boolean takeDamage(final int damage) {
         final Optional<BooleanAttribute> divineShield = booleanMechanics.get(ConstMechanic.DIVINE_SHIELD);
-        if (BooleanAttribute.isPresentAndOn(divineShield)) {
+        final boolean willTakeDamage = !BooleanAttribute.isPresentAndOn(divineShield);
+        if (willTakeDamage) {
+          healthAttr.decrease(damage);
+        } else {
           logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
           booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
-          return false;
-        } else {
-          healthAttr.decrease(damage);
-          return true;
         }
+
+        if (isDead()) {
+          death();
+        }
+
+        return willTakeDamage;
       }
 
       @Override
@@ -206,12 +207,11 @@ public class MinionFactory {
 
       @Override
       public void death() {
-        //final Side side = battlefield.getSideCreatureIsOn(this);
-        //side.board.remove(this);
+        final Side side = binder.getSide();
+        side.board.remove(this);
 
-        //Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
-        //if (deathrattleConfig.isPresent()) {
-        //}
+        Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
+        EffectFactory.pipeMechanicEffectIfPresent(deathrattleConfig, this);
       }
 
       @Override
