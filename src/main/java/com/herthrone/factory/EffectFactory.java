@@ -22,7 +22,7 @@ import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.IntAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.List;

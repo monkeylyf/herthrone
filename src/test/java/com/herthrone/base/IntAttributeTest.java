@@ -1,6 +1,6 @@
 package com.herthrone.base;
 
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.IntAttribute;
 import junit.framework.TestCase;
 
 public class IntAttributeTest extends TestCase {

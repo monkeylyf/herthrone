@@ -16,10 +16,10 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.stats.BooleanAttribute;
-import com.herthrone.stats.BooleanMechanics;
-import com.herthrone.stats.EffectMechanics;
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.BooleanAttribute;
+import com.herthrone.objects.BooleanMechanics;
+import com.herthrone.objects.EffectMechanics;
+import com.herthrone.objects.IntAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.Map;
@@ -91,10 +91,16 @@ public class MinionFactory {
 
       @Override
       public void playOnBoard(final Container<Minion> board, final Minion minion) {
+        board.add(minion);
         // TODO: I am passing minion only because if I don't, using "this" as the reference to minion
         // will mess up the intellij reformat code functionality...wtf??
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
         EffectFactory.pipeMechanicEffectIfPresent(battlecry, minion);
+        // Combo condition check that there must be one replay record before this action.
+        if (minion.getBinder().getSide().replay.size() > 1) {
+          Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
+          EffectFactory.pipeMechanicEffectIfPresent(combo, minion);
+        }
       }
 
       @Override

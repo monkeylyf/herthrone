@@ -7,7 +7,7 @@ import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.IntAttribute;
 
 import java.util.Map;
 

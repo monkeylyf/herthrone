@@ -2,6 +2,7 @@ package com.herthrone.configuration;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.herthrone.constant.ConstEvent;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.Constant;
 
@@ -16,11 +17,15 @@ public class MechanicConfig {
 
   private static final String NAME = "name";
   private static final String EFFECT = "effect";
+  private static final String TRIGGER = "trigger";
   private final ConstMechanic mechanic;
+  private final Optional<ConstEvent> triggeringEvent;
   private final Optional<EffectConfig> effect;
 
   public MechanicConfig(Map map) {
     this.mechanic = ConstMechanic.valueOf(Constant.upperCaseValue(map, NAME));
+    this.triggeringEvent = map.containsKey(TRIGGER) ?
+        Optional.of(ConstEvent.valueOf(Constant.upperCaseValue(map, TRIGGER))) : Optional.absent();
     this.effect = map.containsKey(EFFECT) ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 

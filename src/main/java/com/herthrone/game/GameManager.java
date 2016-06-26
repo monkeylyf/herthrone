@@ -12,6 +12,7 @@ import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.constant.ConstAction;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
@@ -27,7 +28,7 @@ import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.WeaponFactory;
-import com.herthrone.stats.BooleanAttribute;
+import com.herthrone.objects.BooleanAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -282,7 +283,6 @@ public class GameManager {
     checkManaCost(index);
     final Card card = activeSide.hand.remove(index);
     playCard(card);
-    activeSide.incrementPlayedCardCount();
   }
 
   void clearBoard(final Container<Minion> board) {
@@ -304,7 +304,7 @@ public class GameManager {
     if (card instanceof Minion) {
       Minion minion = (Minion) card;
       // Assign game board sequence id to minion.
-      activeSide.board.add(minion);
+      activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.getCardName());
       minion.playOnBoard(activeSide.board, minion);
       minion.setSequenceId(seqId);
       seqId += 1;

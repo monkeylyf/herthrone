@@ -14,7 +14,7 @@ import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
-import com.herthrone.stats.BooleanAttribute;
+import com.herthrone.objects.BooleanAttribute;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class MechanicTest extends TestCase {
   private GameManager gm;
   private Side activeSide;
   private Side inactiveSide;
-
+  private int initialBoardSize;
 
   @Before
   public void setUp() {
@@ -51,6 +51,8 @@ public class MechanicTest extends TestCase {
     activeSide.board.add(waterElemental);
     this.scarletCrusader = MinionFactory.create(ConstMinion.SCARLET_CRUSADER, activeSide);
     activeSide.board.add(scarletCrusader);
+    this.initialBoardSize = activeSide.board.size();
+    activeSide.startTurn();
   }
 
   @Test
@@ -65,7 +67,6 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testBattlecryDrawCardWithFatigue() {
-    int boardSize = activeSide.board.size();
     assertThat(activeSide.deck.size()).isEqualTo(0);
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.hero.getHealthLoss()).isEqualTo(0);
@@ -75,8 +76,8 @@ public class MechanicTest extends TestCase {
 
     gm.playCard(minion);
 
-    assertThat(activeSide.board.size()).isEqualTo(boardSize + 1);
-    assertThat(activeSide.board.get(boardSize).getCardName()).isEqualTo(minionName.toString());
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
+    assertThat(activeSide.board.get(initialBoardSize).getCardName()).isEqualTo(minionName.toString());
     assertThat(activeSide.deck.size()).isEqualTo(0);
     assertThat(activeSide.hand.size()).isEqualTo(0);
     // Battlecry draw card causing fatigue damage.
@@ -288,11 +289,10 @@ public class MechanicTest extends TestCase {
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
     final Minion minion = MinionFactory.create(minionName, activeSide);
 
-    int boardSize = activeSide.board.size();
     gm.playCard(minion);
 
-    assertThat(activeSide.board.size()).isEqualTo(boardSize + 1);
-    assertThat(activeSide.board.get(boardSize).getCardName()).isEqualTo(minionName.toString());
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
+    assertThat(activeSide.board.get(initialBoardSize).getCardName()).isEqualTo(minionName.toString());
     assertThat(activeSide.deck.size()).isEqualTo(0);
     assertThat(activeSide.hand.size()).isEqualTo(1);
     assertThat(activeSide.hand.get(0).getCardName()).isEqualTo(minionInDeck.toString());
@@ -305,14 +305,30 @@ public class MechanicTest extends TestCase {
 
     final Minion lootHoarder = MinionFactory.create(ConstMinion.LOOT_HOARDER, activeSide);
     activeSide.board.add(lootHoarder);
-    final int boardSize = activeSide.board.size();
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
     assertThat(activeSide.deck.size()).isEqualTo(1);
     assertThat(activeSide.hand.size()).isEqualTo(0);
 
     lootHoarder.takeDamage(1);
-    assertThat(activeSide.board.size()).isEqualTo(boardSize - 1);
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
     assertThat(activeSide.hand.size()).isEqualTo(1);
     assertThat(activeSide.hand.get(0).getCardName()).isEqualTo(minionInDeck.toString());
+  }
+
+  @Test
+  public void testCombo() {
+    final Minion defiasRingleader1 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER, activeSide);
+    final Minion defiasRingleader2 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER, activeSide);
+    gm.playCard(defiasRingleader1);
+    // First play should not trigger combo effect hence add onl one minion to the board.
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
+
+    gm.playCard(defiasRingleader2);
+
+    // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 3);
+    assertThat(activeSide.board.get(activeSide.board.size() - 1).getCardName())
+        .isEqualTo(ConstMinion.DEFIAS_BANDIT.toString());
   }
 }

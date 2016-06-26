@@ -5,6 +5,8 @@ package com.herthrone.constant;
  */
 public enum ConstMinion {
   CHILLWIND_YETI,
+  DEFIAS_BANDIT,
+  DEFIAS_RINGLEADER,
   EMPEROR_COBRA,
   FAERIE_DRAGON,
   GNOMISH_INVENTOR,

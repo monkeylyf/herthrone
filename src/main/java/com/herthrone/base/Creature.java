@@ -1,7 +1,7 @@
 package com.herthrone.base;
 
-import com.herthrone.stats.BooleanMechanics;
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.BooleanMechanics;
+import com.herthrone.objects.IntAttribute;
 
 /**
  * Created by yifengliu on 6/4/16.

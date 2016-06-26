@@ -1,4 +1,4 @@
-package com.herthrone.stats;
+package com.herthrone.objects;
 
 /**
  * Created by yifengliu on 5/5/16.

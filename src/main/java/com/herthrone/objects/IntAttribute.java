@@ -1,4 +1,4 @@
-package com.herthrone.stats;
+package com.herthrone.objects;
 
 import com.herthrone.base.Round;
 

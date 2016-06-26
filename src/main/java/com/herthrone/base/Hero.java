@@ -1,7 +1,7 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.IntAttribute;
 
 /**
  * Created by yifeng on 4/13/16.

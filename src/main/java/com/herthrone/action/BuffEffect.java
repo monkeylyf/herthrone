@@ -2,8 +2,8 @@ package com.herthrone.action;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.stats.IntAttribute;
-import com.herthrone.stats.Value;
+import com.herthrone.objects.IntAttribute;
+import com.herthrone.objects.Value;
 
 /**
  * Created by yifeng on 4/28/16.

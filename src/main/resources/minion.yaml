@@ -95,6 +95,7 @@
   attack: 2
   health: 1
   crystal: 2
+  collectible: true
   mechanics:
     - name: deathrattle
       effect: draw
@@ -111,16 +112,18 @@
   attack: 3
   health: 2
   crystal: 2
+  collectible: true
   mechanics:
     - name: elusive
 
-- name: ironfur_Grizzly
+- name: ironfur_grizzly
   display: Ironfur Grizzly
   class: neutral
   type: beast
   attack: 3
   health: 3
   crystal: 3
+  collectible: true
   mechanics:
     - name: taunt
 
@@ -130,6 +133,7 @@
   attack: 3
   health: 6
   crystal: 4
+  collectible: true
   mechanics:
     - name: freeze
 
@@ -139,6 +143,7 @@
   attack: 3
   health: 1
   crystal: 3
+  collectible: true
   mechanics:
     - name: divine_shield
 
@@ -148,6 +153,7 @@
   attack: 2
   health: 1
   crystal: 1
+  collectible: true
   mechanics:
     - name: stealth
 
@@ -157,6 +163,7 @@
   attack: 2
   health: 3
   crystal: 3
+  collectible: true
   mechanics:
     - name: poison
 
@@ -166,6 +173,7 @@
   attack: 4
   health: 4
   crystal: 3
+  collectible: true
   mechanics:
     - name: forgetful
 
@@ -175,6 +183,7 @@
   attack: 4
   health: 6
   crystal: 6
+  collectible: true
   mechanics:
     - name: windfury
 
@@ -184,5 +193,32 @@
   attack: 4
   health: 2
   crystal: 3
+  collectible: true
   mechanics:
     - name: stealth
+
+- name: defias_ringleader
+  display: Defias Ringleader
+  class: rogue
+  attack: 2
+  health: 2
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: combo
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices: [defias_bandit]
+
+- name: defias_bandit
+  display: Defias Bandit
+  class: rogue
+  attack: 2
+  health: 1
+  crystal: 1
+  collectible: false
+  mechanics: []

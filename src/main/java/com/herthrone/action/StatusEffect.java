@@ -2,7 +2,7 @@ package com.herthrone.action;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.stats.BooleanAttribute;
+import com.herthrone.objects.BooleanAttribute;
 
 /**
  * Created by yifeng on 4/15/16.

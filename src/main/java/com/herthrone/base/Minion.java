@@ -1,7 +1,7 @@
 package com.herthrone.base;
 
 import com.herthrone.game.Container;
-import com.herthrone.stats.EffectMechanics;
+import com.herthrone.objects.EffectMechanics;
 
 /**
  * Created by yifeng on 4/2/16.

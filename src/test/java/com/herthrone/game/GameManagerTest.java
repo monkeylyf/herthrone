@@ -145,6 +145,7 @@ public class GameManagerTest {
 
     while (gm.activeSide.manaCrystal.getCrystal() < requiredCrystalCost) {
       try {
+        gm.activeSide.replay.startTurn();
         gm.playCard(0);
       } catch (IllegalArgumentException expected) {
         assertThat(expected).hasMessage("Not enough mana for: " + card.getCardName());
@@ -153,6 +154,7 @@ public class GameManagerTest {
       gm.activeSide.manaCrystal.endTurn();
     }
 
+    gm.activeSide.replay.startTurn();
     gm.playCard(0);
     assertThat(gm.activeSide.board.size()).isEqualTo(1);
     assertThat(gm.activeSide.board.get(0).getCardName()).isEqualTo(MINION.toString());

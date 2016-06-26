@@ -1,6 +1,6 @@
 package com.herthrone.base;
 
-import com.herthrone.stats.IntAttribute;
+import com.herthrone.objects.IntAttribute;
 
 /**
  * Created by yifeng on 4/2/16.

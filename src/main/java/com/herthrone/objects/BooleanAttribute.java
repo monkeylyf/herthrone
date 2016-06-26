@@ -1,4 +1,4 @@
-package com.herthrone.stats;
+package com.herthrone.objects;
 
 import com.google.common.base.Optional;
 import com.herthrone.base.Reset;

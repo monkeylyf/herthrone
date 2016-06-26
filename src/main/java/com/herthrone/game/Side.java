@@ -5,10 +5,12 @@ import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Reset;
+import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.stats.IntAttribute;
-import com.herthrone.stats.ManaCrystal;
+import com.herthrone.objects.IntAttribute;
+import com.herthrone.objects.ManaCrystal;
+import com.herthrone.objects.Replay;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.List;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class Side implements Reset {
+public class Side implements Round {
 
   static Logger logger = Logger.getLogger(Side.class.getName());
   public final Hero hero;
@@ -27,9 +29,9 @@ public class Side implements Reset {
   public final Container<Secret> secrets;
   public final ManaCrystal manaCrystal;
   public final IntAttribute heroPowerMovePoints;
+  public final Replay replay;
   private EffectQueue effectQueue;
   private int fatigue;
-  private int numCardPlayThisRound;
 
   public Side(final Hero hero, final EffectQueue effectQueue) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
@@ -45,14 +47,20 @@ public class Side implements Reset {
 
     this.deck = new Container<>(deckCapacity);
     this.heroPowerMovePoints = new IntAttribute(1);
+    this.replay = new Replay();
 
     this.fatigue = 0;
-    this.numCardPlayThisRound = 0;
     this.effectQueue = effectQueue;
   }
 
   public void populateDeck(final List<Enum> cards) {
-    cards.stream().forEach(card -> deck.add(GameManager.createCardInstance(card)));
+    cards.stream().forEach(cardName -> {
+      final Card card = GameManager.createCardInstance(cardName);
+      deck.add(card);
+      if (card instanceof Minion) {
+        card.getBinder().bind(this);
+      }
+    });
   }
 
   public void takeFatigueDamage() {
@@ -79,17 +87,17 @@ public class Side implements Reset {
     return allCreatures;
   }
 
-  public void incrementPlayedCardCount() {
-    numCardPlayThisRound += 1;
-  }
-
   public EffectQueue getEffectQueue() {
     return effectQueue;
   }
 
   @Override
-  public void reset() {
-    numCardPlayThisRound = 0;
+  public void endTurn() {
+    replay.endTurn();
   }
 
+  @Override
+  public void startTurn() {
+    replay.startTurn();
+  }
 }
