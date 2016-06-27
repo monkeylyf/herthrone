@@ -15,16 +15,17 @@ public class Constant {
   // think about it later(better config file structure?)
   public static final String ARMOR = "armor";
   public static final String ATTACK = "attack";
-  public static final String CRYSTAL = "crystal";
   public static final String BOARD = "board";
-  public static final String HEROPOWER = "heropower";
+  public static final String CARD_NAME = "card_name";
+  public static final String CRYSTAL = "crystal";
+  public static final String CRYSTAL_LOCK = "crystal_lock";
   public static final String DECK_SIZE = "deck_size";
-  public static final String HAND_SIZE = "hand_size";
   public static final String HAND = "hand";
+  public static final String HAND_SIZE = "hand_size";
+  public static final String HERO_POWER = "hero_power";
   public static final String SECRET_SIZE = "secret_size";
   public static final String SECRET = "secret";
   public static final String HEALTH = "health";
-  public static final String CARD_NAME = "card_name";
   public static final String TYPE = "type";
   public static final String HERO = "hero";
   public static final String WEAPON = "weapon";

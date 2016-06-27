@@ -19,8 +19,7 @@ public class RandomMinionGenerator {
     return random.nextBoolean();
   }
 
-  public static Creature randomExcept(final List<Creature> creatures, final Creature
-      exceptionCreature) {
+  public static Creature randomExcept(final List<Creature> creatures, final Creature exceptionCreature) {
     Preconditions.checkArgument(creatures.size() > 0, "Expects non-empty list");
     Preconditions.checkArgument(creatures.contains(exceptionCreature), "Invalid creature pool");
     final int size = creatures.size();
@@ -32,12 +31,9 @@ public class RandomMinionGenerator {
     return candidate;
   }
 
-  public static String randomUnique(final List<String> pool, final List<Creature>
-      exceptionCreatures) {
-    final Set<String> exceptionCreatureNames = exceptionCreatures.stream().map(creature ->
-        creature.getCardName()).collect(Collectors.toSet());
-    List<String> candidates = pool.stream()
-        .filter(c -> !exceptionCreatureNames.contains(c)).collect(Collectors.toList());
+  public static String randomUnique(final List<String> pool, final List<Creature> exceptionCreatures) {
+    final Set<String> exceptionCreatureNames = exceptionCreatures.stream().map(creature -> creature.getCardName()).collect(Collectors.toSet());
+    List<String> candidates = pool.stream().filter(c -> !exceptionCreatureNames.contains(c)).collect(Collectors.toList());
     return randomOne(candidates);
   }
 

@@ -43,17 +43,24 @@ public class MinionFactory {
   public static Minion create(final ConstMinion minionName) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
-    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(), config.getClassName(), config.getName(), config.getMechanics(), config.isCollectible());
+    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(),
+                        config.getClassName(), config.getName(), config.getMechanics(),
+                        config.isCollectible());
   }
 
-  private static Minion createMinion(final int health, final int attack, final int crystalManaCost, final ConstClass className, final ConstMinion name, final Map<ConstMechanic, MechanicConfig> mechanics, final boolean isCollectible) {
+  private static Minion createMinion(final int health, final int attack, final int crystalManaCost,
+                                     final ConstClass className, final ConstMinion name,
+                                     final Map<ConstMechanic, MechanicConfig> mechanics,
+                                     final boolean isCollectible) {
     final Minion minion = new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute attackAttr = new IntAttribute(attack);
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute movePoints = new IntAttribute(mechanics.containsKey(ConstMechanic.WINDFURY) ? WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
+      private final IntAttribute movePoints = new IntAttribute(
+          mechanics.containsKey(ConstMechanic.WINDFURY) ?
+              WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
       private final Binder binder = new Binder();
@@ -90,16 +97,14 @@ public class MinionFactory {
       }
 
       @Override
-      public void playOnBoard(final Container<Minion> board, final Minion minion) {
-        board.add(minion);
-        // TODO: I am passing minion only because if I don't, using "this" as the reference to minion
-        // will mess up the intellij reformat code functionality...wtf??
+      public void playOnBoard(final Container<Minion> board) {
+        board.add(this);
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
-        EffectFactory.pipeMechanicEffectIfPresent(battlecry, minion);
+        EffectFactory.pipeMechanicEffectIfPresent(battlecry, this);
         // Combo condition check that there must be one replay record before this action.
-        if (minion.getBinder().getSide().replay.size() > 1) {
+        if (getBinder().getSide().replay.size() > 1) {
           Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
-          EffectFactory.pipeMechanicEffectIfPresent(combo, minion);
+          EffectFactory.pipeMechanicEffectIfPresent(combo, this);
         }
       }
 
@@ -135,9 +140,15 @@ public class MinionFactory {
 
       @Override
       public Map<String, String> view() {
-        return ImmutableMap.<String, String>builder().put(Constant.CARD_NAME, getCardName()).put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString()).put(Constant.ATTACK, getAttackAttr().toString()).put(Constant.CRYSTAL, getCrystalManaCost().toString())
+        return ImmutableMap.<String, String>builder()
+            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
+            .put(Constant.ATTACK, getAttackAttr().toString())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
             //.put(Constant.DESCRIPTION, "TODO")
-            .put(Constant.TYPE, getClassName().toString()).put(Constant.MOVE_POINTS, getAttackMovePoints().toString()).build();
+            .put(Constant.TYPE, getClassName().toString())
+            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
+            .build();
       }
 
       @Override
@@ -176,7 +187,8 @@ public class MinionFactory {
             creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
           }
 
-          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) && creature instanceof Minion) {
+          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
+              creature instanceof Minion) {
             ((Minion) creature).destroy();
           }
         }
@@ -221,7 +233,8 @@ public class MinionFactory {
 
       @Override
       public boolean canMove() {
-        return movePoints.getVal() > 0 && BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
+        return movePoints.getVal() > 0 &&
+            BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
       }
 
       @Override

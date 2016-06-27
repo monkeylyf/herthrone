@@ -9,6 +9,7 @@ import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
@@ -124,7 +125,7 @@ public class HeroFactory {
       public void causeDamage(final Creature attackee) {
         attackee.takeDamage(weaponOptional.get().use());
         if (weaponOptional.get().getDurabilityAttr().getVal() == 0) {
-          disarm();
+          unequip();
         }
       }
 
@@ -183,9 +184,9 @@ public class HeroFactory {
       }
 
       @Override
-      public void arm(Weapon newWeapon) {
+      public void equip(Weapon newWeapon) {
         if (weaponOptional.isPresent()) {
-          disarm();
+          unequip();
         }
         weaponOptional = Optional.of(newWeapon);
       }
@@ -201,8 +202,15 @@ public class HeroFactory {
       }
 
       @Override
-      public void disarm() {
+      public void unequip() {
         weaponOptional = Optional.absent();
+      }
+
+      @Override
+      public void playToEquip(final Weapon weapon) {
+        Optional<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstMechanic.ON_EQUIP);
+        EffectFactory.pipeMechanicEffectIfPresent(onEquip, this);
+        equip(weapon);
       }
 
       @Override

@@ -73,10 +73,7 @@ public class Battlefield implements View {
   }
 
   private Map<String, String> getOpponentSideView() {
-    return buildNoHiddenSideView(opponentSide)
-        .put(Constant.HAND_SIZE, Integer.toString(opponentSide.hand.size()))
-        .put(Constant.SECRET_SIZE, Integer.toString(opponentSide.secrets.size()))
-        .build();
+    return buildNoHiddenSideView(opponentSide).put(Constant.HAND_SIZE, Integer.toString(opponentSide.hand.size())).put(Constant.SECRET_SIZE, Integer.toString(opponentSide.secrets.size())).build();
   }
 
   private ImmutableMap.Builder<String, String> buildNoHiddenSideView(final Side side) {
@@ -92,7 +89,7 @@ public class Battlefield implements View {
     // Add crystals as part of view.
     sideViewBuilder.put(Constant.CRYSTAL, side.manaCrystal.toString());
     // Add hero power as part of view.
-    sideViewBuilder.put(Constant.HEROPOWER, side.hero.getHeroPower().view().toString());
+    sideViewBuilder.put(Constant.HERO_POWER, side.hero.getHeroPower().view().toString());
 
     return sideViewBuilder;
   }

@@ -20,5 +20,5 @@ public interface Minion extends Creature {
 
   void destroy();
 
-  void playOnBoard(final Container<Minion> board, final Minion minion);
+  void playOnBoard(final Container<Minion> board);
 }

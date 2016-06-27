@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.herthrone.action.AttributeEffect;
 import com.herthrone.action.EquipWeaponEffect;
 import com.herthrone.action.MoveCardEffect;
+import com.herthrone.action.OverloadEffect;
 import com.herthrone.action.SummonEffect;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
@@ -23,6 +24,7 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.objects.IntAttribute;
+import com.herthrone.objects.ManaCrystal;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -35,14 +37,7 @@ public class EffectFactory {
 
   static Logger logger = Logger.getLogger(EffectFactory.class.getName());
 
-  public static Effect pipeMechanicEffect(final MechanicConfig mechanic, final Creature target) {
-    final Optional<EffectConfig> config = mechanic.getEffect();
-    Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
-    return getActionsByConfig(config.get(), target);
-  }
-
-  public static void pipeMechanicEffectIfPresent(final Optional<MechanicConfig> mechanicConfigOptional,
-                                                 final Creature target) {
+  public static void pipeMechanicEffectIfPresent(final Optional<MechanicConfig> mechanicConfigOptional, final Creature target) {
     if (mechanicConfigOptional.isPresent()) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.getMechanic().toString());
@@ -51,20 +46,28 @@ public class EffectFactory {
     }
   }
 
+  public static Effect pipeMechanicEffect(final MechanicConfig mechanic, final Creature target) {
+    final Optional<EffectConfig> config = mechanic.getEffect();
+    Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
+    return getActionsByConfig(config.get(), target);
+  }
+
   public static Effect getActionsByConfig(final EffectConfig config, final Creature creature) {
     ConstEffectType effect = config.getEffect();
     switch (effect) {
       case ATTRIBUTE:
         return getAttributeAction(config, creature);
       case WEAPON:
-        Preconditions.checkArgument(
-            creature instanceof Hero, creature.getType() + " can not equip weapon");
+        Preconditions.checkArgument(creature instanceof Hero, creature.getType() + " can not equip weapon");
         final Hero hero = (Hero) creature;
         return getEquipWeaponAction(hero, config);
       case SUMMON:
         return getSummonAction(config, creature.getBinder().getSide());
       case DRAW:
         return getDrawCardAction(config, creature.getBinder().getSide());
+      case CRYSTAL:
+        //Preconditions.checkArgument(creature instanceof Hero, "");
+        return getCrystalEffect(config, creature);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
@@ -82,10 +85,8 @@ public class EffectFactory {
       case (Constant.HEALTH_UPPER_BOUND):
         return getGeneralAttributeAction(creature.getHealthUpperAttr(), effect);
       case (Constant.ARMOR):
-        Preconditions.checkArgument(
-            creature instanceof Hero, "Armor Attribute does not applies to " + creature.getType());
-        final Hero hero = (Hero) creature;
-        return getGeneralAttributeAction(hero.getArmorAttr(), effect);
+        Preconditions.checkArgument(creature instanceof Hero, "Armor Attribute does not applies to " + creature.getType());
+        return getGeneralAttributeAction(((Hero) creature).getArmorAttr(), effect);
       default:
         throw new IllegalArgumentException("Unknown effect type: " + type);
     }
@@ -99,15 +100,12 @@ public class EffectFactory {
   }
 
   private static Effect getSummonAction(final EffectConfig effect, final Side side) {
-    List<String> summonChoices = effect.getChoices().stream()
-        .map(name -> name.toUpperCase()).collect(Collectors.toList());
+    List<String> summonChoices = effect.getChoices().stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
     String summonTargetName;
     if (effect.isUnique()) {
       // Summon candidates must be non-existing on the board to avoid dups.
-      final List<Creature> existingCreatures = side.board.stream()
-          .map(m -> (Creature) m).collect(Collectors.toList());
-      summonTargetName = RandomMinionGenerator.randomUnique(
-          summonChoices, existingCreatures);
+      final List<Creature> existingCreatures = side.board.stream().map(m -> (Creature) m).collect(Collectors.toList());
+      summonTargetName = RandomMinionGenerator.randomUnique(summonChoices, existingCreatures);
     } else {
       summonTargetName = RandomMinionGenerator.randomOne(summonChoices);
     }
@@ -125,30 +123,35 @@ public class EffectFactory {
     return new MoveCardEffect(side.hand, side.deck, side);
   }
 
-  private static Effect getHealthAttributeAction(final Creature creature, final EffectConfig
-      effect) {
+  private static Effect getCrystalEffect(final EffectConfig config, final Creature creature) {
+    final String type = config.getType();
+    final ManaCrystal manaCrystal = creature.getBinder().getSide().manaCrystal;
+    switch (type) {
+      case (Constant.CRYSTAL_LOCK):
+        return new OverloadEffect(manaCrystal, config.getValue());
+      default:
+        throw new IllegalArgumentException("Unknown type: " + type);
+    }
+  }
+
+  private static Effect getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
     final int value = effect.getValue();
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
     final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
     return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
   }
 
-  private static Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig
-      effect) {
+  private static Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
     Preconditions.checkArgument(effect.getValue() != 0, "Attribute change must be non-zero");
     return new AttributeEffect(attr, effect.getValue(), effect.isPermanent());
   }
 
   public static List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
-    return spell.getEffects().stream()
-        .map(effect -> getActionsByConfig(effect, creature))
-        .collect(Collectors.toList());
+    return spell.getEffects().stream().map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
   }
 
   public static List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
-    return config.getEffects().stream()
-        .map(effect -> getActionsByConfig(effect, creature))
-        .collect(Collectors.toList());
+    return config.getEffects().stream().map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
   }
 
 }

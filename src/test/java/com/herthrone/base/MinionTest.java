@@ -27,8 +27,7 @@ public class MinionTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN,
-        Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
     this.yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeSide);
     gm.activeSide.board.add(yeti1);
     this.yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.inactiveSide);
@@ -60,6 +59,10 @@ public class MinionTest extends TestCase {
     assertThat(yeti2.isDead()).isTrue();
   }
 
+  private void attackEachOther() {
+    AttackFactory.getPhysicalDamageAction(yeti1, yeti2);
+  }
+
   @Test
   public void testMinionDeath() {
     // Before attack starts, both side has one minion on its board.
@@ -76,10 +79,6 @@ public class MinionTest extends TestCase {
     assertThat(yeti2.isDead()).isTrue();
     assertThat(gm.activeSide.board.size()).isEqualTo(0);
     assertThat(gm.inactiveSide.board.size()).isEqualTo(0);
-  }
-
-  private void attackEachOther() {
-    AttackFactory.getPhysicalDamageAction(yeti1, yeti2);
   }
 }
 

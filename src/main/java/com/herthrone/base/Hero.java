@@ -14,12 +14,14 @@ public interface Hero extends Creature {
 
   Optional<Weapon> getWeapon();
 
-  void arm(Weapon weapon);
+  void equip(Weapon weapon);
 
   Spell getHeroPower();
 
   void UpdateHeroPower(final Spell heroPower);
 
-  void disarm();
+  void unequip();
+
+  void playToEquip(final Weapon weapon);
 
 }

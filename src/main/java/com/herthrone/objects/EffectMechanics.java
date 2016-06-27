@@ -17,13 +17,11 @@ public class EffectMechanics {
   public EffectMechanics(final Map<ConstMechanic, MechanicConfig> mechanics) {
     this.effectMechanics = new HashMap<>();
 
-    ConstMechanic.getEffectMechanics().stream().forEach(
-        mechanic -> {
-          if (mechanics.containsKey(mechanic)) {
-            effectMechanics.put(mechanic, mechanics.get(mechanic));
-          }
-        }
-    );
+    ConstMechanic.getEffectMechanics().stream().forEach(mechanic -> {
+      if (mechanics.containsKey(mechanic)) {
+        effectMechanics.put(mechanic, mechanics.get(mechanic));
+      }
+    });
   }
 
   public boolean has(final ConstMechanic mechanic) {

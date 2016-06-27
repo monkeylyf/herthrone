@@ -16,9 +16,10 @@ public class ManaCrystal implements Round {
   private int lockedCrystal;
 
   public ManaCrystal() {
-    this.crystal = 1;
+    this.crystal = 0;
     this.overloaded = 0;
     this.lockedCrystal = 0;
+    this.crystalUpperBound = 0;
   }
 
   public boolean canPlay(final Card card) {
@@ -32,9 +33,14 @@ public class ManaCrystal implements Round {
 
   @Override
   public void endTurn() {
+  }
+
+  @Override
+  public void startTurn() {
     increaseUpperBound();
     crystal = crystalUpperBound;
     applyOverload();
+
   }
 
   public void increaseUpperBound() {
@@ -47,9 +53,8 @@ public class ManaCrystal implements Round {
     overloaded = 0;
   }
 
-  @Override
-  public void startTurn() {
-
+  public void increaseUpperBound(final int incrementValue) {
+    crystalUpperBound = Math.min(crystalUpperBound + incrementValue, ManaCrystal.MAX_CRYSTALS);
   }
 
   public void overload(final int val) {

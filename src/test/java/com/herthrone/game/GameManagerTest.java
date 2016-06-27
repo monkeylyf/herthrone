@@ -63,11 +63,11 @@ public class GameManagerTest {
 
   @Test
   public void testInitCrystal() {
-    // TODO: need to define turn/round.
-    // turn and start and end. Different events can be triggered by starting the turn
-    // and ending the turn. Crystal should increase one when starting a new turn, not ending
-    // previous turn.
+    assertThat(gm.activeSide.manaCrystal.getCrystal()).isEqualTo(0);
+    assertThat(gm.inactiveSide.manaCrystal.getCrystal()).isEqualTo(0);
+    gm.activeSide.manaCrystal.startTurn();
     assertThat(gm.activeSide.manaCrystal.getCrystal()).isEqualTo(1);
+    gm.inactiveSide.manaCrystal.startTurn();
     assertThat(gm.inactiveSide.manaCrystal.getCrystal()).isEqualTo(1);
   }
 
@@ -151,7 +151,7 @@ public class GameManagerTest {
         assertThat(expected).hasMessage("Not enough mana for: " + card.getCardName());
       }
 
-      gm.activeSide.manaCrystal.endTurn();
+      gm.activeSide.manaCrystal.startTurn();
     }
 
     gm.activeSide.replay.startTurn();
@@ -210,7 +210,7 @@ public class GameManagerTest {
     // At least 4 crystals so YETI can be played and show up as options.
     for (int i = 0; i < 8; ++i) {
       gm.drawCard();
-      gm.activeSide.manaCrystal.endTurn();
+      gm.activeSide.manaCrystal.startTurn();
       gm.switchTurn();
     }
   }
@@ -233,11 +233,7 @@ public class GameManagerTest {
   private void checkCommands(CommandLine.CommandNode root, final int numOfMinions) {
     assertThat(root.childOptions.size()).isEqualTo(4);
     List<String> childOptions = root.childOptions.stream().map(option -> option.option).collect(Collectors.toList());
-    assertThat(childOptions).containsExactly(
-        ConstCommand.END_TURN.toString(),
-        ConstCommand.MOVE_MINION.toString(),
-        ConstCommand.PLAY_CARD.toString(),
-        ConstCommand.USE_HERO_POWER.toString());
+    assertThat(childOptions).containsExactly(ConstCommand.END_TURN.toString(), ConstCommand.MOVE_MINION.toString(), ConstCommand.PLAY_CARD.toString(), ConstCommand.USE_HERO_POWER.toString());
 
     for (CommandLine.CommandNode node : root.childOptions) {
       final String optionName = node.option;

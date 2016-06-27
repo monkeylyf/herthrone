@@ -9,6 +9,7 @@ public enum ConstEffectType {
   BUFF,
   CAST_SPELL,
   COPY_CARD,
+  CRYSTAL,
   DRAW,
   MOVE_CARD,
   EQUIP_WEAPON,

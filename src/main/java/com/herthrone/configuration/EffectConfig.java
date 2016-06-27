@@ -68,11 +68,6 @@ public class EffectConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
-        .add("effect", effect)
-        .add("type", type)
-        .add("value", value)
-        .add("target", target)
-        .toString();
+    return Objects.toStringHelper(this).add("effect", effect).add("type", type).add("value", value).add("target", target).toString();
   }
 }

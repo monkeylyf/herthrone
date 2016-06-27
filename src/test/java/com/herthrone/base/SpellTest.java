@@ -33,8 +33,7 @@ public class SpellTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
-        Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = gm.activeSide.hero;
     this.hero2 = gm.inactiveSide.hero;
 
@@ -47,8 +46,7 @@ public class SpellTest extends TestCase {
     final Spell fireBall = SpellFactory.create(ConstSpell.FIRE_BALL);
 
     EffectFactory.getActionsByConfig(fireBall, minion).stream().forEach(Effect::act);
-    assertThat(minion.getHealthAttr().getVal()).isEqualTo(
-        yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
+    assertThat(minion.getHealthAttr().getVal()).isEqualTo(yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
     assertThat(minion.isDead()).isTrue();
   }
 
@@ -157,8 +155,7 @@ public class SpellTest extends TestCase {
       assertThat(gm.activeSide.board.size()).isEqualTo(i + 1);
     }
 
-    Set<String> totems = gm.activeSide.board.stream().map(minion -> minion.getCardName()).collect
-        (Collectors.toSet());
+    Set<String> totems = gm.activeSide.board.stream().map(minion -> minion.getCardName()).collect(Collectors.toSet());
     assertThat(totems.size()).isEqualTo(size);
   }
 

@@ -1,0 +1,29 @@
+package com.herthrone.action;
+
+import com.herthrone.base.Effect;
+import com.herthrone.constant.ConstEffectType;
+import com.herthrone.objects.ManaCrystal;
+
+/**
+ * Created by yifengliu on 6/27/16.
+ */
+public class OverloadEffect implements Effect {
+
+  private final ManaCrystal manaCrystal;
+  private final int lockValue;
+
+  public OverloadEffect(final ManaCrystal manaCrystal, final int lockValue) {
+    this.manaCrystal = manaCrystal;
+    this.lockValue = lockValue;
+  }
+
+  @Override
+  public ConstEffectType getEffectType() {
+    return ConstEffectType.CRYSTAL;
+  }
+
+  @Override
+  public void act() {
+    manaCrystal.overload(lockValue);
+  }
+}

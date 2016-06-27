@@ -1,5 +1,7 @@
 package com.herthrone.base;
 
+import com.herthrone.objects.BooleanMechanics;
+import com.herthrone.objects.EffectMechanics;
 import com.herthrone.objects.IntAttribute;
 
 /**
@@ -12,4 +14,8 @@ public interface Weapon extends Card {
   IntAttribute getDurabilityAttr();
 
   IntAttribute getAttackAttr();
+
+  EffectMechanics getEffectMechanics();
+
+  BooleanMechanics getBooleanMechanics();
 }

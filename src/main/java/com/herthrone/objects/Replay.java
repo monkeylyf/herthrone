@@ -21,10 +21,6 @@ public class Replay implements Round {
     this.turnCount = 0;
   }
 
-  public int getTurn() {
-    return turnCount + 1;
-  }
-
   public void add(final String who, final int whoIndex, final ConstAction action, final String what) {
     records.get(turnCount).add(new ReplayRecord(who, whoIndex, action, Optional.of(what)));
   }
@@ -53,12 +49,15 @@ public class Replay implements Round {
 
   @Override
   public String toString() {
-    final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this)
-        .add("turn", getTurn());
+    final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this).add("turn", getTurn());
     for (int i = 0; i < records.size(); ++i) {
       stringHelper.add("turn#" + (i + 1), records.get(i));
     }
     return stringHelper.toString();
+  }
+
+  public int getTurn() {
+    return turnCount + 1;
   }
 
   private static class ReplayRecord {
@@ -78,10 +77,7 @@ public class Replay implements Round {
 
     @Override
     public String toString() {
-      return Objects.toStringHelper(this)
-          .add("who", who)
-          .add("action", action.toString())
-          .toString();
+      return Objects.toStringHelper(this).add("who", who).add("action", action.toString()).toString();
     }
   }
 

@@ -22,9 +22,6 @@ public class TargetConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
-        .add("scope", scope)
-        .add("type", type)
-        .toString();
+    return Objects.toStringHelper(this).add("scope", scope).add("type", type).toString();
   }
 }

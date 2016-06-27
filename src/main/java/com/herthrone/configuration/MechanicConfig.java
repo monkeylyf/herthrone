@@ -24,8 +24,7 @@ public class MechanicConfig {
 
   public MechanicConfig(Map map) {
     this.mechanic = ConstMechanic.valueOf(Constant.upperCaseValue(map, NAME));
-    this.triggeringEvent = map.containsKey(TRIGGER) ?
-        Optional.of(ConstEvent.valueOf(Constant.upperCaseValue(map, TRIGGER))) : Optional.absent();
+    this.triggeringEvent = map.containsKey(TRIGGER) ? Optional.of(ConstEvent.valueOf(Constant.upperCaseValue(map, TRIGGER))) : Optional.absent();
     this.effect = map.containsKey(EFFECT) ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
@@ -49,9 +48,6 @@ public class MechanicConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
-        .add(NAME, mechanic)
-        .add(EFFECT, effect)
-        .toString();
+    return Objects.toStringHelper(this).add(NAME, mechanic).add(EFFECT, effect).toString();
   }
 }

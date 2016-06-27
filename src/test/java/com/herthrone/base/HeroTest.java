@@ -42,19 +42,15 @@ public class HeroTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(
-        ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
-        Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero1 = gm.activeSide.hero;
     this.hero2 = gm.inactiveSide.hero;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
 
-    this.weapon1 = WeaponFactory.create(
-        0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
-    this.weapon2 = WeaponFactory.create(
-        0, weaponAttackVal2, weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, true);
+    this.weapon1 = WeaponFactory.create(0, weaponAttackVal1, weaponDurability1, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, Collections.EMPTY_MAP, true);
+    this.weapon2 = WeaponFactory.create(0, weaponAttackVal2, weaponDurability2, ConstWeapon.FIERY_WAR_AXE, ConstClass.WARRIOR, Collections.EMPTY_MAP, true);
   }
 
   @Test
@@ -65,8 +61,8 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testAttackAction() {
-    hero1.arm(weapon1);
-    hero2.arm(weapon2);
+    hero1.equip(weapon1);
+    hero2.equip(weapon2);
 
     hero1AttackHero2();
 
@@ -84,8 +80,8 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testAttackActionUtilWeaponExpires() {
-    hero1.arm(weapon1);
-    hero2.arm(weapon2);
+    hero1.equip(weapon1);
+    hero2.equip(weapon2);
 
     while (hero1.canDamage() || hero2.canDamage()) {
       if (hero1.canDamage()) {
@@ -96,10 +92,8 @@ public class HeroTest extends TestCase {
       }
     }
 
-    assertThat(hero1.getHealthAttr().getVal())
-        .isEqualTo(HeroFactory.HEALTH - weaponAttackVal2 * weaponDurability2);
-    assertThat(hero2.getHealthAttr().getVal())
-        .isEqualTo(HeroFactory.HEALTH - weaponAttackVal1 * weaponDurability1);
+    assertThat(hero1.getHealthAttr().getVal()).isEqualTo(HeroFactory.HEALTH - weaponAttackVal2 * weaponDurability2);
+    assertThat(hero2.getHealthAttr().getVal()).isEqualTo(HeroFactory.HEALTH - weaponAttackVal1 * weaponDurability1);
 
     assertThat(weapon1.getDurabilityAttr().getVal()).isEqualTo(0);
     assertThat(weapon2.getDurabilityAttr().getVal()).isEqualTo(0);
@@ -114,8 +108,8 @@ public class HeroTest extends TestCase {
     assertThat(hero1.canDamage()).isFalse();
     assertThat(hero2.canDamage()).isFalse();
 
-    hero1.arm(weapon1);
-    hero2.arm(weapon2);
+    hero1.equip(weapon1);
+    hero2.equip(weapon2);
 
     assertThat(hero1.canDamage()).isTrue();
     assertThat(hero2.canDamage()).isTrue();
@@ -159,8 +153,8 @@ public class HeroTest extends TestCase {
   public void testArmorUpAttackMixture() {
     assertEquals(0, hero1.getArmorAttr().getVal());
 
-    hero1.arm(weapon1);
-    hero2.arm(weapon2);
+    hero1.equip(weapon1);
+    hero2.equip(weapon2);
 
     hero1ArmorUp();
     assertEquals(armorGain, hero1.getArmorAttr().getVal());
@@ -171,7 +165,7 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testHeroAttackMinion() {
-    hero1.arm(weapon1);
+    hero1.equip(weapon1);
 
     AttackFactory.getPhysicalDamageAction(yeti, hero1);
     assertEquals(0, yeti.getHealthLoss());
@@ -180,7 +174,7 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testMinionAttackHero() {
-    hero1.arm(weapon1);
+    hero1.equip(weapon1);
     AttackFactory.getPhysicalDamageAction(hero1, yeti);
 
     assertEquals(weapon1.getAttackAttr().getVal(), yeti.getHealthLoss());

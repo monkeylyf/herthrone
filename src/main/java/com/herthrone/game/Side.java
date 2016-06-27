@@ -4,7 +4,6 @@ import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
-import com.herthrone.base.Reset;
 import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.configuration.ConfigLoader;

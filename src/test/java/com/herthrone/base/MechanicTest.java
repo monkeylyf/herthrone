@@ -9,8 +9,10 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
+import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.MinionFactory;
+import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
@@ -39,8 +41,7 @@ public class MechanicTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
-        Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
     this.hero = gm.activeSide.hero;
     this.activeSide = gm.activeSide;
     this.inactiveSide = gm.inactiveSide;
@@ -87,8 +88,7 @@ public class MechanicTest extends TestCase {
   @Test
   public void testElusive() {
     final Minion faerieDragon = MinionFactory.create(ConstMinion.FAERIE_DRAGON);
-    assertThat(GameManager.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL))
-        .isFalse();
+    assertThat(GameManager.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL)).isFalse();
 
     assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isTrue();
   }
@@ -124,10 +124,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDivineShield() {
-    assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent())
-        .isTrue();
-    final BooleanAttribute divineShield = scarletCrusader.getBooleanMechanics()
-        .get(ConstMechanic.DIVINE_SHIELD).get();
+    assertThat(scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent()).isTrue();
+    final BooleanAttribute divineShield = scarletCrusader.getBooleanMechanics().get(ConstMechanic.DIVINE_SHIELD).get();
     assertThat(divineShield.isOn()).isTrue();
 
     AttackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
@@ -146,15 +144,12 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testStealth() {
-    final Minion stoneclawTotem = MinionFactory.create(
-        ConstMinion.STONECLAW_TOTEM, activeSide);
+    final Minion stoneclawTotem = MinionFactory.create(ConstMinion.STONECLAW_TOTEM, activeSide);
     activeSide.board.add(stoneclawTotem);
-    final Minion worgenInfiltrator = MinionFactory.create(
-        ConstMinion.WORGEN_INFILTRATOR, activeSide);
+    final Minion worgenInfiltrator = MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR, activeSide);
     activeSide.board.add(worgenInfiltrator);
 
-    final Optional<BooleanAttribute> stealth = worgenInfiltrator.getBooleanMechanics().get
-        (ConstMechanic.STEALTH);
+    final Optional<BooleanAttribute> stealth = worgenInfiltrator.getBooleanMechanics().get(ConstMechanic.STEALTH);
     assertThat(stealth.isPresent()).isTrue();
     assertThat(stealth.get().isOn()).isTrue();
 
@@ -189,8 +184,7 @@ public class MechanicTest extends TestCase {
 
     AttackFactory.getPhysicalDamageAction(waterElemental, hero);
 
-    final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics()
-        .get(ConstMechanic.FROZEN);
+    final Optional<BooleanAttribute> heroFrozen = yeti.getBooleanMechanics().get(ConstMechanic.FROZEN);
 
     assertThat(heroFrozen.isPresent()).isTrue();
 
@@ -257,12 +251,8 @@ public class MechanicTest extends TestCase {
     for (int i = 0; i < total; ++i) {
       AttackFactory.getPhysicalDamageAction(ogreBrute, inactiveSide.hero);
     }
-    Range<Double> mainTargetGotAttackedNumRange = Range.closed(
-        total * forgetfulFactor * (1 - jitter),
-        total * forgetfulFactor * (1 + jitter));
-    Range<Double> otherTargetsGotAttackedNumRange = Range.closed(
-        total * forgetfulFactor * (1 - jitter) / minionNum,
-        total * forgetfulFactor * (1 + jitter) / minionNum);
+    Range<Double> mainTargetGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter), total * forgetfulFactor * (1 + jitter));
+    Range<Double> otherTargetsGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter) / minionNum, total * forgetfulFactor * (1 + jitter) / minionNum);
     final double numOfHeroGotAttacked = inactiveSide.hero.getHealthLoss() / attackVal;
     assertThat(mainTargetGotAttackedNumRange.contains(numOfHeroGotAttacked)).isTrue();
     for (int i = 0; i < minionNum; ++i) {
@@ -328,7 +318,26 @@ public class MechanicTest extends TestCase {
 
     // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 3);
-    assertThat(activeSide.board.get(activeSide.board.size() - 1).getCardName())
-        .isEqualTo(ConstMinion.DEFIAS_BANDIT.toString());
+    assertThat(activeSide.board.get(activeSide.board.size() - 1).getCardName()).isEqualTo(ConstMinion.DEFIAS_BANDIT.toString());
+  }
+
+  @Test
+  public void testOverload() {
+    // Turn 1.
+    activeSide.manaCrystal.startTurn();
+    assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(1);
+    // Turn 2.
+    activeSide.manaCrystal.startTurn();
+    assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(2);
+
+    final Weapon stormforgedAxe = WeaponFactory.create(ConstWeapon.STORMFORGED_AXE);
+
+    assertThat(hero.canDamage()).isFalse();
+    hero.playToEquip(stormforgedAxe);
+    assertThat(hero.canDamage()).isTrue();
+
+    // Turn 3.
+    activeSide.manaCrystal.startTurn();
+    assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(1);
   }
 }

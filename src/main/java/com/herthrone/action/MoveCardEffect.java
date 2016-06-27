@@ -15,8 +15,7 @@ public class MoveCardEffect implements Effect {
   private final Container<Card> moveFrom;
   private final Side side;
 
-  public MoveCardEffect(final Container<Card> moveTo, final Container<Card> moveFrom, final Side
-      side) {
+  public MoveCardEffect(final Container<Card> moveTo, final Container<Card> moveFrom, final Side side) {
     this.moveTo = moveTo;
     this.moveFrom = moveFrom;
     this.side = side;

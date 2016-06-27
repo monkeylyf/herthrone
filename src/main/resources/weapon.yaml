@@ -1,26 +1,49 @@
 - name: wicked_blade
-  display: WickedBlade
+  display: Wicked Blade
+  class: rogue
   attack: 1
   durability: 2
-  class: rogue
   crystal: 1
   collectible: false
 
 - name: fiery_war_axe
-  display: FieryWarAxe
+  display: Fiery War Axe
+  class: warrior
   attack: 3
   durability: 2
-  class: warrior
   crystal: 2
+  collectible: true
 
 - name: truesilver_champion
-  display: TruesilverChampion
+  display: Truesilver Champion
+  class: paladin
   attack: 4
   durability: 2
-  actions:
-    - effect: attribute
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: on_attack
+      effect: attribute
       type: health
       value: 2
-      target: [hero]
+      target:
+        scope: own
+        type: hero
   class: paladin
   crystal: 4
+
+- name: stormforged_axe
+  display: Stormforged Axe
+  class: shaman
+  attack: 2
+  durability: 3
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: on_equip
+      effect: crystal
+      type: crystal_lock
+      value: 2
+      target:
+        scope: own
+        type: hero

@@ -24,13 +24,11 @@ public class BooleanMechanics {
   public BooleanMechanics(final Map<ConstMechanic, MechanicConfig> mechanics) {
     this.booleanAttributeMap = new HashMap<>();
 
-    ConstMechanic.getBooleanMechanics().stream().forEach(
-        mechanic -> {
-          if (mechanics.containsKey(mechanic)) {
-            booleanAttributeMap.put(mechanic, new BooleanAttribute());
-          }
-        }
-    );
+    ConstMechanic.getBooleanMechanics().stream().forEach(mechanic -> {
+      if (mechanics.containsKey(mechanic)) {
+        booleanAttributeMap.put(mechanic, new BooleanAttribute());
+      }
+    });
   }
 
   public Optional<BooleanAttribute> get(final ConstMechanic mechanic) {

@@ -24,20 +24,10 @@ public class SpellFactory {
 
   public static Spell create(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
-    return create(
-        config.getName(),
-        config.getClassName(),
-        config.getCrystal(),
-        config.getType(),
-        config.getTargetConfig(),
-        config.getEffects()
-    );
+    return create(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getTargetConfig(), config.getEffects());
   }
 
-  private static Spell create(final ConstSpell name, final ConstClass className,
-                              final int crystal, final ConstType type,
-                              final Optional<TargetConfig> targetConfig,
-                              final List<EffectConfig> effects) {
+  private static Spell create(final ConstSpell name, final ConstClass className, final int crystal, final ConstType type, final Optional<TargetConfig> targetConfig, final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
@@ -45,12 +35,9 @@ public class SpellFactory {
 
       @Override
       public Map<String, String> view() {
-        return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
+        return ImmutableMap.<String, String>builder().put(Constant.CARD_NAME, getCardName()).put(Constant.CRYSTAL, getCrystalManaCost().toString())
             //.put(Constant.DESCRIPTION, "TODO")
-            .put(Constant.TYPE, getType().toString())
-            .build();
+            .put(Constant.TYPE, getType().toString()).build();
       }
 
       @Override
@@ -97,14 +84,7 @@ public class SpellFactory {
 
   public static Spell createHeroPowerByName(final ConstSpell heroPower) {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
-    return create(
-        config.getName(),
-        config.getClassName(),
-        config.getCrystal(),
-        config.getType(),
-        config.getTargetConfig(),
-        config.getEffects()
-    );
+    return create(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getTargetConfig(), config.getEffects());
   }
 
 }

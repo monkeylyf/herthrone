@@ -5,7 +5,8 @@ package com.herthrone.constant;
  */
 public enum ConstWeapon {
   FIERY_WAR_AXE,
-  WICKED_KNIFE,
+  STORMFORGED_AXE,
+  TRUESILVER_CHAMPION,
   WICKED_BLADE,
-  TRUESILVER_CHAMPION;
+  WICKED_KNIFE;
 }

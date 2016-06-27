@@ -49,11 +49,9 @@ public class GameManager {
   public Side inactiveSide;
   private int seqId = 0;
 
-  public GameManager(final ConstHero hero1, final ConstHero hero2, final List<Enum> cardNames1,
-                     final List<Enum> cardNames2) {
+  public GameManager(final ConstHero hero1, final ConstHero hero2, final List<Enum> cardNames1, final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
-    this.battlefield1 = new Battlefield(
-        HeroFactory.create(hero1), HeroFactory.create(hero2));
+    this.battlefield1 = new Battlefield(HeroFactory.create(hero1), HeroFactory.create(hero2));
     this.battlefield2 = battlefield1.getMirrorBattlefield();
     this.activeBattlefield = battlefield1;
     this.activeSide = battlefield1.mySide;
@@ -89,8 +87,7 @@ public class GameManager {
     throw new RuntimeException(String.format("Unknown card %s", name));
   }
 
-  public static boolean isMinionTargetable(final Minion minion, final Container<Minion> board,
-                                           final ConstType type) {
+  public static boolean isMinionTargetable(final Minion minion, final Container<Minion> board, final ConstType type) {
     if (BooleanAttribute.isPresentAndOn(minion.getBooleanMechanics().get(ConstMechanic.IMMUNE))) {
       return false;
     } else {
@@ -105,11 +102,9 @@ public class GameManager {
     }
   }
 
-  private static boolean isMinionTargetableByAttack(final Minion minion, final Container<Minion>
-      board) {
+  private static boolean isMinionTargetableByAttack(final Minion minion, final Container<Minion> board) {
     // A stealth minion can not be targeted, even it is a taunt minion.
-    final Optional<BooleanAttribute> stealth = minion.getBooleanMechanics().get(ConstMechanic
-        .STEALTH);
+    final Optional<BooleanAttribute> stealth = minion.getBooleanMechanics().get(ConstMechanic.STEALTH);
     if (BooleanAttribute.isPresentAndOn(stealth)) {
       return false;
     }
@@ -122,20 +117,15 @@ public class GameManager {
 
     // If there is any other minions on the board with taunt but not stealth ability, this minion
     // cannot be targeted.
-    return !board.stream().anyMatch(
-        m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)) &&
-            BooleanAttribute.isAbsentOrOff(m.getBooleanMechanics().get(ConstMechanic.STEALTH)));
+    return !board.stream().anyMatch(m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)) && BooleanAttribute.isAbsentOrOff(m.getBooleanMechanics().get(ConstMechanic.STEALTH)));
   }
 
-  private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion>
-      board) {
-    final Optional<BooleanAttribute> elusive = minion.getBooleanMechanics().get(
-        ConstMechanic.ELUSIVE);
+  private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion> board) {
+    final Optional<BooleanAttribute> elusive = minion.getBooleanMechanics().get(ConstMechanic.ELUSIVE);
     return !BooleanAttribute.isPresentAndOn(elusive);
   }
 
-  public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board,
-                                         final ConstType type) {
+  public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board, final ConstType type) {
     if (BooleanAttribute.isPresentAndOn(hero.getBooleanMechanics().get(ConstMechanic.IMMUNE))) {
       return false;
     } else {
@@ -151,8 +141,7 @@ public class GameManager {
   }
 
   private static boolean isHeroTargetableByAttack(final Hero hero, final Container<Minion> board) {
-    return !board.stream().anyMatch(
-        m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
+    return !board.stream().anyMatch(m -> BooleanAttribute.isPresentAndOn(m.getBooleanMechanics().get(ConstMechanic.TAUNT)));
   }
 
   private static boolean isHeroTargetableBySpell(final Hero hero, final Container<Minion> board) {
@@ -239,15 +228,13 @@ public class GameManager {
 
     if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power without a specific target.
-      EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), activeSide.hero)
-          .stream().forEach(Effect::act);
+      EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), activeSide.hero).stream().forEach(Effect::act);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.getAttackMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature)
-          .stream().forEach(Effect::act);
+      EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature).stream().forEach(Effect::act);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.getAttackMovePoints().buff.temp.decrease(1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
@@ -296,8 +283,7 @@ public class GameManager {
   private void checkManaCost(final int index) {
     final Card card = activeSide.hand.get(index);
     final int manaCost = card.getCrystalManaCost().getVal();
-    Preconditions.checkArgument(
-        manaCost <= activeSide.manaCrystal.getCrystal(), "Not enough mana for: " + card.getCardName());
+    Preconditions.checkArgument(manaCost <= activeSide.manaCrystal.getCrystal(), "Not enough mana for: " + card.getCardName());
   }
 
   public void playCard(final Card card) {
@@ -305,7 +291,7 @@ public class GameManager {
       Minion minion = (Minion) card;
       // Assign game board sequence id to minion.
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.getCardName());
-      minion.playOnBoard(activeSide.board, minion);
+      minion.playOnBoard(activeSide.board);
       minion.setSequenceId(seqId);
       seqId += 1;
     } else if (card instanceof Secret) {
@@ -313,7 +299,7 @@ public class GameManager {
       activeSide.secrets.add(secret);
     } else if (card instanceof Weapon) {
       Weapon weapon = (Weapon) card;
-      activeSide.hero.arm(weapon);
+      activeSide.hero.equip(weapon);
     } else if (card instanceof Spell) {
       Spell spell = (Spell) card;
       //spell.getEffects().
@@ -331,7 +317,7 @@ public class GameManager {
       activeSide.board.add(minion);
     } else if (card instanceof Weapon) {
       Weapon weapon = (Weapon) card;
-      activeSide.hero.arm(weapon);
+      activeSide.hero.equip(weapon);
     } else if (card instanceof Spell) {
       Spell spell = (Spell) card;
       //spell.getEffects().
@@ -341,8 +327,7 @@ public class GameManager {
   }
 
   void useHeroPower(final Creature creature) {
-    Preconditions.checkArgument(
-        activeSide.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
+    Preconditions.checkArgument(activeSide.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
     EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature).stream().forEach(Effect::act);
     activeSide.heroPowerMovePoints.decrease(1);
   }
