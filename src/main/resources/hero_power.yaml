@@ -31,14 +31,14 @@
   type: hero_power
   target:
     scope: all
-    type: creature
+    type: all
   actions:
     - effect: attribute
       type: health
       value: -1
       target:
         scope: all
-        type: creature
+        type: all
 
 - name: lesser_heal
   display: Lesser Heal
@@ -47,14 +47,14 @@
   type: hero_power
   target:
     scope: all
-    type: creature
+    type: all
   actions:
     - effect: attribute
       type: health
       value: 2
       target:
         scope: all
-        type: creature
+        type: all
 
 - name: life_tap
   display: Life Tap

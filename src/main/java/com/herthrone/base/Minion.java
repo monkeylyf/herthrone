@@ -20,5 +20,18 @@ public interface Minion extends Creature {
 
   void destroy();
 
+  /**
+   * A minion actively to be played by a player onto a board.
+   * Battlecry effects will be triggered by the action of play.
+   *
+   * @param board
+   */
   void playOnBoard(final Container<Minion> board);
+
+  /**
+   * A minion passively to be put onto a board.
+   *
+   * @param board
+   */
+  void summonOnBoard(final Container<Minion> board);
 }

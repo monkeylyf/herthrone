@@ -31,6 +31,7 @@ public class Side implements Round {
   public final Replay replay;
   private EffectQueue effectQueue;
   private int fatigue;
+  private Side opponentSide;
 
   public Side(final Hero hero, final EffectQueue effectQueue) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
@@ -52,6 +53,14 @@ public class Side implements Round {
     this.effectQueue = effectQueue;
   }
 
+  public static Side createSide(final Hero hero1, final Hero hero2, final EffectQueue effectQueue) {
+    final Side thisSide = new Side(hero1, effectQueue);
+    final Side thatSide = new Side(hero2, effectQueue);
+    thisSide.opponentSide = thatSide;
+    thatSide.opponentSide = thisSide;
+    return thisSide;
+  }
+
   public void populateDeck(final List<Enum> cards) {
     cards.stream().forEach(cardName -> {
       final Card card = GameManager.createCardInstance(cardName);
@@ -66,14 +75,6 @@ public class Side implements Round {
     fatigue += 1;
     logger.debug(String.format("Increase fatigue to %d", fatigue));
     hero.takeDamage(fatigue);
-  }
-
-  public boolean hasCreature(final Creature creature) {
-    if (creature instanceof Hero) {
-      return creature == hero;
-    } else {
-      return board.contains((Minion) creature);
-    }
   }
 
   public List<Creature> allCreatures() {
@@ -98,5 +99,9 @@ public class Side implements Round {
   @Override
   public void startTurn() {
     replay.startTurn();
+  }
+
+  public Side getOpponentSide() {
+    return opponentSide;
   }
 }

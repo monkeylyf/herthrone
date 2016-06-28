@@ -19,11 +19,13 @@ public class EffectConfig {
   private static final String PERMANENT = "permanent";
   private static final String UNIQUE = "unique";
   private static final String CHOICES = "choices";
+  private static final String RANDOM = "random";
   private static final String TARGET = "target";
   private final ConstEffectType effect;
   private final String type;  // TODO: get rid of all String.
   private final int value;
   private final boolean unique;
+  private final boolean random;
   private final boolean permanent;
   private final List<String> choices;
   private final TargetConfig target;
@@ -34,6 +36,7 @@ public class EffectConfig {
     this.value = (int) map.get(VALUE);
     this.permanent = (map.containsKey(PERMANENT)) ? (boolean) map.get(PERMANENT) : false;
     this.unique = (map.containsKey(UNIQUE)) ? (boolean) map.get(UNIQUE) : false;
+    this.random = (map.containsKey(RANDOM)) ? (boolean) map.get(RANDOM) : false;
     this.choices = ((map.containsKey(CHOICES)) ? (List) map.get(CHOICES) : Collections.emptyList());
     this.target = new TargetConfig((Map) map.get(TARGET));
   }
@@ -56,6 +59,10 @@ public class EffectConfig {
 
   public boolean isUnique() {
     return unique;
+  }
+
+  public boolean isRandom() {
+    return random;
   }
 
   public boolean isPermanent() {

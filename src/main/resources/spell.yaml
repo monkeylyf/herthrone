@@ -4,11 +4,11 @@
   crystal: 4
   target:
     scope: all
-    type: creature
+    type: all
   actions:
     - effect: attribute
       type: health
       value: -6
       target:
         scope: all
-        type: creature
+        type: all

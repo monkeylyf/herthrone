@@ -222,3 +222,20 @@
   crystal: 1
   collectible: false
   mechanics: []
+
+- name: knife_juggler
+  display: Knife Juggler
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: on_summon
+      effect: attribute
+      type: health
+      value: -1
+      random: true
+      target:
+        scope: opponent
+        type: all

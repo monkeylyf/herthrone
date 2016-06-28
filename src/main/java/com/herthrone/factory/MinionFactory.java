@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
@@ -22,7 +23,10 @@ import com.herthrone.objects.EffectMechanics;
 import com.herthrone.objects.IntAttribute;
 import org.apache.log4j.Logger;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -74,13 +78,13 @@ public class MinionFactory {
 
       @Override
       public int getSequenceId() {
-        Preconditions.checkArgument(seqId.isPresent(), "Minion sequence Id not set yet");
+        Preconditions.checkArgument(seqId.isPresent(), getCardName() + " sequence ID not set yet");
         return seqId.get().intValue();
       }
 
       @Override
       public void setSequenceId(final int sequenceId) {
-        Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence Id already set");
+        Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence ID already set");
         seqId = Optional.of(sequenceId);
         logger.debug(String.format("%s ID set to %d", getCardName(), sequenceId));
       }
@@ -98,7 +102,8 @@ public class MinionFactory {
 
       @Override
       public void playOnBoard(final Container<Minion> board) {
-        board.add(this);
+        // TODO: battlecry happens before summon triggered events.
+        summonOnBoard(board);
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
         EffectFactory.pipeMechanicEffectIfPresent(battlecry, this);
         // Combo condition check that there must be one replay record before this action.
@@ -106,6 +111,22 @@ public class MinionFactory {
           Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
           EffectFactory.pipeMechanicEffectIfPresent(combo, this);
         }
+      }
+
+      @Override
+      public void summonOnBoard(Container<Minion> board) {
+        final Comparator<Minion> bySequenceId = (m1, m2) -> Integer.compare(
+            m1.getSequenceId(), m2.getSequenceId());
+        List<Effect> onSummonEffects = board.stream()
+            .sorted(bySequenceId)
+            .map(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_SUMMON))
+            .filter(mechanicOptional -> mechanicOptional.isPresent())
+            .map(mechanicOptional -> EffectFactory.pipeMechanicEffect(mechanicOptional.get(), this))
+            .collect(Collectors.toList());
+        // Add to board after scanning through existing board otherwise this minion itself triggers
+        // its summon effect if there is one.
+        board.add(this);
+        getBinder().getSide().getEffectQueue().enqueue(onSummonEffects);
       }
 
       @Override
@@ -250,6 +271,11 @@ public class MinionFactory {
       @Override
       public void startTurn() {
 
+      }
+
+      @Override
+      public String toString() {
+        return view().toString();
       }
     };
 

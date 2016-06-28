@@ -46,13 +46,16 @@ public class MechanicTest extends TestCase {
     this.activeSide = gm.activeSide;
     this.inactiveSide = gm.inactiveSide;
 
+    activeSide.startTurn();
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, activeSide);
-    activeSide.board.add(yeti);
+    gm.playCard(yeti);
     this.waterElemental = MinionFactory.create(ConstMinion.WATER_ELEMENTAL, activeSide);
-    activeSide.board.add(waterElemental);
+    gm.playCard(waterElemental);
     this.scarletCrusader = MinionFactory.create(ConstMinion.SCARLET_CRUSADER, activeSide);
-    activeSide.board.add(scarletCrusader);
+    gm.playCard(scarletCrusader);
+
     this.initialBoardSize = activeSide.board.size();
+    activeSide.endTurn();
     activeSide.startTurn();
   }
 
@@ -339,5 +342,18 @@ public class MechanicTest extends TestCase {
     // Turn 3.
     activeSide.manaCrystal.startTurn();
     assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(1);
+  }
+
+  @Test
+  public void testDealDamage() {
+    final Minion knifeJuggler = MinionFactory.create(ConstMinion.KNIFE_JUGGLER, activeSide);
+
+    gm.playCard(knifeJuggler);
+
+    final int numOfYetiToSummon = 5;
+    for (int i = 0; i < numOfYetiToSummon; ++i) {
+      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI, activeSide));
+      assertThat(inactiveSide.hero.getHealthLoss()).isEqualTo(i + 1);
+    }
   }
 }

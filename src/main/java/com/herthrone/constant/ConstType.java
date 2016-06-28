@@ -14,7 +14,7 @@ public enum ConstType {
   TOTEM,
   GENERAL,
   //
-  CREATURE, // Meaning either minion or hero.
+  ALL, // Either minion or hero.
   BOARD,
   HERO,
   SPELL,

@@ -291,9 +291,8 @@ public class GameManager {
       Minion minion = (Minion) card;
       // Assign game board sequence id to minion.
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.getCardName());
+      setIncrementalSequenceId(minion);
       minion.playOnBoard(activeSide.board);
-      minion.setSequenceId(seqId);
-      seqId += 1;
     } else if (card instanceof Secret) {
       Secret secret = (Secret) card;
       activeSide.secrets.add(secret);
@@ -306,6 +305,11 @@ public class GameManager {
     } else {
 
     }
+  }
+
+  public void setIncrementalSequenceId(final Minion minion) {
+    minion.setSequenceId(seqId);
+    seqId += 1;
   }
 
   void playCard(final int index, final Minion target) {

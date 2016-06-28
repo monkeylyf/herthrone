@@ -23,7 +23,6 @@ public enum ConstMechanic {
   STEALTH(true),
   TAUNT(true),
   WINDFURY(true),
-  ON_ATTACK(true),
   // Effect mechanics.
   BATTLECRY,
   CARD_DRAW_EFFECT,
@@ -34,7 +33,9 @@ public enum ConstMechanic {
   DEATHRATTLE,
   DESTROY_EFFECT,
   DISCARD_EFFECT,
+  ON_ATTACK,
   ON_EQUIP,
+  ON_SUMMON,
   EQUIP,
   GENERATE_EFFECT,
   INSPIRE,

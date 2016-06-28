@@ -109,7 +109,7 @@ public class CommandLine {
           nodes.add(new CommandNode(side.board.get(i).toString(), i, target));
         }
         break;
-      case CREATURE:
+      case ALL:
         nodes.add(new CommandNode(side.hero.toString(), -1, target));
         for (int i = 0; i < side.board.size(); ++i) {
           nodes.add(new CommandNode(side.board.get(i).toString(), i, target));

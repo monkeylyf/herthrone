@@ -22,6 +22,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Side;
+import com.herthrone.game.Target;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.objects.IntAttribute;
 import com.herthrone.objects.ManaCrystal;
@@ -49,7 +50,12 @@ public class EffectFactory {
   public static Effect pipeMechanicEffect(final MechanicConfig mechanic, final Creature target) {
     final Optional<EffectConfig> config = mechanic.getEffect();
     Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
-    return getActionsByConfig(config.get(), target);
+    final EffectConfig effectConfig = config.get();
+    final Creature realTarget = effectConfig.isRandom() ?
+        RandomMinionGenerator.randomCreature(effectConfig.getTarget(), target.getBinder().getSide()) :
+        target;
+
+    return getActionsByConfig(effectConfig,  realTarget);
   }
 
   public static Effect getActionsByConfig(final EffectConfig config, final Creature creature) {

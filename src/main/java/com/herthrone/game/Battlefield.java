@@ -1,7 +1,6 @@
 package com.herthrone.game;
 
 import com.google.common.collect.ImmutableMap;
-import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
 import com.herthrone.base.View;
 import com.herthrone.constant.ConstTarget;
@@ -20,8 +19,8 @@ public class Battlefield implements View {
 
   public Battlefield(final Hero hero1, final Hero hero2) {
     this.effectQueue = new EffectQueue();
-    this.mySide = new Side(hero1, effectQueue);
-    this.opponentSide = new Side(hero2, effectQueue);
+    this.mySide = Side.createSide(hero1, hero2, effectQueue);
+    this.opponentSide = mySide.getOpponentSide();
   }
 
   private Battlefield(final Side mySide, final Side opponentSide, final EffectQueue effectQueue) {
@@ -32,10 +31,6 @@ public class Battlefield implements View {
 
   public Battlefield getMirrorBattlefield() {
     return new Battlefield(opponentSide, mySide, effectQueue);
-  }
-
-  public EffectQueue getEffectQueue() {
-    return effectQueue;
   }
 
   @Override
@@ -73,7 +68,10 @@ public class Battlefield implements View {
   }
 
   private Map<String, String> getOpponentSideView() {
-    return buildNoHiddenSideView(opponentSide).put(Constant.HAND_SIZE, Integer.toString(opponentSide.hand.size())).put(Constant.SECRET_SIZE, Integer.toString(opponentSide.secrets.size())).build();
+    return buildNoHiddenSideView(opponentSide)
+        .put(Constant.HAND_SIZE, Integer.toString(opponentSide.hand.size()))
+        .put(Constant.SECRET_SIZE, Integer.toString(opponentSide.secrets.size()))
+        .build();
   }
 
   private ImmutableMap.Builder<String, String> buildNoHiddenSideView(final Side side) {
@@ -94,13 +92,4 @@ public class Battlefield implements View {
     return sideViewBuilder;
   }
 
-  public Side getSideCreatureIsOn(final Creature creature) {
-    if (mySide.hasCreature(creature)) {
-      return mySide;
-    } else if (opponentSide.hasCreature(creature)) {
-      return opponentSide;
-    } else {
-      throw new RuntimeException(String.format("Minion %s is not on the board", creature.toString()));
-    }
-  }
 }
