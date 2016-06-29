@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -317,6 +318,7 @@ public class MechanicTest extends TestCase {
     // First play should not trigger combo effect hence add onl one minion to the board.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
+    System.out.println("fuck");
     gm.playCard(defiasRingleader2);
 
     // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
@@ -355,5 +357,27 @@ public class MechanicTest extends TestCase {
       gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI, activeSide));
       assertThat(inactiveSide.hero.getHealthLoss()).isEqualTo(i + 1);
     }
+  }
+
+  @Test
+  public void testTakeControl() {
+    gm.switchTurn();
+    final int threshold = 4;
+    for (int i = 0; i < threshold; ++i) {
+      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI, inactiveSide));
+    }
+    // Test take control effect triggered because it satisfies the condition.
+    final List<Minion> opponentMinions = inactiveSide.board.asList();
+    gm.switchTurn();
+    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH, activeSide));
+
+    assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
+    // Test the right-most minion is stolen from opponent board.
+    assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinions);
+
+    gm.switchTurn();
+    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH, activeSide));
+    // Test control effect not triggered because of opponent has less than 4 minions.
+    assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
   }
 }

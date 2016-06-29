@@ -209,7 +209,7 @@ public class HeroFactory {
       @Override
       public void playToEquip(final Weapon weapon) {
         Optional<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstMechanic.ON_EQUIP);
-        EffectFactory.pipeMechanicEffectIfPresent(onEquip, this);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onEquip, this);
         equip(weapon);
       }
 

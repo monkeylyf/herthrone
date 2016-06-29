@@ -106,7 +106,7 @@ public class Container<T extends Card> implements Iterator<T> {
   }
 
   public List<T> asList() {
-    return container;
+    return new ArrayList<>(container);
   }
 
   public boolean contains(final T card) {

@@ -193,11 +193,11 @@ public class GameManager {
       }
       leafNode = CommandLine.run(root);
       play(leafNode);
-      clearBoard();
     } while (!isGameFinished() && !isTurnFinished(leafNode));
   }
 
-  void switchTurn() {
+  public void switchTurn() {
+    activeSide.endTurn();
     if (activeBattlefield == battlefield1) {
       activeBattlefield = battlefield2;
     } else {
@@ -206,6 +206,7 @@ public class GameManager {
 
     activeSide = activeBattlefield.mySide;
     inactiveSide = activeBattlefield.opponentSide;
+    activeSide.startTurn();
   }
 
   void increaseCrystalUpperBound() {
@@ -252,11 +253,6 @@ public class GameManager {
     }
   }
 
-  void clearBoard() {
-    clearBoard(activeSide.board);
-    clearBoard(inactiveSide.board);
-  }
-
   boolean isTurnFinished(final CommandLine.CommandNode node) {
     return node == null || node.option.equals(ConstCommand.END_TURN.toString());
   }
@@ -270,14 +266,6 @@ public class GameManager {
     checkManaCost(index);
     final Card card = activeSide.hand.remove(index);
     playCard(card);
-  }
-
-  void clearBoard(final Container<Minion> board) {
-    for (int i = 0; i < board.size(); ++i) {
-      if (board.get(i).isDead()) {
-        board.remove(i);
-      }
-    }
   }
 
   private void checkManaCost(final int index) {

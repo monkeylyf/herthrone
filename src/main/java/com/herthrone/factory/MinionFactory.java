@@ -105,11 +105,11 @@ public class MinionFactory {
         // TODO: battlecry happens before summon triggered events.
         summonOnBoard(board);
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
-        EffectFactory.pipeMechanicEffectIfPresent(battlecry, this);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, this);
         // Combo condition check that there must be one replay record before this action.
         if (getBinder().getSide().replay.size() > 1) {
           Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
-          EffectFactory.pipeMechanicEffectIfPresent(combo, this);
+          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, this);
         }
       }
 
@@ -249,7 +249,7 @@ public class MinionFactory {
         side.board.remove(this);
 
         Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
-        EffectFactory.pipeMechanicEffectIfPresent(deathrattleConfig, this);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(deathrattleConfig, this);
       }
 
       @Override

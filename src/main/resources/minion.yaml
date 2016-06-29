@@ -239,3 +239,24 @@
       target:
         scope: opponent
         type: all
+
+- name: mind_control_tech
+  display: Mind Control Tech
+  class: neutral
+  attack: 3
+  health: 3
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: battlecry
+      effect: take_control
+      type: minion
+      permanent: true
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+      condition:
+        type: board_size
+        rangeStart: 4  # Inclusive
+        rangeEnd: 7  # Inclusive

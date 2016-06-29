@@ -7,12 +7,14 @@ import com.herthrone.action.EquipWeaponEffect;
 import com.herthrone.action.MoveCardEffect;
 import com.herthrone.action.OverloadEffect;
 import com.herthrone.action.SummonEffect;
+import com.herthrone.action.TakeControlEffect;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
+import com.herthrone.configuration.ConditionConfig;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
@@ -38,12 +40,38 @@ public class EffectFactory {
 
   static Logger logger = Logger.getLogger(EffectFactory.class.getName());
 
-  public static void pipeMechanicEffectIfPresent(final Optional<MechanicConfig> mechanicConfigOptional, final Creature target) {
-    if (mechanicConfigOptional.isPresent()) {
-      final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
-      logger.debug("Triggering " + mechanicConfig.getMechanic().toString());
-      Effect effect = pipeMechanicEffect(mechanicConfig, target);
-      target.getBinder().getSide().getEffectQueue().enqueue(effect);
+  public static void pipeMechanicEffectIfPresentAndMeetCondition(
+      final Optional<MechanicConfig> mechanicConfigOptional, final Creature target) {
+    if (!mechanicConfigOptional.isPresent()) {
+      logger.debug("Mechanic configuration is absent");
+      return;
+    }
+    final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
+    if (!isConditionTriggered(mechanicConfig.getEffect(), target)) {
+      logger.debug("Condition not met and mechanic effect not triggered");
+      return;
+    }
+
+    logger.debug("Triggering " + mechanicConfig.getMechanic().toString());
+    Effect effect = pipeMechanicEffect(mechanicConfig, target);
+    target.getBinder().getSide().getEffectQueue().enqueue(effect);
+  }
+
+  private static boolean isConditionTriggered(final Optional<EffectConfig> effectConfigOptional,
+                                              final Creature target) {
+    if (effectConfigOptional.isPresent() &&
+        effectConfigOptional.get().getConditionConfigOptional().isPresent()) {
+      // Check if there is condition config. If there is, return whether condition is met.
+      final ConditionConfig conditionConfig = effectConfigOptional.get().getConditionConfigOptional().get();
+      switch (conditionConfig.getConditionType()) {
+        case BOARD_SIZE:
+          return conditionConfig.inRange(target.getBinder().getOpponentSide().board.size());
+        default:
+          throw new RuntimeException("Unknown condition: " + conditionConfig.getConditionType());
+      }
+    } else {
+      // If no condition configured, return true and the effect should be triggered any way.
+      return true;
     }
   }
 
@@ -74,9 +102,18 @@ public class EffectFactory {
       case CRYSTAL:
         //Preconditions.checkArgument(creature instanceof Hero, "");
         return getCrystalEffect(config, creature);
+      case TAKE_CONTROL:
+        return getTakeControlAction(config, creature);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
+  }
+
+  private static Effect getTakeControlAction(final EffectConfig effect, final Creature creature) {
+    final Creature traitorMinion = RandomMinionGenerator.randomCreature(
+        effect.getTarget(), creature.getBinder().getSide());
+    Preconditions.checkArgument(traitorMinion instanceof Minion);
+    return new TakeControlEffect((Minion) traitorMinion);
   }
 
   private static Effect getAttributeAction(final EffectConfig effect, final Creature creature) {

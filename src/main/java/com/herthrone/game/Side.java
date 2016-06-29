@@ -104,4 +104,9 @@ public class Side implements Round {
   public Side getOpponentSide() {
     return opponentSide;
   }
+
+  @Override
+  public String toString() {
+    return board.toString();
+  }
 }
