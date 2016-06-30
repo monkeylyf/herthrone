@@ -13,6 +13,7 @@ public enum ConstEffectType {
   TAKE_CONTROL,
   DRAW,
   MOVE_CARD,
+  GENERATE,
   EQUIP_WEAPON,
   PLAY_MINION,
   SUMMON,

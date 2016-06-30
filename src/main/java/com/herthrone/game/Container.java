@@ -1,6 +1,5 @@
 package com.herthrone.game;
 
-import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
@@ -29,7 +28,8 @@ public class Container<T extends Card> implements Iterator<T> {
   }
 
   public Container(final List<T> container, final int maxCapacity) {
-    Preconditions.checkArgument(container.size() <= maxCapacity, "Container size larger that max capacity: " + maxCapacity);
+    Preconditions.checkArgument(
+        container.size() <= maxCapacity, "Container size larger that max capacity: " + maxCapacity);
     this.container = container;
     this.maxCapacity = maxCapacity;
   }
@@ -106,7 +106,7 @@ public class Container<T extends Card> implements Iterator<T> {
   }
 
   public List<T> asList() {
-    return new ArrayList<>(container);
+    return container;
   }
 
   public boolean contains(final T card) {

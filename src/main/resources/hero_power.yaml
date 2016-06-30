@@ -3,7 +3,7 @@
   class: warrior
   crystal: 2
   type: hero_power
-  actions:
+  mechanics:
     - effect: attribute
       type: armor
       value: 2
@@ -16,7 +16,7 @@
   class: rogue
   crystal: 2
   type: hero_power
-  actions:
+  mechanics:
     - effect: weapon
       type: wicked_blade
       value: 1
@@ -32,7 +32,7 @@
   target:
     scope: all
     type: all
-  actions:
+  mechanics:
     - effect: attribute
       type: health
       value: -1
@@ -48,7 +48,7 @@
   target:
     scope: all
     type: all
-  actions:
+  mechanics:
     - effect: attribute
       type: health
       value: 2
@@ -61,7 +61,7 @@
   class: warlock
   crystal: 2
   type: hero_power
-  actions:
+  mechanics:
     - effect: attribute
       type: health
       value: -2
@@ -80,7 +80,7 @@
   class: paladin
   crystal: 2
   type: hero_power
-  actions:
+  mechanics:
     - effect: summon
       type: minion
       value: 1
@@ -95,7 +95,7 @@
   class: druid
   crystal: 2
   type: hero_power
-  actions:
+  mechanics:
     - effect: attribute
       type: attack
       permanent: false  # true by default
@@ -118,7 +118,7 @@
   target:
      scope: opponent
      type: hero
-  actions:
+  mechanics:
     - effect: attribute
       type: health
       value: -2
@@ -131,7 +131,7 @@
   class: shaman
   crystal: 2
   type: hero_power
-  actions:
+  mechanics:
     - effect: summon
       type: minion
       value: 1

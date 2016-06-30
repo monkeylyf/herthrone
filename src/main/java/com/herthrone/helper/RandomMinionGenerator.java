@@ -44,9 +44,9 @@ public class RandomMinionGenerator {
     return randomOne(candidates);
   }
 
-  public static <T> T randomOne(final List<T> creatures) {
-    final int index = random.nextInt(creatures.size());
-    return creatures.get(index);
+  public static <T> T randomOne(final List<T> elements) {
+    final int index = random.nextInt(elements.size());
+    return elements.get(index);
   }
 
 

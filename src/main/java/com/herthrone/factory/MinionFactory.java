@@ -114,11 +114,9 @@ public class MinionFactory {
       }
 
       @Override
-      public void summonOnBoard(Container<Minion> board) {
-        final Comparator<Minion> bySequenceId = (m1, m2) -> Integer.compare(
-            m1.getSequenceId(), m2.getSequenceId());
+      public void summonOnBoard(final Container<Minion> board) {
         List<Effect> onSummonEffects = board.stream()
-            .sorted(bySequenceId)
+            .sorted(EffectFactory.compareBySequenceId)
             .map(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_SUMMON))
             .filter(mechanicOptional -> mechanicOptional.isPresent())
             .map(mechanicOptional -> EffectFactory.pipeMechanicEffect(mechanicOptional.get(), this))

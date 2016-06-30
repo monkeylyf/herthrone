@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.herthrone.base.Effect;
 import org.apache.log4j.Logger;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -29,6 +28,13 @@ public class EffectQueue {
     executeUntilEmpty();
   }
 
+  private void executeUntilEmpty() {
+    while (!queue.isEmpty()) {
+      final Effect effect = queue.remove();
+      effect.act();
+    }
+  }
+
   public void enqueue(final List<Effect> effects) {
     if (effects.size() > 0) {
       logger.debug(String.format("Enqueuing %d effects", effects.size()));
@@ -37,13 +43,6 @@ public class EffectQueue {
         queue.add(effect);
       });
       executeUntilEmpty();
-    }
-  }
-
-  private void executeUntilEmpty() {
-    while (!queue.isEmpty()) {
-      final Effect effect = queue.remove();
-      effect.act();
     }
   }
 }

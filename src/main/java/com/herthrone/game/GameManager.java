@@ -61,6 +61,21 @@ public class GameManager {
     inactiveSide.populateDeck(cardNames2);
   }
 
+  public static Card createCardInstance(final String cardName, final ConstType type) {
+    switch (type) {
+      case MINION:
+        return MinionFactory.create(ConstMinion.valueOf(cardName.toUpperCase()));
+      case WEAPON:
+        return WeaponFactory.create(ConstWeapon.valueOf(cardName.toUpperCase()));
+      case SPELL:
+        return SpellFactory.create(ConstSpell.valueOf(cardName.toUpperCase()));
+      case SECRET:
+        return SecretFactory.create(ConstSecret.valueOf(cardName.toUpperCase()));
+      default:
+        throw new RuntimeException(String.format("Unknown card %s", cardName));
+    }
+  }
+
   public static Card createCardInstance(final Enum cardName) {
     final String name = cardName.toString();
 
@@ -318,9 +333,11 @@ public class GameManager {
     }
   }
 
-  void useHeroPower(final Creature creature) {
+  public void useHeroPower(final Creature creature) {
     Preconditions.checkArgument(activeSide.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
     EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature).stream().forEach(Effect::act);
     activeSide.heroPowerMovePoints.decrease(1);
+
+
   }
 }

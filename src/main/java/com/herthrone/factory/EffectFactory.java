@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.action.AttributeEffect;
 import com.herthrone.action.EquipWeaponEffect;
+import com.herthrone.action.GenerateEffect;
 import com.herthrone.action.MoveCardEffect;
 import com.herthrone.action.OverloadEffect;
 import com.herthrone.action.SummonEffect;
@@ -24,12 +25,12 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Side;
-import com.herthrone.game.Target;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.objects.IntAttribute;
 import com.herthrone.objects.ManaCrystal;
 import org.apache.log4j.Logger;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,8 @@ import java.util.stream.Collectors;
 public class EffectFactory {
 
   static Logger logger = Logger.getLogger(EffectFactory.class.getName());
+  static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
+      m1.getSequenceId(), m2.getSequenceId());
 
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
       final Optional<MechanicConfig> mechanicConfigOptional, final Creature target) {
@@ -62,7 +65,8 @@ public class EffectFactory {
     if (effectConfigOptional.isPresent() &&
         effectConfigOptional.get().getConditionConfigOptional().isPresent()) {
       // Check if there is condition config. If there is, return whether condition is met.
-      final ConditionConfig conditionConfig = effectConfigOptional.get().getConditionConfigOptional().get();
+      final ConditionConfig conditionConfig = effectConfigOptional.get()
+          .getConditionConfigOptional().get();
       switch (conditionConfig.getConditionType()) {
         case BOARD_SIZE:
           return conditionConfig.inRange(target.getBinder().getOpponentSide().board.size());
@@ -92,7 +96,8 @@ public class EffectFactory {
       case ATTRIBUTE:
         return getAttributeAction(config, creature);
       case WEAPON:
-        Preconditions.checkArgument(creature instanceof Hero, creature.getType() + " can not equip weapon");
+        Preconditions.checkArgument(
+            creature instanceof Hero, creature.getType() + " can not equip weapon");
         final Hero hero = (Hero) creature;
         return getEquipWeaponAction(hero, config);
       case SUMMON:
@@ -100,13 +105,19 @@ public class EffectFactory {
       case DRAW:
         return getDrawCardAction(config, creature.getBinder().getSide());
       case CRYSTAL:
-        //Preconditions.checkArgument(creature instanceof Hero, "");
         return getCrystalEffect(config, creature);
       case TAKE_CONTROL:
         return getTakeControlAction(config, creature);
+      case GENERATE:
+        return getGenerateAction(config, creature);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
+  }
+
+  private static Effect getGenerateAction(EffectConfig config, Creature creature) {
+    return new GenerateEffect(
+        config.getChoices(), config.getType(), config.getTarget(), creature.getBinder().getSide());
   }
 
   private static Effect getTakeControlAction(final EffectConfig effect, final Creature creature) {
@@ -128,7 +139,8 @@ public class EffectFactory {
       case (Constant.HEALTH_UPPER_BOUND):
         return getGeneralAttributeAction(creature.getHealthUpperAttr(), effect);
       case (Constant.ARMOR):
-        Preconditions.checkArgument(creature instanceof Hero, "Armor Attribute does not applies to " + creature.getType());
+        Preconditions.checkArgument(
+            creature instanceof Hero, "Armor Attribute does not applies to " + creature.getType());
         return getGeneralAttributeAction(((Hero) creature).getArmorAttr(), effect);
       default:
         throw new IllegalArgumentException("Unknown effect type: " + type);
@@ -143,11 +155,13 @@ public class EffectFactory {
   }
 
   private static Effect getSummonAction(final EffectConfig effect, final Side side) {
-    List<String> summonChoices = effect.getChoices().stream().map(name -> name.toUpperCase()).collect(Collectors.toList());
+    List<String> summonChoices = effect.getChoices().stream()
+        .map(name -> name.toUpperCase()).collect(Collectors.toList());
     String summonTargetName;
     if (effect.isUnique()) {
       // Summon candidates must be non-existing on the board to avoid dups.
-      final List<Creature> existingCreatures = side.board.stream().map(m -> (Creature) m).collect(Collectors.toList());
+      final List<Creature> existingCreatures = side.board.stream()
+          .map(m -> (Creature) m).collect(Collectors.toList());
       summonTargetName = RandomMinionGenerator.randomUnique(summonChoices, existingCreatures);
     } else {
       summonTargetName = RandomMinionGenerator.randomOne(summonChoices);
@@ -190,11 +204,13 @@ public class EffectFactory {
   }
 
   public static List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
-    return spell.getEffects().stream().map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
+    return spell.getEffects().stream()
+        .map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
   }
 
   public static List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
-    return config.getEffects().stream().map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
+    return config.getEffects().stream()
+        .map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
   }
 
 }

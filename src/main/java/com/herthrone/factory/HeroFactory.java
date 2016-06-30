@@ -2,8 +2,10 @@ package com.herthrone.factory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
@@ -17,11 +19,14 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
+import com.herthrone.game.Side;
 import com.herthrone.objects.BooleanAttribute;
 import com.herthrone.objects.BooleanMechanics;
 import com.herthrone.objects.IntAttribute;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by yifeng on 4/8/16.
@@ -211,6 +216,23 @@ public class HeroFactory {
         Optional<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstMechanic.ON_EQUIP);
         EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onEquip, this);
         equip(weapon);
+      }
+
+      @Override
+      public void useHeroPower(final Creature creature) {
+        Preconditions.checkArgument(heroPowerMovePoints.getVal() > 0);
+        EffectFactory.getActionsByConfig(heroPower, creature).stream().forEach(Effect::act);
+        heroPowerMovePoints.decrease(1);
+
+        final Side side = getBinder().getSide();
+        List<Effect> inspireEffects = side.board.stream()
+            .sorted(EffectFactory.compareBySequenceId)
+            .map(minion -> minion.getEffectMechanics().get(ConstMechanic.INSPIRE))
+            .filter(mechanicOptional -> mechanicOptional.isPresent())
+            .map(mechanicOptional -> EffectFactory.pipeMechanicEffect(mechanicOptional.get(), this))
+            .collect(Collectors.toList());
+
+        side.getEffectQueue().enqueue(inspireEffects);
       }
 
       @Override

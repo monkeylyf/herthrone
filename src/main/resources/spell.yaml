@@ -5,7 +5,7 @@
   target:
     scope: all
     type: all
-  actions:
+  mechanics:
     - effect: attribute
       type: health
       value: -6

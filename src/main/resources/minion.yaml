@@ -260,3 +260,46 @@
         type: board_size
         rangeStart: 4  # Inclusive
         rangeEnd: 7  # Inclusive
+
+- name: recruiter
+  display: Recruiter
+  class: neutral
+  attack: 5
+  health: 4
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: inspire
+      effect: generate
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: hand
+      choices: [squire]
+
+- name: silver_hand_knight
+  display: Silver Hand Knight
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: battlecry
+      effect: summon
+      type: board
+      value: 1
+      target:
+        scope: own
+        type: minion
+      choices: [squire]
+
+- name: squire
+  display: Squire
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 1
+  collectible: false
+  mechanics: []

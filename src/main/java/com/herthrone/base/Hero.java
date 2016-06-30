@@ -24,4 +24,5 @@ public interface Hero extends Creature {
 
   void playToEquip(final Weapon weapon);
 
+  void useHeroPower(final Creature creature);
 }
