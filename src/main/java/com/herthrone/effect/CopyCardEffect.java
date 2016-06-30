@@ -1,4 +1,4 @@
-package com.herthrone.action;
+package com.herthrone.effect;
 
 import com.herthrone.base.Card;
 import com.herthrone.base.Effect;

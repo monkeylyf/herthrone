@@ -5,6 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.TargetConfig;
@@ -40,39 +41,47 @@ public class CommandLine {
     if (playCardNode.childOptions.size() != 0) {
       root.addChildNode(playCardNode);
     }
-    // Populate move minions option.
-    final CommandNode moveMinions = new CommandNode(ConstCommand.MOVE_MINION.toString());
+    // Populate minions attack option.
+    final CommandNode moveMinions = new CommandNode(ConstCommand.MINION_ATTACK.toString());
     for (int i = 0; i < mySide.board.size(); ++i) {
       final Minion minion = mySide.board.get(i);
       if (minion.canMove()) {
-        final CommandNode moveMinionCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
+        final CommandNode minionAttackCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
           if (GameManager.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
-            moveMinionCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
+            minionAttackCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
           }
         }
         final CommandNode heroNode = new CommandNode(opponentSide.hero.getCardName(), -1);
         heroNode.setSide(ConstTarget.OPPONENT);
-        moveMinionCommand.addChildNode(heroNode);
-        moveMinions.addChildNode(moveMinionCommand);
+        minionAttackCommand.addChildNode(heroNode);
+        moveMinions.addChildNode(minionAttackCommand);
       }
     }
+
+    // Populate hero attack option if hero can attack.
     if (mySide.hero.canMove()) {
-      // TODO: add hero as an legit attack move.
+      final CommandNode heroAttack = new CommandNode(ConstCommand.HERO_ATTACK.toString());
+      for (int j = 0; j < opponentSide.board.size(); ++j) {
+        final Minion opponentMinion = opponentSide.board.get(j);
+        if (GameManager.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
+          heroAttack.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
+        }
+      }
     }
     if (moveMinions.childOptions.size() != 0) {
       root.addChildNode(moveMinions);
     }
-    // Use hero power.
-    if (battlefield.mySide.hero.getAttackMovePoints().getVal() > 0 && battlefield.mySide.manaCrystal.getCrystal() >= battlefield.mySide.hero.getHeroPower().getCrystalManaCost().getVal()) {
-      final Spell heroPower = mySide.hero.getHeroPower();
+    // Populate use hero power option if can use hero power.
+    if (mySide.hero.getHeroPowerMovePoints().isPositive() &&
+        mySide.hero.getHeroPower().getCrystalManaCost().isNoGreaterThan(mySide.manaCrystal.getCrystal())) {
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
-      scanTargets(useHeroPower, heroPower.getTargetConfig(), battlefield);
+      scanTargets(useHeroPower, mySide.hero.getHeroPower().getTargetConfig(), battlefield);
       root.addChildNode(useHeroPower);
     }
-    // End turn.
+    // Populate end turn option.
     root.addChildNode(new CommandNode(ConstCommand.END_TURN.toString()));
 
     return root;
@@ -150,8 +159,8 @@ public class CommandLine {
       cursor = cursor.move(scanner);
       println("--------------------");
     }
-    // TODO: Intentionally not to close scanner because it closes System.in as well.
-    //scanner.close();
+    // Intentionally not to close scanner because it closes System.in as well, which causes
+    // next this is called again, it throws.
     return cursor;
   }
 

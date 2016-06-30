@@ -1,7 +1,7 @@
 package com.herthrone.factory;
 
 import com.google.common.base.Preconditions;
-import com.herthrone.action.PhysicalDamageEffect;
+import com.herthrone.effect.PhysicalDamageEffect;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstMechanic;

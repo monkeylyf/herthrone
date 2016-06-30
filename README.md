@@ -7,7 +7,8 @@ Interface design and refactoring
 ----
 TODO
 ----
-Improve CLI and dummy view
+- Improve CLI and dummy view
+- Add serialize/deserialize for all models for deepcopy/communicate between frontend and backend
 
 -----------
 In Progress

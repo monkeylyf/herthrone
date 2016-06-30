@@ -1,27 +1,26 @@
-package com.herthrone.action;
+package com.herthrone.effect;
 
 import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Container;
 
-
 /**
- * Created by yifeng on 4/13/16.
+ * Created by yifengliu on 5/25/16.
  */
-public class SummonEffect implements Effect {
+public class PlayMinionEffect implements Effect {
 
-  private final Container<Minion> board;
   private final Minion minion;
+  private final Container<Minion> board;
 
-  public SummonEffect(final Container<Minion> board, final Minion minion) {
-    this.board = board;
+  public PlayMinionEffect(final Minion minion, final Container<Minion> board) {
     this.minion = minion;
+    this.board = board;
   }
 
   @Override
   public ConstEffectType getEffectType() {
-    return ConstEffectType.SUMMON;
+    return ConstEffectType.PLAY_MINION;
   }
 
   @Override

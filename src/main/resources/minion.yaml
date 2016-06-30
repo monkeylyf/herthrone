@@ -303,3 +303,19 @@
   crystal: 1
   collectible: false
   mechanics: []
+
+- name: youthful_brewmaster
+  display: Youthful Brewmaster
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: battlecry
+      effect: return_to_hand
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: minion

@@ -36,6 +36,8 @@ public class HeroFactory {
   public static final int HEALTH = 30;
   private static final int HERO_INIT_MOVE_POINTS = 1;
 
+  public static final String HERO_POWER_ERROR_MESSAGE = "Cannot use hero power in this turn";
+
   public static Hero create(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
     return HeroFactory.create(
@@ -66,7 +68,6 @@ public class HeroFactory {
             .put(Constant.WEAPON, (getWeapon().isPresent()) ? getWeapon().toString() : "unarmed")
             .put(Constant.ATTACK, getAttackAttr().toString())
             .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            //.put(Constant.DESCRIPTION, "TODO")
             .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
             .build();
       }
@@ -220,7 +221,7 @@ public class HeroFactory {
 
       @Override
       public void useHeroPower(final Creature creature) {
-        Preconditions.checkArgument(heroPowerMovePoints.getVal() > 0);
+        Preconditions.checkArgument(heroPowerMovePoints.getVal() > 0, HERO_POWER_ERROR_MESSAGE);
         EffectFactory.getActionsByConfig(heroPower, creature).stream().forEach(Effect::act);
         heroPowerMovePoints.decrease(1);
 

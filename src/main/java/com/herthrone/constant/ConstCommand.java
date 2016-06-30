@@ -4,9 +4,9 @@ package com.herthrone.constant;
  * Created by yifengliu on 5/15/16.
  */
 public enum ConstCommand {
-
+  END_TURN,
+  HERO_ATTACK,
+  MINION_ATTACK,
   PLAY_CARD,
-  MOVE_MINION,
-  USE_HERO_POWER,
-  END_TURN;
+  USE_HERO_POWER;
 }

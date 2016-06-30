@@ -25,9 +25,21 @@ public class IntAttribute implements Round {
     val.decrease(loss);
   }
 
+  public boolean isPositive() {
+    return getVal() > 0;
+  }
+
+  public int getVal() {
+    return val.getVal() + buff.getBuffVal();
+  }
+
   public void reset() {
     val.setTo(rawVal);
     buff.reset();
+  }
+
+  public boolean isNoGreaterThan(final int val) {
+    return getVal() <= val;
   }
 
   @Override
@@ -37,7 +49,6 @@ public class IntAttribute implements Round {
 
   @Override
   public void startTurn() {
-
   }
 
   @Override
@@ -47,9 +58,5 @@ public class IntAttribute implements Round {
     } else {
       return Integer.toString(getVal());
     }
-  }
-
-  public int getVal() {
-    return val.getVal() + buff.getBuffVal();
   }
 }

@@ -35,8 +35,9 @@ public class SpellFactory {
 
       @Override
       public Map<String, String> view() {
-        return ImmutableMap.<String, String>builder().put(Constant.CARD_NAME, getCardName()).put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            //.put(Constant.DESCRIPTION, "TODO")
+        return ImmutableMap.<String, String>builder()
+            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
             .put(Constant.TYPE, getType().toString()).build();
       }
 

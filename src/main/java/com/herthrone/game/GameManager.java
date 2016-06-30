@@ -257,7 +257,7 @@ public class GameManager {
       final Card card = activeSide.hand.get(leafNode.index);
       playCard(leafNode.index);
       consumeCrystal(card);
-    } else if (leafNode.getParent().getParentType().equals(ConstCommand.MOVE_MINION.toString())) {
+    } else if (leafNode.getParent().getParentType().equals(ConstCommand.MINION_ATTACK.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       AttackFactory.getPhysicalDamageAction(attacker, attackee);
@@ -310,6 +310,10 @@ public class GameManager {
     }
   }
 
+  public void playCard(final Card card, final Creature target) {
+
+  }
+
   public void setIncrementalSequenceId(final Minion minion) {
     minion.setSequenceId(seqId);
     seqId += 1;
@@ -334,10 +338,6 @@ public class GameManager {
   }
 
   public void useHeroPower(final Creature creature) {
-    Preconditions.checkArgument(activeSide.heroPowerMovePoints.getVal() > 0, "Cannot use hero power any more in current turn");
-    EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature).stream().forEach(Effect::act);
-    activeSide.heroPowerMovePoints.decrease(1);
-
-
+    activeSide.hero.useHeroPower(creature);
   }
 }

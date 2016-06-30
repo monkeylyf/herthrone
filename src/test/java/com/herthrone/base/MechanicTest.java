@@ -392,4 +392,10 @@ public class MechanicTest extends TestCase {
 
     assertThat(activeSide.hand.size()).isEqualTo(1);
   }
+
+  @Test
+  public void testReturnToHand() {
+    final Minion youthfulBrewmaster = MinionFactory.create(
+        ConstMinion.YOUTHFUL_BREWMASTER, activeSide);
+  }
 }

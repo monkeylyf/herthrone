@@ -6,6 +6,7 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.factory.HeroFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -171,7 +172,7 @@ public class GameManagerTest {
     try {
       gm.useHeroPower(gm.inactiveSide.hero);
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessage("Cannot use hero power any more in current turn");
+      assertThat(expected).hasMessage(HeroFactory.HERO_POWER_ERROR_MESSAGE);
     }
   }
 
@@ -233,7 +234,7 @@ public class GameManagerTest {
   private void checkCommands(CommandLine.CommandNode root, final int numOfMinions) {
     assertThat(root.childOptions.size()).isEqualTo(4);
     List<String> childOptions = root.childOptions.stream().map(option -> option.option).collect(Collectors.toList());
-    assertThat(childOptions).containsExactly(ConstCommand.END_TURN.toString(), ConstCommand.MOVE_MINION.toString(), ConstCommand.PLAY_CARD.toString(), ConstCommand.USE_HERO_POWER.toString());
+    assertThat(childOptions).containsExactly(ConstCommand.END_TURN.toString(), ConstCommand.MINION_ATTACK.toString(), ConstCommand.PLAY_CARD.toString(), ConstCommand.USE_HERO_POWER.toString());
 
     for (CommandLine.CommandNode node : root.childOptions) {
       final String optionName = node.option;
@@ -242,7 +243,7 @@ public class GameManagerTest {
       } else if (optionName.equals(ConstCommand.USE_HERO_POWER.toString())) {
         // 1(own hero) + 2(own minions) + 1(opponent hero) + 1(opponent minion) = 5
         assertThat(node.childOptions.size()).isEqualTo(5);
-      } else if (optionName.equals(ConstCommand.MOVE_MINION)) {
+      } else if (optionName.equals(ConstCommand.MINION_ATTACK)) {
         assertThat(node.childOptions.size()).isEqualTo(numOfMinions);
       } else if (optionName.equals(ConstCommand.PLAY_CARD)) {
         assertThat(node.childOptions.size()).isEqualTo(0);
