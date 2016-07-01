@@ -1,5 +1,4 @@
 - name: chillwind_yeti
-  display: Chillwind Yeti
   class: neutral
   attack: 4
   health: 5
@@ -18,7 +17,6 @@
     - name: Taunt
 
 - name: silver_hand_recruit
-  display: SilverHand Recruit
   class: paladin
   attack: 1
   health: 1
@@ -27,7 +25,6 @@
   mechanics: []
 
 - name: healing_totem
-  display: Healing Totem
   class: shaman
   attack: 0
   health: 2
@@ -36,7 +33,6 @@
   mechanics: []
 
 - name: searing_totem
-  display: Searing Totem
   class: shaman
   attack: 1
   health: 1
@@ -45,7 +41,6 @@
   mechanics: []
 
 - name: wrath_of_air_totem
-  display: Wrath Of Air Totem
   class: shaman
   attack: 0
   health: 2
@@ -54,7 +49,6 @@
   collectible: false
 
 - name: stoneclaw_totem
-  display: Stoneclaw Totem
   class: shaman
   attack: 0
   health: 2
@@ -64,7 +58,6 @@
     - name: Taunt
 
 - name: wolfrider
-  display: Wolfrider
   class: neutral
   attack: 3
   health: 1
@@ -74,7 +67,6 @@
     - name: charge
 
 - name: gnomish_inventor
-  display: Gnomish Inventor
   class: neutral
   attack: 2
   health: 4
@@ -90,7 +82,6 @@
         type: deck
 
 - name: loot_hoarder
-  display: Loot Hoarder
   class: neutral
   attack: 2
   health: 1
@@ -106,7 +97,6 @@
         type: deck
 
 - name: faerie_dragon
-  display: Faerie Dragon
   class: neutral
   type: dragon
   attack: 3
@@ -117,7 +107,6 @@
     - name: elusive
 
 - name: ironfur_grizzly
-  display: Ironfur Grizzly
   class: neutral
   type: beast
   attack: 3
@@ -128,7 +117,6 @@
     - name: taunt
 
 - name: water_elemental
-  display: Water Elemental
   class: mage
   attack: 3
   health: 6
@@ -138,7 +126,6 @@
     - name: freeze
 
 - name: scarlet_crusader
-  display: Scarlet Crusader
   class: mage
   attack: 3
   health: 1
@@ -148,7 +135,6 @@
     - name: divine_shield
 
 - name: worgen_infiltrator
-  display: Worgen Infiltrator
   class: neutral
   attack: 2
   health: 1
@@ -158,7 +144,6 @@
     - name: stealth
 
 - name: emperor_cobra
-  display: Emperor Cobra
   class: neutral
   attack: 2
   health: 3
@@ -168,7 +153,6 @@
     - name: poison
 
 - name: ogre_brute
-  display: Ogre Brute
   class: neutral
   attack: 4
   health: 4
@@ -178,7 +162,6 @@
     - name: forgetful
 
 - name: windfury_harpy
-  display: Windfury Harpy
   class: neutral
   attack: 4
   health: 6
@@ -188,7 +171,6 @@
     - name: windfury
 
 - name: jungle_panther
-  display: Jungle Panther
   class: neutral
   attack: 4
   health: 2
@@ -198,7 +180,6 @@
     - name: stealth
 
 - name: defias_ringleader
-  display: Defias Ringleader
   class: rogue
   attack: 2
   health: 2
@@ -215,7 +196,6 @@
       choices: [defias_bandit]
 
 - name: defias_bandit
-  display: Defias Bandit
   class: rogue
   attack: 2
   health: 1
@@ -224,7 +204,6 @@
   mechanics: []
 
 - name: knife_juggler
-  display: Knife Juggler
   class: neutral
   attack: 2
   health: 2
@@ -241,7 +220,6 @@
         type: all
 
 - name: mind_control_tech
-  display: Mind Control Tech
   class: neutral
   attack: 3
   health: 3
@@ -262,7 +240,6 @@
         rangeEnd: 7  # Inclusive
 
 - name: recruiter
-  display: Recruiter
   class: neutral
   attack: 5
   health: 4
@@ -279,7 +256,6 @@
       choices: [squire]
 
 - name: silver_hand_knight
-  display: Silver Hand Knight
   class: neutral
   attack: 4
   health: 4
@@ -296,7 +272,6 @@
       choices: [squire]
 
 - name: squire
-  display: Squire
   class: neutral
   attack: 2
   health: 2
@@ -305,7 +280,6 @@
   mechanics: []
 
 - name: youthful_brewmaster
-  display: Youthful Brewmaster
   class: neutral
   attack: 3
   health: 2

@@ -20,9 +20,9 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
-import com.herthrone.objects.BooleanAttribute;
-import com.herthrone.objects.BooleanMechanics;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.BooleanAttribute;
+import com.herthrone.object.BooleanMechanics;
+import com.herthrone.object.IntAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -41,12 +41,14 @@ public class HeroFactory {
   public static Hero create(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
     return HeroFactory.create(
-        HeroFactory.HEALTH, heroConfig.getName(), heroConfig.getHeroPower(), heroConfig.getClassName());
+        HeroFactory.HEALTH, heroConfig.name(), heroConfig.displayName(),
+        heroConfig.getHeroPower(), heroConfig.className());
   }
 
-  public static Hero create(final int health, final ConstHero name, final ConstSpell
-      heroPowerName, final ConstClass className) {
+  public static Hero create(final int health, final ConstHero name, final String displayName,
+                            final ConstSpell heroPowerName, final ConstClass className) {
     return new Hero() {
+
       private final IntAttribute healthAttr = new IntAttribute(health);
       private final IntAttribute healthUpperAttr = new IntAttribute(health);
       private final IntAttribute armorAttr = new IntAttribute(0);
@@ -56,39 +58,44 @@ public class HeroFactory {
       private final IntAttribute heroPowerMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics();
       private final Binder binder = new Binder();
-      private Spell heroPower = SpellFactory.createHeroPowerByName(heroPowerName);
+      private Spell heroPower = HeroPowerFactory.createHeroPowerByName(heroPowerName);
       private Optional<Weapon> weaponOptional = Optional.absent();
 
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
-            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
-            .put(Constant.ARMOR, getArmorAttr().toString())
+            .put(Constant.CARD_NAME, cardName())
+            .put(Constant.HEALTH, health().toString() + "/" + maxHealth().toString())
+            .put(Constant.ARMOR, armor().toString())
             .put(Constant.WEAPON, (getWeapon().isPresent()) ? getWeapon().toString() : "unarmed")
-            .put(Constant.ATTACK, getAttackAttr().toString())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
+            .put(Constant.ATTACK, attack().toString())
+            .put(Constant.CRYSTAL, manaCost().toString())
+            .put(Constant.MOVE_POINTS, attackMovePoints().toString())
             .build();
       }
 
       @Override
-      public String getCardName() {
+      public String cardName() {
         return name.toString();
       }
 
       @Override
-      public ConstType getType() {
+      public String displayName() {
+        return displayName;
+      }
+
+      @Override
+      public ConstType type() {
         return ConstType.HERO;
       }
 
       @Override
-      public ConstClass getClassName() {
+      public ConstClass className() {
         return className;
       }
 
       @Override
-      public IntAttribute getCrystalManaCost() {
+      public IntAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -98,53 +105,53 @@ public class HeroFactory {
       }
 
       @Override
-      public Binder getBinder() {
+      public Binder binder() {
         return binder;
       }
 
       @Override
-      public IntAttribute getHealthAttr() {
+      public IntAttribute health() {
         return healthAttr;
       }
 
       @Override
-      public IntAttribute getHealthUpperAttr() {
+      public IntAttribute maxHealth() {
         return healthUpperAttr;
       }
 
       @Override
-      public IntAttribute getAttackAttr() {
+      public IntAttribute attack() {
         return attackAttr;
       }
 
       @Override
-      public IntAttribute getAttackMovePoints() {
+      public IntAttribute attackMovePoints() {
         return attackMovePoints;
       }
 
       @Override
-      public BooleanMechanics getBooleanMechanics() {
+      public BooleanMechanics booleanMechanics() {
         return booleanMechanics;
       }
 
       @Override
-      public void causeDamage(final Creature attackee) {
+      public void dealDamage(final Creature attackee) {
         attackee.takeDamage(weaponOptional.get().use());
-        if (weaponOptional.get().getDurabilityAttr().getVal() == 0) {
+        if (weaponOptional.get().getDurabilityAttr().value() == 0) {
           unequip();
         }
       }
 
       @Override
       public boolean takeDamage(int damage) {
-        final int healthBeforeDamage = getHealthLoss();
-        if (armorAttr.getVal() >= damage) {
+        final int healthBeforeDamage = healthLoss();
+        if (armorAttr.value() >= damage) {
           armorAttr.decrease(damage);
         } else {
-          healthAttr.decrease(damage - armorAttr.getVal());
+          healthAttr.decrease(damage - armorAttr.value());
           armorAttr.reset();
         }
-        return healthBeforeDamage != getHealthLoss();
+        return healthBeforeDamage != healthLoss();
       }
 
       @Override
@@ -154,33 +161,33 @@ public class HeroFactory {
 
       @Override
       public boolean isDead() {
-        return healthAttr.getVal() <= 0;
+        return healthAttr.value() <= 0;
       }
 
       @Override
       public void death() {
-        throw new GameEndException(getCardName() + " is death");
+        throw new GameEndException(cardName() + " is death");
       }
 
       @Override
       public boolean canMove() {
         return weaponOptional.isPresent() &&
-            attackMovePoints.getVal() > 0 &&
+            attackMovePoints.value() > 0 &&
             BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.FROZEN));
       }
 
       @Override
-      public int getHealthLoss() {
-        return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
+      public int healthLoss() {
+        return maxHealth().value() - health().value();
       }
 
       @Override
-      public IntAttribute getArmorAttr() {
+      public IntAttribute armor() {
         return armorAttr;
       }
 
       @Override
-      public IntAttribute getHeroPowerMovePoints() {
+      public IntAttribute heroPowerMovePoints() {
         return heroPowerMovePoints;
       }
 
@@ -203,7 +210,7 @@ public class HeroFactory {
       }
 
       @Override
-      public void UpdateHeroPower(final Spell heroPower) {
+      public void setHeroPower(final Spell heroPower) {
         this.heroPower = heroPower;
       }
 
@@ -221,11 +228,11 @@ public class HeroFactory {
 
       @Override
       public void useHeroPower(final Creature creature) {
-        Preconditions.checkArgument(heroPowerMovePoints.getVal() > 0, HERO_POWER_ERROR_MESSAGE);
+        Preconditions.checkArgument(heroPowerMovePoints.value() > 0, HERO_POWER_ERROR_MESSAGE);
         EffectFactory.getActionsByConfig(heroPower, creature).stream().forEach(Effect::act);
         heroPowerMovePoints.decrease(1);
 
-        final Side side = getBinder().getSide();
+        final Side side = binder().getSide();
         List<Effect> inspireEffects = side.board.stream()
             .sorted(EffectFactory.compareBySequenceId)
             .map(minion -> minion.getEffectMechanics().get(ConstMechanic.INSPIRE))
@@ -249,16 +256,16 @@ public class HeroFactory {
       @Override
       public String toString() {
         final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this)
-            .add("hero", getCardName())
-            .add("health", getHealthAttr().getVal())
-            .add("health_upper", getHealthUpperAttr().getVal())
-            .add("attack", getAttackAttr().getVal());
+            .add("hero", cardName())
+            .add("health", health().value())
+            .add("health_upper", maxHealth().value())
+            .add("attack", attack().value());
 
         if (weaponOptional.isPresent()) {
           final Weapon weapon = weaponOptional.get();
           stringHelper
-              .add("weapon_attack", weapon.getAttackAttr().getVal())
-              .add("weapon_durability", weapon.getDurabilityAttr().getVal());
+              .add("weapon_attack", weapon.getAttackAttr().value())
+              .add("weapon_durability", weapon.getDurabilityAttr().value());
         }
         return stringHelper.toString();
       }

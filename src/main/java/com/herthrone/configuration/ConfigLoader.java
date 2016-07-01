@@ -142,7 +142,7 @@ public class ConfigLoader {
       for (Object object : configSection) {
         final Map map = (Map) object;
         final T config = createInstance(map);
-        builder.put(config.getName(), config);
+        builder.put(config.name(), config);
       }
       return builder.build();
     }

@@ -25,7 +25,7 @@ public class CastSpellEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.CAST_SPELL;
   }
 

@@ -7,9 +7,9 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.objects.IntAttribute;
-import com.herthrone.objects.ManaCrystal;
-import com.herthrone.objects.Replay;
+import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ManaCrystal;
+import com.herthrone.object.Replay;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class Side implements Round {
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
 
     this.hero = hero;
-    hero.getBinder().bind(this);
+    hero.binder().bind(this);
     this.hand = new Container<>(handCapacity);
     this.board = new Container<>(boardCapacity);
     this.secrets = new Container<>();
@@ -66,7 +66,7 @@ public class Side implements Round {
       final Card card = GameManager.createCardInstance(cardName);
       deck.add(card);
       if (card instanceof Minion) {
-        card.getBinder().bind(this);
+        card.binder().bind(this);
       }
     });
   }

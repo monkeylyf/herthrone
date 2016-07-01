@@ -7,7 +7,7 @@ import com.herthrone.constant.ConstEffectType;
  */
 public interface Effect {
 
-  ConstEffectType getEffectType();
+  ConstEffectType effectType();
 
   void act();
 

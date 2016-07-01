@@ -58,8 +58,8 @@ public class GameManagerTest {
 
   @Test
   public void testInitHero() {
-    assertThat(gm.activeSide.hero.getCardName()).isEqualTo(hero1.toString());
-    assertThat(gm.inactiveSide.hero.getCardName()).isEqualTo(hero2.toString());
+    assertThat(gm.activeSide.hero.cardName()).isEqualTo(hero1.toString());
+    assertThat(gm.inactiveSide.hero.cardName()).isEqualTo(hero2.toString());
   }
 
   @Test
@@ -92,8 +92,8 @@ public class GameManagerTest {
 
   @Test
   public void testInitHeroPowerMovePoints() {
-    assertThat(gm.activeSide.heroPowerMovePoints.getVal()).isEqualTo(1);
-    assertThat(gm.inactiveSide.heroPowerMovePoints.getVal()).isEqualTo(1);
+    assertThat(gm.activeSide.heroPowerMovePoints.value()).isEqualTo(1);
+    assertThat(gm.inactiveSide.heroPowerMovePoints.value()).isEqualTo(1);
   }
 
   @Test
@@ -118,18 +118,18 @@ public class GameManagerTest {
       gm.drawCard();
     }
 
-    assertThat(gm.activeSide.hero.getHealthLoss()).isEqualTo(0);
+    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(0);
     int damage = 0;
     final int repeat = 10;
     for (int i = 1; i <= repeat; ++i) {
-      final int healthBeforeDrawCard = gm.activeSide.hero.getHealthAttr().getVal();
+      final int healthBeforeDrawCard = gm.activeSide.hero.health().value();
       gm.drawCard();
-      final int healthAfterDrawCard = gm.activeSide.hero.getHealthAttr().getVal();
+      final int healthAfterDrawCard = gm.activeSide.hero.health().value();
       assertThat(healthBeforeDrawCard - healthAfterDrawCard).isEqualTo(i);
       damage += i;
     }
 
-    assertThat(gm.activeSide.hero.getHealthLoss()).isEqualTo(damage);
+    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(damage);
     assertThat(gm.activeSide.hero.isDead()).isTrue();
   }
 
@@ -138,18 +138,18 @@ public class GameManagerTest {
     gm.drawCard();
 
     assertThat(gm.activeSide.hand.get(0) instanceof Minion).isTrue();
-    assertThat(gm.activeSide.hand.get(0).getCardName()).isEqualTo(MINION.toString());
+    assertThat(gm.activeSide.hand.get(0).cardName()).isEqualTo(MINION.toString());
     assertThat(gm.activeSide.board.size()).isEqualTo(0);
 
     final Card card = gm.activeSide.hand.get(0);
-    final int requiredCrystalCost = card.getCrystalManaCost().getVal();
+    final int requiredCrystalCost = card.manaCost().value();
 
     while (gm.activeSide.manaCrystal.getCrystal() < requiredCrystalCost) {
       try {
         gm.activeSide.replay.startTurn();
         gm.playCard(0);
       } catch (IllegalArgumentException expected) {
-        assertThat(expected).hasMessage("Not enough mana for: " + card.getCardName());
+        assertThat(expected).hasMessage("Not enough mana for: " + card.cardName());
       }
 
       gm.activeSide.manaCrystal.startTurn();
@@ -158,16 +158,16 @@ public class GameManagerTest {
     gm.activeSide.replay.startTurn();
     gm.playCard(0);
     assertThat(gm.activeSide.board.size()).isEqualTo(1);
-    assertThat(gm.activeSide.board.get(0).getCardName()).isEqualTo(MINION.toString());
+    assertThat(gm.activeSide.board.get(0).cardName()).isEqualTo(MINION.toString());
   }
 
   @Test
   public void testUseHeroPower() {
     final int damage = 2;
     gm.inactiveSide.hero.takeDamage(damage);
-    assertThat(gm.inactiveSide.hero.getHealthLoss()).isEqualTo(damage);
+    assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(damage);
     gm.useHeroPower(gm.inactiveSide.hero);
-    assertThat(gm.inactiveSide.hero.getHealthLoss()).isEqualTo(0);
+    assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(0);
 
     try {
       gm.useHeroPower(gm.inactiveSide.hero);

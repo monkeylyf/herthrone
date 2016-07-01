@@ -1,4 +1,4 @@
-package com.herthrone.objects;
+package com.herthrone.object;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
@@ -23,7 +23,7 @@ public class ManaCrystal implements Round {
   }
 
   public boolean canPlay(final Card card) {
-    return crystal >= card.getCrystalManaCost().getVal();
+    return crystal >= card.manaCost().value();
   }
 
   public void consume(final int crystalCost) {
@@ -40,7 +40,6 @@ public class ManaCrystal implements Round {
     increaseUpperBound();
     crystal = crystalUpperBound;
     applyOverload();
-
   }
 
   public void increaseUpperBound() {

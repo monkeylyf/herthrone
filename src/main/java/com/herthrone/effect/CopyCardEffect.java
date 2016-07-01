@@ -19,13 +19,13 @@ public class CopyCardEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.COPY_CARD;
   }
 
   @Override
   public void act() {
-    final String cardName = cardToCopy.getCardName();
+    final String cardName = cardToCopy.cardName();
     // TODO: deep copy is not so fun. Will create createCardByName method.
     final Card copiedCard = null;
     container.add(copiedCard);

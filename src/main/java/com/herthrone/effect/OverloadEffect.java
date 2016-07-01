@@ -2,7 +2,7 @@ package com.herthrone.effect;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.objects.ManaCrystal;
+import com.herthrone.object.ManaCrystal;
 
 /**
  * Created by yifengliu on 6/27/16.
@@ -18,7 +18,7 @@ public class OverloadEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.CRYSTAL;
   }
 

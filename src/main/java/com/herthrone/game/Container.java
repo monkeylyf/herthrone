@@ -49,7 +49,7 @@ public class Container<T extends Card> implements Iterator<T> {
       container.add(card);
     } else {
       logger.debug(String.format("Container is already full with size %d", container.size()));
-      logger.debug(String.format("Card %s not added", card.getCardName()));
+      logger.debug(String.format("Card %s not added", card.cardName()));
     }
     return willCardBeAdded;
   }
@@ -96,9 +96,9 @@ public class Container<T extends Card> implements Iterator<T> {
 
   public int count(final T card) {
     int count = 0;
-    final String cardName = card.getCardName();
+    final String cardName = card.cardName();
     for (T existingCard : container) {
-      if (existingCard.getCardName().equals(cardName)) {
+      if (existingCard.cardName().equals(cardName)) {
         count += 1;
       }
     }
@@ -150,7 +150,7 @@ public class Container<T extends Card> implements Iterator<T> {
   public String toString() {
     final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this);
     for (int i = 0; i < container.size(); ++i) {
-      stringHelper.add(Integer.toString(i), container.get(i).getCardName());
+      stringHelper.add(Integer.toString(i), container.get(i).cardName());
     }
     return stringHelper.toString();
   }

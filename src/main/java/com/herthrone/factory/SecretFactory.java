@@ -7,7 +7,7 @@ import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.IntAttribute;
 
 import java.util.Map;
 
@@ -24,29 +24,34 @@ public class SecretFactory {
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName().toString())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            .put(Constant.TYPE, getType().toString())
+            .put(Constant.CARD_NAME, cardName().toString())
+            .put(Constant.CRYSTAL, manaCost().toString())
+            .put(Constant.TYPE, type().toString())
             .build();
       }
 
       @Override
-      public String getCardName() {
+      public String cardName() {
         return null;
       }
 
       @Override
-      public ConstType getType() {
+      public String displayName() {
+        return null;
+      }
+
+      @Override
+      public ConstType type() {
         return ConstType.SECRET;
       }
 
       @Override
-      public ConstClass getClassName() {
+      public ConstClass className() {
         return null;
       }
 
       @Override
-      public IntAttribute getCrystalManaCost() {
+      public IntAttribute manaCost() {
         return null;
       }
 
@@ -56,7 +61,7 @@ public class SecretFactory {
       }
 
       @Override
-      public Binder getBinder() {
+      public Binder binder() {
         return binder;
       }
     };

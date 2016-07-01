@@ -2,7 +2,7 @@ package com.herthrone.base;
 
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.objects.ManaCrystal;
+import com.herthrone.object.ManaCrystal;
 import org.junit.Before;
 import org.junit.Test;
 

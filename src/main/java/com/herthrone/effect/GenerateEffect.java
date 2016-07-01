@@ -31,7 +31,7 @@ public class GenerateEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.GENERATE;
   }
 
@@ -57,7 +57,7 @@ public class GenerateEffect implements Effect {
       final String randomCardName = RandomMinionGenerator.randomOne(cardNames);
       final Card card = GameManager.createCardInstance(randomCardName, cardType);
       if (card instanceof Minion) {
-        card.getBinder().bind(side);
+        card.binder().bind(side);
       }
 
       switch (target.type) {

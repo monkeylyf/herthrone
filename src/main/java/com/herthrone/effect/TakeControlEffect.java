@@ -17,14 +17,14 @@ public class TakeControlEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.TAKE_CONTROL;
   }
 
   @Override
   public void act() {
-    final Side currentSide = minion.getBinder().getSide();
-    minion.getBinder().switchSide();
+    final Side currentSide = minion.binder().getSide();
+    minion.binder().switchSide();
     currentSide.board.remove(minion);
     minion.summonOnBoard(currentSide.getOpponentSide().board);
   }

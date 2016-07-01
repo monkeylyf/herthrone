@@ -1,4 +1,4 @@
-package com.herthrone.objects;
+package com.herthrone.object;
 
 import com.google.common.base.Optional;
 import com.herthrone.base.Reset;
@@ -13,20 +13,12 @@ public class BooleanAttribute implements Round, Reset {
   private double roundUntilExpire;
 
   public BooleanAttribute() {
-    this(true);
-  }
-
-  public BooleanAttribute(final boolean on) {
-    this(on, Double.POSITIVE_INFINITY);
-  }
-
-  public BooleanAttribute(final boolean on, final double roundUntilExpire) {
-    this.on = on;
-    this.roundUntilExpire = roundUntilExpire;
+    this(Double.POSITIVE_INFINITY);
   }
 
   public BooleanAttribute(final double roundUntilExpire) {
-    this(true, roundUntilExpire);
+    this.on = true;
+    this.roundUntilExpire = roundUntilExpire;
   }
 
   public static boolean isAbsentOrOff(Optional<BooleanAttribute> booleanAttributeOptional) {
@@ -50,7 +42,7 @@ public class BooleanAttribute implements Round, Reset {
   public void endTurn() {
     roundUntilExpire -= 1;
     if (roundUntilExpire == 0) {
-      //reset();
+      reset();
     }
   }
 

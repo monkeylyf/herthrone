@@ -1,24 +1,25 @@
 package com.herthrone.base;
 
-import com.herthrone.objects.BooleanMechanics;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.game.Container;
+import com.herthrone.object.BooleanMechanics;
+import com.herthrone.object.IntAttribute;
 
 /**
  * Created by yifengliu on 6/4/16.
  */
 public interface Creature extends Card, Round {
 
-  IntAttribute getHealthAttr();
+  IntAttribute health();
 
-  IntAttribute getHealthUpperAttr();
+  IntAttribute maxHealth();
 
-  IntAttribute getAttackAttr();
+  IntAttribute attack();
 
-  IntAttribute getAttackMovePoints();
+  IntAttribute attackMovePoints();
 
-  BooleanMechanics getBooleanMechanics();
+  BooleanMechanics booleanMechanics();
 
-  void causeDamage(final Creature creature);
+  void dealDamage(final Creature creature);
 
   boolean takeDamage(final int damage);
 
@@ -30,5 +31,5 @@ public interface Creature extends Card, Round {
 
   boolean canMove();
 
-  int getHealthLoss();
+  int healthLoss();
 }

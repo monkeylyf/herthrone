@@ -1,5 +1,4 @@
 - name: fire_ball
-  display: FireBall
   class: mage
   crystal: 4
   target:

@@ -5,9 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
-import com.herthrone.base.Spell;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstTarget;
@@ -34,7 +32,7 @@ public class CommandLine {
     final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
     for (int i = 0; i < mySide.hand.size(); ++i) {
       final Card card = mySide.hand.get(i);
-      if (mySide.manaCrystal.getCrystal() >= card.getCrystalManaCost().getVal()) {
+      if (mySide.manaCrystal.getCrystal() >= card.manaCost().value()) {
         playCardNode.addChildNode(new CommandNode(card.view().toString(), i));
       }
     }
@@ -46,14 +44,14 @@ public class CommandLine {
     for (int i = 0; i < mySide.board.size(); ++i) {
       final Minion minion = mySide.board.get(i);
       if (minion.canMove()) {
-        final CommandNode minionAttackCommand = new CommandNode(minion.getCardName(), i, ConstTarget.OWN);
+        final CommandNode minionAttackCommand = new CommandNode(minion.cardName(), i, ConstTarget.OWN);
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
           if (GameManager.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
-            minionAttackCommand.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
+            minionAttackCommand.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.OPPONENT));
           }
         }
-        final CommandNode heroNode = new CommandNode(opponentSide.hero.getCardName(), -1);
+        final CommandNode heroNode = new CommandNode(opponentSide.hero.cardName(), -1);
         heroNode.setSide(ConstTarget.OPPONENT);
         minionAttackCommand.addChildNode(heroNode);
         moveMinions.addChildNode(minionAttackCommand);
@@ -66,7 +64,7 @@ public class CommandLine {
       for (int j = 0; j < opponentSide.board.size(); ++j) {
         final Minion opponentMinion = opponentSide.board.get(j);
         if (GameManager.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
-          heroAttack.addChildNode(new CommandNode(opponentMinion.getCardName(), j, ConstTarget.OPPONENT));
+          heroAttack.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.OPPONENT));
         }
       }
     }
@@ -74,8 +72,8 @@ public class CommandLine {
       root.addChildNode(moveMinions);
     }
     // Populate use hero power option if can use hero power.
-    if (mySide.hero.getHeroPowerMovePoints().isPositive() &&
-        mySide.hero.getHeroPower().getCrystalManaCost().isNoGreaterThan(mySide.manaCrystal.getCrystal())) {
+    if (mySide.hero.heroPowerMovePoints().isPositive() &&
+        mySide.hero.getHeroPower().manaCost().isNoGreaterThan(mySide.manaCrystal.getCrystal())) {
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
       scanTargets(useHeroPower, mySide.hero.getHeroPower().getTargetConfig(), battlefield);

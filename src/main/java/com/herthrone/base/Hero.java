@@ -1,24 +1,24 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.IntAttribute;
 
 /**
  * Created by yifeng on 4/13/16.
  */
 public interface Hero extends Creature {
 
-  IntAttribute getArmorAttr();
+  IntAttribute armor();
 
-  IntAttribute getHeroPowerMovePoints();
+  IntAttribute heroPowerMovePoints();
 
   Optional<Weapon> getWeapon();
 
-  void equip(Weapon weapon);
+  void equip(final Weapon weapon);
 
   Spell getHeroPower();
 
-  void UpdateHeroPower(final Spell heroPower);
+  void setHeroPower(final Spell heroPower);
 
   void unequip();
 

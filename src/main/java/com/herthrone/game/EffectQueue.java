@@ -23,7 +23,7 @@ public class EffectQueue {
   }
 
   public void enqueue(final Effect effect) {
-    logger.debug("Enqueuing effect: " + effect.getEffectType().toString());
+    logger.debug("Enqueuing effect: " + effect.effectType().toString());
     queue.add(effect);
     executeUntilEmpty();
   }
@@ -39,7 +39,7 @@ public class EffectQueue {
     if (effects.size() > 0) {
       logger.debug(String.format("Enqueuing %d effects", effects.size()));
       effects.stream().forEach(effect -> {
-        logger.debug("Enqueuing effect: " + effect.getEffectType().toString());
+        logger.debug("Enqueuing effect: " + effect.effectType().toString());
         queue.add(effect);
       });
       executeUntilEmpty();

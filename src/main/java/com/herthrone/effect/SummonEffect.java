@@ -20,7 +20,7 @@ public class SummonEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.SUMMON;
   }
 

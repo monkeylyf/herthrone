@@ -2,7 +2,7 @@ package com.herthrone.effect;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.IntAttribute;
 
 /**
  * Created by yifeng on 4/14/16.
@@ -20,7 +20,7 @@ public class AttributeEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.ATTRIBUTE;
   }
 

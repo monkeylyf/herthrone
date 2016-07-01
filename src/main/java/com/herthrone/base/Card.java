@@ -3,7 +3,7 @@ package com.herthrone.base;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
 import com.herthrone.game.Binder;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.IntAttribute;
 
 /**
  * Created by yifeng on 4/2/16.
@@ -11,17 +11,17 @@ import com.herthrone.objects.IntAttribute;
 
 public interface Card extends View {
 
-  String getCardName();
+  String cardName();
 
-  //String getCardDisplayName();
+  String displayName();
 
-  ConstType getType();
+  ConstType type();
 
-  ConstClass getClassName();
+  ConstClass className();
 
-  IntAttribute getCrystalManaCost();
+  IntAttribute manaCost();
 
   boolean isCollectible();
 
-  Binder getBinder();
+  Binder binder();
 }

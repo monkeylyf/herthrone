@@ -2,7 +2,7 @@ package com.herthrone.effect;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.objects.BooleanAttribute;
+import com.herthrone.object.BooleanAttribute;
 
 /**
  * Created by yifeng on 4/15/16.
@@ -18,7 +18,7 @@ public class StatusEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.STATUS;
   }
 

@@ -11,9 +11,9 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.objects.BooleanMechanics;
-import com.herthrone.objects.EffectMechanics;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.BooleanMechanics;
+import com.herthrone.object.EffectMechanics;
+import com.herthrone.object.IntAttribute;
 
 import java.util.Map;
 
@@ -24,10 +24,14 @@ public class WeaponFactory {
 
   public static Weapon create(final ConstWeapon weapon) {
     WeaponConfig config = ConfigLoader.getWeaponConfigByName(weapon);
-    return create(config.getCrystal(), config.getAttack(), config.getDurability(), config.getName(), config.getClassName(), config.getMechanics(), config.isCollectible());
+    return create(config.manaCost(), config.getAttack(), config.getDurability(), config.name(),
+        config.displayName(), config.className(), config.isCollectible(), config.getMechanics());
   }
 
-  public static Weapon create(final int crystalManaCost, final int attack, final int durability, final ConstWeapon name, final ConstClass className, final Map<ConstMechanic, MechanicConfig> mechanics, final boolean isCollectible) {
+  public static Weapon create(final int crystalManaCost, final int attack, final int durability,
+                              final ConstWeapon name, final String displayName,
+                              final ConstClass className,  final boolean isCollectible,
+                              final Map<ConstMechanic, MechanicConfig> mechanics) {
     return new Weapon() {
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
       private final IntAttribute attackAttr = new IntAttribute(attack);
@@ -39,29 +43,34 @@ public class WeaponFactory {
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
+            .put(Constant.CARD_NAME, cardName())
             .put(Constant.ATTACK, getAttackAttr().toString())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            .put(Constant.TYPE, getType().toString()).build();
+            .put(Constant.CRYSTAL, manaCost().toString())
+            .put(Constant.TYPE, type().toString()).build();
       }
 
       @Override
-      public String getCardName() {
+      public String cardName() {
         return name.toString();
       }
 
       @Override
-      public ConstType getType() {
+      public String displayName() {
+        return displayName;
+      }
+
+      @Override
+      public ConstType type() {
         return ConstType.WEAPON;
       }
 
       @Override
-      public ConstClass getClassName() {
+      public ConstClass className() {
         return className;
       }
 
       @Override
-      public IntAttribute getCrystalManaCost() {
+      public IntAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -71,14 +80,14 @@ public class WeaponFactory {
       }
 
       @Override
-      public Binder getBinder() {
+      public Binder binder() {
         return binder;
       }
 
       @Override
       public int use() {
         durabilityAttr.decrease(1);
-        return attackAttr.getVal();
+        return attackAttr.value();
       }
 
       @Override

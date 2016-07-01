@@ -7,6 +7,7 @@ import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
 import com.herthrone.effect.MoveCardEffect;
 import com.herthrone.effect.OverloadEffect;
+import com.herthrone.effect.ReturnToHandEffect;
 import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
 import com.herthrone.base.Creature;
@@ -26,8 +27,8 @@ import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
-import com.herthrone.objects.IntAttribute;
-import com.herthrone.objects.ManaCrystal;
+import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ManaCrystal;
 import org.apache.log4j.Logger;
 
 import java.util.Comparator;
@@ -57,7 +58,7 @@ public class EffectFactory {
 
     logger.debug("Triggering " + mechanicConfig.getMechanic().toString());
     Effect effect = pipeMechanicEffect(mechanicConfig, target);
-    target.getBinder().getSide().getEffectQueue().enqueue(effect);
+    target.binder().getSide().getEffectQueue().enqueue(effect);
   }
 
   private static boolean isConditionTriggered(final Optional<EffectConfig> effectConfigOptional,
@@ -69,7 +70,7 @@ public class EffectFactory {
           .getConditionConfigOptional().get();
       switch (conditionConfig.getConditionType()) {
         case BOARD_SIZE:
-          return conditionConfig.inRange(target.getBinder().getOpponentSide().board.size());
+          return conditionConfig.inRange(target.binder().getOpponentSide().board.size());
         default:
           throw new RuntimeException("Unknown condition: " + conditionConfig.getConditionType());
       }
@@ -84,7 +85,7 @@ public class EffectFactory {
     Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
     final EffectConfig effectConfig = config.get();
     final Creature realTarget = effectConfig.isRandom() ?
-        RandomMinionGenerator.randomCreature(effectConfig.getTarget(), target.getBinder().getSide()) :
+        RandomMinionGenerator.randomCreature(effectConfig.getTarget(), target.binder().getSide()) :
         target;
 
     return getActionsByConfig(effectConfig,  realTarget);
@@ -97,32 +98,39 @@ public class EffectFactory {
         return getAttributeAction(config, creature);
       case WEAPON:
         Preconditions.checkArgument(
-            creature instanceof Hero, creature.getType() + " can not equip weapon");
-        final Hero hero = (Hero) creature;
-        return getEquipWeaponAction(hero, config);
+            creature instanceof Hero, creature.type() + " can not equip weapon");
+        return getEquipWeaponAction((Hero) creature, config);
       case SUMMON:
-        return getSummonAction(config, creature.getBinder().getSide());
+        return getSummonAction(config, creature.binder().getSide());
       case DRAW:
-        return getDrawCardAction(config, creature.getBinder().getSide());
+        return getDrawCardAction(config, creature.binder().getSide());
       case CRYSTAL:
         return getCrystalEffect(config, creature);
       case TAKE_CONTROL:
         return getTakeControlAction(config, creature);
       case GENERATE:
         return getGenerateAction(config, creature);
+      case RETURN_TO_HAND:
+        Preconditions.checkArgument(
+            creature instanceof Minion, creature.type() + " can not be returned to player's hand");
+        return getReturnToHandAction((Minion) creature);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
   }
 
+  private static Effect getReturnToHandAction(final Minion target) {
+    return new ReturnToHandEffect(target);
+  }
+
   private static Effect getGenerateAction(EffectConfig config, Creature creature) {
     return new GenerateEffect(
-        config.getChoices(), config.getType(), config.getTarget(), creature.getBinder().getSide());
+        config.getChoices(), config.getType(), config.getTarget(), creature.binder().getSide());
   }
 
   private static Effect getTakeControlAction(final EffectConfig effect, final Creature creature) {
     final Creature traitorMinion = RandomMinionGenerator.randomCreature(
-        effect.getTarget(), creature.getBinder().getSide());
+        effect.getTarget(), creature.binder().getSide());
     Preconditions.checkArgument(traitorMinion instanceof Minion);
     return new TakeControlEffect((Minion) traitorMinion);
   }
@@ -133,15 +141,15 @@ public class EffectFactory {
       case (Constant.HEALTH):
         return getHealthAttributeAction(creature, effect);
       case (Constant.ATTACK):
-        return getGeneralAttributeAction(creature.getAttackAttr(), effect);
+        return getGeneralAttributeAction(creature.attack(), effect);
       case (Constant.CRYSTAL):
-        return getGeneralAttributeAction(creature.getCrystalManaCost(), effect);
+        return getGeneralAttributeAction(creature.manaCost(), effect);
       case (Constant.HEALTH_UPPER_BOUND):
-        return getGeneralAttributeAction(creature.getHealthUpperAttr(), effect);
+        return getGeneralAttributeAction(creature.maxHealth(), effect);
       case (Constant.ARMOR):
         Preconditions.checkArgument(
-            creature instanceof Hero, "Armor Attribute does not applies to " + creature.getType());
-        return getGeneralAttributeAction(((Hero) creature).getArmorAttr(), effect);
+            creature instanceof Hero, "Armor Attribute does not applies to " + creature.type());
+        return getGeneralAttributeAction(((Hero) creature).armor(), effect);
       default:
         throw new IllegalArgumentException("Unknown effect type: " + type);
     }
@@ -182,7 +190,7 @@ public class EffectFactory {
 
   private static Effect getCrystalEffect(final EffectConfig config, final Creature creature) {
     final String type = config.getType();
-    final ManaCrystal manaCrystal = creature.getBinder().getSide().manaCrystal;
+    final ManaCrystal manaCrystal = creature.binder().getSide().manaCrystal;
     switch (type) {
       case (Constant.CRYSTAL_LOCK):
         return new OverloadEffect(manaCrystal, config.getValue());
@@ -194,8 +202,8 @@ public class EffectFactory {
   private static Effect getHealthAttributeAction(final Creature creature, final EffectConfig effect) {
     final int value = effect.getValue();
     Preconditions.checkArgument(value != 0, "Health change must be non-zero");
-    final int adjustChange = (value > 0) ? Math.min(value, creature.getHealthLoss()) : value;
-    return new AttributeEffect(creature.getHealthAttr(), adjustChange, effect.isPermanent());
+    final int adjustChange = (value > 0) ? Math.min(value, creature.healthLoss()) : value;
+    return new AttributeEffect(creature.health(), adjustChange, effect.isPermanent());
   }
 
   private static Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {

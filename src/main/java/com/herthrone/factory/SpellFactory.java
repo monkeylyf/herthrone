@@ -12,7 +12,7 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.IntAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -24,10 +24,13 @@ public class SpellFactory {
 
   public static Spell create(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
-    return create(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getTargetConfig(), config.getEffects());
+    return create(config.name(), config.displayName(), config.className(),
+        config.manaCost(), config.type(), config.getTargetConfig(), config.getEffects());
   }
 
-  private static Spell create(final ConstSpell name, final ConstClass className, final int crystal, final ConstType type, final Optional<TargetConfig> targetConfig, final List<EffectConfig> effects) {
+  static Spell create(final ConstSpell name, final String displayName, final ConstClass className,
+                      final int crystal, final ConstType type,
+                      final Optional<TargetConfig> targetConfig, final List<EffectConfig> effects) {
     return new Spell() {
 
       private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
@@ -36,28 +39,33 @@ public class SpellFactory {
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            .put(Constant.TYPE, getType().toString()).build();
+            .put(Constant.CARD_NAME, cardName())
+            .put(Constant.CRYSTAL, manaCost().toString())
+            .put(Constant.TYPE, type().toString()).build();
       }
 
       @Override
-      public String getCardName() {
+      public String cardName() {
         return name.toString();
       }
 
       @Override
-      public ConstType getType() {
+      public String displayName() {
+        return displayName;
+      }
+
+      @Override
+      public ConstType type() {
         return type;
       }
 
       @Override
-      public ConstClass getClassName() {
+      public ConstClass className() {
         return className;
       }
 
       @Override
-      public IntAttribute getCrystalManaCost() {
+      public IntAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -67,7 +75,7 @@ public class SpellFactory {
       }
 
       @Override
-      public Binder getBinder() {
+      public Binder binder() {
         return binder;
       }
 
@@ -81,11 +89,6 @@ public class SpellFactory {
         return effects;
       }
     };
-  }
-
-  public static Spell createHeroPowerByName(final ConstSpell heroPower) {
-    SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
-    return create(config.getName(), config.getClassName(), config.getCrystal(), config.getType(), config.getTargetConfig(), config.getEffects());
   }
 
 }

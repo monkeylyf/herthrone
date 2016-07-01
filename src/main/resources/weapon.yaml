@@ -1,5 +1,4 @@
 - name: wicked_blade
-  display: Wicked Blade
   class: rogue
   attack: 1
   durability: 2
@@ -7,7 +6,6 @@
   collectible: false
 
 - name: fiery_war_axe
-  display: Fiery War Axe
   class: warrior
   attack: 3
   durability: 2
@@ -15,7 +13,6 @@
   collectible: true
 
 - name: truesilver_champion
-  display: Truesilver Champion
   class: paladin
   attack: 4
   durability: 2
@@ -33,7 +30,6 @@
   crystal: 4
 
 - name: stormforged_axe
-  display: Stormforged Axe
   class: shaman
   attack: 2
   durability: 3

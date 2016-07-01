@@ -19,7 +19,7 @@ public class PhysicalDamageEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.ATTACK;
   }
 
@@ -27,11 +27,11 @@ public class PhysicalDamageEffect implements Effect {
   public void act() {
     // TODO: refactor attacker/attackee design. This is very bad tight coupling.
     if (attacker instanceof Minion && attackee instanceof Minion) {
-      attacker.causeDamage(attackee);
-      attackee.causeDamage(attacker);
+      attacker.dealDamage(attackee);
+      attackee.dealDamage(attacker);
     } else {
-      attacker.causeDamage(attackee);
-      attacker.takeDamage(attackee.getAttackAttr().getVal());
+      attacker.dealDamage(attackee);
+      attacker.takeDamage(attackee.attack().value());
     }
   }
 }

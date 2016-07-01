@@ -2,8 +2,8 @@ package com.herthrone.effect;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.objects.IntAttribute;
-import com.herthrone.objects.Value;
+import com.herthrone.object.IntAttribute;
+import com.herthrone.object.Value;
 
 /**
  * Created by yifeng on 4/28/16.
@@ -22,18 +22,18 @@ public class BuffEffect implements Effect {
 
   public BuffEffect(final IntAttribute attr, final int setToValue) {
     this.attr = attr;
-    this.buffDelta = setToValue - attr.getVal();
+    this.buffDelta = setToValue - attr.value();
     this.permanent = true;
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.BUFF;
   }
 
   @Override
   public void act() {
-    final Value value = permanent ? attr.buff.perm : attr.buff.temp;
+    final Value value = permanent ? attr.buff.permanentBuff : attr.buff.temporaryBuff;
     value.increase(buffDelta);
   }
 }

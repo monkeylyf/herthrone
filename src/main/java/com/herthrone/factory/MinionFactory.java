@@ -17,13 +17,12 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.objects.BooleanAttribute;
-import com.herthrone.objects.BooleanMechanics;
-import com.herthrone.objects.EffectMechanics;
-import com.herthrone.objects.IntAttribute;
+import com.herthrone.object.BooleanAttribute;
+import com.herthrone.object.BooleanMechanics;
+import com.herthrone.object.EffectMechanics;
+import com.herthrone.object.IntAttribute;
 import org.apache.log4j.Logger;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,22 +39,22 @@ public class MinionFactory {
 
   public static Minion create(final ConstMinion minionName, final Side side) {
     final Minion minion = create(minionName);
-    minion.getBinder().bind(side);
+    minion.binder().bind(side);
     return minion;
   }
 
   public static Minion create(final ConstMinion minionName) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
-    return createMinion(config.getHealth(), config.getAttack(), config.getCrystal(),
-                        config.getClassName(), config.getName(), config.getMechanics(),
-                        config.isCollectible());
+    return create(config.getHealth(), config.getAttack(), config.manaCost(),
+                        config.className(), config.name(), config.displayName(),
+                        config.isCollectible(), config.getMechanics());
   }
 
-  private static Minion createMinion(final int health, final int attack, final int crystalManaCost,
-                                     final ConstClass className, final ConstMinion name,
-                                     final Map<ConstMechanic, MechanicConfig> mechanics,
-                                     final boolean isCollectible) {
+  private static Minion create(final int health, final int attack, final int crystalManaCost,
+                               final ConstClass className, final ConstMinion name,
+                               final String displayName, final boolean isCollectible,
+                               final Map<ConstMechanic, MechanicConfig> mechanics) {
     final Minion minion = new Minion() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);
@@ -78,7 +77,7 @@ public class MinionFactory {
 
       @Override
       public int getSequenceId() {
-        Preconditions.checkArgument(seqId.isPresent(), getCardName() + " sequence ID not set yet");
+        Preconditions.checkArgument(seqId.isPresent(), cardName() + " sequence ID not set yet");
         return seqId.get().intValue();
       }
 
@@ -86,7 +85,7 @@ public class MinionFactory {
       public void setSequenceId(final int sequenceId) {
         Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence ID already set");
         seqId = Optional.of(sequenceId);
-        logger.debug(String.format("%s ID set to %d", getCardName(), sequenceId));
+        logger.debug(String.format("%s ID set to %d", cardName(), sequenceId));
       }
 
       @Override
@@ -96,18 +95,23 @@ public class MinionFactory {
 
       @Override
       public void destroy() {
-        final int health = healthAttr.getVal();
+        final int health = healthAttr.value();
         healthAttr.decrease(health);
       }
 
       @Override
       public void playOnBoard(final Container<Minion> board) {
+        playOnBoard(board, this);
+      }
+
+      @Override
+      public void playOnBoard(Container<Minion> board, Creature target) {
         // TODO: battlecry happens before summon triggered events.
         summonOnBoard(board);
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, this);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, target);
         // Combo condition check that there must be one replay record before this action.
-        if (getBinder().getSide().replay.size() > 1) {
+        if (binder().getSide().replay.size() > 1) {
           Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
           EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, this);
         }
@@ -124,26 +128,36 @@ public class MinionFactory {
         // Add to board after scanning through existing board otherwise this minion itself triggers
         // its summon effect if there is one.
         board.add(this);
-        getBinder().getSide().getEffectQueue().enqueue(onSummonEffects);
+        binder().getSide().getEffectQueue().enqueue(onSummonEffects);
       }
 
       @Override
-      public String getCardName() {
+      public ConstMinion minionConstName() {
+        return name;
+      }
+
+      @Override
+      public String cardName() {
         return name.toString();
       }
 
       @Override
-      public ConstType getType() {
+      public String displayName() {
+        return displayName;
+      }
+
+      @Override
+      public ConstType type() {
         return ConstType.MINION;
       }
 
       @Override
-      public ConstClass getClassName() {
+      public ConstClass className() {
         return className;
       }
 
       @Override
-      public IntAttribute getCrystalManaCost() {
+      public IntAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -153,57 +167,56 @@ public class MinionFactory {
       }
 
       @Override
-      public Binder getBinder() {
+      public Binder binder() {
         return binder;
       }
 
       @Override
       public Map<String, String> view() {
         return ImmutableMap.<String, String>builder()
-            .put(Constant.CARD_NAME, getCardName())
-            .put(Constant.HEALTH, getHealthAttr().toString() + "/" + getHealthUpperAttr().toString())
-            .put(Constant.ATTACK, getAttackAttr().toString())
-            .put(Constant.CRYSTAL, getCrystalManaCost().toString())
-            //.put(Constant.DESCRIPTION, "TODO")
-            .put(Constant.TYPE, getClassName().toString())
-            .put(Constant.MOVE_POINTS, getAttackMovePoints().toString())
+            .put(Constant.CARD_NAME, cardName())
+            .put(Constant.HEALTH, health().toString() + "/" + maxHealth().toString())
+            .put(Constant.ATTACK, attack().toString())
+            .put(Constant.CRYSTAL, manaCost().toString())
+            .put(Constant.TYPE, className().toString())
+            .put(Constant.MOVE_POINTS, attackMovePoints().toString())
             .build();
       }
 
       @Override
-      public IntAttribute getHealthAttr() {
+      public IntAttribute health() {
         return healthAttr;
       }
 
       @Override
-      public IntAttribute getHealthUpperAttr() {
+      public IntAttribute maxHealth() {
         return healthUpperAttr;
       }
 
       @Override
-      public IntAttribute getAttackAttr() {
+      public IntAttribute attack() {
         return attackAttr;
       }
 
       @Override
-      public IntAttribute getAttackMovePoints() {
+      public IntAttribute attackMovePoints() {
         return this.movePoints;
       }
 
       @Override
-      public BooleanMechanics getBooleanMechanics() {
+      public BooleanMechanics booleanMechanics() {
         return booleanMechanics;
       }
 
       @Override
-      public void causeDamage(final Creature creature) {
+      public void dealDamage(final Creature creature) {
         // TODO: but this is not the only way to reveal a minion in stealth.
         // http://hearthstone.gamepedia.com/Stealth
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
-        boolean isDamaged = creature.takeDamage(attackAttr.getVal());
+        boolean isDamaged = creature.takeDamage(attackAttr.value());
         if (isDamaged) {
           if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.FREEZE))) {
-            creature.getBooleanMechanics().initialize(ConstMechanic.FROZEN, 1);
+            creature.booleanMechanics().initialize(ConstMechanic.FROZEN, 1);
           }
 
           if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
@@ -233,12 +246,12 @@ public class MinionFactory {
 
       @Override
       public boolean canDamage() {
-        return attackAttr.getVal() > 0;
+        return attackAttr.value() > 0;
       }
 
       @Override
       public boolean isDead() {
-        return healthAttr.getVal() <= 0;
+        return healthAttr.value() <= 0;
       }
 
       @Override
@@ -252,13 +265,13 @@ public class MinionFactory {
 
       @Override
       public boolean canMove() {
-        return movePoints.getVal() > 0 &&
+        return movePoints.value() > 0 &&
             BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
       }
 
       @Override
-      public int getHealthLoss() {
-        return getHealthUpperAttr().getVal() - getHealthAttr().getVal();
+      public int healthLoss() {
+        return maxHealth().value() - health().value();
       }
 
       @Override
@@ -281,7 +294,7 @@ public class MinionFactory {
       // Minion with no charge ability waits until next turn to move.
       // TODO: also when a minion switch side due to TAKE_CONTROLL effect, the CHARGE also apply
       // the right after it switches side.
-      minion.getAttackMovePoints().buff.temp.decrease(minion.getAttackMovePoints().getVal());
+      minion.attackMovePoints().buff.temporaryBuff.reset();
     }
 
     return minion;

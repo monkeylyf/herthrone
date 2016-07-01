@@ -6,6 +6,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
+import com.herthrone.helper.StringHelper;
 
 import java.util.Map;
 
@@ -18,13 +19,17 @@ public class HeroConfig implements Config<ConstHero> {
   private static final String CLASS = "class";
   private static final String HERO_POWER = "hero_power";
   private static final String DESCRIPTION = "description";
+  private static final String DISPLAY = "display";
   private final ConstHero name;
   private final ConstClass className;
+  private final String displayName;
   private final String description;
   private final ConstSpell heroPower;
 
   public HeroConfig(Map map) {
     this.name = ConstHero.valueOf(Constant.upperCaseValue(map, NAME));
+    this.displayName = (map.containsKey(DISPLAY)) ?
+        (String) map.get(DISPLAY) : StringHelper.lowerUnderscoreToUpperWhitespace(name);
     this.className = ConstClass.valueOf(Constant.upperCaseValue(map, CLASS));
     this.heroPower = ConstSpell.valueOf(Constant.upperCaseValue(map, HERO_POWER));
     this.description = (String) map.get(DESCRIPTION);
@@ -39,22 +44,27 @@ public class HeroConfig implements Config<ConstHero> {
   }
 
   @Override
-  public ConstHero getName() {
+  public ConstHero name() {
     return name;
   }
 
   @Override
-  public ConstClass getClassName() {
+  public String displayName() {
+    return displayName;
+  }
+
+  @Override
+  public ConstClass className() {
     return className;
   }
 
   @Override
-  public ConstType getType() {
+  public ConstType type() {
     return ConstType.HERO;
   }
 
   @Override
-  public int getCrystal() {
+  public int manaCost() {
     return 0;
   }
 }

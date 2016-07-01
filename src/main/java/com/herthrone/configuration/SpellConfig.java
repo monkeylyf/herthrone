@@ -6,6 +6,7 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
+import com.herthrone.helper.StringHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -20,9 +21,11 @@ public class SpellConfig implements Config<ConstSpell> {
   private static final String CLASS = "class";
   private static final String CRYSTAL = "crystal";
   private static final String MECHANICS = "mechanics";
+  private static final String DISPLAY = "display";
   private static final String TARGET = "target";
   private final ConstSpell name;
   private final ConstClass className;
+  private final String displayName;
   private final int crystal;
   private final List<EffectConfig> effects;
   private final Optional<TargetConfig> target;
@@ -31,6 +34,8 @@ public class SpellConfig implements Config<ConstSpell> {
     this.name = ConstSpell.valueOf(Constant.upperCaseValue(map, NAME));
     this.className = ConstClass.valueOf(Constant.upperCaseValue(map, CLASS));
     this.crystal = (int) map.get(CRYSTAL);
+    this.displayName = (map.containsKey(DISPLAY)) ?
+        (String) map.get(DISPLAY) : StringHelper.lowerUnderscoreToUpperWhitespace(name);
     this.target = (map.containsKey(TARGET)) ?
         Optional.of(new TargetConfig((Map) map.get(TARGET))) : Optional.absent();
     this.effects = ((List<Object>) map.get(MECHANICS)).stream()
@@ -43,22 +48,27 @@ public class SpellConfig implements Config<ConstSpell> {
   }
 
   @Override
-  public ConstSpell getName() {
+  public ConstSpell name() {
     return name;
   }
 
   @Override
-  public ConstClass getClassName() {
+  public String displayName() {
+    return null;
+  }
+
+  @Override
+  public ConstClass className() {
     return className;
   }
 
   @Override
-  public ConstType getType() {
+  public ConstType type() {
     return ConstType.SPELL;
   }
 
   @Override
-  public int getCrystal() {
+  public int manaCost() {
     return crystal;
   }
 

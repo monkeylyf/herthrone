@@ -19,7 +19,7 @@ public class PlayMinionEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.PLAY_MINION;
   }
 

@@ -1,4 +1,4 @@
-package com.herthrone.objects;
+package com.herthrone.object;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;

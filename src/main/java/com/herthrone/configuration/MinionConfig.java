@@ -7,6 +7,7 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
+import com.herthrone.helper.StringHelper;
 
 import java.util.Map;
 
@@ -37,7 +38,8 @@ public class MinionConfig implements Config<ConstMinion> {
   public MinionConfig(final Map map) {
     this.name = ConstMinion.valueOf(Constant.upperCaseValue(map, NAME_FIELD));
     this.className = ConstClass.valueOf(Constant.upperCaseValue(map, CLASS_FIELD));
-    this.displayName = (String) map.get(DISPLAY_FIELD);
+    this.displayName = (map.containsKey(DISPLAY_FIELD)) ?
+        (String) map.get(DISPLAY_FIELD) : StringHelper.lowerUnderscoreToUpperWhitespace(name);
     this.attack = (int) map.get(ATTACK_FIELD);
     this.health = (int) map.get(HEALTH_FIELD);
     this.crystal = (int) map.get(CRYSTAL_FIELD);
@@ -64,21 +66,26 @@ public class MinionConfig implements Config<ConstMinion> {
   }
 
   @Override
-  public ConstMinion getName() {
+  public ConstMinion name() {
     return name;
   }
 
   @Override
-  public ConstClass getClassName() {
+  public String displayName() {
+    return displayName;
+  }
+
+  @Override
+  public ConstClass className() {
     return className;
   }
 
   @Override
-  public ConstType getType() {
+  public ConstType type() {
     return ConstType.MINION;
   }
 
-  public int getCrystal() {
+  public int manaCost() {
     return crystal;
   }
 

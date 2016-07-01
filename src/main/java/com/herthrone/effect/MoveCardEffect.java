@@ -22,7 +22,7 @@ public class MoveCardEffect implements Effect {
   }
 
   @Override
-  public ConstEffectType getEffectType() {
+  public ConstEffectType effectType() {
     return ConstEffectType.MOVE_CARD;
   }
 

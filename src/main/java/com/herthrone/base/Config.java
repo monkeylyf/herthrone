@@ -8,11 +8,13 @@ import com.herthrone.constant.ConstType;
  */
 public interface Config<E extends Enum<E>> {
 
-  E getName();
+  E name();
 
-  ConstClass getClassName();
+  String displayName();
 
-  ConstType getType();
+  ConstClass className();
 
-  int getCrystal();
+  ConstType type();
+
+  int manaCost();
 }
