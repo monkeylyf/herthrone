@@ -12,7 +12,7 @@ public class HeroPowerFactory {
 
   public static Spell createHeroPowerByName(final ConstSpell heroPower) {
     SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
-    return SpellFactory.create(config.name(), config.displayName(), config.className(),
-        config.manaCost(), config.type(), config.getTargetConfig(), config.getEffects());
+    return SpellFactory.create(config.name, config.displayName, config.className, config.crystal,
+        config.type, config.targetConfigOptional, config.effects);
   }
 }

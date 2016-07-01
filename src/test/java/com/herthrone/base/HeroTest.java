@@ -50,10 +50,10 @@ public class HeroTest extends TestCase {
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
 
-    this.weapon1 = WeaponFactory.create(0, weaponAttackVal1, weaponDurability1,
-        ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR, true, Collections.EMPTY_MAP);
-    this.weapon2 = WeaponFactory.create(0, weaponAttackVal2, weaponDurability2,
-        ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR, true, Collections.EMPTY_MAP);
+    this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
+        weaponAttackVal1, weaponDurability1, 0, true, Collections.EMPTY_MAP);
+    this.weapon2 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
+        weaponAttackVal2, weaponDurability2, 0, true, Collections.EMPTY_MAP);
   }
 
   @Test

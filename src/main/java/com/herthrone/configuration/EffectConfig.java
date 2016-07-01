@@ -3,11 +3,13 @@ package com.herthrone.configuration;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.constant.Constant;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.herthrone.configuration.ConfigLoader.getByDefault;
+import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
 
 /**
  * Created by yifeng on 4/18/16.
@@ -23,70 +25,34 @@ public class EffectConfig {
   private static final String RANDOM = "random";
   private static final String TARGET = "target";
   private static final String CONDITION = "condition";
-  private final ConstEffectType effect;
-  private final String type;  // TODO: get rid of all String.
-  private final int value;
-  private final boolean unique;
-  private final boolean random;
-  private final boolean permanent;
-  private final List<String> choices;
-  private final TargetConfig target;
-  private final Optional<ConditionConfig> conditionConfigOptional;
+  public final ConstEffectType name;
+  public final String type;  // TODO: get rid of all String.
+  public final int value;
+  public final boolean isUnique;
+  public final boolean isRandom;
+  public final boolean isPermanent;
+  public final List<String> choices;
+  public final TargetConfig target;
+  public final Optional<ConditionConfig> conditionConfigOptional;
 
-  public EffectConfig(Map map) {
-    this.effect = ConstEffectType.valueOf(Constant.upperCaseValue(map, EFFECT));
+  EffectConfig(Map map) {
+    this.name = ConstEffectType.valueOf(getUpperCaseStringValue(map, EFFECT));
     this.type = (String) map.get(TYPE);
     this.value = (int) map.get(VALUE);
-    this.permanent = (map.containsKey(PERMANENT)) ? (boolean) map.get(PERMANENT) : false;
-    this.unique = (map.containsKey(UNIQUE)) ? (boolean) map.get(UNIQUE) : false;
-    this.random = (map.containsKey(RANDOM)) ? (boolean) map.get(RANDOM) : false;
-    this.choices = ((map.containsKey(CHOICES)) ? (List) map.get(CHOICES) : Collections.emptyList());
+    this.isPermanent = getByDefault(map, PERMANENT, false);
+    this.isUnique = getByDefault (map, UNIQUE, false);
+    this.isRandom = getByDefault (map, RANDOM, false);
+    this.choices = getByDefault(map, CHOICES, Collections.EMPTY_LIST);
     this.target = new TargetConfig((Map) map.get(TARGET));
     this.conditionConfigOptional = (map.containsKey(CONDITION)) ?
         Optional.of(new ConditionConfig((Map) map.get(CONDITION))) :
         Optional.absent();
   }
 
-  public ConstEffectType getEffect() {
-    return effect;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public int getValue() {
-    return value;
-  }
-
-  public TargetConfig getTarget() {
-    return target;
-  }
-
-  public boolean isUnique() {
-    return unique;
-  }
-
-  public boolean isRandom() {
-    return random;
-  }
-
-  public boolean isPermanent() {
-    return permanent;
-  }
-
-  public List<String> getChoices() {
-    return choices;
-  }
-
-  public Optional<ConditionConfig> getConditionConfigOptional() {
-    return conditionConfigOptional;
-  }
-
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
-        .add(EFFECT, effect)
+        .add(EFFECT, name)
         .add(TYPE, type)
         .add(VALUE, value)
         .add(TARGET, target)

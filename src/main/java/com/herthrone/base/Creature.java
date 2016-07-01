@@ -1,6 +1,5 @@
 package com.herthrone.base;
 
-import com.herthrone.game.Container;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.IntAttribute;
 

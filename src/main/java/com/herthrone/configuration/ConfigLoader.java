@@ -1,8 +1,9 @@
 package com.herthrone.configuration;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.herthrone.base.Config;
+import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
@@ -62,6 +63,21 @@ public class ConfigLoader {
     }
   };
 
+  static <T> T getByDefault(final Map map, final String key, final T defaultValue) {
+    return (map.containsKey(key)) ? (T) map.get(key) : defaultValue;
+  }
+
+  static String lowerUnderscoreToUpperWhitespace(final Enum name) {
+    return CaseFormat.UPPER_CAMEL
+        .to(CaseFormat.UPPER_UNDERSCORE, name.toString())
+        .replaceAll(" ", "_");
+  }
+
+  static String getUpperCaseStringValue(final Map map, final String key) {
+    final String value = (String) map.get(key);
+    return value.toUpperCase();
+  }
+
   public static ConstType getCardTypeByName(final Enum cardName) {
     if (spellConfigLoader.getConfigurations().containsKey(cardName)) {
       return ConstType.SPELL;
@@ -115,7 +131,7 @@ public class ConfigLoader {
     return weaponConfigLoader.getConfigurations().get(weapon);
   }
 
-  private abstract static class AbstractConfigLoader<T extends Config> {
+  private abstract static class AbstractConfigLoader<T extends AbstractConfig> {
     private volatile ImmutableMap<Enum, T> configs;
     private String configName;
 
@@ -142,7 +158,7 @@ public class ConfigLoader {
       for (Object object : configSection) {
         final Map map = (Map) object;
         final T config = createInstance(map);
-        builder.put(config.name(), config);
+        builder.put(config.name, config);
       }
       return builder.build();
     }
@@ -158,10 +174,42 @@ public class ConfigLoader {
         throw new RuntimeException("Configuration file not found: " + configPath);
       }
       Iterator<Object> iterator = yaml.loadAll(input).iterator();
-      return (List) iterator.next();
+      @SuppressWarnings("unchecked") List<Object> configurationSections = (List) iterator.next();
+      return configurationSections;
     }
 
     abstract protected T createInstance(Map map);
 
+  }
+
+  /**
+   * Created by yifengliu on 6/30/16.
+   */
+  abstract static class AbstractConfig<E extends Enum<E>> {
+
+    private static final String NAME = "name";
+    private static final String CLASS = "class";
+    private static final String DESCRIPTION = "description";
+    private static final String DISPLAY = "display";
+    private static final String CRYSTAL = "crystal";
+    private static final String COLLECTIBLE = "collectible";
+
+    public final E name;
+    public final String displayName;
+    public final ConstClass className;
+    public final String description;
+    public final int crystal;
+    public final boolean isCollectible;
+
+    AbstractConfig(final Map map) {
+      this.name = loadName((String) map.get(NAME));
+      this.displayName = getByDefault(map, DISPLAY, lowerUnderscoreToUpperWhitespace(name));
+      this.className = ConstClass.valueOf(getUpperCaseStringValue(map, CLASS));
+      this.description = (String) map.get(DESCRIPTION);
+      this.crystal = getByDefault(map, CRYSTAL, 0);
+      this.isCollectible = getByDefault(map, COLLECTIBLE, false);
+    }
+
+    protected abstract E loadName(final String name);
   }
 }

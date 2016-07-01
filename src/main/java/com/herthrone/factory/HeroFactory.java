@@ -40,13 +40,13 @@ public class HeroFactory {
 
   public static Hero create(final ConstHero hero) {
     HeroConfig heroConfig = ConfigLoader.getHeroConfigByName(hero);
-    return HeroFactory.create(
-        HeroFactory.HEALTH, heroConfig.name(), heroConfig.displayName(),
-        heroConfig.getHeroPower(), heroConfig.className());
+    return HeroFactory.create(heroConfig.name, heroConfig.displayName, heroConfig.className,
+        HeroFactory.HEALTH, heroConfig.heroPower);
   }
 
-  public static Hero create(final int health, final ConstHero name, final String displayName,
-                            final ConstSpell heroPowerName, final ConstClass className) {
+  public static Hero create(final ConstHero name, final String displayName,
+                            final ConstClass className, final int health,
+                            final ConstSpell heroPowerName)  {
     return new Hero() {
 
       private final IntAttribute healthAttr = new IntAttribute(health);

@@ -1,95 +1,39 @@
 package com.herthrone.configuration;
 
 import com.google.common.base.Optional;
-import com.herthrone.base.Config;
-import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
-import com.herthrone.constant.Constant;
-import com.herthrone.helper.StringHelper;
 
 import java.util.Map;
 
 /**
  * Created by yifeng on 4/12/16.
  */
-public class MinionConfig implements Config<ConstMinion> {
+public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
 
-  private static final String NAME_FIELD = "name";
-  private static final String CLASS_FIELD = "class";
-  private static final String DISPLAY_FIELD = "display";
-  private static final String ATTACK_FIELD = "attack";
-  private static final String TYPE_FIELD = "type";
-  private static final String HEALTH_FIELD = "health";
-  private static final String CRYSTAL_FIELD = "crystal";
-  private static final String MECHANICS_FIELD = "mechanics";
-  private static final String COLLECTIBLE_FIELD = "collectible";
-  private final ConstMinion name;
-  private final ConstClass className;
-  private final String displayName;
-  private final int attack;
-  private final int health;
-  private final int crystal;
-  private final ConstType type;
-  private final Map<ConstMechanic, MechanicConfig> mechanics;
-  private final boolean collectible;
+  private static final String ATTACK = "attack";
+  private static final String HEALTH = "health";
+  private static final String MECHANICS = "mechanics";
+  public final int attack;
+  public final int health;
+  public final Map<ConstMechanic, MechanicConfig> mechanics;
+  public final ConstType type = ConstType.MINION;
 
-  public MinionConfig(final Map map) {
-    this.name = ConstMinion.valueOf(Constant.upperCaseValue(map, NAME_FIELD));
-    this.className = ConstClass.valueOf(Constant.upperCaseValue(map, CLASS_FIELD));
-    this.displayName = (map.containsKey(DISPLAY_FIELD)) ?
-        (String) map.get(DISPLAY_FIELD) : StringHelper.lowerUnderscoreToUpperWhitespace(name);
-    this.attack = (int) map.get(ATTACK_FIELD);
-    this.health = (int) map.get(HEALTH_FIELD);
-    this.crystal = (int) map.get(CRYSTAL_FIELD);
-    this.type = ConstType.valueOf(Constant.upperCaseValue(map, TYPE_FIELD, ConstType.GENERAL.toString()));
-    this.mechanics = MechanicConfig.mechanicConfigFactory(map.get(MECHANICS_FIELD));
-    this.collectible = map.containsKey(COLLECTIBLE_FIELD) && (Boolean) map.get(COLLECTIBLE_FIELD);
+  MinionConfig(final Map map) {
+    super(map);
+    this.attack = (int) map.get(ATTACK);
+    this.health = (int) map.get(HEALTH);
+    this.mechanics = MechanicConfig.mechanicConfigFactory(map.get(MECHANICS));
   }
 
-  public int getAttack() {
-    return attack;
-  }
-
-  public int getHealth() {
-    return health;
-  }
-
-  public Map<ConstMechanic, MechanicConfig> getMechanics() {
-    return mechanics;
+  @Override
+  protected ConstMinion loadName(final String name) {
+    return ConstMinion.valueOf(name.toUpperCase());
   }
 
   public Optional<MechanicConfig> getMechanic(final ConstMechanic mechanic) {
     final MechanicConfig config = mechanics.get(mechanic);
     return Optional.fromNullable(config);
-  }
-
-  @Override
-  public ConstMinion name() {
-    return name;
-  }
-
-  @Override
-  public String displayName() {
-    return displayName;
-  }
-
-  @Override
-  public ConstClass className() {
-    return className;
-  }
-
-  @Override
-  public ConstType type() {
-    return ConstType.MINION;
-  }
-
-  public int manaCost() {
-    return crystal;
-  }
-
-  public boolean isCollectible() {
-    return collectible;
   }
 }

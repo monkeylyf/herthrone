@@ -47,7 +47,7 @@ public class SpellTest extends TestCase {
     final Spell fireBall = SpellFactory.create(ConstSpell.FIRE_BALL);
 
     EffectFactory.getActionsByConfig(fireBall, minion).stream().forEach(Effect::act);
-    assertThat(minion.health().value()).isEqualTo(yetiConfig.getHealth() + fireBall.getEffects().get(0).getValue());
+    assertThat(minion.health().value()).isEqualTo(yetiConfig.health + fireBall.getEffects().get(0).value);
     assertThat(minion.isDead()).isTrue();
   }
 
@@ -57,7 +57,7 @@ public class SpellTest extends TestCase {
     final Spell armorUp = HeroPowerFactory.createHeroPowerByName(ConstSpell.ARMOR_UP);
 
     EffectFactory.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
-    assertThat(hero1.armor().value()).isEqualTo(armorUp.getEffects().get(0).getValue());
+    assertThat(hero1.armor().value()).isEqualTo(armorUp.getEffects().get(0).value);
   }
 
   @Test
@@ -65,7 +65,7 @@ public class SpellTest extends TestCase {
     final Spell lesserHeal = HeroPowerFactory.createHeroPowerByName(ConstSpell.LESSER_HEAL);
     assertThat(hero1.healthLoss()).isEqualTo(0);
     final int largeDamage = 5;
-    final int healVol = lesserHeal.getEffects().get(0).getValue();
+    final int healVol = lesserHeal.getEffects().get(0).value;
     hero1.takeDamage(largeDamage);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage);
 
@@ -81,7 +81,7 @@ public class SpellTest extends TestCase {
   @Test
   public void testFireBlast() {
     final Spell fireBlast = HeroPowerFactory.createHeroPowerByName(ConstSpell.FIRE_BLAST);
-    final int damage = fireBlast.getEffects().get(0).getValue();
+    final int damage = fireBlast.getEffects().get(0).value;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
     EffectFactory.getActionsByConfig(fireBlast, hero2).stream().forEach(Effect::act);
@@ -95,7 +95,7 @@ public class SpellTest extends TestCase {
   public void testSteadyShot() {
     final Spell steadyShot = HeroPowerFactory.createHeroPowerByName(ConstSpell.STEADY_SHOT);
 
-    final int damage = steadyShot.getEffects().get(0).getValue();
+    final int damage = steadyShot.getEffects().get(0).value;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
     EffectFactory.getActionsByConfig(steadyShot, hero2).stream().forEach(Effect::act);
@@ -108,8 +108,8 @@ public class SpellTest extends TestCase {
   @Test
   public void testShapeshift() {
     final Spell shapeshift = HeroPowerFactory.createHeroPowerByName(ConstSpell.SHAPESHIFT);
-    final int attack = shapeshift.getEffects().get(0).getValue();
-    final int armor = shapeshift.getEffects().get(1).getValue();
+    final int attack = shapeshift.getEffects().get(0).value;
+    final int armor = shapeshift.getEffects().get(1).value;
 
     assertThat(hero1.attack().value()).isEqualTo(0);
     assertThat(hero1.armor().value()).isEqualTo(0);
@@ -132,7 +132,7 @@ public class SpellTest extends TestCase {
     assertThat(hero1.canDamage()).isTrue();
 
     AttackFactory.getPhysicalDamageAction(hero1, hero2);
-    assertThat(daggerMastery.getEffects().get(0).getValue()).isEqualTo(hero2.healthLoss());
+    assertThat(daggerMastery.getEffects().get(0).value).isEqualTo(hero2.healthLoss());
   }
 
   @Test
@@ -149,7 +149,7 @@ public class SpellTest extends TestCase {
   @Test
   public void testTotemicCall() {
     final Spell totemicCall = HeroPowerFactory.createHeroPowerByName(ConstSpell.TOTEMIC_CALL);
-    final int size = totemicCall.getEffects().get(0).getChoices().size();
+    final int size = totemicCall.getEffects().get(0).choices.size();
 
     for (int i = 0; i < size; ++i) {
       EffectFactory.getActionsByConfig(totemicCall, hero1).stream().forEach(Effect::act);
@@ -164,7 +164,7 @@ public class SpellTest extends TestCase {
   public void testLifeTap() {
     final Spell lifeTap = HeroPowerFactory.createHeroPowerByName(ConstSpell.LIFE_TAP);
     final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    final int damage = -lifeTap.getEffects().get(0).getValue();
+    final int damage = -lifeTap.getEffects().get(0).value;
 
     assertThat(gm.activeSide.deck.size()).isEqualTo(0);
     gm.activeSide.deck.add(yeti);

@@ -236,8 +236,8 @@
         type: minion
       condition:
         type: board_size
-        rangeStart: 4  # Inclusive
-        rangeEnd: 7  # Inclusive
+        range_start: 4  # Inclusive
+        range_end: 7  # Inclusive
 
 - name: recruiter
   class: neutral

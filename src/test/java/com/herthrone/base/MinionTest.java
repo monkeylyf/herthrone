@@ -38,22 +38,20 @@ public class MinionTest extends TestCase {
 
   @Test
   public void testMinionStats() {
-    assertEquals(yetiConfig.getHealth(), yeti1.health().value());
-    assertEquals(yetiConfig.getHealth(), yeti2.health().value());
+    assertEquals(yetiConfig.health, yeti1.health().value());
+    assertEquals(yetiConfig.health, yeti2.health().value());
     assertFalse(yeti1.isDead());
     assertFalse(yeti2.isDead());
   }
 
   @Test
   public void testMinionAttack() {
-    final int health = yetiConfig.getHealth();
-    final int attack = yetiConfig.getAttack();
     attackEachOther();
-    assertThat(yeti1.health().value()).isEqualTo(health - attack);
-    assertThat(yeti2.health().value()).isEqualTo(health - attack);
+    assertThat(yeti1.health().value()).isEqualTo(yetiConfig.health - yetiConfig.attack);
+    assertThat(yeti2.health().value()).isEqualTo(yetiConfig.health - yetiConfig.attack);
     attackEachOther();
-    assertThat(yeti1.health().value()).isEqualTo(health - 2 * attack);
-    assertThat(yeti2.health().value()).isEqualTo(health - 2 * attack);
+    assertThat(yeti1.health().value()).isEqualTo(yetiConfig.health - 2 * yetiConfig.attack);
+    assertThat(yeti2.health().value()).isEqualTo(yetiConfig.health - 2 * yetiConfig.attack);
 
     assertThat(yeti1.isDead()).isTrue();
     assertThat(yeti2.isDead()).isTrue();
