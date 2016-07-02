@@ -35,17 +35,17 @@ public class Battlefield implements View {
 
   @Override
   public Map<String, String> view() {
-    final ImmutableMap.Builder viewBuilder = ImmutableMap.<String, String>builder();
+    final ImmutableMap.Builder<String, String> viewBuilder = ImmutableMap.builder();
 
     final String ownPrefix = ConstTarget.OWN.toString() + ":";
     final Map<String, String> ownSideView = getOwnSideView();
-    for (Map.Entry entry : ownSideView.entrySet()) {
+    for (Map.Entry<String, String> entry : ownSideView.entrySet()) {
       viewBuilder.put(ownPrefix + entry.getKey(), entry.getValue());
     }
 
     final String opponentPrefix = ConstTarget.OPPONENT.toString() + ":";
     final Map<String, String> opponentSideView = getOpponentSideView();
-    for (Map.Entry entry : opponentSideView.entrySet()) {
+    for (Map.Entry<String, String> entry : opponentSideView.entrySet()) {
       viewBuilder.put(opponentPrefix + entry.getKey(), entry.getValue());
     }
 
@@ -53,7 +53,7 @@ public class Battlefield implements View {
   }
 
   private Map<String, String> getOwnSideView() {
-    final ImmutableMap.Builder ownSideBuilder = buildNoHiddenSideView(mySide);
+    final ImmutableMap.Builder<String, String> ownSideBuilder = buildNoHiddenSideView(mySide);
 
     // Add hands as part of view.
     for (int i = 0; i < mySide.hand.size(); ++i) {
@@ -75,7 +75,7 @@ public class Battlefield implements View {
   }
 
   private ImmutableMap.Builder<String, String> buildNoHiddenSideView(final Side side) {
-    final ImmutableMap.Builder sideViewBuilder = ImmutableMap.<String, String>builder();
+    final ImmutableMap.Builder<String, String> sideViewBuilder = ImmutableMap.builder();
     // Add here as part of view.
     sideViewBuilder.put(Constant.HERO, side.hero.view().toString());
     // Add deck count as part of view.

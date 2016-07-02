@@ -64,7 +64,9 @@ public class ConfigLoader {
   };
 
   static <T> T getByDefault(final Map map, final String key, final T defaultValue) {
-    return (map.containsKey(key)) ? (T) map.get(key) : defaultValue;
+    @SuppressWarnings("unchecked") final T value =  (map.containsKey(key)) ?
+        (T) map.get(key) : defaultValue;
+    return value;
   }
 
   static String lowerUnderscoreToUpperWhitespace(final Enum name) {

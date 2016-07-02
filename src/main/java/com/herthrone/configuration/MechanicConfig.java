@@ -31,7 +31,7 @@ public class MechanicConfig {
   }
 
   public static Map<ConstMechanic, MechanicConfig> mechanicConfigFactory(Object configList) {
-    final List<Map> configMaps = (List<Map>) configList;
+    @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;
     Map<ConstMechanic, MechanicConfig> configs = new HashMap<>();
     for (Map map : configMaps) {
       MechanicConfig config = new MechanicConfig(map);

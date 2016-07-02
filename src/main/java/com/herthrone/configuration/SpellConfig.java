@@ -19,6 +19,7 @@ public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
   public final Optional<TargetConfig> targetConfigOptional;
   public final ConstType type = ConstType.SPELL;
 
+  @SuppressWarnings("unchecked")
   SpellConfig(final Map map) {
     super(map);
     this.targetConfigOptional = (map.containsKey(TARGET)) ?

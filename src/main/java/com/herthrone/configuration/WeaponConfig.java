@@ -21,6 +21,7 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
   public final Map<ConstMechanic, MechanicConfig> mechanics;
   public final ConstType type = ConstType.WEAPON;
 
+  @SuppressWarnings("unchecked")
   WeaponConfig(final Map map) {
     super(map);
     this.attack = (int) map.get(ATTACK);

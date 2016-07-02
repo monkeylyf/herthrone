@@ -35,6 +35,7 @@ public class EffectConfig {
   public final TargetConfig target;
   public final Optional<ConditionConfig> conditionConfigOptional;
 
+  @SuppressWarnings("unchecked")
   EffectConfig(Map map) {
     this.name = ConstEffectType.valueOf(getUpperCaseStringValue(map, EFFECT));
     this.type = (String) map.get(TYPE);

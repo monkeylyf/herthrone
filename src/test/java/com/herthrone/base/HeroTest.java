@@ -1,9 +1,11 @@
 package com.herthrone.base;
 
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstWeapon;
@@ -18,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -50,10 +53,11 @@ public class HeroTest extends TestCase {
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
 
+    final Map<ConstMechanic, MechanicConfig> emptyMap = Collections.emptyMap();
     this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
-        weaponAttackVal1, weaponDurability1, 0, true, Collections.EMPTY_MAP);
+        weaponAttackVal1, weaponDurability1, 0, true, emptyMap);
     this.weapon2 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
-        weaponAttackVal2, weaponDurability2, 0, true, Collections.EMPTY_MAP);
+        weaponAttackVal2, weaponDurability2, 0, true, emptyMap);
   }
 
   @Test
