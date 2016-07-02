@@ -37,12 +37,6 @@ public class MinionFactory {
   private static final int WINDFURY_INIT_MOVE_POINTS = 2;
   static Logger logger = Logger.getLogger(MinionFactory.class.getName());
 
-  public static Minion create(final ConstMinion minionName, final Side side) {
-    final Minion minion = create(minionName);
-    minion.binder().bind(side);
-    return minion;
-  }
-
   public static Minion create(final ConstMinion minionName) {
     MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));

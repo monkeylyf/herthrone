@@ -51,8 +51,8 @@ public class HeroTest extends TestCase {
     this.hero2 = gm.inactiveSide.hero;
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
-    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeBattlefield.mySide);
-
+    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    yeti.binder().bind(gm.activeSide);
     final Map<ConstMechanic, MechanicConfig> emptyMap = Collections.emptyMap();
     this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
         weaponAttackVal1, weaponDurability1, 0, true, emptyMap);

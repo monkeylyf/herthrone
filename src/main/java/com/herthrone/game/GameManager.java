@@ -8,6 +8,7 @@ import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
+import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
@@ -38,7 +39,7 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/14/16.
  */
-public class GameManager {
+public class GameManager implements Round {
 
   static Logger logger = Logger.getLogger(GameManager.class.getName());
 
@@ -192,8 +193,15 @@ public class GameManager {
     return activeSide.hero.isDead() || inactiveSide.hero.isDead();
   }
 
-  void startTurn() {
+  @Override
+  public void endTurn() {
+
+  }
+
+  @Override
+  public void startTurn() {
     increaseCrystalUpperBound();
+    activeSide.startTurn();
     drawCard();
     activeSide.board.stream().forEach(minion -> minion.endTurn());
     activeSide.hero.endTurn();
@@ -290,6 +298,7 @@ public class GameManager {
   }
 
   public void playCard(final Card card) {
+    card.binder().bind(activeSide);
     if (card instanceof Minion) {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
@@ -311,6 +320,7 @@ public class GameManager {
   }
 
   public void playCard(final Card card, final Creature target) {
+    card.binder().bind(activeSide);
     if (card instanceof Minion) {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());

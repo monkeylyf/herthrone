@@ -28,10 +28,13 @@ public class MinionTest extends TestCase {
   @Before
   public void setUp() {
     this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
-    this.yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.activeSide);
-    gm.activeSide.board.add(yeti1);
-    this.yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI, gm.inactiveSide);
-    gm.inactiveSide.board.add(yeti2);
+    this.yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.startTurn();
+    gm.playCard(yeti1);
+    this.yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.switchTurn();
+    gm.playCard(yeti2);
+    gm.switchTurn();
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
   }

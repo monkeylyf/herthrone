@@ -49,11 +49,11 @@ public class MechanicTest extends TestCase {
     this.inactiveSide = gm.inactiveSide;
 
     activeSide.startTurn();
-    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, activeSide);
+    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     gm.playCard(yeti);
-    this.waterElemental = MinionFactory.create(ConstMinion.WATER_ELEMENTAL, activeSide);
+    this.waterElemental = MinionFactory.create(ConstMinion.WATER_ELEMENTAL);
     gm.playCard(waterElemental);
-    this.scarletCrusader = MinionFactory.create(ConstMinion.SCARLET_CRUSADER, activeSide);
+    this.scarletCrusader = MinionFactory.create(ConstMinion.SCARLET_CRUSADER);
     gm.playCard(scarletCrusader);
 
     this.initialBoardSize = activeSide.board.size();
@@ -78,7 +78,7 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.hero.healthLoss()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.create(minionName, activeSide);
+    final Minion minion = MinionFactory.create(minionName);
 
     gm.playCard(minion);
 
@@ -149,10 +149,10 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testStealth() {
-    final Minion stoneclawTotem = MinionFactory.create(ConstMinion.STONECLAW_TOTEM, activeSide);
-    activeSide.board.add(stoneclawTotem);
-    final Minion worgenInfiltrator = MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR, activeSide);
-    activeSide.board.add(worgenInfiltrator);
+    final Minion stoneclawTotem = MinionFactory.create(ConstMinion.STONECLAW_TOTEM);
+    gm.playCard(stoneclawTotem);
+    final Minion worgenInfiltrator = MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR);
+    gm.playCard(worgenInfiltrator);
 
     final Optional<BooleanAttribute> stealth = worgenInfiltrator.booleanMechanics().get(ConstMechanic.STEALTH);
     assertThat(stealth.isPresent()).isTrue();
@@ -198,8 +198,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testPoison() {
-    Minion emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA, activeSide);
-    activeSide.board.add(emperorCobra);
+    Minion emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA);
+    gm.playCard(emperorCobra);
 
     AttackFactory.getPhysicalDamageAction(emperorCobra, hero);
 
@@ -213,8 +213,8 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.healthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
-    emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA, activeSide);
-    activeSide.board.add(emperorCobra);
+    emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA);
+    gm.playCard(emperorCobra);
     AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
@@ -236,15 +236,15 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testForgetful() {
-    final Minion ogreBrute = MinionFactory.create(ConstMinion.OGRE_BRUTE, activeSide);
-    activeSide.board.add(ogreBrute);
+    final Minion ogreBrute = MinionFactory.create(ConstMinion.OGRE_BRUTE);
+    gm.playCard(ogreBrute);
     final int attackVal = ogreBrute.attack().value();
     final int minionNum = 5;
     final int total = 10000;
     final int buffHealth = total * 10;
     for (int i = 0; i < minionNum; ++i) {
       // Buff Yeti health enough so that it doesn't die and gets removed from board.
-      final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI, inactiveSide);
+      final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
       yeti.health().buff.temporaryBuff.increase(buffHealth);
       inactiveSide.board.add(yeti);
     }
@@ -268,7 +268,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testWindFury() {
-    final Minion harpy = MinionFactory.create(ConstMinion.WINDFURY_HARPY, activeSide);
+    final Minion harpy = MinionFactory.create(ConstMinion.WINDFURY_HARPY);
     harpy.attackMovePoints().reset();
     assertThat(harpy.attackMovePoints().value()).isEqualTo(2);
   }
@@ -282,7 +282,7 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.hand.size()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.create(minionName, activeSide);
+    final Minion minion = MinionFactory.create(minionName);
 
     gm.playCard(minion);
 
@@ -298,8 +298,8 @@ public class MechanicTest extends TestCase {
     final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
     activeSide.deck.add(MinionFactory.create(minionInDeck));
 
-    final Minion lootHoarder = MinionFactory.create(ConstMinion.LOOT_HOARDER, activeSide);
-    activeSide.board.add(lootHoarder);
+    final Minion lootHoarder = MinionFactory.create(ConstMinion.LOOT_HOARDER);
+    gm.playCard(lootHoarder);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
     assertThat(activeSide.deck.size()).isEqualTo(1);
@@ -313,8 +313,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testCombo() {
-    final Minion defiasRingleader1 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER, activeSide);
-    final Minion defiasRingleader2 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER, activeSide);
+    final Minion defiasRingleader1 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER);
+    final Minion defiasRingleader2 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER);
     gm.playCard(defiasRingleader1);
     // First play should not trigger combo effect hence add onl one minion to the board.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
@@ -348,13 +348,13 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDealDamage() {
-    final Minion knifeJuggler = MinionFactory.create(ConstMinion.KNIFE_JUGGLER, activeSide);
+    final Minion knifeJuggler = MinionFactory.create(ConstMinion.KNIFE_JUGGLER);
 
     gm.playCard(knifeJuggler);
 
     final int numOfYetiToSummon = 5;
     for (int i = 0; i < numOfYetiToSummon; ++i) {
-      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI, activeSide));
+      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
       assertThat(inactiveSide.hero.healthLoss()).isEqualTo(i + 1);
     }
   }
@@ -364,19 +364,19 @@ public class MechanicTest extends TestCase {
     gm.switchTurn();
     final int threshold = 4;
     for (int i = 0; i < threshold; ++i) {
-      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI, inactiveSide));
+      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
     }
     final List<Minion> opponentMinions = new ArrayList<>(inactiveSide.board.asList());
     // Test take control effect triggered because it satisfies the condition.
     gm.switchTurn();
-    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH, activeSide));
+    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH));
 
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
     // Test the right-most minion is stolen from opponent board.
     assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinions);
 
-    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH, activeSide));
+    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH));
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2 + 1);
     // Test control effect not triggered because of opponent has less than 4 minions.
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
@@ -384,7 +384,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testInspire() {
-    final Minion recruiter = MinionFactory.create(ConstMinion.RECRUITER, activeSide);
+    final Minion recruiter = MinionFactory.create(ConstMinion.RECRUITER);
     gm.playCard(recruiter);
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
@@ -395,8 +395,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testReturnToHand() {
-    final Minion youthfulBrewmaster = MinionFactory.create(
-        ConstMinion.YOUTHFUL_BREWMASTER, activeSide);
+    final Minion youthfulBrewmaster = MinionFactory.create(ConstMinion.YOUTHFUL_BREWMASTER);
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
