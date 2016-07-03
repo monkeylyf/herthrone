@@ -292,6 +292,7 @@
   mechanics:
     - name: battlecry
       trigger: on_play
+      trigger_only_with_target: true
       effect: return_to_hand
       type: minion
       value: 1

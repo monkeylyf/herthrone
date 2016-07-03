@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.herthrone.configuration.ConfigLoader.getByDefault;
-import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
-
 /**
  * Created by yifeng on 4/18/16.
  */
@@ -37,13 +34,13 @@ public class EffectConfig {
 
   @SuppressWarnings("unchecked")
   EffectConfig(Map map) {
-    this.name = ConstEffectType.valueOf(getUpperCaseStringValue(map, EFFECT));
+    this.name = ConstEffectType.valueOf(ConfigLoader.getUpperCaseStringValue(map, EFFECT));
     this.type = (String) map.get(TYPE);
     this.value = (int) map.get(VALUE);
-    this.isPermanent = getByDefault(map, PERMANENT, false);
-    this.isUnique = getByDefault (map, UNIQUE, false);
-    this.isRandom = getByDefault (map, RANDOM, false);
-    this.choices = getByDefault(map, CHOICES, Collections.EMPTY_LIST);
+    this.isPermanent = ConfigLoader.getByDefault(map, PERMANENT, false);
+    this.isUnique = ConfigLoader.getByDefault (map, UNIQUE, false);
+    this.isRandom = ConfigLoader.getByDefault (map, RANDOM, false);
+    this.choices = ConfigLoader.getByDefault(map, CHOICES, Collections.EMPTY_LIST);
     this.target = new TargetConfig((Map) map.get(TARGET));
     this.conditionConfigOptional = (map.containsKey(CONDITION)) ?
         Optional.of(new ConditionConfig((Map) map.get(CONDITION))) :

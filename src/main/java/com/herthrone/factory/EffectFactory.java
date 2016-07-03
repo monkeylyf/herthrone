@@ -46,21 +46,27 @@ public class EffectFactory {
   static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
-  public static void pipeMechanicEffectIfPresentAndMeetCondition(
-      final Optional<MechanicConfig> mechanicConfigOptional, final Creature target) {
+  public static boolean isTriggerConditionMet(final Optional<MechanicConfig> mechanicConfigOptional,
+                                              final Side side, final Creature target) {
     if (!mechanicConfigOptional.isPresent()) {
       logger.debug("Mechanic configuration is absent");
-      return;
+      return false;
     }
-    final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
-    if (!isConditionTriggered(mechanicConfig.effect, target)) {
+    if (!isConditionTriggered(mechanicConfigOptional.get().effect, target)) {
       logger.debug("Condition not met and mechanic effect not triggered");
-      return;
+      return false;
     }
+    return true;
+  }
 
-    logger.debug("Triggering " + mechanicConfig.mechanic.toString());
-    Effect effect = pipeMechanicEffect(mechanicConfig, target);
-    target.binder().getSide().getEffectQueue().enqueue(effect);
+  public static void pipeMechanicEffectIfPresentAndMeetCondition(
+      final Optional<MechanicConfig> mechanicConfigOptional, final Side side, final Creature target) {
+    if (isTriggerConditionMet(mechanicConfigOptional, side, target)) {
+      final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
+      logger.debug("Triggering " + mechanicConfig.mechanic.toString());
+      Effect effect = pipeMechanicEffect(mechanicConfig, target);
+      target.binder().getSide().getEffectQueue().enqueue(effect);
+    }
   }
 
   private static boolean isConditionTriggered(final Optional<EffectConfig> effectConfigOptional,

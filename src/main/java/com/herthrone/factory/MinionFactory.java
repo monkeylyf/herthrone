@@ -94,7 +94,14 @@ public class MinionFactory {
 
       @Override
       public void playOnBoard(final Container<Minion> board) {
-        playOnBoard(board, this);
+        summonOnBoard(board);
+        Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, binder().getSide(), this);
+        // Combo condition check that there must be one replay record before this action.
+        if (binder().getSide().replay.size() > 1) {
+          Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
+          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, binder().getSide(), this);
+        }
       }
 
       @Override
@@ -102,11 +109,11 @@ public class MinionFactory {
         // TODO: battlecry happens before summon triggered events.
         summonOnBoard(board);
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, target);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, binder().getSide(), target);
         // Combo condition check that there must be one replay record before this action.
         if (binder().getSide().replay.size() > 1) {
           Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
-          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, this);
+          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, binder().getSide(), this);
         }
       }
 
@@ -253,7 +260,7 @@ public class MinionFactory {
         side.board.remove(this);
 
         Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(deathrattleConfig, this);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(deathrattleConfig, binder().getSide(), this);
       }
 
       @Override
