@@ -4,7 +4,7 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
-import com.herthrone.factory.AttackFactory;
+import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
@@ -61,7 +61,7 @@ public class MinionTest extends TestCase {
   }
 
   private void attackEachOther() {
-    AttackFactory.getPhysicalDamageAction(yeti1, yeti2);
+    EffectFactory.AttackFactory.getPhysicalDamageAction(yeti1, yeti2);
   }
 
   @Test

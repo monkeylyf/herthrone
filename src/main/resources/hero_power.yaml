@@ -3,7 +3,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: armor
       value: 2
       target:
@@ -15,7 +16,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - effect: weapon
+    - trigger: on_play
+      effect: weapon
       type: wicked_blade
       value: 1
       target:
@@ -30,7 +32,8 @@
     scope: all
     type: all
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: health
       value: -1
       target:
@@ -45,7 +48,8 @@
     scope: all
     type: all
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: health
       value: 2
       target:
@@ -57,13 +61,15 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: health
       value: -2
       target:
         scope: own
         type: hero
-    - effect: draw
+    - trigger: on_play
+      effect: draw
       type: card
       value: 1
       target:
@@ -75,7 +81,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - effect: summon
+    - trigger: on_play
+      effect: summon
       type: minion
       value: 1
       target:
@@ -90,14 +97,16 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: attack
       permanent: false  # true by default
       value: 1
       target:
         scope: own
         type: hero
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: armor
       value: 1
       target:
@@ -112,7 +121,8 @@
      scope: opponent
      type: hero
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: health
       value: -2
       target:
@@ -124,7 +134,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - effect: summon
+    - trigger: on_play
+      effect: summon
       type: minion
       value: 1
       target:

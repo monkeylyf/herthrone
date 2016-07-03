@@ -2,8 +2,8 @@ package com.herthrone.configuration;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.herthrone.constant.ConstEvent;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstTrigger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,22 +20,24 @@ public class MechanicConfig {
   private static final String EFFECT = "effect";
   private static final String TRIGGER = "trigger";
   public final ConstMechanic mechanic;
-  public final Optional<ConstEvent> triggeringEvent;
+  public final Optional<ConstTrigger> triggeringEvent;
   public final Optional<EffectConfig> effect;
 
   MechanicConfig(Map map) {
     this.mechanic = ConstMechanic.valueOf(getUpperCaseStringValue(map, NAME));
     this.triggeringEvent = map.containsKey(TRIGGER) ?
-        Optional.of(ConstEvent.valueOf(getUpperCaseStringValue(map, TRIGGER))) : Optional.absent();
+        Optional.of(ConstTrigger.valueOf(getUpperCaseStringValue(map, TRIGGER))) : Optional.absent();
     this.effect = map.containsKey(EFFECT) ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
   public static Map<ConstMechanic, MechanicConfig> mechanicConfigFactory(Object configList) {
-    @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;
     Map<ConstMechanic, MechanicConfig> configs = new HashMap<>();
-    for (Map map : configMaps) {
-      MechanicConfig config = new MechanicConfig(map);
-      configs.put(config.mechanic, config);
+    if (configList != null) {
+      @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;
+      for (Map map : configMaps) {
+        MechanicConfig config = new MechanicConfig(map);
+        configs.put(config.mechanic, config);
+      }
     }
     return configs;
   }

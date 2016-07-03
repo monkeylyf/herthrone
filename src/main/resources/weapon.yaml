@@ -19,7 +19,8 @@
   crystal: 4
   collectible: true
   mechanics:
-    - name: on_attack
+    - trigger: on_attack
+      name: on_attack
       effect: attribute
       type: health
       value: 2
@@ -36,7 +37,8 @@
   crystal: 2
   collectible: true
   mechanics:
-    - name: on_equip
+    - trigger: on_play
+      name: on_equip
       effect: crystal
       type: crystal_lock
       value: 2

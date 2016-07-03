@@ -4,7 +4,6 @@
   health: 5
   crystal: 4
   collectible: true
-  mechanics: []
 
 - name: senjin_shieldmasta
   display: Sen'jin Shieldmasta
@@ -22,7 +21,6 @@
   health: 1
   crystal: 1
   collectible: false
-  mechanics: []
 
 - name: healing_totem
   class: shaman
@@ -30,7 +28,6 @@
   health: 2
   crystal: 1
   collectible: false
-  mechanics: []
 
 - name: searing_totem
   class: shaman
@@ -38,14 +35,12 @@
   health: 1
   crystal: 1
   collectible: false
-  mechanics: []
 
 - name: wrath_of_air_totem
   class: shaman
   attack: 0
   health: 2
   crystal: 1
-  mechanics: []
   collectible: false
 
 - name: stoneclaw_totem
@@ -74,6 +69,7 @@
   collectible: true
   mechanics:
     - name: battlecry
+      trigger: on_play
       effect: draw
       type: card
       value: 1
@@ -89,6 +85,7 @@
   collectible: true
   mechanics:
     - name: deathrattle
+      trigger: on_death
       effect: draw
       type: card
       value: 1
@@ -187,6 +184,7 @@
   collectible: true
   mechanics:
     - name: combo
+      trigger: on_play
       effect: summon
       type: minion
       value: 1
@@ -194,6 +192,10 @@
         scope: own
         type: board
       choices: [defias_bandit]
+      condition:
+        type: combo
+        range_start: 1
+        range_end: 999
 
 - name: defias_bandit
   class: rogue
@@ -201,7 +203,6 @@
   health: 1
   crystal: 1
   collectible: false
-  mechanics: []
 
 - name: knife_juggler
   class: neutral
@@ -211,6 +212,7 @@
   collectible: true
   mechanics:
     - name: on_summon
+      trigger: on_summon
       effect: attribute
       type: health
       value: -1
@@ -227,6 +229,7 @@
   collectible: true
   mechanics:
     - name: battlecry
+      trigger: on_play
       effect: take_control
       type: minion
       permanent: true
@@ -247,6 +250,7 @@
   collectible: true
   mechanics:
     - name: inspire
+      trigger: on_use_hero_power
       effect: generate
       type: minion
       value: 1
@@ -263,6 +267,7 @@
   collectible: true
   mechanics:
     - name: battlecry
+      trigger: on_play
       effect: summon
       type: board
       value: 1
@@ -277,7 +282,6 @@
   health: 2
   crystal: 1
   collectible: false
-  mechanics: []
 
 - name: youthful_brewmaster
   class: neutral
@@ -287,8 +291,33 @@
   collectible: true
   mechanics:
     - name: battlecry
+      trigger: on_play
       effect: return_to_hand
       type: minion
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: stormwind_champion
+  class: neutral
+  attack: 6
+  health: 6
+  crystal: 7
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: attribute
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+    - name: aura
+      trigger: on_presence
+      effect: attribute
+      type: health
       value: 1
       target:
         scope: own

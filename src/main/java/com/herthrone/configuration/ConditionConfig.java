@@ -26,4 +26,5 @@ public class ConditionConfig {
   public boolean inRange(final int value) {
     return range.contains(value);
   }
+
 }

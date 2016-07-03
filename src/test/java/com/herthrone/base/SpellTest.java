@@ -5,7 +5,6 @@ import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
-import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
@@ -131,7 +130,7 @@ public class SpellTest extends TestCase {
     EffectFactory.getActionsByConfig(daggerMastery, hero1).stream().forEach(Effect::act);
     assertThat(hero1.canDamage()).isTrue();
 
-    AttackFactory.getPhysicalDamageAction(hero1, hero2);
+    EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, hero2);
     assertThat(daggerMastery.getEffects().get(0).value).isEqualTo(hero2.healthLoss());
   }
 

@@ -9,7 +9,6 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstWeapon;
-import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
@@ -82,7 +81,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1AttackHero2() {
-    AttackFactory.getPhysicalDamageAction(hero1, hero2);
+    EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, hero2);
   }
 
   @Test
@@ -107,7 +106,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero2AttackHero1() {
-    AttackFactory.getPhysicalDamageAction(hero2, hero1);
+    EffectFactory.AttackFactory.getPhysicalDamageAction(hero2, hero1);
   }
 
   @Test
@@ -174,7 +173,7 @@ public class HeroTest extends TestCase {
   public void testHeroAttackMinion() {
     hero1.equip(weapon1);
 
-    AttackFactory.getPhysicalDamageAction(yeti, hero1);
+    EffectFactory.AttackFactory.getPhysicalDamageAction(yeti, hero1);
     assertEquals(0, yeti.healthLoss());
     assertEquals(yeti.attack().value(), hero1.healthLoss());
   }
@@ -182,7 +181,7 @@ public class HeroTest extends TestCase {
   @Test
   public void testMinionAttackHero() {
     hero1.equip(weapon1);
-    AttackFactory.getPhysicalDamageAction(hero1, yeti);
+    EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, yeti);
 
     assertEquals(weapon1.getAttackAttr().value(), yeti.healthLoss());
     assertEquals(yeti.attack().value(), hero1.healthLoss());

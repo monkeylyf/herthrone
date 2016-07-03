@@ -22,7 +22,6 @@ import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
-import com.herthrone.factory.AttackFactory;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
@@ -268,7 +267,7 @@ public class GameManager implements Round {
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MINION_ATTACK.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      AttackFactory.getPhysicalDamageAction(attacker, attackee);
+      EffectFactory.AttackFactory.getPhysicalDamageAction(attacker, attackee);
       // Cost one move point.
       attacker.attackMovePoints().buff.temporaryBuff.increase(-1);
     } else {

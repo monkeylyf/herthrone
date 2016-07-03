@@ -14,6 +14,7 @@ import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
@@ -22,6 +23,7 @@ import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
 import com.herthrone.effect.MoveCardEffect;
 import com.herthrone.effect.OverloadEffect;
+import com.herthrone.effect.PhysicalDamageEffect;
 import com.herthrone.effect.ReturnToHandEffect;
 import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
@@ -71,6 +73,8 @@ public class EffectFactory {
       switch (conditionConfig.conditionType) {
         case BOARD_SIZE:
           return conditionConfig.inRange(target.binder().getOpponentSide().board.size());
+        case COMBO:
+          return target.binder().getSide().replay.size() > 1;
         default:
           throw new RuntimeException("Unknown condition: " + conditionConfig.conditionType);
       }
@@ -221,4 +225,27 @@ public class EffectFactory {
         .map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
   }
 
+
+  public static class AttackFactory {
+
+    public static void getPhysicalDamageAction(final Creature attacker, final Creature attackee) {
+      final Effect effect = attacker.booleanMechanics().has(ConstMechanic.FORGETFUL) ?
+          getForgetfulPhysicalDamageAction(attacker, attackee) : new PhysicalDamageEffect(attacker, attackee);
+      attacker.binder().getSide().getEffectQueue().enqueue(effect);
+    }
+
+    private static Effect getForgetfulPhysicalDamageAction(final Creature attacker, final Creature attackee) {
+      final boolean isForgetfulToPickNewTarget = RandomMinionGenerator.getBool();
+      if (isForgetfulToPickNewTarget) {
+        logger.debug("Forgetful triggered");
+        final Creature substituteAttackee = RandomMinionGenerator.randomExcept(attackee.binder().getSide().allCreatures(), attackee);
+        logger.debug(String.format("Change attackee from %s to %s", attackee.toString(), substituteAttackee.toString()));
+        Preconditions.checkArgument(substituteAttackee != attackee);
+        return new PhysicalDamageEffect(attacker, substituteAttackee);
+      } else {
+        logger.debug("Forgetful not triggered");
+        return new PhysicalDamageEffect(attacker, attackee);
+      }
+    }
+  }
 }
