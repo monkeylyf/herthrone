@@ -394,15 +394,27 @@ public class MechanicTest extends TestCase {
   }
 
   @Test
-  public void testReturnToHand() {
+  public void testReturnToHandWithTarget() {
     final Minion youthfulBrewmaster = MinionFactory.create(ConstMinion.YOUTHFUL_BREWMASTER);
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
     gm.playCard(youthfulBrewmaster, yeti);
-    // Play one minion and another minion got returned.
+    // Play one minion and yeti got returned to hand.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1 - 1);
     assertThat(activeSide.hand.size()).isEqualTo(1);
     assertThat(activeSide.hand.get(0).cardName()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
+  }
+
+  @Test
+  public void testReturnToHandWithNoTarget() {
+    final Minion youthfulBrewmaster = MinionFactory.create(ConstMinion.YOUTHFUL_BREWMASTER);
+    assertThat(activeSide.hand.size()).isEqualTo(0);
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
+    gm.playCard(youthfulBrewmaster);
+
+    // Play one minion without specifying return target. Mechanic should not be triggered.
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
+    assertThat(activeSide.hand.size()).isEqualTo(0);
   }
 }

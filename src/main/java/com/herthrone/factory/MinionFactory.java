@@ -95,12 +95,28 @@ public class MinionFactory {
       @Override
       public void playOnBoard(final Container<Minion> board) {
         summonOnBoard(board);
+        // Battlecry mechanic.
         Optional<MechanicConfig> battlecry = getEffectMechanics().get(ConstMechanic.BATTLECRY);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, binder().getSide(), this);
+        if (battlecry.isPresent() && !battlecry.get().triggerOnlyWithTarget) {
+          System.out.println("shit");
+          System.out.println(battlecry.isPresent());
+          System.out.println(battlecry.get().triggerOnlyWithTarget);
+          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(battlecry, binder().getSide(), this);
+        } else {
+          logger.debug("Battlecry with no target specified. Battlecry not triggered");
+        }
+
+        // Combo mechanic.
         // Combo condition check that there must be one replay record before this action.
-        if (binder().getSide().replay.size() > 1) {
-          Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
-          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, binder().getSide(), this);
+        Optional<MechanicConfig> combo = getEffectMechanics().get(ConstMechanic.COMBO);
+        if (combo.isPresent() && !combo.get().triggerOnlyWithTarget) {
+          if (binder().getSide().replay.size() > 1) {
+            EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(combo, binder().getSide(), this);
+          } else {
+            logger.debug("First play and not a combo. Combo not triggered");
+          }
+        } else {
+          logger.debug("Combo with no target specified. Combo not triggered");
         }
       }
 
