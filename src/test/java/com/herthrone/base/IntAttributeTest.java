@@ -1,6 +1,6 @@
 package com.herthrone.base;
 
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 import junit.framework.TestCase;
 
 public class IntAttributeTest extends TestCase {
@@ -8,10 +8,10 @@ public class IntAttributeTest extends TestCase {
   private static final int FOUR = 4;
   private static final int BUFF = 1;
   private static final int DEBUFF = -2;
-  private IntAttribute attr;
+  private ValueAttribute attr;
 
   public void setUp() throws Exception {
-    attr = new IntAttribute(IntAttributeTest.FOUR);
+    attr = new ValueAttribute(IntAttributeTest.FOUR);
   }
 
   public void testGetVal() throws Exception {
@@ -19,15 +19,15 @@ public class IntAttributeTest extends TestCase {
   }
 
   public void testSetBuff() throws Exception {
-    attr.buff.permanentBuff.increase(IntAttributeTest.BUFF);
+    attr.getPermanentBuff().increase(IntAttributeTest.BUFF);
     assertEquals(IntAttributeTest.BUFF + IntAttributeTest.FOUR, attr.value());
   }
 
   public void testResetBuff() throws Exception {
-    attr.buff.permanentBuff.increase(IntAttributeTest.DEBUFF);
+    attr.getPermanentBuff().increase(IntAttributeTest.DEBUFF);
     assertEquals(IntAttributeTest.DEBUFF + IntAttributeTest.FOUR, attr.value());
 
-    attr.buff.reset();
+    attr.resetBuff();
     assertEquals(IntAttributeTest.FOUR, attr.value());
   }
 
@@ -35,7 +35,7 @@ public class IntAttributeTest extends TestCase {
     int decreaseVal = 1;
     attr.decrease(decreaseVal);
     assertEquals(IntAttributeTest.FOUR - decreaseVal, attr.value());
-    attr.buff.permanentBuff.increase(IntAttributeTest.BUFF);
+    attr.getPermanentBuff().increase(IntAttributeTest.BUFF);
     assertEquals(IntAttributeTest.FOUR - decreaseVal + IntAttributeTest.BUFF, attr.value());
 
     attr.reset();

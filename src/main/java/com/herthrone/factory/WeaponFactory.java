@@ -13,7 +13,7 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.EffectMechanics;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
 
@@ -34,9 +34,9 @@ public class WeaponFactory {
                               final int crystalManaCost, final boolean isCollectible,
                               final Map<ConstMechanic, MechanicConfig> mechanics) {
     return new Weapon() {
-      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute attackAttr = new IntAttribute(attack);
-      private final IntAttribute durabilityAttr = new IntAttribute(durability);
+      private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
+      private final ValueAttribute attackAttr = new ValueAttribute(attack);
+      private final ValueAttribute durabilityAttr = new ValueAttribute(durability);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
       private final Binder binder = new Binder();
@@ -71,7 +71,7 @@ public class WeaponFactory {
       }
 
       @Override
-      public IntAttribute manaCost() {
+      public ValueAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -92,12 +92,12 @@ public class WeaponFactory {
       }
 
       @Override
-      public IntAttribute getDurabilityAttr() {
+      public ValueAttribute getDurabilityAttr() {
         return durabilityAttr;
       }
 
       @Override
-      public IntAttribute getAttackAttr() {
+      public ValueAttribute getAttackAttr() {
         return attackAttr;
       }
 

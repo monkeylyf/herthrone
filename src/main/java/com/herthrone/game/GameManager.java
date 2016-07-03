@@ -253,13 +253,13 @@ public class GameManager implements Round {
       // Use hero power without a specific target.
       EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), activeSide.hero).stream().forEach(Effect::act);
       consumeCrystal(activeSide.hero.getHeroPower());
-      activeSide.hero.attackMovePoints().buff.temporaryBuff.increase(-1);
+      activeSide.hero.attackMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature).stream().forEach(Effect::act);
       consumeCrystal(activeSide.hero.getHeroPower());
-      activeSide.hero.attackMovePoints().buff.temporaryBuff.increase(-1);
+      activeSide.hero.attackMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
       final Card card = activeSide.hand.get(leafNode.index);
       playCard(leafNode.index);
@@ -269,7 +269,7 @@ public class GameManager implements Round {
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       EffectFactory.AttackFactory.getPhysicalDamageAction(attacker, attackee);
       // Cost one move point.
-      attacker.attackMovePoints().buff.temporaryBuff.increase(-1);
+      attacker.attackMovePoints().getTemporaryBuff().increase(-1);
     } else {
       throw new RuntimeException("Unknown option: " + leafNode.option.toString());
     }
@@ -321,6 +321,7 @@ public class GameManager implements Round {
   public void playCard(final Card card, final Creature target) {
     card.binder().bind(activeSide);
     if (card instanceof Minion) {
+      System.out.println("shit1");
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.

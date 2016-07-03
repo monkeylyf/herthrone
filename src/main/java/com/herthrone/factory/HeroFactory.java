@@ -22,7 +22,7 @@ import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
 import com.herthrone.object.BooleanAttribute;
 import com.herthrone.object.BooleanMechanics;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -49,13 +49,13 @@ public class HeroFactory {
                             final ConstSpell heroPowerName)  {
     return new Hero() {
 
-      private final IntAttribute healthAttr = new IntAttribute(health);
-      private final IntAttribute healthUpperAttr = new IntAttribute(health);
-      private final IntAttribute armorAttr = new IntAttribute(0);
-      private final IntAttribute attackAttr = new IntAttribute(0);
-      private final IntAttribute crystalManaCostAttr = new IntAttribute(0);
-      private final IntAttribute attackMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
-      private final IntAttribute heroPowerMovePoints = new IntAttribute(HERO_INIT_MOVE_POINTS);
+      private final ValueAttribute healthAttr = new ValueAttribute(health);
+      private final ValueAttribute healthUpperAttr = new ValueAttribute(health);
+      private final ValueAttribute armorAttr = new ValueAttribute(0);
+      private final ValueAttribute attackAttr = new ValueAttribute(0);
+      private final ValueAttribute crystalManaCostAttr = new ValueAttribute(0);
+      private final ValueAttribute attackMovePoints = new ValueAttribute(HERO_INIT_MOVE_POINTS);
+      private final ValueAttribute heroPowerMovePoints = new ValueAttribute(HERO_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics();
       private final Binder binder = new Binder();
       private Spell heroPower = HeroPowerFactory.createHeroPowerByName(heroPowerName);
@@ -95,7 +95,7 @@ public class HeroFactory {
       }
 
       @Override
-      public IntAttribute manaCost() {
+      public ValueAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -110,22 +110,22 @@ public class HeroFactory {
       }
 
       @Override
-      public IntAttribute health() {
+      public ValueAttribute health() {
         return healthAttr;
       }
 
       @Override
-      public IntAttribute maxHealth() {
+      public ValueAttribute maxHealth() {
         return healthUpperAttr;
       }
 
       @Override
-      public IntAttribute attack() {
+      public ValueAttribute attack() {
         return attackAttr;
       }
 
       @Override
-      public IntAttribute attackMovePoints() {
+      public ValueAttribute attackMovePoints() {
         return attackMovePoints;
       }
 
@@ -182,12 +182,12 @@ public class HeroFactory {
       }
 
       @Override
-      public IntAttribute armor() {
+      public ValueAttribute armor() {
         return armorAttr;
       }
 
       @Override
-      public IntAttribute heroPowerMovePoints() {
+      public ValueAttribute heroPowerMovePoints() {
         return heroPowerMovePoints;
       }
 
@@ -235,7 +235,7 @@ public class HeroFactory {
         final Side side = binder().getSide();
         List<Effect> inspireEffects = side.board.stream()
             .sorted(EffectFactory.compareBySequenceId)
-            .map(minion -> minion.getEffectMechanics().get(ConstMechanic.INSPIRE))
+            .map(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_USE_HERO_POWER))
             .filter(mechanicOptional -> mechanicOptional.isPresent())
             .map(mechanicOptional -> EffectFactory.pipeMechanicEffect(mechanicOptional.get(), this))
             .collect(Collectors.toList());

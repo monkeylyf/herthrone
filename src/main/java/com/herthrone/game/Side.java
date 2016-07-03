@@ -7,7 +7,7 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 import com.herthrone.object.ManaCrystal;
 import com.herthrone.object.Replay;
 import org.apache.log4j.Logger;
@@ -27,7 +27,7 @@ public class Side implements Round {
   public final Container<Minion> board;
   public final Container<Secret> secrets;
   public final ManaCrystal manaCrystal;
-  public final IntAttribute heroPowerMovePoints;
+  public final ValueAttribute heroPowerMovePoints;
   public final Replay replay;
   private EffectQueue effectQueue;
   private int fatigue;
@@ -46,7 +46,7 @@ public class Side implements Round {
     this.manaCrystal = new ManaCrystal();
 
     this.deck = new Container<>(deckCapacity);
-    this.heroPowerMovePoints = new IntAttribute(1);
+    this.heroPowerMovePoints = new ValueAttribute(1);
     this.replay = new Replay();
 
     this.fatigue = 0;

@@ -7,7 +7,7 @@ import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
 
@@ -51,7 +51,7 @@ public class SecretFactory {
       }
 
       @Override
-      public IntAttribute manaCost() {
+      public ValueAttribute manaCost() {
         return null;
       }
 

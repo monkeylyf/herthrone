@@ -2,7 +2,7 @@ package com.herthrone.effect;
 
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 import com.herthrone.object.Value;
 
 /**
@@ -10,17 +10,17 @@ import com.herthrone.object.Value;
  */
 public class BuffEffect implements Effect {
 
-  private final IntAttribute attr;
+  private final ValueAttribute attr;
   private final int buffDelta;
   private final boolean permanent;
 
-  public BuffEffect(final IntAttribute attr, final int buffDelta, final boolean permanent) {
+  public BuffEffect(final ValueAttribute attr, final int buffDelta, final boolean permanent) {
     this.attr = attr;
     this.buffDelta = buffDelta;
     this.permanent = permanent;
   }
 
-  public BuffEffect(final IntAttribute attr, final int setToValue) {
+  public BuffEffect(final ValueAttribute attr, final int setToValue) {
     this.attr = attr;
     this.buffDelta = setToValue - attr.value();
     this.permanent = true;
@@ -33,7 +33,7 @@ public class BuffEffect implements Effect {
 
   @Override
   public void act() {
-    final Value value = permanent ? attr.buff.permanentBuff : attr.buff.temporaryBuff;
+    final Value value = permanent ? attr.getPermanentBuff() : attr.getTemporaryBuff();
     value.increase(buffDelta);
   }
 }

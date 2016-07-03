@@ -29,7 +29,7 @@ import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 import com.herthrone.object.ManaCrystal;
 import org.apache.log4j.Logger;
 
@@ -216,7 +216,7 @@ public class EffectFactory {
     return new AttributeEffect(creature.health(), adjustChange, effect.isPermanent);
   }
 
-  private static Effect getGeneralAttributeAction(final IntAttribute attr, final EffectConfig effect) {
+  private static Effect getGeneralAttributeAction(final ValueAttribute attr, final EffectConfig effect) {
     Preconditions.checkArgument(effect.value != 0, "Attribute change must be non-zero");
     return new AttributeEffect(attr, effect.value, effect.isPermanent);
   }

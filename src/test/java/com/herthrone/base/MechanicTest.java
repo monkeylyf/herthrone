@@ -245,13 +245,13 @@ public class MechanicTest extends TestCase {
     for (int i = 0; i < minionNum; ++i) {
       // Buff Yeti health enough so that it doesn't die and gets removed from board.
       final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-      yeti.health().buff.temporaryBuff.increase(buffHealth);
+      yeti.health().getTemporaryBuff().increase(buffHealth);
       inactiveSide.board.add(yeti);
     }
     // TODO: find another way to test randomness or not to test it at all.
     final double jitter = .10;
     final double forgetfulFactor = .5;
-    ogreBrute.health().buff.temporaryBuff.increase(buffHealth);
+    ogreBrute.health().getTemporaryBuff().increase(buffHealth);
 
     for (int i = 0; i < total; ++i) {
       EffectFactory.AttackFactory.getPhysicalDamageAction(ogreBrute, inactiveSide.hero);

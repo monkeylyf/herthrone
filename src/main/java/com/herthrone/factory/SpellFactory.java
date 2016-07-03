@@ -12,7 +12,7 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class SpellFactory {
                       final Optional<TargetConfig> targetConfig, final List<EffectConfig> effects) {
     return new Spell() {
 
-      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystal);
+      private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystal);
       private final Binder binder = new Binder();
 
       @Override
@@ -65,7 +65,7 @@ public class SpellFactory {
       }
 
       @Override
-      public IntAttribute manaCost() {
+      public ValueAttribute manaCost() {
         return crystalManaCostAttr;
       }
 

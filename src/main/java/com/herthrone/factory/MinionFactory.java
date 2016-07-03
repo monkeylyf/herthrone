@@ -20,7 +20,7 @@ import com.herthrone.game.Side;
 import com.herthrone.object.BooleanAttribute;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.EffectMechanics;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -50,11 +50,11 @@ public class MinionFactory {
                                final Map<ConstMechanic, MechanicConfig> mechanics) {
     final Minion minion = new Minion() {
 
-      private final IntAttribute healthAttr = new IntAttribute(health);
-      private final IntAttribute healthUpperAttr = new IntAttribute(health);
-      private final IntAttribute attackAttr = new IntAttribute(attack);
-      private final IntAttribute crystalManaCostAttr = new IntAttribute(crystalManaCost);
-      private final IntAttribute movePoints = new IntAttribute(
+      private final ValueAttribute healthAttr = new ValueAttribute(health);
+      private final ValueAttribute healthUpperAttr = new ValueAttribute(health);
+      private final ValueAttribute attackAttr = new ValueAttribute(attack);
+      private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
+      private final ValueAttribute movePoints = new ValueAttribute(
           mechanics.containsKey(ConstMechanic.WINDFURY) ?
               WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
@@ -96,9 +96,9 @@ public class MinionFactory {
       public void playOnBoard(final Container<Minion> board) {
         summonOnBoard(board);
         // On-play mechanics.
-        Optional<MechanicConfig> onPlayEffects = getEffectMechanics().get(ConstMechanic.ON_PLAY);
-        if (onPlayEffects.isPresent() && !onPlayEffects.get().triggerOnlyWithTarget) {
-          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onPlayEffects, binder().getSide(), this);
+        Optional<MechanicConfig> onPlayMechanic = getEffectMechanics().get(ConstMechanic.ON_PLAY);
+        if (onPlayMechanic.isPresent() && !onPlayMechanic.get().triggerOnlyWithTarget) {
+          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onPlayMechanic, binder().getSide(), this);
         } else {
           logger.debug("Combo with no target specified. Combo not triggered");
         }
@@ -153,7 +153,7 @@ public class MinionFactory {
       }
 
       @Override
-      public IntAttribute manaCost() {
+      public ValueAttribute manaCost() {
         return crystalManaCostAttr;
       }
 
@@ -180,22 +180,22 @@ public class MinionFactory {
       }
 
       @Override
-      public IntAttribute health() {
+      public ValueAttribute health() {
         return healthAttr;
       }
 
       @Override
-      public IntAttribute maxHealth() {
+      public ValueAttribute maxHealth() {
         return healthUpperAttr;
       }
 
       @Override
-      public IntAttribute attack() {
+      public ValueAttribute attack() {
         return attackAttr;
       }
 
       @Override
-      public IntAttribute attackMovePoints() {
+      public ValueAttribute attackMovePoints() {
         return this.movePoints;
       }
 
@@ -255,8 +255,8 @@ public class MinionFactory {
         final Side side = binder.getSide();
         side.board.remove(this);
 
-        Optional<MechanicConfig> deathrattleConfig = effectMechanics.get(ConstMechanic.DEATHRATTLE);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(deathrattleConfig, binder().getSide(), this);
+        Optional<MechanicConfig> onDeathMechanic = effectMechanics.get(ConstMechanic.ON_DEATH);
+        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onDeathMechanic, binder().getSide(), this);
       }
 
       @Override
@@ -290,7 +290,7 @@ public class MinionFactory {
       // Minion with no charge ability waits until next turn to move.
       // TODO: also when a minion switch side due to TAKE_CONTROLL effect, the CHARGE also apply
       // the right after it switches side.
-      minion.attackMovePoints().buff.temporaryBuff.reset();
+      minion.attackMovePoints().getTemporaryBuff().reset();
     }
 
     return minion;

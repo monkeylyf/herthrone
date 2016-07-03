@@ -84,7 +84,7 @@
   crystal: 2
   collectible: true
   mechanics:
-    - name: deathrattle
+    - name: on_death
       trigger: on_death
       effect: draw
       type: card
@@ -249,7 +249,7 @@
   crystal: 5
   collectible: true
   mechanics:
-    - name: inspire
+    - name: on_use_hero_power
       trigger: on_use_hero_power
       effect: generate
       type: minion
@@ -307,7 +307,7 @@
   crystal: 7
   collectible: true
   mechanics:
-    - name: aura
+    - name: on_presence
       trigger: on_presence
       effect: attribute
       type: attack
@@ -315,7 +315,7 @@
       target:
         scope: own
         type: minion
-    - name: aura
+    - name: on_presence
       trigger: on_presence
       effect: attribute
       type: health

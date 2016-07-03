@@ -1,16 +1,16 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
-import com.herthrone.object.IntAttribute;
+import com.herthrone.object.ValueAttribute;
 
 /**
  * Created by yifeng on 4/13/16.
  */
 public interface Hero extends Creature {
 
-  IntAttribute armor();
+  ValueAttribute armor();
 
-  IntAttribute heroPowerMovePoints();
+  ValueAttribute heroPowerMovePoints();
 
   Optional<Weapon> getWeapon();
 
