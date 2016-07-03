@@ -23,7 +23,7 @@ public interface Minion extends Creature {
 
   /**
    * A minion actively to be played by a player onto the board.
-   * Battlecry effects will be triggered by the action of play.
+   * Effects like battlecry or combo will be triggered by the action of play.
    *
    * @param board
    */
@@ -31,7 +31,7 @@ public interface Minion extends Creature {
 
   /**
    * A minion actively to be played by a player onto the board.
-   * Battlecry effects will be triggered, with a specific target, by the action of play.
+   * Effects like battlecry or combo will be triggered by the action of play.
    *
    * @param board
    * @param target

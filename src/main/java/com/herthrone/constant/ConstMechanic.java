@@ -25,7 +25,7 @@ public enum ConstMechanic {
   WINDFURY(true),
   // Effect mechanics.
   AURA,
-  BATTLECRY,
+  //BATTLECRY,
   CARD_DRAW,
   CHOOSE_ONE,
   COMBO,
@@ -37,6 +37,7 @@ public enum ConstMechanic {
   DISCOVER,
   ON_ATTACK,
   ON_EQUIP,
+  ON_PLAY,
   ON_SUMMON,
   EQUIP,
   GENERATE,

@@ -51,12 +51,12 @@ public class EffectFactory {
     if (!mechanicConfigOptional.isPresent()) {
       logger.debug("Mechanic configuration is absent");
       return false;
-    }
-    if (!isConditionTriggered(mechanicConfigOptional.get().effect, target)) {
+    } else if (!isConditionTriggered(mechanicConfigOptional.get().effect, target)) {
       logger.debug("Condition not met and mechanic effect not triggered");
       return false;
+    } else {
+      return true;
     }
-    return true;
   }
 
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
