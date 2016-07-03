@@ -24,6 +24,7 @@ public enum ConstMechanic {
   TAUNT(true),
   WINDFURY(true),
   // Effect mechanics.
+  AURA,
   BATTLECRY,
   CARD_DRAW,
   CHOOSE_ONE,

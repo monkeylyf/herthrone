@@ -71,6 +71,8 @@ public class EffectFactory {
       switch (conditionConfig.conditionType) {
         case BOARD_SIZE:
           return conditionConfig.inRange(target.binder().getOpponentSide().board.size());
+        case COMBO:
+          return target.binder().getSide().replay.size() > 1;
         default:
           throw new RuntimeException("Unknown condition: " + conditionConfig.conditionType);
       }

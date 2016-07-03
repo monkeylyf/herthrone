@@ -5,7 +5,8 @@
     scope: all
     type: all
   mechanics:
-    - effect: attribute
+    - trigger: on_play
+      effect: attribute
       type: health
       value: -6
       target:
