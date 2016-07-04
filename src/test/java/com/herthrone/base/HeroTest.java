@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -52,7 +53,7 @@ public class HeroTest extends TestCase {
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     yeti.binder().bind(gm.activeSide);
-    final Map<ConstMechanic, MechanicConfig> emptyMap = Collections.emptyMap();
+    final Map<ConstMechanic, List<MechanicConfig>> emptyMap = Collections.emptyMap();
     this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
         weaponAttackVal1, weaponDurability1, 0, true, emptyMap);
     this.weapon2 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,

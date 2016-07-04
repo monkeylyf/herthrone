@@ -65,8 +65,8 @@ public class MechanicTest extends TestCase {
   public void testCharge() {
     final ConstMinion minionName = ConstMinion.WOLFRIDER;
     final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
-    final Optional<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
-    assertThat(mechanic.isPresent()).isTrue();
+    final List<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
+    assertThat(mechanic.size()).isAtLeast(1);
     final Minion minion = MinionFactory.create(minionName);
     assertThat(minion.attackMovePoints().value()).isGreaterThan(0);
   }
@@ -416,5 +416,36 @@ public class MechanicTest extends TestCase {
     // Play one minion without specifying return target. Mechanic should not be triggered.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
     assertThat(activeSide.hand.size()).isEqualTo(0);
+  }
+
+  @Test
+  public void testAura() {
+    final Minion stormwindChampion = MinionFactory.create(ConstMinion.STORMWIND_CHAMPION);
+
+    final int yetiAttack = yeti.attack().value();
+    final int yetiHealth = yeti.health().value();
+    final int yetiMaxHealth = yeti.maxHealth().value();
+
+    final int scarletCrusaderAttack = scarletCrusader.attack().value();
+    final int scarletCrusaderHealth = scarletCrusader.health().value();
+    final int scarletCrusaderMaxHealth = scarletCrusader.maxHealth().value();
+
+    final int waterElementalAttack = waterElemental.attack().value();
+    final int waterElementalHealth = waterElemental.health().value();
+    final int waterElementalMaxHealth = waterElemental.maxHealth().value();
+
+    gm.playCard(stormwindChampion);
+
+    assertThat(yeti.attack().value()).isEqualTo(yetiAttack + 1);
+    assertThat(yeti.health().value()).isEqualTo(yetiHealth + 1);
+    assertThat(yeti.maxHealth().value()).isEqualTo(yetiMaxHealth + 1);
+
+    assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack + 1);
+    assertThat(scarletCrusader.health().value()).isEqualTo(scarletCrusaderHealth + 1);
+    assertThat(scarletCrusader.maxHealth().value()).isEqualTo(scarletCrusaderMaxHealth + 1);
+
+    assertThat(waterElemental.attack().value()).isEqualTo(waterElementalAttack + 1);
+    assertThat(waterElemental.health().value()).isEqualTo(waterElementalHealth + 1);
+    assertThat(waterElemental.maxHealth().value()).isEqualTo(waterElementalMaxHealth + 1);
   }
 }

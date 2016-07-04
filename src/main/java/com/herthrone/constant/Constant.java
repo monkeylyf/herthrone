@@ -26,6 +26,6 @@ public class Constant {
   public static final String TYPE = "type";
   public static final String HERO = "hero";
   public static final String WEAPON = "weapon";
+  public static final String MAX_HEALTH = "max_health";
   public static final String MOVE_POINTS = "move_points";
-  public static final String HEALTH_UPPER_BOUND = "health_upper_bound";
 }

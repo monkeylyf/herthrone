@@ -62,6 +62,7 @@ public class EffectFactory {
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
       final Optional<MechanicConfig> mechanicConfigOptional, final Side side, final Creature target) {
     if (isTriggerConditionMet(mechanicConfigOptional, side, target)) {
+      System.out.println("target " + target);
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
       Effect effect = pipeMechanicEffect(mechanicConfig, target);
@@ -154,7 +155,7 @@ public class EffectFactory {
         return getGeneralAttributeAction(creature.attack(), effect);
       case (Constant.CRYSTAL):
         return getGeneralAttributeAction(creature.manaCost(), effect);
-      case (Constant.HEALTH_UPPER_BOUND):
+      case (Constant.MAX_HEALTH):
         return getGeneralAttributeAction(creature.maxHealth(), effect);
       case (Constant.ARMOR):
         Preconditions.checkArgument(

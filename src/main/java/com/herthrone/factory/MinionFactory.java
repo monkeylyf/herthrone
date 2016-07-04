@@ -2,6 +2,7 @@ package com.herthrone.factory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
@@ -23,6 +24,8 @@ import com.herthrone.object.EffectMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +50,7 @@ public class MinionFactory {
   private static Minion create(final int health, final int attack, final int crystalManaCost,
                                final ConstClass className, final ConstMinion name,
                                final String displayName, final boolean isCollectible,
-                               final Map<ConstMechanic, MechanicConfig> mechanics) {
+                               final Map<ConstMechanic, List<MechanicConfig>> mechanics) {
     final Minion minion = new Minion() {
 
       private final ValueAttribute healthAttr = new ValueAttribute(health);
@@ -96,12 +99,11 @@ public class MinionFactory {
       public void playOnBoard(final Container<Minion> board) {
         summonOnBoard(board);
         // On-play mechanics.
-        Optional<MechanicConfig> onPlayMechanic = getEffectMechanics().get(ConstMechanic.ON_PLAY);
-        if (onPlayMechanic.isPresent() && !onPlayMechanic.get().triggerOnlyWithTarget) {
-          EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onPlayMechanic, binder().getSide(), this);
-        } else {
-          logger.debug("Combo with no target specified. Combo not triggered");
-        }
+        final List<MechanicConfig> onPlayMechanic = getEffectMechanics().get(ConstMechanic.ON_PLAY);
+        onPlayMechanic.stream()
+            .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
+            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                Optional.of(mechanic), binder().getSide(), this));
       }
 
       @Override
@@ -109,21 +111,34 @@ public class MinionFactory {
         // TODO: on-play mechanics happen before summon triggered events.
         summonOnBoard(board);
         // On-play mechanics.
-        Optional<MechanicConfig> onPlayEffects = getEffectMechanics().get(ConstMechanic.ON_PLAY);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onPlayEffects, binder().getSide(), target);
+        List<MechanicConfig> onPlayEffects = getEffectMechanics().get(ConstMechanic.ON_PLAY);
+        onPlayEffects.stream()
+            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                Optional.of(mechanic), binder().getSide(), target));
       }
 
       @Override
       public void summonOnBoard(final Container<Minion> board) {
-        List<Effect> onSummonEffects = board.stream()
+        final List<Effect> onSummonEffects = board.stream()
+            .filter(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_SUMMON).size() > 0)
             .sorted(EffectFactory.compareBySequenceId)
-            .map(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_SUMMON))
-            .filter(mechanicOptional -> mechanicOptional.isPresent())
-            .map(mechanicOptional -> EffectFactory.pipeMechanicEffect(mechanicOptional.get(), this))
+            .flatMap(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_SUMMON).stream())
+            .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
             .collect(Collectors.toList());
-        // Add to board after scanning through existing board otherwise this minion itself triggers
-        // its summon effect if there is one.
+
+        final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(ConstMechanic.ON_PRESENCE);
+        for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
+          for (final Minion minion : board.asList()) {
+            // Execute one by one because max_health must take effect before increase health
+            // otherwise increase health will be capped if the minion has full health.
+            binder().getSide().getEffectQueue().enqueue(EffectFactory.pipeMechanicEffect(onPresenceConfig, minion));
+          }
+        }
+
+        // Put minion onto board.
         board.add(this);
+
+        // Execute effects.
         binder().getSide().getEffectQueue().enqueue(onSummonEffects);
       }
 
@@ -255,8 +270,10 @@ public class MinionFactory {
         final Side side = binder.getSide();
         side.board.remove(this);
 
-        Optional<MechanicConfig> onDeathMechanic = effectMechanics.get(ConstMechanic.ON_DEATH);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onDeathMechanic, binder().getSide(), this);
+        final List<MechanicConfig> onDeathMechanics = effectMechanics.get(ConstMechanic.ON_DEATH);
+        onDeathMechanics.stream()
+            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                Optional.of(mechanic), binder().getSide(), this));
       }
 
       @Override

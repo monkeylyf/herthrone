@@ -5,6 +5,8 @@ import com.google.common.base.Optional;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTrigger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +35,17 @@ public class MechanicConfig {
     this.effect = map.containsKey(EFFECT) ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
-  public static Map<ConstMechanic, MechanicConfig> mechanicConfigFactory(final Object configList) {
-    Map<ConstMechanic, MechanicConfig> configs = new HashMap<>();
+  public static Map<ConstMechanic, List<MechanicConfig>> mechanicConfigFactory(final Object configList) {
+    final Map<ConstMechanic, List<MechanicConfig>> configs = new HashMap<>();
     if (configList != null) {
       @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;
       for (Map map : configMaps) {
-        MechanicConfig config = new MechanicConfig(map);
-        configs.put(config.mechanic, config);
+        final MechanicConfig config = new MechanicConfig(map);
+        if (configs.containsKey(config.mechanic)) {
+          configs.get(config.mechanic).add(config);
+        } else {
+          configs.put(config.mechanic, new ArrayList<MechanicConfig>(Arrays.asList(config)));
+        }
       }
     }
     return configs;

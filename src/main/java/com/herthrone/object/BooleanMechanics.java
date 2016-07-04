@@ -6,6 +6,7 @@ import com.herthrone.constant.ConstMechanic;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public class BooleanMechanics {
     this.booleanAttributeMap = new HashMap<>();
   }
 
-  public BooleanMechanics(final Map<ConstMechanic, MechanicConfig> mechanics) {
+  public BooleanMechanics(final Map<ConstMechanic, List<MechanicConfig>> mechanics) {
     this.booleanAttributeMap = new HashMap<>();
 
     ConstMechanic.getBooleanMechanics().stream().forEach(mechanic -> {

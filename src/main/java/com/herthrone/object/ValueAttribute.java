@@ -116,7 +116,7 @@ public class ValueAttribute implements Reset, Round {
   private static class AuraBuff implements Reset {
 
     private final Map<Minion, Integer> buffs;
-    private int accumulatedBuffValue;
+    public int accumulatedBuffValue;
 
     public AuraBuff() {
       this.buffs = new HashMap<>();
@@ -126,10 +126,6 @@ public class ValueAttribute implements Reset, Round {
     public void add(final Minion card, final int buffVal) {
       buffs.put(card, buffVal);
       accumulatedBuffValue += buffVal;
-    }
-
-    public int value() {
-      return accumulatedBuffValue;
     }
 
     public void remove(final Minion card) {

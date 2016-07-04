@@ -318,6 +318,14 @@
     - name: on_presence
       trigger: on_presence
       effect: attribute
+      type: max_health
+      value: 1
+      target:
+        scope: own
+        type: minion
+    - name: on_presence
+      trigger: on_presence
+      effect: attribute
       type: health
       value: 1
       target:

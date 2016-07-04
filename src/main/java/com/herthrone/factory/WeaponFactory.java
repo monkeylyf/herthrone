@@ -15,6 +15,7 @@ import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.EffectMechanics;
 import com.herthrone.object.ValueAttribute;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +33,7 @@ public class WeaponFactory {
   public static Weapon create(final ConstWeapon name, final String displayName,
                               final ConstClass className, final int attack, final int durability,
                               final int crystalManaCost, final boolean isCollectible,
-                              final Map<ConstMechanic, MechanicConfig> mechanics) {
+                              final Map<ConstMechanic, List<MechanicConfig>> mechanics) {
     return new Weapon() {
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);

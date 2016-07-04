@@ -6,6 +6,7 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
   private static final String MECHANICS = "mechanics";
   public final int attack;
   public final int durability;
-  public final Map<ConstMechanic, MechanicConfig> mechanics;
+  public final Map<ConstMechanic, List<MechanicConfig>> mechanics;
   public final ConstType type = ConstType.WEAPON;
 
   @SuppressWarnings("unchecked")

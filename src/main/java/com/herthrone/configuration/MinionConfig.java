@@ -5,6 +5,8 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstType;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +19,7 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   private static final String MECHANICS = "mechanics";
   public final int attack;
   public final int health;
-  public final Map<ConstMechanic, MechanicConfig> mechanics;
+  public final Map<ConstMechanic, List<MechanicConfig>> mechanics;
   public final ConstType type = ConstType.MINION;
 
   MinionConfig(final Map map) {
@@ -32,8 +34,11 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
     return ConstMinion.valueOf(name.toUpperCase());
   }
 
-  public Optional<MechanicConfig> getMechanic(final ConstMechanic mechanic) {
-    final MechanicConfig config = mechanics.get(mechanic);
-    return Optional.fromNullable(config);
+  public List<MechanicConfig> getMechanic(final ConstMechanic mechanic) {
+    if (mechanics.containsKey(mechanic)) {
+      return mechanics.get(mechanic);
+    } else {
+      return Collections.EMPTY_LIST;
+    }
   }
 }

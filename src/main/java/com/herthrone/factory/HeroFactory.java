@@ -221,8 +221,10 @@ public class HeroFactory {
 
       @Override
       public void playToEquip(final Weapon weapon) {
-        Optional<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstMechanic.ON_EQUIP);
-        EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(onEquip, binder().getSide(), this);
+        final List<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstMechanic.ON_EQUIP);
+        onEquip.stream()
+            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                Optional.of(mechanic), binder().getSide(), this));
         equip(weapon);
       }
 
@@ -233,14 +235,14 @@ public class HeroFactory {
         heroPowerMovePoints.decrease(1);
 
         final Side side = binder().getSide();
-        List<Effect> inspireEffects = side.board.stream()
+        List<Effect> useHeroPowerMechanics = side.board.stream()
+            .filter(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_USE_HERO_POWER).size() > 0)
             .sorted(EffectFactory.compareBySequenceId)
-            .map(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_USE_HERO_POWER))
-            .filter(mechanicOptional -> mechanicOptional.isPresent())
-            .map(mechanicOptional -> EffectFactory.pipeMechanicEffect(mechanicOptional.get(), this))
+            .flatMap(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_USE_HERO_POWER).stream())
+            .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
             .collect(Collectors.toList());
 
-        side.getEffectQueue().enqueue(inspireEffects);
+        side.getEffectQueue().enqueue(useHeroPowerMechanics);
       }
 
       @Override
