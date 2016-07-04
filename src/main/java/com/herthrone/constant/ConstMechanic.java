@@ -1,29 +1,23 @@
 package com.herthrone.constant;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Created by yifengliu on 5/15/16.
  * <p>
  * http://hearthstone.gamepedia.com/<mechanicName>
  */
 public enum ConstMechanic {
-  // Boolean mechanics.
-  CHARGE(true),
-  DIVINE_SHIELD(true),
-  ELUSIVE(true),
-  ENRAGE(true),
-  FORGETFUL(true),
-  FREEZE(true), // Consequence of being hit by a minion has freeze ability.
-  FROZEN(true),
-  IMMUNE(true),
-  POISON(true),
-  STEALTH(true),
-  TAUNT(true),
-  WINDFURY(true),
-  // Effect mechanics.
+  CHARGE,
+  DIVINE_SHIELD,
+  ELUSIVE,
+  ENRAGE,
+  FORGETFUL,
+  FREEZE, // Consequence of being hit by a minion has freeze ability.
+  FROZEN,
+  IMMUNE,
+  POISON,
+  STEALTH,
+  TAUNT,
+  WINDFURY,
   AURA,
   CARD_DRAW,
   CHOOSE_ONE,
@@ -56,22 +50,4 @@ public enum ConstMechanic {
   TAKE_CONTROL,
   TRANSFORM,
   TRIGGERED;
-
-  private boolean isBooleanMechanics;
-
-  ConstMechanic() {
-    this(false);
-  }
-
-  ConstMechanic(final boolean isBooleanMechanisc) {
-    this.isBooleanMechanics = isBooleanMechanisc;
-  }
-
-  public static List<ConstMechanic> getBooleanMechanics() {
-    return Arrays.stream(values()).filter(m -> m.isBooleanMechanics).collect(Collectors.toList());
-  }
-
-  public static List<ConstMechanic> getEffectMechanics() {
-    return Arrays.stream(values()).filter(m -> !m.isBooleanMechanics).collect(Collectors.toList());
-  }
 }

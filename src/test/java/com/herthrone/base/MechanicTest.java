@@ -2,9 +2,6 @@ package com.herthrone.base;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Range;
-import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.MechanicConfig;
-import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;

@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class GameManager implements Round {
 
-  static Logger logger = Logger.getLogger(GameManager.class.getName());
+  private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;

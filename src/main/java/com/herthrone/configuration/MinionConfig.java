@@ -1,6 +1,5 @@
 package com.herthrone.configuration;
 
-import com.google.common.base.Optional;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;

@@ -6,7 +6,6 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
-import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;

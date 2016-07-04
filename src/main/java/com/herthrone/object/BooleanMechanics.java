@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class BooleanMechanics {
 
-  static Logger logger = Logger.getLogger(BooleanMechanics.class.getName());
+  private static final Logger logger = Logger.getLogger(BooleanMechanics.class.getName());
 
   private Map<ConstMechanic, BooleanAttribute> booleanAttributeMap;
 

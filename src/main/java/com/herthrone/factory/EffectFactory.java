@@ -29,8 +29,8 @@ import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
-import com.herthrone.object.ValueAttribute;
 import com.herthrone.object.ManaCrystal;
+import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.Comparator;

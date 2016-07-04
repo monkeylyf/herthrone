@@ -5,7 +5,6 @@ import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstTrigger;
