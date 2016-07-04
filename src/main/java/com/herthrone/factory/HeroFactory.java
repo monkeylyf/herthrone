@@ -16,6 +16,7 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
@@ -221,7 +222,7 @@ public class HeroFactory {
 
       @Override
       public void playToEquip(final Weapon weapon) {
-        final List<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstMechanic.ON_EQUIP);
+        final List<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstTrigger.ON_PLAY);
         onEquip.stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                 Optional.of(mechanic), binder().getSide(), this));
@@ -236,9 +237,9 @@ public class HeroFactory {
 
         final Side side = binder().getSide();
         List<Effect> useHeroPowerMechanics = side.board.stream()
-            .filter(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_USE_HERO_POWER).size() > 0)
+            .filter(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_USE_HERO_POWER).size() > 0)
             .sorted(EffectFactory.compareBySequenceId)
-            .flatMap(minion -> minion.getEffectMechanics().get(ConstMechanic.ON_USE_HERO_POWER).stream())
+            .flatMap(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_USE_HERO_POWER).stream())
             .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
             .collect(Collectors.toList());
 

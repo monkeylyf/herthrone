@@ -2,6 +2,7 @@ package com.herthrone.configuration;
 
 
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 
@@ -19,7 +20,7 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
   private static final String MECHANICS = "mechanics";
   public final int attack;
   public final int durability;
-  public final Map<ConstMechanic, List<MechanicConfig>> mechanics;
+  public final Map<ConstTrigger, List<MechanicConfig>> mechanics;
   public final ConstType type = ConstType.WEAPON;
 
   @SuppressWarnings("unchecked")

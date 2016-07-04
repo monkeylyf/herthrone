@@ -49,11 +49,23 @@ public class EffectConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
+    final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this)
         .add(EFFECT, name)
         .add(TYPE, type)
         .add(VALUE, value)
-        .add(TARGET, target)
-        .toString();
+        .add(TARGET, target);
+    if (isPermanent) {
+      stringHelper.add(PERMANENT, isPermanent);
+    }
+    if (isRandom) {
+      stringHelper.add(RANDOM, isRandom);
+    }
+    if (isUnique) {
+      stringHelper.add(UNIQUE, isUnique);
+    }
+    if (choices.size() > 0) {
+      stringHelper.add(CHOICES, choices);
+    }
+    return stringHelper.toString();
   }
 }

@@ -7,6 +7,7 @@ import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
@@ -33,7 +34,7 @@ public class WeaponFactory {
   public static Weapon create(final ConstWeapon name, final String displayName,
                               final ConstClass className, final int attack, final int durability,
                               final int crystalManaCost, final boolean isCollectible,
-                              final Map<ConstMechanic, List<MechanicConfig>> mechanics) {
+                              final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     return new Weapon() {
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);

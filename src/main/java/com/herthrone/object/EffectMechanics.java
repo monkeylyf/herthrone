@@ -2,6 +2,7 @@ package com.herthrone.object;
 
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstTrigger;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,24 +14,21 @@ import java.util.Map;
  */
 public class EffectMechanics {
 
-  private final Map<ConstMechanic, List<MechanicConfig>> mechanics;
+  private final Map<ConstTrigger, List<MechanicConfig>> mechanics;
 
-  public EffectMechanics(final Map<ConstMechanic, List<MechanicConfig>> mechanics) {
+  public EffectMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
+    // TODO: use lambda.
     this.mechanics = new HashMap<>();
 
-    ConstMechanic.getEffectMechanics().stream().forEach(mechanic -> {
-      if (mechanics.containsKey(mechanic)) {
-        this.mechanics.put(mechanic, mechanics.get(mechanic));
+    for (Map.Entry<ConstTrigger, List<MechanicConfig>> entry : mechanics.entrySet()) {
+      if (!entry.getKey().equals(ConstTrigger.NO_TRIGGER)) {
+        this.mechanics.put(entry.getKey(), entry.getValue());
       }
-    });
+    }
   }
 
-  public boolean has(final ConstMechanic mechanic) {
-    return mechanics.containsKey(mechanic);
-  }
-
-  public List<MechanicConfig> get(final ConstMechanic mechanic) {
-    return mechanics.containsKey(mechanic) ? mechanics.get(mechanic) : Collections.emptyList();
+  public List<MechanicConfig> get(final ConstTrigger trigger) {
+    return mechanics.containsKey(trigger) ? mechanics.get(trigger) : Collections.emptyList();
   }
 
   @Override

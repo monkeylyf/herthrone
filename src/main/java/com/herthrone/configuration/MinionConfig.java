@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 
 import java.util.Collections;
@@ -19,7 +20,7 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   private static final String MECHANICS = "mechanics";
   public final int attack;
   public final int health;
-  public final Map<ConstMechanic, List<MechanicConfig>> mechanics;
+  public final Map<ConstTrigger, List<MechanicConfig>> mechanics;
   public final ConstType type = ConstType.MINION;
 
   MinionConfig(final Map map) {

@@ -8,6 +8,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
@@ -53,7 +54,7 @@ public class HeroTest extends TestCase {
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     yeti.binder().bind(gm.activeSide);
-    final Map<ConstMechanic, List<MechanicConfig>> emptyMap = Collections.emptyMap();
+    final Map<ConstTrigger, List<MechanicConfig>> emptyMap = Collections.emptyMap();
     this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
         weaponAttackVal1, weaponDurability1, 0, true, emptyMap);
     this.weapon2 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,

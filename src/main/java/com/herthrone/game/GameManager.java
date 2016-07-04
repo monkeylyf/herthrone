@@ -321,7 +321,6 @@ public class GameManager implements Round {
   public void playCard(final Card card, final Creature target) {
     card.binder().bind(activeSide);
     if (card instanceof Minion) {
-      System.out.println("shit1");
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.

@@ -23,28 +23,28 @@ public class MechanicConfig {
   private static final String TRIGGER = "trigger";
   private static final String TRIGGER_ONLY_WITH_TARGET = "trigger_only_with_target";
   public final ConstMechanic mechanic;
-  public final Optional<ConstTrigger> triggeringEvent;
+  public final ConstTrigger trigger;
   public final Optional<EffectConfig> effect;
   public final boolean triggerOnlyWithTarget;
 
   MechanicConfig(final Map map) {
     this.mechanic = ConstMechanic.valueOf(getUpperCaseStringValue(map, NAME));
-    this.triggeringEvent = map.containsKey(TRIGGER) ?
-        Optional.of(ConstTrigger.valueOf(getUpperCaseStringValue(map, TRIGGER))) : Optional.absent();
+    this.trigger = map.containsKey(TRIGGER) ?
+        ConstTrigger.valueOf(getUpperCaseStringValue(map, TRIGGER)) : ConstTrigger.NO_TRIGGER;
     this.triggerOnlyWithTarget = ConfigLoader.getByDefault(map, TRIGGER_ONLY_WITH_TARGET, false);
     this.effect = map.containsKey(EFFECT) ? Optional.of(new EffectConfig(map)) : Optional.absent();
   }
 
-  public static Map<ConstMechanic, List<MechanicConfig>> mechanicConfigFactory(final Object configList) {
-    final Map<ConstMechanic, List<MechanicConfig>> configs = new HashMap<>();
+  public static Map<ConstTrigger, List<MechanicConfig>> mechanicConfigFactory(final Object configList) {
+    final Map<ConstTrigger, List<MechanicConfig>> configs = new HashMap<>();
     if (configList != null) {
       @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;
       for (Map map : configMaps) {
         final MechanicConfig config = new MechanicConfig(map);
-        if (configs.containsKey(config.mechanic)) {
-          configs.get(config.mechanic).add(config);
+        if (configs.containsKey(config.trigger)) {
+          configs.get(config.trigger).add(config);
         } else {
-          configs.put(config.mechanic, new ArrayList<MechanicConfig>(Arrays.asList(config)));
+          configs.put(config.trigger, new ArrayList<>(Arrays.asList(config)));
         }
       }
     }

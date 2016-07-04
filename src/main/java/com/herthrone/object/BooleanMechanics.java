@@ -3,6 +3,7 @@ package com.herthrone.object;
 import com.google.common.base.Optional;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstTrigger;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -22,14 +23,14 @@ public class BooleanMechanics {
     this.booleanAttributeMap = new HashMap<>();
   }
 
-  public BooleanMechanics(final Map<ConstMechanic, List<MechanicConfig>> mechanics) {
+  public BooleanMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     this.booleanAttributeMap = new HashMap<>();
 
-    ConstMechanic.getBooleanMechanics().stream().forEach(mechanic -> {
-      if (mechanics.containsKey(mechanic)) {
-        booleanAttributeMap.put(mechanic, new BooleanAttribute());
-      }
-    });
+    if (mechanics.containsKey(ConstTrigger.NO_TRIGGER)) {
+      final List<MechanicConfig> noTriggerMechanics = mechanics.get(ConstTrigger.NO_TRIGGER);
+      noTriggerMechanics.stream().forEach(mechanic -> booleanAttributeMap.put(
+          mechanic.mechanic, new BooleanAttribute()));
+    }
   }
 
   public Optional<BooleanAttribute> get(final ConstMechanic mechanic) {

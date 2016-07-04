@@ -64,11 +64,9 @@ public class MechanicTest extends TestCase {
   @Test
   public void testCharge() {
     final ConstMinion minionName = ConstMinion.WOLFRIDER;
-    final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
-    final List<MechanicConfig> mechanic = config.getMechanic(ConstMechanic.CHARGE);
-    assertThat(mechanic.size()).isAtLeast(1);
-    final Minion minion = MinionFactory.create(minionName);
-    assertThat(minion.attackMovePoints().value()).isGreaterThan(0);
+    final Minion wolfrider = MinionFactory.create(minionName);
+    gm.playCard(wolfrider);
+    assertThat(wolfrider.attackMovePoints().value()).isGreaterThan(0);
   }
 
   @Test
