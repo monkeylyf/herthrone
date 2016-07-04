@@ -35,10 +35,6 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   }
 
   public List<MechanicConfig> getMechanic(final ConstMechanic mechanic) {
-    if (mechanics.containsKey(mechanic)) {
-      return mechanics.get(mechanic);
-    } else {
-      return Collections.EMPTY_LIST;
-    }
+    return (mechanics.containsKey(mechanic)) ? mechanics.get(mechanic) :  Collections.emptyList();
   }
 }

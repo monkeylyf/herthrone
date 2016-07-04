@@ -46,6 +46,40 @@ public class EffectFactory {
   static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
+  public static void addAuraEffect(final EffectConfig effectConfig, final Minion minion,
+                                   final Minion target) {
+    switch (effectConfig.type) {
+      case Constant.ATTACK:
+        target.attack().addAuraBuff(minion, effectConfig.value);
+        break;
+      case Constant.HEALTH:
+        target.health().addAuraBuff(minion, effectConfig.value);
+        break;
+      case Constant.MAX_HEALTH:
+        target.maxHealth().addAuraBuff(minion, effectConfig.value);
+        break;
+      default:
+        throw new RuntimeException(effectConfig.type + " not supported for aura");
+    }
+  }
+
+  public static void removeAuraEffect(final EffectConfig effectConfig, final Minion minion,
+                                      final Minion target) {
+    switch (effectConfig.type) {
+      case Constant.ATTACK:
+        target.attack().removeAuraBuff(minion);
+        break;
+      case Constant.HEALTH:
+        target.health().removeAuraBuff(minion);
+        break;
+      case Constant.MAX_HEALTH:
+        target.maxHealth().removeAuraBuff(minion);
+        break;
+      default:
+        throw new RuntimeException(effectConfig.type + " not supported for aura");
+    }
+  }
+
   public static boolean isTriggerConditionMet(final Optional<MechanicConfig> mechanicConfigOptional,
                                               final Side side, final Creature target) {
     if (!mechanicConfigOptional.isPresent()) {
@@ -62,7 +96,6 @@ public class EffectFactory {
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
       final Optional<MechanicConfig> mechanicConfigOptional, final Side side, final Creature target) {
     if (isTriggerConditionMet(mechanicConfigOptional, side, target)) {
-      System.out.println("target " + target);
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
       Effect effect = pipeMechanicEffect(mechanicConfig, target);

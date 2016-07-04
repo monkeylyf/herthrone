@@ -421,6 +421,7 @@ public class MechanicTest extends TestCase {
   @Test
   public void testAura() {
     final Minion stormwindChampion = MinionFactory.create(ConstMinion.STORMWIND_CHAMPION);
+    final int gain = 1;
 
     final int yetiAttack = yeti.attack().value();
     final int yetiHealth = yeti.health().value();
@@ -436,16 +437,46 @@ public class MechanicTest extends TestCase {
 
     gm.playCard(stormwindChampion);
 
-    assertThat(yeti.attack().value()).isEqualTo(yetiAttack + 1);
-    assertThat(yeti.health().value()).isEqualTo(yetiHealth + 1);
-    assertThat(yeti.maxHealth().value()).isEqualTo(yetiMaxHealth + 1);
+    checkHealthAttackMaxHealth(yeti, yetiHealth + gain, yetiMaxHealth + gain, yetiAttack + gain);
 
-    assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack + 1);
-    assertThat(scarletCrusader.health().value()).isEqualTo(scarletCrusaderHealth + 1);
-    assertThat(scarletCrusader.maxHealth().value()).isEqualTo(scarletCrusaderMaxHealth + 1);
+    checkHealthAttackMaxHealth(scarletCrusader, scarletCrusaderHealth + gain,
+        scarletCrusaderMaxHealth + gain, scarletCrusaderAttack + gain);
 
-    assertThat(waterElemental.attack().value()).isEqualTo(waterElementalAttack + 1);
-    assertThat(waterElemental.health().value()).isEqualTo(waterElementalHealth + 1);
-    assertThat(waterElemental.maxHealth().value()).isEqualTo(waterElementalMaxHealth + 1);
+    checkHealthAttackMaxHealth(waterElemental, waterElementalHealth + gain,
+        waterElementalMaxHealth + gain, waterElementalAttack + gain);
+
+    // Test minion put onto the board later also benifits from the aura effect.
+
+    final Minion worgenInfiltrator = MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR);
+    final int worgenInfiltratorAttack = worgenInfiltrator.attack().value();
+    final int worgenInfiltratorHealth = worgenInfiltrator.health().value();
+    final int worgenInfiltratorMaxHealth = worgenInfiltrator.maxHealth().value();
+    gm.playCard(worgenInfiltrator);
+    checkHealthAttackMaxHealth(worgenInfiltrator, worgenInfiltratorHealth + gain,
+        worgenInfiltratorMaxHealth + gain, worgenInfiltratorAttack + gain);
+
+    worgenInfiltrator.attack().reset();
+    assertThat(worgenInfiltrator.attack().value()).isEqualTo(worgenInfiltratorAttack);
+
+    stormwindChampion.death();
+
+
+    checkHealthAttackMaxHealth(yeti, yetiHealth, yetiMaxHealth, yetiAttack);
+
+    checkHealthAttackMaxHealth(scarletCrusader, scarletCrusaderHealth, scarletCrusaderMaxHealth,
+        scarletCrusaderAttack);
+
+    checkHealthAttackMaxHealth(waterElemental, waterElementalHealth, waterElementalMaxHealth,
+        waterElementalAttack);
+
+    checkHealthAttackMaxHealth(worgenInfiltrator, worgenInfiltratorHealth, worgenInfiltratorMaxHealth,
+        worgenInfiltratorAttack);
+  }
+
+  private void checkHealthAttackMaxHealth(final Minion minion, final int expectedHealth,
+                                          final int expectedMaxHealth, final int expectedAttack) {
+    assertThat(minion.attack().value()).isEqualTo(expectedAttack);
+    assertThat(minion.health().value()).isEqualTo(expectedHealth );
+    assertThat(minion.maxHealth().value()).isEqualTo(expectedMaxHealth);
   }
 }

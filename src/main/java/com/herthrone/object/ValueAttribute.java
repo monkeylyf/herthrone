@@ -14,11 +14,13 @@ public class ValueAttribute implements Reset, Round {
 
   private final Buff buff;
   private final int rawValue;
+  private final AuraBuff auraBuff;
   private Value currentValue;
 
   public ValueAttribute(final int value) {
     this.currentValue = new Value(value);
     this.rawValue = value;
+    this.auraBuff = new AuraBuff();
     this.buff = new Buff();
   }
 
@@ -35,12 +37,13 @@ public class ValueAttribute implements Reset, Round {
   }
 
   public int value() {
-    return currentValue.value() + buff.value();
+    return currentValue.value() + buff.value() + auraBuff.accumulatedBuffValue;
   }
 
   public void reset() {
     currentValue.setTo(rawValue);
     buff.reset();
+    auraBuff.reset();
   }
 
   public boolean isNoGreaterThan(final int value) {
@@ -72,6 +75,14 @@ public class ValueAttribute implements Reset, Round {
 
   public Value getPermanentBuff() {
     return buff.permanentBuff;
+  }
+
+  public void addAuraBuff(final Minion minion, final int gain) {
+    auraBuff.add(minion, gain);
+  }
+
+  public void removeAuraBuff(final Minion minion) {
+    auraBuff.remove(minion);
   }
 
   public void resetBuff() {
@@ -115,21 +126,21 @@ public class ValueAttribute implements Reset, Round {
 
   private static class AuraBuff implements Reset {
 
-    private final Map<Minion, Integer> buffs;
+    private final Map<Minion, Integer> minionToBuffMapping;
     public int accumulatedBuffValue;
 
     public AuraBuff() {
-      this.buffs = new HashMap<>();
+      this.minionToBuffMapping = new HashMap<>();
       this.accumulatedBuffValue = 0;
     }
 
-    public void add(final Minion card, final int buffVal) {
-      buffs.put(card, buffVal);
+    public void add(final Minion minion, final int buffVal) {
+      minionToBuffMapping.put(minion, buffVal);
       accumulatedBuffValue += buffVal;
     }
 
-    public void remove(final Minion card) {
-      final Integer buff = buffs.remove(card);
+    public void remove(final Minion minion) {
+      final Integer buff = minionToBuffMapping.remove(minion);
       if (buff != null) {
         accumulatedBuffValue -= buff.intValue();
       }
@@ -137,7 +148,7 @@ public class ValueAttribute implements Reset, Round {
 
     @Override
     public void reset() {
-      buffs.clear();
+      minionToBuffMapping.clear();
       accumulatedBuffValue = 0;
     }
   }

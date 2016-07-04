@@ -8,6 +8,7 @@ import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstClass;
@@ -126,13 +127,18 @@ public class MinionFactory {
             .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
             .collect(Collectors.toList());
 
+        // Add the aura effect to minions that are already on board.
         final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(ConstMechanic.ON_PRESENCE);
         for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
-          for (final Minion minion : board.asList()) {
-            // Execute one by one because max_health must take effect before increase health
-            // otherwise increase health will be capped if the minion has full health.
-            binder().getSide().getEffectQueue().enqueue(EffectFactory.pipeMechanicEffect(onPresenceConfig, minion));
-          }
+          board.stream().forEach(minion -> EffectFactory.addAuraEffect(
+              onPresenceConfig.effect.get(), this, minion));
+        }
+        // Add aura effect from minion that already on-board to this minion.
+        for (final Minion minion : board.asList()) {
+          final List<MechanicConfig> ExistingOnPresenceConfigs = minion.getEffectMechanics().get(
+              ConstMechanic.ON_PRESENCE);
+          ExistingOnPresenceConfigs.stream().forEach(
+             config -> EffectFactory.addAuraEffect(config.effect.get(), minion, this));
         }
 
         // Put minion onto board.
@@ -274,6 +280,13 @@ public class MinionFactory {
         onDeathMechanics.stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                 Optional.of(mechanic), binder().getSide(), this));
+
+
+        final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(ConstMechanic.ON_PRESENCE);
+        for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
+          side.board.stream().forEach(minion -> EffectFactory.removeAuraEffect(
+              onPresenceConfig.effect.get(), this, minion));
+        }
       }
 
       @Override
