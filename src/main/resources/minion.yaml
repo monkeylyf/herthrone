@@ -68,7 +68,7 @@
   crystal: 4
   collectible: true
   mechanics:
-    - name: on_play
+    - name: battlecry
       trigger: on_play
       effect: draw
       type: card
@@ -84,7 +84,7 @@
   crystal: 2
   collectible: true
   mechanics:
-    - name: on_death
+    - name: deathrattle
       trigger: on_death
       effect: draw
       type: card
@@ -183,7 +183,7 @@
   crystal: 2
   collectible: true
   mechanics:
-    - name: on_play
+    - name: combo
       trigger: on_play
       effect: summon
       type: minion
@@ -211,7 +211,7 @@
   crystal: 2
   collectible: true
   mechanics:
-    - name: on_summon
+    - name: summoning
       trigger: on_summon
       effect: attribute
       type: health
@@ -228,7 +228,7 @@
   crystal: 3
   collectible: true
   mechanics:
-    - name: on_play
+    - name: battlecry
       trigger: on_play
       effect: take_control
       type: minion
@@ -249,7 +249,7 @@
   crystal: 5
   collectible: true
   mechanics:
-    - name: on_use_hero_power
+    - name: inspire
       trigger: on_use_hero_power
       effect: generate
       type: minion
@@ -266,7 +266,7 @@
   crystal: 5
   collectible: true
   mechanics:
-    - name: on_play
+    - name: battlecry
       trigger: on_play
       effect: summon
       type: board
@@ -290,7 +290,7 @@
   crystal: 2
   collectible: true
   mechanics:
-    - name: on_play
+    - name: battlecry
       trigger: on_play
       trigger_only_with_target: true
       effect: return_to_hand
@@ -307,7 +307,7 @@
   crystal: 7
   collectible: true
   mechanics:
-    - name: on_presence
+    - name: aura
       trigger: on_presence
       effect: attribute
       type: attack
@@ -315,7 +315,7 @@
       target:
         scope: own
         type: minion
-    - name: on_presence
+    - name: aura
       trigger: on_presence
       effect: attribute
       type: max_health
@@ -323,7 +323,7 @@
       target:
         scope: own
         type: minion
-    - name: on_presence
+    - name: aura
       trigger: on_presence
       effect: attribute
       type: health

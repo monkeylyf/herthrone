@@ -9,9 +9,11 @@ public enum ConstTrigger {
   ON_DAMAGE,
   ON_DEATH,
   ON_DRAW,
+  ON_END_TURN,
   ON_HEAL,
   ON_PLAY,
   ON_PRESENCE,
   ON_SUMMON,
+  ON_START_TURN,
   ON_USE_HERO_POWER;
 }

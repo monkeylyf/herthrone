@@ -20,7 +20,7 @@
   collectible: true
   mechanics:
     - trigger: on_attack
-      name: on_attack
+      name: restore_health
       effect: attribute
       type: health
       value: 2
@@ -38,7 +38,7 @@
   collectible: true
   mechanics:
     - trigger: on_play
-      name: on_equip
+      name: overload
       effect: crystal
       type: crystal_lock
       value: 2
