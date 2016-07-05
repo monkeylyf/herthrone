@@ -225,7 +225,7 @@ public class HeroFactory {
         final List<MechanicConfig> onEquip = weapon.getEffectMechanics().get(ConstTrigger.ON_PLAY);
         onEquip.stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), this));
+                Optional.of(mechanic), binder().getSide(), this, this));
         equip(weapon);
       }
 
@@ -277,7 +277,7 @@ public class HeroFactory {
 
   public static class GameEndException extends RuntimeException {
 
-    public GameEndException(final String message) {
+    private GameEndException(final String message) {
       super(message);
     }
   }

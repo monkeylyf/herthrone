@@ -94,7 +94,8 @@ public class EffectFactory {
   }
 
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
-      final Optional<MechanicConfig> mechanicConfigOptional, final Side side, final Creature target) {
+      final Optional<MechanicConfig> mechanicConfigOptional, final Side side,
+      final Creature caster, final Creature target) {
     if (isTriggerConditionMet(mechanicConfigOptional, side, target)) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());

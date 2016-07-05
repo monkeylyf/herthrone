@@ -474,4 +474,11 @@ public class MechanicTest extends TestCase {
     assertThat(minion.health().value()).isEqualTo(expectedHealth );
     assertThat(minion.maxHealth().value()).isEqualTo(expectedMaxHealth);
   }
+
+  @Test
+  public void testDealDamageAsBattlecry() {
+    final Minion nightblade = MinionFactory.create(ConstMinion.NIGHTBLADE);
+    gm.playCard(nightblade);
+    assertThat(inactiveSide.hero.healthLoss()).isAtLeast(1);
+  }
 }

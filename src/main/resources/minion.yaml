@@ -28,6 +28,15 @@
   health: 2
   crystal: 1
   collectible: false
+  mechanics:
+    - name: restore_health
+      trigger: on_end_turn
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: own
+        type: minion
 
 - name: searing_totem
   class: shaman
@@ -331,3 +340,47 @@
       target:
         scope: own
         type: minion
+
+- name: bloodfen_raptor
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 2
+  collectible: true
+
+- name: boulderfist_ogre
+  class: neutral
+  attack: 6
+  health: 7
+  crystal: 6
+  collectible: true
+
+- name: magma_rager
+  class: neutral
+  attack: 5
+  health: 1
+  crystal: 3
+  collectible: true
+
+- name: murloc_raider
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  collectible: true
+
+- name: nightblade
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -3
+      target:
+        scope: opponent
+        type: hero

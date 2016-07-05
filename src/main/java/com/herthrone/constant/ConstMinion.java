@@ -4,6 +4,8 @@ package com.herthrone.constant;
  * Created by yifengliu on 5/15/16.
  */
 public enum ConstMinion {
+  BLOODFEN_RAPTOR,
+  BOULDERFIST_OGRE,
   CHILLWIND_YETI,
   DEFIAS_BANDIT,
   DEFIAS_RINGLEADER,
@@ -15,7 +17,10 @@ public enum ConstMinion {
   JUNGLE_PANTHER,
   KNIFE_JUGGLER,
   LOOT_HOARDER,
+  MAGMA_RAGER,
   MIND_CONTROL_TECH,
+  MURLOC_RAIDER,
+  NIGHTBLADE,
   OGRE_BRUTE,
   RECRUITER,
   SCARLET_CRUSADER,

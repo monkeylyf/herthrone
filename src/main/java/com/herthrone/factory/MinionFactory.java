@@ -9,9 +9,11 @@ import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
@@ -101,7 +103,25 @@ public class MinionFactory {
         onPlayMechanics.stream()
             .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), this));
+                Optional.of(mechanic), binder().getSide(), this, getProperTarget(mechanic.effect
+                    .get().target, binder().getSide(), this)));
+      }
+
+      private Creature getProperTarget(final TargetConfig targetConfig, final Side side,
+                                       final Creature creature) {
+        switch (targetConfig.type) {
+          case HERO:
+            if (targetConfig.scope.equals(ConstTarget.OWN)) {
+              return side.hero;
+            } else if (targetConfig.scope.equals(ConstTarget.OPPONENT)) {
+              return side.getOpponentSide().hero;
+            } else {
+              // TODO: A no-target skill can have effects on both sides.
+              return creature;
+            }
+          default:
+            return creature;
+        }
       }
 
       @Override
@@ -112,7 +132,7 @@ public class MinionFactory {
         List<MechanicConfig> onPlayEffects = getEffectMechanics().get(ConstTrigger.ON_PLAY);
         onPlayEffects.stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), target));
+                Optional.of(mechanic), binder().getSide(), this, target));
       }
 
       @Override
@@ -276,7 +296,7 @@ public class MinionFactory {
         final List<MechanicConfig> onDeathMechanics = effectMechanics.get(ConstTrigger.ON_DEATH);
         onDeathMechanics.stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), this));
+                Optional.of(mechanic), binder().getSide(), this, this));
 
 
         final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(
