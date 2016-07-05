@@ -29,4 +29,8 @@ public class EffectMechanics {
   public String toString() {
     return mechanics.toString();
   }
+
+  public boolean has(final ConstTrigger trigger) {
+    return mechanics.containsKey(trigger);
+  }
 }

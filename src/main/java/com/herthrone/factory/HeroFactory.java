@@ -237,7 +237,6 @@ public class HeroFactory {
 
         final Side side = binder().getSide();
         List<Effect> useHeroPowerMechanics = side.board.stream()
-            .filter(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_USE_HERO_POWER).size() > 0)
             .sorted(EffectFactory.compareBySequenceId)
             .flatMap(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_USE_HERO_POWER).stream())
             .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))

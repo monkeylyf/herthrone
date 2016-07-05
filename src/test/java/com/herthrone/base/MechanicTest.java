@@ -481,4 +481,24 @@ public class MechanicTest extends TestCase {
     gm.playCard(nightblade);
     assertThat(inactiveSide.hero.healthLoss()).isAtLeast(1);
   }
+
+  @Test
+  public void testEndingTurnMechanics() {
+    final Minion healingTotem = MinionFactory.create(ConstMinion.HEALING_TOTEM);
+    gm.playCard(healingTotem);
+
+    final int damage = 2;
+    final int healing = 1;
+    yeti.takeDamage(damage);
+    waterElemental.takeDamage(damage);
+    gm.endTurn();
+
+    assertThat(yeti.healthLoss()).isEqualTo(damage - healing);
+    assertThat(waterElemental.healthLoss()).isEqualTo(damage - healing);
+
+    gm.endTurn();
+
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+    assertThat(waterElemental.healthLoss()).isEqualTo(0);
+  }
 }

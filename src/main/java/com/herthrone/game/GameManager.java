@@ -20,6 +20,7 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -194,7 +195,7 @@ public class GameManager implements Round {
 
   @Override
   public void endTurn() {
-
+    EffectFactory.triggerEndTurnMechanics(activeSide);
   }
 
   @Override

@@ -16,6 +16,9 @@ import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstTarget;
+import com.herthrone.constant.ConstTrigger;
+import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.effect.AttributeEffect;
@@ -33,6 +36,7 @@ import com.herthrone.object.ManaCrystal;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,6 +106,56 @@ public class EffectFactory {
       Effect effect = pipeMechanicEffect(mechanicConfig, target);
       target.binder().getSide().getEffectQueue().enqueue(effect);
     }
+  }
+
+  public static void triggerEndTurnMechanics(final Side side) {
+    List<Minion> minions = side.board.stream()
+        .sorted(compareBySequenceId)
+        .filter(minion -> minion.getEffectMechanics().has(ConstTrigger.ON_END_TURN))
+        .collect(Collectors.toList());
+
+    for (final Minion minion : minions) {
+      for (MechanicConfig mechanic : minion.getEffectMechanics().get(ConstTrigger.ON_END_TURN)) {
+        final List<Creature> targets = getTargets(mechanic.effect.get().target, side);
+        final List<Effect> effects = targets.stream().map(target -> pipeMechanicEffect(
+            mechanic, target)).collect(Collectors.toList());
+        side.getEffectQueue().enqueue(effects);
+      }
+    }
+  }
+
+  private static List<Creature> getTargets(final TargetConfig target, final Side side) {
+    switch (target.scope) {
+      case OWN:
+        return getTargetsBySide(target, side);
+      case OPPONENT:
+        return getTargetsBySide(target, side.getOpponentSide());
+      case ALL:
+        final List<Creature> targets = getTargetsBySide(target, side);
+        targets.addAll(getTargetsBySide(target, side.getOpponentSide()));
+        return targets;
+      default:
+        throw new RuntimeException("Unknown scope: " + target.scope);
+    }
+  }
+
+  private static List<Creature> getTargetsBySide(final TargetConfig target, final Side side) {
+    final List<Creature> targets = new ArrayList<>();
+    switch (target.type) {
+      case MINION:
+        side.board.stream().forEach(minion -> targets.add(minion));
+        break;
+      case HERO:
+        targets.add(side.hero);
+        break;
+      case ALL:
+        side.board.stream().forEach(minion -> targets.add(minion));
+        targets.add(side.hero);
+        break;
+      default:
+        throw new RuntimeException("Unknown type: " + target.type);
+    }
+    return targets;
   }
 
   private static boolean isConditionTriggered(final Optional<EffectConfig> effectConfigOptional,

@@ -138,7 +138,6 @@ public class MinionFactory {
       @Override
       public void summonOnBoard(final Container<Minion> board) {
         final List<Effect> onSummonEffects = board.stream()
-            .filter(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_SUMMON).size() > 0)
             .sorted(EffectFactory.compareBySequenceId)
             .flatMap(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_SUMMON).stream())
             .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
