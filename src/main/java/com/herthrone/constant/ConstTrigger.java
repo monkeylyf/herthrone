@@ -13,6 +13,7 @@ public enum ConstTrigger {
   ON_HEAL,
   ON_PLAY,
   ON_PRESENCE,
+  ON_SPELL_DAMAGE,
   ON_SUMMON,
   ON_START_TURN,
   ON_USE_HERO_POWER;

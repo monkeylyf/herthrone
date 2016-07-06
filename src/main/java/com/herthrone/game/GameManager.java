@@ -297,7 +297,7 @@ public class GameManager implements Round {
   }
 
   public void playCard(final Card card) {
-    card.binder().bind(activeSide);
+    //card.binder().bind(activeSide);
     if (card instanceof Minion) {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
@@ -316,7 +316,7 @@ public class GameManager implements Round {
   }
 
   public void playCard(final Card card, final Creature target) {
-    card.binder().bind(activeSide);
+    //card.binder().bind(activeSide);
     if (card instanceof Minion) {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());

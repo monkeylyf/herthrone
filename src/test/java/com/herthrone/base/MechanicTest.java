@@ -5,10 +5,12 @@ import com.google.common.collect.Range;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
+import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
@@ -46,11 +48,11 @@ public class MechanicTest extends TestCase {
     this.inactiveSide = gm.inactiveSide;
 
     activeSide.startTurn();
-    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    this.yeti = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
     gm.playCard(yeti);
-    this.waterElemental = MinionFactory.create(ConstMinion.WATER_ELEMENTAL);
+    this.waterElemental = createAndBindMinion(ConstMinion.WATER_ELEMENTAL);
     gm.playCard(waterElemental);
-    this.scarletCrusader = MinionFactory.create(ConstMinion.SCARLET_CRUSADER);
+    this.scarletCrusader = createAndBindMinion(ConstMinion.SCARLET_CRUSADER);
     gm.playCard(scarletCrusader);
 
     this.initialBoardSize = activeSide.board.size();
@@ -61,7 +63,7 @@ public class MechanicTest extends TestCase {
   @Test
   public void testCharge() {
     final ConstMinion minionName = ConstMinion.WOLFRIDER;
-    final Minion wolfrider = MinionFactory.create(minionName);
+    final Minion wolfrider = createAndBindMinion(minionName);
     gm.playCard(wolfrider);
     assertThat(wolfrider.attackMovePoints().value()).isGreaterThan(0);
   }
@@ -73,7 +75,7 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.hero.healthLoss()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.create(minionName);
+    final Minion minion = createAndBindMinion(minionName);
 
     gm.playCard(minion);
 
@@ -87,7 +89,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testElusive() {
-    final Minion faerieDragon = MinionFactory.create(ConstMinion.FAERIE_DRAGON);
+    final Minion faerieDragon = createAndBindMinion(ConstMinion.FAERIE_DRAGON);
     assertThat(GameManager.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL)).isFalse();
 
     assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isTrue();
@@ -95,9 +97,9 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testTaunt() {
-    final Minion senjin = MinionFactory.create(ConstMinion.SENJIN_SHIELDMASTA);
-    final Minion grizzly = MinionFactory.create(ConstMinion.IRONFUR_GRIZZLY);
-    final Minion junglePanther = MinionFactory.create(ConstMinion.JUNGLE_PANTHER);
+    final Minion senjin = createAndBindMinion(ConstMinion.SENJIN_SHIELDMASTA);
+    final Minion grizzly = createAndBindMinion(ConstMinion.IRONFUR_GRIZZLY);
+    final Minion junglePanther = createAndBindMinion(ConstMinion.JUNGLE_PANTHER);
     // Let jungle panther be both stealth and taunt.
     junglePanther.booleanMechanics().initialize(ConstMechanic.TAUNT);
 
@@ -144,9 +146,9 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testStealth() {
-    final Minion stoneclawTotem = MinionFactory.create(ConstMinion.STONECLAW_TOTEM);
+    final Minion stoneclawTotem = createAndBindMinion(ConstMinion.STONECLAW_TOTEM);
     gm.playCard(stoneclawTotem);
-    final Minion worgenInfiltrator = MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR);
+    final Minion worgenInfiltrator = createAndBindMinion(ConstMinion.WORGEN_INFILTRATOR);
     gm.playCard(worgenInfiltrator);
 
     final Optional<BooleanAttribute> stealth = worgenInfiltrator.booleanMechanics().get(ConstMechanic.STEALTH);
@@ -193,7 +195,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testPoison() {
-    Minion emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA);
+    Minion emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
     gm.playCard(emperorCobra);
 
     EffectFactory.AttackFactory.getPhysicalDamageAction(emperorCobra, hero);
@@ -208,7 +210,7 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.healthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
-    emperorCobra = MinionFactory.create(ConstMinion.EMPEROR_COBRA);
+    emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
     gm.playCard(emperorCobra);
     EffectFactory.AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
@@ -232,7 +234,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testForgetful() {
-    final Minion ogreBrute = MinionFactory.create(ConstMinion.OGRE_BRUTE);
+    final Minion ogreBrute = createAndBindMinion(ConstMinion.OGRE_BRUTE);
+    activeSide.bind(ogreBrute);
     gm.playCard(ogreBrute);
     final int attackVal = ogreBrute.attack().value();
     final int minionNum = 5;
@@ -240,7 +243,7 @@ public class MechanicTest extends TestCase {
     final int buffHealth = total * 10;
     for (int i = 0; i < minionNum; ++i) {
       // Buff Yeti health enough so that it doesn't die and gets removed from board.
-      final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+      final Minion yeti = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
       yeti.health().getTemporaryBuff().increase(buffHealth);
       inactiveSide.board.add(yeti);
     }
@@ -264,7 +267,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testWindFury() {
-    final Minion harpy = MinionFactory.create(ConstMinion.WINDFURY_HARPY);
+    final Minion harpy = createAndBindMinion(ConstMinion.WINDFURY_HARPY);
     harpy.attackMovePoints().reset();
     assertThat(harpy.attackMovePoints().value()).isEqualTo(2);
   }
@@ -272,13 +275,13 @@ public class MechanicTest extends TestCase {
   @Test
   public void testBattlecry() {
     final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
-    activeSide.deck.add(MinionFactory.create(minionInDeck));
+    activeSide.deck.add(createAndBindMinion(minionInDeck));
 
     assertThat(activeSide.deck.size()).isEqualTo(1);
     assertThat(activeSide.hand.size()).isEqualTo(0);
 
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = MinionFactory.create(minionName);
+    final Minion minion = createAndBindMinion(minionName);
 
     gm.playCard(minion);
 
@@ -292,9 +295,9 @@ public class MechanicTest extends TestCase {
   @Test
   public void testDeathrattle() {
     final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
-    activeSide.deck.add(MinionFactory.create(minionInDeck));
+    activeSide.deck.add(createAndBindMinion(minionInDeck));
 
-    final Minion lootHoarder = MinionFactory.create(ConstMinion.LOOT_HOARDER);
+    final Minion lootHoarder = createAndBindMinion(ConstMinion.LOOT_HOARDER);
     gm.playCard(lootHoarder);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
@@ -309,12 +312,14 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testCombo() {
-    final Minion defiasRingleader1 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER);
-    final Minion defiasRingleader2 = MinionFactory.create(ConstMinion.DEFIAS_RINGLEADER);
+    final Minion defiasRingleader1 = createAndBindMinion(ConstMinion.DEFIAS_RINGLEADER);
+    activeSide.bind(defiasRingleader1);
     gm.playCard(defiasRingleader1);
     // First play should not trigger combo effect hence add onl one minion to the board.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
+    final Minion defiasRingleader2 = createAndBindMinion(ConstMinion.DEFIAS_RINGLEADER);
+    activeSide.bind(defiasRingleader2);
     gm.playCard(defiasRingleader2);
 
     // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
@@ -344,13 +349,13 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDealDamage() {
-    final Minion knifeJuggler = MinionFactory.create(ConstMinion.KNIFE_JUGGLER);
+    final Minion knifeJuggler = createAndBindMinion(ConstMinion.KNIFE_JUGGLER);
 
     gm.playCard(knifeJuggler);
 
     final int numOfYetiToSummon = 5;
     for (int i = 0; i < numOfYetiToSummon; ++i) {
-      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+      gm.playCard(createAndBindMinion(ConstMinion.CHILLWIND_YETI));
       assertThat(inactiveSide.hero.healthLoss()).isEqualTo(i + 1);
     }
   }
@@ -360,19 +365,21 @@ public class MechanicTest extends TestCase {
     gm.switchTurn();
     final int threshold = 4;
     for (int i = 0; i < threshold; ++i) {
-      gm.playCard(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+      final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+      inactiveSide.bind(yeti);
+      gm.playCard(yeti);
     }
     final List<Minion> opponentMinions = new ArrayList<>(inactiveSide.board.asList());
     // Test take control effect triggered because it satisfies the condition.
     gm.switchTurn();
-    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH));
+    gm.playCard(createAndBindMinion(ConstMinion.MIND_CONTROL_TECH));
 
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
     // Test the right-most minion is stolen from opponent board.
     assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinions);
 
-    gm.playCard(MinionFactory.create(ConstMinion.MIND_CONTROL_TECH));
+    gm.playCard(createAndBindMinion(ConstMinion.MIND_CONTROL_TECH));
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2 + 1);
     // Test control effect not triggered because of opponent has less than 4 minions.
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
@@ -380,7 +387,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testInspire() {
-    final Minion recruiter = MinionFactory.create(ConstMinion.RECRUITER);
+    final Minion recruiter = createAndBindMinion(ConstMinion.RECRUITER);
     gm.playCard(recruiter);
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
@@ -391,7 +398,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testReturnToHandWithTarget() {
-    final Minion youthfulBrewmaster = MinionFactory.create(ConstMinion.YOUTHFUL_BREWMASTER);
+    final Minion youthfulBrewmaster = createAndBindMinion(ConstMinion.YOUTHFUL_BREWMASTER);
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
@@ -404,7 +411,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testReturnToHandWithNoTarget() {
-    final Minion youthfulBrewmaster = MinionFactory.create(ConstMinion.YOUTHFUL_BREWMASTER);
+    final Minion youthfulBrewmaster = createAndBindMinion(ConstMinion.YOUTHFUL_BREWMASTER);
+    activeSide.bind(youthfulBrewmaster);
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
     gm.playCard(youthfulBrewmaster);
@@ -416,7 +424,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testAura() {
-    final Minion stormwindChampion = MinionFactory.create(ConstMinion.STORMWIND_CHAMPION);
+    final Minion stormwindChampion = createAndBindMinion(ConstMinion.STORMWIND_CHAMPION);
     final int gain = 1;
 
     final int yetiAttack = yeti.attack().value();
@@ -443,7 +451,7 @@ public class MechanicTest extends TestCase {
 
     // Test minion put onto the board later also benifits from the aura effect.
 
-    final Minion worgenInfiltrator = MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR);
+    final Minion worgenInfiltrator = createAndBindMinion(ConstMinion.WORGEN_INFILTRATOR);
     final int worgenInfiltratorAttack = worgenInfiltrator.attack().value();
     final int worgenInfiltratorHealth = worgenInfiltrator.health().value();
     final int worgenInfiltratorMaxHealth = worgenInfiltrator.maxHealth().value();
@@ -478,14 +486,15 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDealDamageAsBattlecry() {
-    final Minion nightblade = MinionFactory.create(ConstMinion.NIGHTBLADE);
+    final Minion nightblade = createAndBindMinion(ConstMinion.NIGHTBLADE);
     gm.playCard(nightblade);
     assertThat(inactiveSide.hero.healthLoss()).isAtLeast(1);
   }
 
   @Test
   public void testEndingTurnMechanics() {
-    final Minion healingTotem = MinionFactory.create(ConstMinion.HEALING_TOTEM);
+    final Minion healingTotem = createAndBindMinion(ConstMinion.HEALING_TOTEM);
+    activeSide.bind(healingTotem);
     gm.playCard(healingTotem);
 
     final int damage = 2;
@@ -505,10 +514,11 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDestroyWeapon() {
-    final Minion ooze = MinionFactory.create(ConstMinion.ACIDIC_SWAMP_OOZE);
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
 
     gm.switchTurn();
     final Weapon fieryWinAxe = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE);
+    gm.activeSide.bind(fieryWinAxe);
     gm.playCard(fieryWinAxe);
 
     gm.switchTurn();
@@ -517,7 +527,26 @@ public class MechanicTest extends TestCase {
     assertThat(inactiveSide.hero.getWeapon().isPresent()).isFalse();
 
     // Play another ooze and no weapon to destroy.
-    gm.playCard(MinionFactory.create(ConstMinion.ACIDIC_SWAMP_OOZE));
+    gm.playCard(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
     assertThat(inactiveSide.hero.getWeapon().isPresent()).isFalse();
+  }
+
+  @Test
+  public void testSpellDamage() {
+    final Minion archmage = createAndBindMinion(ConstMinion.ARCHMAGE);
+    activeSide.bind(archmage);
+    final Spell fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
+
+    gm.playCard(archmage);
+
+    System.out.println(fireball.getEffects());
+
+    System.out.println(archmage.getEffectMechanics());
+  }
+
+  private Minion createAndBindMinion(final ConstMinion minionName) {
+    final Minion minion = MinionFactory.create(minionName);
+    gm.activeSide.bind(minion);
+    return minion;
   }
 }

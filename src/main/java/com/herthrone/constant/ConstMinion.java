@@ -5,6 +5,7 @@ package com.herthrone.constant;
  */
 public enum ConstMinion {
   ACIDIC_SWAMP_OOZE,
+  ARCHMAGE,
   BLOODFEN_RAPTOR,
   BOULDERFIST_OGRE,
   CHILLWIND_YETI,

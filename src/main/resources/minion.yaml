@@ -484,3 +484,19 @@
         type: weapon_equiped
         range_start: 1
         range_end: 999
+
+- name: archmage
+  class: neutral
+  attack: 4
+  health: 7
+  crystal: 6
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell

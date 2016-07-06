@@ -17,6 +17,7 @@ public enum ConstEffectType {
   MOVE_CARD,
   PLAY_MINION,
   RETURN_TO_HAND,
+  SPELL_DAMAGE,
   SUMMON,
   STATUS,
   TAKE_CONTROL,

@@ -87,6 +87,10 @@ public class Side implements Round {
     return allCreatures;
   }
 
+  public void bind(final Card card) {
+    card.binder().bind(this);
+  }
+
   public EffectQueue getEffectQueue() {
     return effectQueue;
   }
