@@ -1,7 +1,7 @@
 package com.herthrone.object;
 
 import com.herthrone.base.Minion;
-import com.herthrone.base.Reset;
+import com.herthrone.base.Resettable;
 import com.herthrone.base.Round;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by yifeng on 4/5/16.
  */
-public class ValueAttribute implements Reset, Round {
+public class ValueAttribute implements Resettable, Round {
 
   private final Buff buff;
   private final int rawValue;
@@ -46,18 +46,17 @@ public class ValueAttribute implements Reset, Round {
     auraBuff.reset();
   }
 
-  public boolean isNoGreaterThan(final int value) {
-    return value() <= value;
+  public boolean isGreaterThan(final int value) {
+    return value() > value;
+  }
+
+  public boolean isLessThan(final int value) {
+    return value() < value;
   }
 
   @Override
   public void endTurn() {
     buff.endTurn();
-  }
-
-  @Override
-  public void startTurn() {
-    buff.startTurn();
   }
 
   @Override
@@ -67,6 +66,9 @@ public class ValueAttribute implements Reset, Round {
     } else {
       return Integer.toString(value());
     }
+  }  @Override
+  public void startTurn() {
+    buff.startTurn();
   }
 
   public Value getTemporaryBuff() {
@@ -89,7 +91,7 @@ public class ValueAttribute implements Reset, Round {
     buff.reset();
   }
 
-  private static class Buff implements Reset, Round {
+  private static class Buff implements Resettable, Round {
 
     public final Map<Minion, Integer> minionToTemporaryBuffMapping;
     public final Map<Minion, Integer> minionToPermanentBuffMapping;
@@ -124,7 +126,7 @@ public class ValueAttribute implements Reset, Round {
     }
   }
 
-  private static class AuraBuff implements Reset {
+  private static class AuraBuff implements Resettable {
 
     private final Map<Minion, Integer> minionToBuffMapping;
     public int accumulatedBuffValue;
@@ -152,4 +154,6 @@ public class ValueAttribute implements Reset, Round {
       accumulatedBuffValue = 0;
     }
   }
+
+
 }

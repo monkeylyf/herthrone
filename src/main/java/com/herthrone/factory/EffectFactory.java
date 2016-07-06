@@ -3,6 +3,7 @@ package com.herthrone.factory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Destroyable;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
@@ -16,12 +17,11 @@ import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
-import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstTrigger;
-import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.effect.AttributeEffect;
+import com.herthrone.effect.DestroyEffect;
 import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
 import com.herthrone.effect.MoveCardEffect;
@@ -170,6 +170,16 @@ public class EffectFactory {
           return conditionConfig.inRange(target.binder().getOpponentSide().board.size());
         case COMBO:
           return target.binder().getSide().replay.size() > 1;
+        case WEAPON_EQUIPED:
+          final List<Destroyable> destroyables = getDestroyables(
+              effectConfigOptional.get().target, target.binder().getSide());
+          if (destroyables.size() == 0) {
+            return false;
+          } else {
+            Preconditions.checkArgument(destroyables.size() == 1, "More than one destroyable object");
+            Preconditions.checkArgument(destroyables.get(0) instanceof Weapon, "Only support weapon");
+            return true;
+          }
         default:
           throw new RuntimeException("Unknown condition: " + conditionConfig.conditionType);
       }
@@ -195,27 +205,74 @@ public class EffectFactory {
     switch (effect) {
       case ATTRIBUTE:
         return getAttributeAction(config, creature);
-      case WEAPON:
-        Preconditions.checkArgument(
-            creature instanceof Hero, creature.type() + " can not equip weapon");
-        return getEquipWeaponAction((Hero) creature, config);
-      case SUMMON:
-        return getSummonAction(config, creature.binder().getSide());
-      case DRAW:
-        return getDrawCardAction(config, creature.binder().getSide());
       case CRYSTAL:
         return getCrystalEffect(config, creature);
-      case TAKE_CONTROL:
-        return getTakeControlAction(config, creature);
+      case DRAW:
+        return getDrawCardAction(config, creature.binder().getSide());
       case GENERATE:
         return getGenerateAction(config, creature);
+      case DESTROY:
+        return getDestroyEffect(config, creature);
       case RETURN_TO_HAND:
         Preconditions.checkArgument(
             creature instanceof Minion, creature.type() + " can not be returned to player's hand");
         return getReturnToHandAction((Minion) creature);
+      case SUMMON:
+        return getSummonAction(config, creature.binder().getSide());
+      case TAKE_CONTROL:
+        return getTakeControlAction(config, creature);
+      case WEAPON:
+        Preconditions.checkArgument(
+            creature instanceof Hero, creature.type() + " can not equip weapon");
+        return getEquipWeaponAction((Hero) creature, config);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
+  }
+
+  private static Effect getDestroyEffect(final EffectConfig config, final Creature creature) {
+    List<Destroyable> destroyables = getDestroyables(config.target, creature.binder().getSide());
+    Preconditions.checkArgument(destroyables.size() == 1, "TODO");
+    return new DestroyEffect(destroyables.get(0));
+  }
+
+  private static List<Destroyable> getDestroyables(final TargetConfig target, final Side side) {
+    switch (target.scope) {
+      case OWN:
+        return getDestroyablesBySide(target, side);
+      case OPPONENT:
+        return getDestroyablesBySide(target, side.getOpponentSide());
+      case ALL:
+        final List<Destroyable> targets = getDestroyablesBySide(target, side);
+        targets.addAll(getDestroyablesBySide(target, side.getOpponentSide()));
+        return targets;
+      default:
+        throw new RuntimeException("Unknown scope: " + target.scope);
+    }
+  }
+
+  private static List<Destroyable> getDestroyablesBySide(final TargetConfig target,
+                                                         final Side side) {
+    final List<Destroyable> destroyables = new ArrayList<>();
+    switch (target.type) {
+      case MINION:
+        side.board.stream().forEach(minion -> destroyables.add(minion));
+        break;
+      case WEAPON:
+        if (side.hero.getWeapon().isPresent()) {
+          destroyables.add(side.hero.getWeapon().get());
+        }
+        break;
+      case ALL:
+        side.board.stream().forEach(minion -> destroyables.add(minion));
+        if (side.hero.getWeapon().isPresent()) {
+          destroyables.add(side.hero.getWeapon().get());
+        }
+        break;
+      default:
+        throw new RuntimeException("Unknown type: " + target.type);
+    }
+    return destroyables;
   }
 
   private static Effect getReturnToHandAction(final Minion target) {

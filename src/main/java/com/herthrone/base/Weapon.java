@@ -7,7 +7,7 @@ import com.herthrone.object.ValueAttribute;
 /**
  * Created by yifeng on 4/2/16.
  */
-public interface Weapon extends Card {
+public interface Weapon extends Card, Destroyable {
 
   int use();
 

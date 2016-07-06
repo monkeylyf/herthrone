@@ -9,7 +9,7 @@ import com.herthrone.object.EffectMechanics;
  */
 
 
-public interface Minion extends Creature {
+public interface Minion extends Creature, Destroyable {
 
   EffectMechanics getEffectMechanics();
 
@@ -18,8 +18,6 @@ public interface Minion extends Creature {
   void setSequenceId(final int id);
 
   void silence();
-
-  void destroy();
 
   /**
    * A minion actively to be played by a player onto the board.

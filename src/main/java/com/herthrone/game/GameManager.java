@@ -20,7 +20,6 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
-import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -306,13 +305,10 @@ public class GameManager implements Round {
       setIncrementalSequenceId(minion);
       minion.playOnBoard(activeSide.board);
     } else if (card instanceof Secret) {
-      final Secret secret = (Secret) card;
-      activeSide.secrets.add(secret);
+      activeSide.secrets.add((Secret) card);
     } else if (card instanceof Weapon) {
-      final Weapon weapon = (Weapon) card;
-      activeSide.hero.equip(weapon);
+      activeSide.hero.equip((Weapon) card);
     } else if (card instanceof Spell) {
-      final Spell spell = (Spell) card;
       //spell.getEffects().
     } else {
 

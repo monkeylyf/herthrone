@@ -479,4 +479,8 @@
       value: 1
       target:
         scope: opponent
-        type: hero
+        type: weapon
+      condition:
+        type: weapon_equiped
+        range_start: 1
+        range_end: 999

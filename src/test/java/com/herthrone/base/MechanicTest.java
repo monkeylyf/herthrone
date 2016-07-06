@@ -213,6 +213,7 @@ public class MechanicTest extends TestCase {
     EffectFactory.AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
+    assertThat(activeSide.board.contains(emperorCobra)).isFalse();
   }
 
   @Test
@@ -500,5 +501,23 @@ public class MechanicTest extends TestCase {
 
     assertThat(yeti.healthLoss()).isEqualTo(0);
     assertThat(waterElemental.healthLoss()).isEqualTo(0);
+  }
+
+  @Test
+  public void testDestroyWeapon() {
+    final Minion ooze = MinionFactory.create(ConstMinion.ACIDIC_SWAMP_OOZE);
+
+    gm.switchTurn();
+    final Weapon fieryWinAxe = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE);
+    gm.playCard(fieryWinAxe);
+
+    gm.switchTurn();
+    assertThat(inactiveSide.hero.getWeapon().isPresent()).isTrue();
+    gm.playCard(ooze);
+    assertThat(inactiveSide.hero.getWeapon().isPresent()).isFalse();
+
+    // Play another ooze and no weapon to destroy.
+    gm.playCard(MinionFactory.create(ConstMinion.ACIDIC_SWAMP_OOZE));
+    assertThat(inactiveSide.hero.getWeapon().isPresent()).isFalse();
   }
 }

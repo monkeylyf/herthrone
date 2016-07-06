@@ -7,5 +7,6 @@ public enum ConstCondition {
   ATTACK_VALUE,
   BOARD_SIZE,
   COMBO,
-  HERO_HEALTH;
+  HERO_HEALTH,
+  WEAPON_EQUIPED;
 }

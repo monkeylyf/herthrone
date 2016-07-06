@@ -73,7 +73,7 @@ public class CommandLine {
     }
     // Populate use hero power option if can use hero power.
     if (mySide.hero.heroPowerMovePoints().isPositive() &&
-        mySide.hero.getHeroPower().manaCost().isNoGreaterThan(mySide.manaCrystal.getCrystal())) {
+        !mySide.hero.getHeroPower().manaCost().isGreaterThan(mySide.manaCrystal.getCrystal())) {
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
       scanTargets(useHeroPower, mySide.hero.getHeroPower().getTargetConfig(), battlefield);

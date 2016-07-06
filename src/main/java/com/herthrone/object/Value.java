@@ -1,11 +1,11 @@
 package com.herthrone.object;
 
-import com.herthrone.base.Reset;
+import com.herthrone.base.Resettable;
 
 /**
  * Created by yifengliu on 5/5/16.
  */
-public class Value implements Reset {
+public class Value implements Resettable {
 
   private int value;
 

@@ -35,6 +35,12 @@ public class WeaponFactory {
                               final int crystalManaCost, final boolean isCollectible,
                               final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     return new Weapon() {
+      @Override
+      public void destroy() {
+        durabilityAttr.decrease(durabilityAttr.value());
+        binder().getSide().hero.unequip();
+      }
+
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);
       private final ValueAttribute durabilityAttr = new ValueAttribute(durability);

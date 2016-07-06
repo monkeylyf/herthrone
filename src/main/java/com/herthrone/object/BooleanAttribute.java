@@ -1,13 +1,13 @@
 package com.herthrone.object;
 
 import com.google.common.base.Optional;
-import com.herthrone.base.Reset;
+import com.herthrone.base.Resettable;
 import com.herthrone.base.Round;
 
 /**
  * Created by yifeng on 4/14/16.
  */
-public class BooleanAttribute implements Round, Reset {
+public class BooleanAttribute implements Round, Resettable {
 
   private boolean on;
   private double roundUntilExpire;
