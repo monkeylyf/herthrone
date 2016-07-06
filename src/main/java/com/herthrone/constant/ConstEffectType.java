@@ -10,6 +10,7 @@ public enum ConstEffectType {
   CAST_SPELL,
   COPY_CARD,
   CRYSTAL,
+  DESTROY,
   DRAW,
   EQUIP_WEAPON,
   GENERATE,

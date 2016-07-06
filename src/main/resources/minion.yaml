@@ -384,3 +384,99 @@
       target:
         scope: opponent
         type: hero
+
+- name: novice_engineer
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: oasis_snapjaw
+  class: neutral
+  attack: 2
+  health: 7
+  crystal: 4
+  collectible: true
+
+- name: raid_leader
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: attribute
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: reckless_rocketeer
+  class: neutral
+  attack: 5
+  health: 2
+  crystal: 6
+  collectible: true
+  mechanics:
+    - name: charge
+
+- name: river_crocolisk
+  class: neutral
+  attack: 2
+  health: 3
+  crystal: 2
+  collectible: true
+
+- name: stonetusk_boar
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: charge
+
+- name: voodoo_doctor
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: all
+        type: all
+
+- name: acidic_swamp_ooze
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: destroy
+      type: weapon
+      value: 1
+      target:
+        scope: opponent
+        type: hero
