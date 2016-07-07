@@ -7,6 +7,7 @@ import com.herthrone.constant.ConstEffectType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 /**
  * Created by yifeng on 4/18/16.
@@ -24,7 +25,7 @@ public class EffectConfig {
   private static final String CONDITION = "condition";
   public final ConstEffectType name;
   public final String type;  // TODO: get rid of all String.
-  public final int value;
+  public int value;
   public final boolean isUnique;
   public final boolean isRandom;
   public final boolean isPermanent;
@@ -33,7 +34,7 @@ public class EffectConfig {
   public final Optional<ConditionConfig> conditionConfigOptional;
 
   @SuppressWarnings("unchecked")
-  EffectConfig(Map map) {
+  EffectConfig(final Map map) {
     this.name = ConstEffectType.valueOf(ConfigLoader.getUpperCaseStringValue(map, EFFECT));
     this.type = (String) map.get(TYPE);
     this.value = (int) map.get(VALUE);
@@ -45,6 +46,22 @@ public class EffectConfig {
     this.conditionConfigOptional = (map.containsKey(CONDITION)) ?
         Optional.of(new ConditionConfig((Map) map.get(CONDITION))) :
         Optional.absent();
+  }
+
+  private EffectConfig(final EffectConfig effectConfig) {
+    this.name = effectConfig.name;
+    this.type = effectConfig.type;
+    this.value = effectConfig.value;
+    this.isPermanent = effectConfig.isPermanent;
+    this.isUnique = effectConfig.isUnique;
+    this.isRandom = effectConfig.isRandom;
+    this.choices = effectConfig.choices;
+    this.target = effectConfig.target;
+    this.conditionConfigOptional = effectConfig.conditionConfigOptional;
+  }
+
+  public static EffectConfig clone(final EffectConfig effectConfigToClone) {
+    return new EffectConfig(effectConfigToClone);
   }
 
   @Override

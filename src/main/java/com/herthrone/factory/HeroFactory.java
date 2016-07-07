@@ -232,7 +232,7 @@ public class HeroFactory {
       @Override
       public void useHeroPower(final Creature creature) {
         Preconditions.checkArgument(heroPowerMovePoints.value() > 0, HERO_POWER_ERROR_MESSAGE);
-        EffectFactory.getActionsByConfig(heroPower, creature).stream().forEach(Effect::act);
+        EffectFactory.pipeEffectsByConfig(heroPower, creature);
         heroPowerMovePoints.decrease(1);
 
         final Side side = binder().getSide();

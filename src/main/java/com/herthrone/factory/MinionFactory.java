@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
@@ -143,16 +144,6 @@ public class MinionFactory {
             .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
             .collect(Collectors.toList());
 
-        // Add the aura effect to minions that are already on board.
-        //final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
-        //for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
-        //  board.stream().forEach(minion -> EffectFactory.addAuraEffect(onPresenceConfig.effect.get(), this, minion));}
-        // Add aura effect from minion that already on-board to this minion.
-        //for (final Minion minion : board.asList()) {
-        // final List<MechanicConfig> ExistingOnPresenceConfigs = minion.getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
-          //ExistingOnPresenceConfigs.stream().forEach(config -> EffectFactory.addAuraEffect(config.effect.get(), minion, this));
-        //}
-
         // Put minion onto board.
         board.add(this);
 
@@ -161,6 +152,13 @@ public class MinionFactory {
         if (boardHasAura) {
           logger.debug("Updating aura effects on all minions");
           board.stream().forEach(minion -> minion.refresh());
+        }
+
+        if (getEffectMechanics().has(ConstTrigger.ON_SPELL_DAMAGE)) {
+          binder().getSide().hand.stream()
+              .filter(card -> card instanceof Spell)
+              .map(card -> (Spell) card)
+              .forEach(Spell::refresh);
         }
         // Execute effects.
         binder().getSide().getEffectQueue().enqueue(onSummonEffects);
@@ -294,18 +292,22 @@ public class MinionFactory {
         final Side side = binder.getSide();
         side.board.remove(this);
 
-        final List<MechanicConfig> onDeathMechanics = effectMechanics.get(ConstTrigger.ON_DEATH);
-        onDeathMechanics.stream()
+        // Remove aura effects if the dead one has it.
+        getEffectMechanics().get(ConstTrigger.ON_PRESENCE).stream()
+            .forEach(config -> {
+              side.board.stream().forEach(
+                  minion -> EffectFactory.removeAuraEffect(config.effect.get(), this, minion));
+            });
+        // Remove spell damage effects if the dead one has it.
+        binder().getSide().hand.stream()
+            .filter(card -> card instanceof Spell)
+            .map(card -> (Spell) card)
+            .forEach(Spell::refresh);
+
+        // Trigger deathrattle if the dead one has it.
+        getEffectMechanics().get(ConstTrigger.ON_DEATH).stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                 Optional.of(mechanic), binder().getSide(), this, this));
-
-
-        final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(
-            ConstTrigger.ON_PRESENCE);
-        for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
-          side.board.stream().forEach(minion -> EffectFactory.removeAuraEffect(
-              onPresenceConfig.effect.get(), this, minion));
-        }
       }
 
       @Override

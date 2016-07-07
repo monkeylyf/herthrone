@@ -31,6 +31,6 @@ public class CastSpellEffect implements Effect {
 
   @Override
   public void act() {
-    EffectFactory.getActionsByConfig(spell, target).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(spell, target);
   }
 }

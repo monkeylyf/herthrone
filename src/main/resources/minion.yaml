@@ -343,6 +343,7 @@
 
 - name: bloodfen_raptor
   class: neutral
+  type: beast
   attack: 3
   health: 2
   crystal: 2
@@ -364,6 +365,7 @@
 
 - name: murloc_raider
   class: neutral
+  type: murloc
   attack: 2
   health: 1
   crystal: 1
@@ -403,6 +405,7 @@
 
 - name: oasis_snapjaw
   class: neutral
+  type: beast
   attack: 2
   health: 7
   crystal: 4
@@ -442,6 +445,7 @@
 
 - name: stonetusk_boar
   class: neutral
+  type: beast
   attack: 1
   health: 1
   crystal: 1
@@ -503,9 +507,19 @@
 
 - name: bluegill_warrior
   class: neutral
+  type: murloc
   attack: 2
   health: 1
   crystal: 2
   collectible: true
   mechanics:
     - name: charge
+
+- name: booty_bay_bodyguard
+  class: neutral
+  attack: 5
+  health: 4
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: taunt

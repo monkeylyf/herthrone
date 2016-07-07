@@ -55,7 +55,12 @@ public class Side implements Round {
 
   public static Side createSide(final Hero hero1, final Hero hero2, final EffectQueue effectQueue) {
     final Side thisSide = new Side(hero1, effectQueue);
+    thisSide.bind(hero1);
+    thisSide.bind(hero1.getHeroPower());
     final Side thatSide = new Side(hero2, effectQueue);
+    thatSide.bind(hero2);
+    thatSide.bind(hero2.getHeroPower());
+
     thisSide.opponentSide = thatSide;
     thatSide.opponentSide = thisSide;
     return thisSide;

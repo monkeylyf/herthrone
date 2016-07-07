@@ -197,10 +197,10 @@ public class EffectFactory {
         RandomMinionGenerator.randomCreature(effectConfig.target, target.binder().getSide()) :
         target;
 
-    return getActionsByConfig(effectConfig,  realTarget);
+    return pipeEffectsByConfig(effectConfig,  realTarget);
   }
 
-  public static Effect getActionsByConfig(final EffectConfig config, final Creature creature) {
+  public static Effect pipeEffectsByConfig(final EffectConfig config, final Creature creature) {
     ConstEffectType effect = config.name;
     switch (effect) {
       case ATTRIBUTE:
@@ -367,14 +367,15 @@ public class EffectFactory {
     return new AttributeEffect(attr, effect.value, effect.isPermanent);
   }
 
-  public static List<Effect> getActionsByConfig(final Spell spell, final Creature creature) {
-    return spell.getEffects().stream()
-        .map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
+  public static void pipeEffectsByConfig(final Spell spell, final Creature creature) {
+    List<Effect> effects = spell.getEffects().stream()
+        .map(effect -> pipeEffectsByConfig(effect, creature)).collect(Collectors.toList());
+    spell.binder().getSide().getEffectQueue().enqueue(effects);
   }
 
-  public static List<Effect> getActionsByConfig(final SpellConfig config, final Creature creature) {
+  public static List<Effect> pipeEffectsByConfig(final SpellConfig config, final Creature creature) {
     return config.effects.stream()
-        .map(effect -> getActionsByConfig(effect, creature)).collect(Collectors.toList());
+        .map(effect -> pipeEffectsByConfig(effect, creature)).collect(Collectors.toList());
   }
 
 

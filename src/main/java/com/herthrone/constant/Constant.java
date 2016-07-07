@@ -14,6 +14,7 @@ public class Constant {
   public static final String ATTACK = "attack";
   public static final String BOARD = "board";
   public static final String CARD_NAME = "card_name";
+  public static final String CLASS = "class";
   public static final String CRYSTAL = "crystal";
   public static final String CRYSTAL_LOCK = "crystal_lock";
   public static final String DECK_SIZE = "deck_size";
@@ -28,4 +29,5 @@ public class Constant {
   public static final String WEAPON = "weapon";
   public static final String MAX_HEALTH = "max_health";
   public static final String MOVE_POINTS = "move_points";
+
 }

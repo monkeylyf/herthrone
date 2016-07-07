@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Round;
@@ -251,13 +250,13 @@ public class GameManager implements Round {
 
     if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power without a specific target.
-      EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), activeSide.hero).stream().forEach(Effect::act);
+      EffectFactory.pipeEffectsByConfig(activeSide.hero.getHeroPower(), activeSide.hero);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.attackMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      EffectFactory.getActionsByConfig(activeSide.hero.getHeroPower(), creature).stream().forEach(Effect::act);
+      EffectFactory.pipeEffectsByConfig(activeSide.hero.getHeroPower(), creature);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.attackMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
@@ -323,6 +322,9 @@ public class GameManager implements Round {
       // Assign game board sequence id to minion.
       setIncrementalSequenceId(minion);
       minion.playOnBoard(activeSide.board, target);
+    } else if (card instanceof Spell) {
+      final Spell spell = (Spell) card;
+      EffectFactory.pipeEffectsByConfig(spell, target);
     }
   }
 

@@ -149,11 +149,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    EffectFactory.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(armorUp, hero1).stream().forEach(Effect::act);
   }
 
   private void hero2ArmorUp() {
-    EffectFactory.getActionsByConfig(armorUp, hero2).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(armorUp, hero2).stream().forEach(Effect::act);
   }
 
   @Test

@@ -44,8 +44,9 @@ public class SpellTest extends TestCase {
   @Test
   public void testFireBall() {
     final Spell fireBall = SpellFactory.create(ConstSpell.FIRE_BALL);
+    gm.activeSide.bind(fireBall);
 
-    EffectFactory.getActionsByConfig(fireBall, minion).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(fireBall, minion);
     assertThat(minion.health().value()).isEqualTo(yetiConfig.health + fireBall.getEffects().get(0).value);
     assertThat(minion.isDead()).isTrue();
   }
@@ -54,66 +55,71 @@ public class SpellTest extends TestCase {
   public void testArmorUp() {
     assertThat(hero1.armor().value()).isEqualTo(0);
     final Spell armorUp = HeroPowerFactory.createHeroPowerByName(ConstSpell.ARMOR_UP);
+    gm.activeSide.bind(armorUp);
 
-    EffectFactory.getActionsByConfig(armorUp, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(armorUp, hero1);
     assertThat(hero1.armor().value()).isEqualTo(armorUp.getEffects().get(0).value);
   }
 
   @Test
   public void testLesserHeal() {
     final Spell lesserHeal = HeroPowerFactory.createHeroPowerByName(ConstSpell.LESSER_HEAL);
+    gm.activeSide.bind(lesserHeal);
     assertThat(hero1.healthLoss()).isEqualTo(0);
     final int largeDamage = 5;
     final int healVol = lesserHeal.getEffects().get(0).value;
     hero1.takeDamage(largeDamage);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage);
 
-    EffectFactory.getActionsByConfig(lesserHeal, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(lesserHeal, hero1);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage - healVol);
-    EffectFactory.getActionsByConfig(lesserHeal, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(lesserHeal, hero1);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage - healVol * 2);
     // Healing cannot exceed the health upper bound.
-    EffectFactory.getActionsByConfig(lesserHeal, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(lesserHeal, hero1);
     assertThat(hero1.healthLoss()).isEqualTo(0);
   }
 
   @Test
   public void testFireBlast() {
     final Spell fireBlast = HeroPowerFactory.createHeroPowerByName(ConstSpell.FIRE_BLAST);
+    gm.activeSide.bind(fireBlast);
     final int damage = fireBlast.getEffects().get(0).value;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
-    EffectFactory.getActionsByConfig(fireBlast, hero2).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(fireBlast, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage);
 
-    EffectFactory.getActionsByConfig(fireBlast, hero2).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(fireBlast, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage * 2);
   }
 
   @Test
   public void testSteadyShot() {
     final Spell steadyShot = HeroPowerFactory.createHeroPowerByName(ConstSpell.STEADY_SHOT);
+    gm.activeSide.bind(steadyShot);
 
     final int damage = steadyShot.getEffects().get(0).value;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
-    EffectFactory.getActionsByConfig(steadyShot, hero2).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(steadyShot, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage);
 
-    EffectFactory.getActionsByConfig(steadyShot, hero2).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(steadyShot, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage * 2);
   }
 
   @Test
   public void testShapeshift() {
     final Spell shapeshift = HeroPowerFactory.createHeroPowerByName(ConstSpell.SHAPESHIFT);
+    gm.activeSide.bind(shapeshift);
     final int attack = shapeshift.getEffects().get(0).value;
     final int armor = shapeshift.getEffects().get(1).value;
 
     assertThat(hero1.attack().value()).isEqualTo(0);
     assertThat(hero1.armor().value()).isEqualTo(0);
 
-    EffectFactory.getActionsByConfig(shapeshift, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(shapeshift, hero1);
 
     assertThat(hero1.attack().value()).isEqualTo(attack);
     assertThat(hero1.armor().value()).isEqualTo(armor);
@@ -126,8 +132,9 @@ public class SpellTest extends TestCase {
   @Test
   public void testDaggerMastery() {
     final Spell daggerMastery = HeroPowerFactory.createHeroPowerByName(ConstSpell.DAGGER_MASTERY);
+    gm.activeSide.bind(daggerMastery);
     assertThat(hero1.canDamage()).isFalse();
-    EffectFactory.getActionsByConfig(daggerMastery, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(daggerMastery, hero1);
     assertThat(hero1.canDamage()).isTrue();
 
     EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, hero2);
@@ -137,8 +144,9 @@ public class SpellTest extends TestCase {
   @Test
   public void testReinforce() {
     final Spell reinforce = HeroPowerFactory.createHeroPowerByName(ConstSpell.REINFORCE);
+    gm.activeSide.bind(reinforce);
     assertThat(gm.activeSide.board.size()).isEqualTo(0);
-    EffectFactory.getActionsByConfig(reinforce, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(reinforce, hero1);
     assertThat(gm.activeSide.board.size()).isEqualTo(1);
 
     final Minion minion = gm.activeSide.board.get(0);
@@ -148,10 +156,11 @@ public class SpellTest extends TestCase {
   @Test
   public void testTotemicCall() {
     final Spell totemicCall = HeroPowerFactory.createHeroPowerByName(ConstSpell.TOTEMIC_CALL);
+    gm.activeSide.bind(totemicCall);
     final int size = totemicCall.getEffects().get(0).choices.size();
 
     for (int i = 0; i < size; ++i) {
-      EffectFactory.getActionsByConfig(totemicCall, hero1).stream().forEach(Effect::act);
+      EffectFactory.pipeEffectsByConfig(totemicCall, hero1);
       assertThat(gm.activeSide.board.size()).isEqualTo(i + 1);
     }
 
@@ -162,6 +171,7 @@ public class SpellTest extends TestCase {
   @Test
   public void testLifeTap() {
     final Spell lifeTap = HeroPowerFactory.createHeroPowerByName(ConstSpell.LIFE_TAP);
+    gm.activeSide.bind(lifeTap);
     final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     final int damage = -lifeTap.getEffects().get(0).value;
 
@@ -171,7 +181,7 @@ public class SpellTest extends TestCase {
 
     assertThat(gm.activeSide.hand.size()).isEqualTo(0);
     assertThat(hero1.healthLoss()).isEqualTo(0);
-    EffectFactory.getActionsByConfig(lifeTap, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(lifeTap, hero1);
 
     assertThat(gm.activeSide.hand.size()).isEqualTo(1);
     assertThat(gm.activeSide.deck.size()).isEqualTo(0);

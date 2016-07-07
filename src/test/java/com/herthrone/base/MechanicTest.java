@@ -536,12 +536,41 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testSpellDamage() {
+    Spell fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
+    final int damage = -fireball.getEffects().get(0).value;
+    activeSide.bind(fireball);
+    activeSide.hand.add(fireball);
+
     final Minion archmage = createAndBindMinion(ConstMinion.ARCHMAGE);
     activeSide.bind(archmage);
-    final Spell fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
-
     gm.playCard(archmage);
+    gm.playCard(fireball, yeti);
 
+    // Test that spell is held in hand then add spell damage minion onto board, it should be
+    // reflected on that spell in the hand by adding the buff.
+    assertThat(yeti.healthLoss()).isEqualTo(damage + 1);
+
+    fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
+    activeSide.bind(fireball);
+    activeSide.hand.add(fireball);
+    fireball.refresh();
+
+    gm.playCard(fireball, yeti);
+    // Test that spell is added to hand after playing spell damage minion onto board, it should be
+    // reflected on that spell in the hand by adding the buff.
+    assertThat(yeti.healthLoss()).isEqualTo(2 * damage + 2);
+
+
+    // Test that spell is held in hand then remove the spell damage minion, it should be
+    // reflected on that spell in the hand by removing the buff.
+    fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
+    activeSide.bind(fireball);
+    activeSide.hand.add(fireball);
+    fireball.refresh();
+    archmage.death();
+
+    gm.playCard(fireball, waterElemental);
+    assertThat(waterElemental.healthLoss()).isEqualTo(damage);
   }
 
   private Minion createAndBindMinion(final ConstMinion minionName) {
