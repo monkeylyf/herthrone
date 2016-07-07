@@ -9,7 +9,7 @@ import com.herthrone.object.EffectMechanics;
  */
 
 
-public interface Minion extends Creature, Destroyable {
+public interface Minion extends Creature, Destroyable, Refreshable {
 
   EffectMechanics getEffectMechanics();
 

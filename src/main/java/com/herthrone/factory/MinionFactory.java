@@ -144,22 +144,24 @@ public class MinionFactory {
             .collect(Collectors.toList());
 
         // Add the aura effect to minions that are already on board.
-        final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
-        for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
-          board.stream().forEach(minion -> EffectFactory.addAuraEffect(
-              onPresenceConfig.effect.get(), this, minion));
-        }
+        //final List<MechanicConfig> onPresenceConfigs = getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
+        //for (final MechanicConfig onPresenceConfig : onPresenceConfigs) {
+        //  board.stream().forEach(minion -> EffectFactory.addAuraEffect(onPresenceConfig.effect.get(), this, minion));}
         // Add aura effect from minion that already on-board to this minion.
-        for (final Minion minion : board.asList()) {
-          final List<MechanicConfig> ExistingOnPresenceConfigs = minion.getEffectMechanics().get(
-              ConstTrigger.ON_PRESENCE);
-          ExistingOnPresenceConfigs.stream().forEach(
-             config -> EffectFactory.addAuraEffect(config.effect.get(), minion, this));
-        }
+        //for (final Minion minion : board.asList()) {
+        // final List<MechanicConfig> ExistingOnPresenceConfigs = minion.getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
+          //ExistingOnPresenceConfigs.stream().forEach(config -> EffectFactory.addAuraEffect(config.effect.get(), minion, this));
+        //}
 
         // Put minion onto board.
         board.add(this);
 
+        final boolean boardHasAura = board.stream().anyMatch(
+            minion -> minion.getEffectMechanics().has(ConstTrigger.ON_PRESENCE));
+        if (boardHasAura) {
+          logger.debug("Updating aura effects on all minions");
+          board.stream().forEach(minion -> minion.refresh());
+        }
         // Execute effects.
         binder().getSide().getEffectQueue().enqueue(onSummonEffects);
       }
@@ -324,7 +326,22 @@ public class MinionFactory {
 
       @Override
       public void startTurn() {
+      }
 
+      @Override
+      public void refresh() {
+        final Container<Minion> board = binder().getSide().board;
+        // Refresh aura effects.
+        final List<Minion> auraMinions = binder().getSide().board.stream()
+            .filter(minion -> minion.getEffectMechanics().has(ConstTrigger.ON_PRESENCE))
+            .collect(Collectors.toList());
+        for (final Minion auraMinion : auraMinions) {
+          final List<MechanicConfig> onPresenceConfigs = auraMinion.getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
+          if (this != auraMinion) {
+            onPresenceConfigs.stream().forEach(
+                config -> EffectFactory.addAuraEffect(config.effect.get(), auraMinion, this));
+          }
+        }
       }
 
       @Override

@@ -500,3 +500,12 @@
       target:
         scope: own
         type: spell
+
+- name: bluegill_warrior
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: charge

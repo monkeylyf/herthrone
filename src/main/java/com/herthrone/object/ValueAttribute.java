@@ -137,15 +137,16 @@ public class ValueAttribute implements Resettable, Round {
     }
 
     public void add(final Minion minion, final int buffVal) {
+      final Integer existingBuff = minionToBuffMapping.get(minion);
       minionToBuffMapping.put(minion, buffVal);
-      accumulatedBuffValue += buffVal;
+      final int gain = (existingBuff == null) ? buffVal : buffVal - existingBuff;
+      accumulatedBuffValue += gain;
     }
 
     public void remove(final Minion minion) {
-      final Integer buff = minionToBuffMapping.remove(minion);
-      if (buff != null) {
-        accumulatedBuffValue -= buff.intValue();
-      }
+      final Integer existingBuff = minionToBuffMapping.remove(minion);
+      final int loss = (existingBuff == null) ? 0 : existingBuff;
+      accumulatedBuffValue -= loss;
     }
 
     @Override
