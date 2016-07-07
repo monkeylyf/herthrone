@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 
@@ -65,7 +66,7 @@ public class MinionFactory {
               WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
       private final Binder binder = new Binder();
       // use OptionalInt
-      private Optional<Integer> seqId = Optional.absent();
+      private OptionalInt seqId = OptionalInt.empty();
 
       @Override
       public EffectMechanics getEffectMechanics() {
@@ -75,13 +76,13 @@ public class MinionFactory {
       @Override
       public int getSequenceId() {
         Preconditions.checkArgument(seqId.isPresent(), cardName() + " sequence ID not set yet");
-        return seqId.get();
+        return seqId.getAsInt();
       }
 
       @Override
       public void setSequenceId(final int sequenceId) {
         Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence ID already set");
-        seqId = Optional.of(sequenceId);
+        seqId = OptionalInt.of(sequenceId);
         logger.debug(String.format("%s ID set to %d", cardName(), sequenceId));
       }
 
