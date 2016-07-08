@@ -64,6 +64,12 @@ public class MechanicTest extends TestCase {
     activeSide.startTurn();
   }
 
+  private Minion createAndBindMinion(final ConstMinion minionName) {
+    final Minion minion = MinionFactory.create(minionName);
+    gm.activeSide.bind(minion);
+    return minion;
+  }
+
   @Test
   public void testCharge() {
     final ConstMinion minionName = ConstMinion.WOLFRIDER;
@@ -573,9 +579,20 @@ public class MechanicTest extends TestCase {
     assertThat(waterElemental.healthLoss()).isEqualTo(damage);
   }
 
-  private Minion createAndBindMinion(final ConstMinion minionName) {
-    final Minion minion = MinionFactory.create(minionName);
-    gm.activeSide.bind(minion);
-    return minion;
+  @Test
+  public void testAoeHeal() {
+    final Minion darkscaleHealer = MinionFactory.create(ConstMinion.DARKSCALE_HEALER);
+    gm.activeSide.bind(darkscaleHealer);
+
+    final int damage = 3;
+    yeti.takeDamage(3);
+    waterElemental.takeDamage(3);
+    scarletCrusader.takeDamage(3);
+
+    gm.playCard(darkscaleHealer);
+
+    assertThat(yeti.healthLoss()).isEqualTo(damage - 2);
+    assertThat(waterElemental.healthLoss()).isEqualTo(damage - 2);
+    assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
   }
 }

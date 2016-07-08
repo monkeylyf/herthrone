@@ -8,6 +8,7 @@ import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.configuration.TargetConfig;
@@ -21,12 +22,15 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
+import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.object.BooleanAttribute;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.EffectMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -102,28 +106,20 @@ public class MinionFactory {
         summonOnBoard(board);
         // On-play mechanics.
         final List<MechanicConfig> onPlayMechanics = getEffectMechanics().get(ConstTrigger.ON_PLAY);
+        final Side side = binder().getSide();
         onPlayMechanics.stream()
             .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
-            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), this, getProperTarget(mechanic.effect
-                    .get().target, binder().getSide(), this)));
-      }
-
-      private Creature getProperTarget(final TargetConfig targetConfig, final Side side,
-                                       final Creature creature) {
-        switch (targetConfig.type) {
-          case HERO:
-            if (targetConfig.scope.equals(ConstTarget.OWN)) {
-              return side.hero;
-            } else if (targetConfig.scope.equals(ConstTarget.OPPONENT)) {
-              return side.getOpponentSide().hero;
-            } else {
-              // TODO: A no-target skill can have effects on both sides.
-              return creature;
-            }
-          default:
-            return creature;
-        }
+            .forEach(mechanic -> {
+              final EffectConfig effectConfig = mechanic.effect.get();
+              List<Creature> targets = EffectFactory.getProperTargets(
+                  effectConfig.target, side, this);
+              targets = effectConfig.isRandom ?
+                  Arrays.asList(RandomMinionGenerator.randomOne(targets)) : targets;
+              targets.stream().forEach(
+                  target -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                      Optional.of(mechanic), side, this, target)
+              );
+            });
       }
 
       @Override

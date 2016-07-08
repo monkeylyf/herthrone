@@ -124,6 +124,42 @@ public class EffectFactory {
     }
   }
 
+  static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side,
+                                                 final Creature caster) {
+    switch (targetConfig.scope) {
+      case OWN:
+        return getProperTargetsBySide(targetConfig, side, caster);
+      case OPPONENT:
+        return getProperTargetsBySide(targetConfig, side.getOpponentSide(), caster);
+      case ALL:
+        final List<Creature> targets = getProperTargetsBySide(targetConfig, side, caster);
+        targets.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide(), caster));
+        return targets;
+      default:
+        throw new RuntimeException("Unknown scope: " + targetConfig.scope);
+    }
+  }
+
+  private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
+                                                       final Side side, final Creature caster) {
+    final List<Creature> targets = new ArrayList<>();
+    switch (targetConfig.type) {
+      case HERO:
+        targets.add(side.hero);
+        break;
+      case MINION:
+        side.board.stream().sorted(EffectFactory.compareBySequenceId).forEach(targets::add);
+        break;
+      case ALL:
+        side.board.stream().sorted(EffectFactory.compareBySequenceId).forEach(targets::add);
+        targets.add(side.hero);
+        break;
+      default:
+        targets.add(caster);
+    }
+    return targets;
+  }
+
   private static List<Creature> getTargets(final TargetConfig target, final Side side) {
     switch (target.scope) {
       case OWN:
@@ -167,7 +203,7 @@ public class EffectFactory {
           .conditionConfigOptional.get();
       switch (conditionConfig.conditionType) {
         case BOARD_SIZE:
-          return conditionConfig.inRange(target.binder().getOpponentSide().board.size());
+          return conditionConfig.inRange(target.binder().getSide().board.size());
         case COMBO:
           return target.binder().getSide().replay.size() > 1;
         case WEAPON_EQUIPED:

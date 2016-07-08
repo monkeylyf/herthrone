@@ -242,6 +242,7 @@
       effect: take_control
       type: minion
       permanent: true
+      random: true
       value: 1
       target:
         scope: opponent
@@ -523,3 +524,41 @@
   collectible: true
   mechanics:
     - name: taunt
+
+- name: core_hound
+  class: neutral
+  type: beast
+  attack: 9
+  health: 5
+  crystal: 7
+  collectible: true
+
+- name: dalaran_mage
+  class: neutral
+  attack: 1
+  health: 4
+  crystal: 3
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: darkscale_healer
+  class: neutral
+  attack: 4
+  health: 5
+  crystal: 5
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: minion
