@@ -18,7 +18,7 @@ public class TargetConfig {
   public final ConstTarget scope;
   public final ConstType type;
 
-  TargetConfig(Map map) {
+  TargetConfig(final Map map) {
     this.scope = ConstTarget.valueOf(getUpperCaseStringValue(map, SCOPE));
     this.type = ConstType.valueOf(getUpperCaseStringValue(map, TYPE));
   }

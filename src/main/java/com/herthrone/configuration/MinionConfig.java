@@ -33,8 +33,4 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   protected ConstMinion loadName(final String name) {
     return ConstMinion.valueOf(name.toUpperCase());
   }
-
-  public List<MechanicConfig> getMechanic(final ConstMechanic mechanic) {
-    return (mechanics.containsKey(mechanic)) ? mechanics.get(mechanic) :  Collections.emptyList();
-  }
 }

@@ -11,11 +11,9 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
-import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
-import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
@@ -29,7 +27,6 @@ import com.herthrone.object.EffectMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +145,7 @@ public class MinionFactory {
             minion -> minion.getEffectMechanics().has(ConstTrigger.ON_PRESENCE));
         if (boardHasAura) {
           logger.debug("Updating aura effects on all minions");
-          board.stream().forEach(minion -> minion.refresh());
+          board.stream().forEach(Minion::refresh);
         }
 
         if (getEffectMechanics().has(ConstTrigger.ON_SPELL_DAMAGE)) {

@@ -39,7 +39,7 @@ public class MechanicConfig {
     final Map<ConstTrigger, List<MechanicConfig>> configs = new HashMap<>();
     if (configList != null) {
       @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;
-      for (Map map : configMaps) {
+      for (final Map map : configMaps) {
         final MechanicConfig config = new MechanicConfig(map);
         if (configs.containsKey(config.trigger)) {
           configs.get(config.trigger).add(config);
@@ -53,6 +53,9 @@ public class MechanicConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this).add(NAME, mechanic).add(EFFECT, effect).toString();
+    return Objects.toStringHelper(this)
+        .add(NAME, mechanic)
+        .add(EFFECT, effect)
+        .toString();
   }
 }

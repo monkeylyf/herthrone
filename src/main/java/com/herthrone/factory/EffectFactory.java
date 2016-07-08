@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  */
 public class EffectFactory {
 
-  static Logger logger = Logger.getLogger(EffectFactory.class.getName());
+  private static Logger logger = Logger.getLogger(EffectFactory.class.getName());
   static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
@@ -116,7 +116,7 @@ public class EffectFactory {
 
     for (final Minion minion : minions) {
       for (MechanicConfig mechanic : minion.getEffectMechanics().get(ConstTrigger.ON_END_TURN)) {
-        final List<Creature> targets = getTargets(mechanic.effect.get().target, side);
+        final List<Creature> targets = getProperTargets(mechanic.effect.get().target, side, minion);
         final List<Effect> effects = targets.stream().map(target -> pipeMechanicEffect(
             mechanic, target)).collect(Collectors.toList());
         side.getEffectQueue().enqueue(effects);
@@ -125,7 +125,7 @@ public class EffectFactory {
   }
 
   static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side,
-                                                 final Creature caster) {
+                                         final Creature caster) {
     switch (targetConfig.scope) {
       case OWN:
         return getProperTargetsBySide(targetConfig, side, caster);
@@ -156,40 +156,6 @@ public class EffectFactory {
         break;
       default:
         targets.add(caster);
-    }
-    return targets;
-  }
-
-  private static List<Creature> getTargets(final TargetConfig target, final Side side) {
-    switch (target.scope) {
-      case OWN:
-        return getTargetsBySide(target, side);
-      case OPPONENT:
-        return getTargetsBySide(target, side.getOpponentSide());
-      case ALL:
-        final List<Creature> targets = getTargetsBySide(target, side);
-        targets.addAll(getTargetsBySide(target, side.getOpponentSide()));
-        return targets;
-      default:
-        throw new RuntimeException("Unknown scope: " + target.scope);
-    }
-  }
-
-  private static List<Creature> getTargetsBySide(final TargetConfig target, final Side side) {
-    final List<Creature> targets = new ArrayList<>();
-    switch (target.type) {
-      case MINION:
-        side.board.stream().forEach(minion -> targets.add(minion));
-        break;
-      case HERO:
-        targets.add(side.hero);
-        break;
-      case ALL:
-        side.board.stream().forEach(minion -> targets.add(minion));
-        targets.add(side.hero);
-        break;
-      default:
-        throw new RuntimeException("Unknown type: " + target.type);
     }
     return targets;
   }
@@ -292,7 +258,7 @@ public class EffectFactory {
     final List<Destroyable> destroyables = new ArrayList<>();
     switch (target.type) {
       case MINION:
-        side.board.stream().forEach(minion -> destroyables.add(minion));
+        side.board.stream().forEach(destroyables::add);
         break;
       case WEAPON:
         if (side.hero.getWeapon().isPresent()) {
@@ -300,7 +266,7 @@ public class EffectFactory {
         }
         break;
       case ALL:
-        side.board.stream().forEach(minion -> destroyables.add(minion));
+        side.board.stream().forEach(destroyables::add);
         if (side.hero.getWeapon().isPresent()) {
           destroyables.add(side.hero.getWeapon().get());
         }
@@ -350,22 +316,18 @@ public class EffectFactory {
   private static Effect getEquipWeaponAction(final Hero hero, final EffectConfig effect) {
     final String weaponName = effect.type;
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
-    Weapon weaponInstance = WeaponFactory.create(weapon);
+    final Weapon weaponInstance = WeaponFactory.create(weapon);
     return new EquipWeaponEffect(hero, weaponInstance);
   }
 
   private static Effect getSummonAction(final EffectConfig effect, final Side side) {
-    List<String> summonChoices = effect.choices.stream()
-        .map(name -> name.toUpperCase()).collect(Collectors.toList());
-    String summonTargetName;
-    if (effect.isUnique) {
-      // Summon candidates must be non-existing on the board to avoid dups.
-      final List<Creature> existingCreatures = side.board.stream()
-          .map(m -> (Creature) m).collect(Collectors.toList());
-      summonTargetName = RandomMinionGenerator.randomUnique(summonChoices, existingCreatures);
-    } else {
-      summonTargetName = RandomMinionGenerator.randomOne(summonChoices);
-    }
+    final List<String> summonChoices = effect.choices.stream()
+        .map(String::toUpperCase)
+        .collect(Collectors.toList());
+    // Summon candidates must be non-existing on the board to avoid dups.
+    final String summonTargetName = effect.isUnique ?
+        RandomMinionGenerator.randomUnique(summonChoices, new ArrayList<>(side.board.asList())) :
+        RandomMinionGenerator.randomOne(summonChoices);
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
     final Minion minion = MinionFactory.create(summonTarget);
     return new SummonEffect(side.board, minion);
@@ -404,7 +366,7 @@ public class EffectFactory {
   }
 
   public static void pipeEffectsByConfig(final Spell spell, final Creature creature) {
-    List<Effect> effects = spell.getEffects().stream()
+    final List<Effect> effects = spell.getEffects().stream()
         .map(effect -> pipeEffectsByConfig(effect, creature)).collect(Collectors.toList());
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }

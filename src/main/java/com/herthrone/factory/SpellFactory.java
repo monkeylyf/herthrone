@@ -2,11 +2,9 @@ package com.herthrone.factory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.EffectConfig;
-import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
@@ -20,10 +18,8 @@ import com.herthrone.object.AuraBuff;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +44,8 @@ public class SpellFactory {
       private final Binder binder = new Binder();
       private final AuraBuff auraBuff = new AuraBuff();
       private final List<EffectConfig> effectConfigs = effects.stream()
-          .map(config -> EffectConfig.clone(config)).collect(Collectors.toList());
+          .map(EffectConfig::clone)
+          .collect(Collectors.toList());
 
       @Override
       public String toString() {

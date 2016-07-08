@@ -1,9 +1,7 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Range;
-import com.google.common.primitives.Ints;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
@@ -23,8 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

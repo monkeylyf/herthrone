@@ -1,13 +1,11 @@
 package com.herthrone.configuration;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
-import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import org.yaml.snakeyaml.Yaml;
 
@@ -80,22 +78,6 @@ public class ConfigLoader {
     return value.toUpperCase();
   }
 
-  public static ConstType getCardTypeByName(final Enum cardName) {
-    if (spellConfigLoader.getConfigurations().containsKey(cardName)) {
-      return ConstType.SPELL;
-    } else if (minionConfigLoader.getConfigurations().containsKey(cardName)) {
-      return ConstType.MINION;
-    } else if (heroConfigLoader.getConfigurations().containsKey(cardName)) {
-      return ConstType.HERO;
-    } else if (heroPowerConfigLoader.getConfigurations().containsKey(cardName)) {
-      return ConstType.HERO_POWER;
-    } else if (weaponConfigLoader.getConfigurations().containsKey(cardName)) {
-      return ConstType.WEAPON;
-    } else {
-      throw new IllegalArgumentException("Unknown card name: " + cardName);
-    }
-  }
-
   public static ResourceBundle getResource() {
     ResourceBundle noneVolatileResource = ConfigLoader.RESOURCE;
     if (noneVolatileResource == null) {
@@ -141,12 +123,6 @@ public class ConfigLoader {
       this.configName = configName;
     }
 
-    public T getConfigByName(final String name) {
-      T config = getConfigurations().get(name);
-      Preconditions.checkNotNull(config, String.format("% % not found", configName, name));
-      return config;
-    }
-
     public synchronized ImmutableMap<Enum, T> getConfigurations() {
       if (configs == null) {
         configs = loadConfiguration();
@@ -155,9 +131,9 @@ public class ConfigLoader {
     }
 
     private ImmutableMap<Enum, T> loadConfiguration() {
-      List<Object> configSection = loadYaml();
-      ImmutableMap.Builder<Enum, T> builder = ImmutableMap.builder();
-      for (Object object : configSection) {
+      final List<Object> configSection = loadYaml();
+      final ImmutableMap.Builder<Enum, T> builder = ImmutableMap.builder();
+      for (final Object object : configSection) {
         final Map map = (Map) object;
         final T config = createInstance(map);
         builder.put(config.name, config);
@@ -166,16 +142,16 @@ public class ConfigLoader {
     }
 
     private List<Object> loadYaml() {
-      Yaml yaml = new Yaml();
+      final Yaml yaml = new Yaml();
       final String configPath = String.format(ConfigLoader.pathTemplate, configName);
-      InputStream input = null;
+      final InputStream input;
       try {
         input = new FileInputStream(new File(configPath));
       } catch (FileNotFoundException e) {
         e.printStackTrace();
         throw new RuntimeException("Configuration file not found: " + configPath);
       }
-      Iterator<Object> iterator = yaml.loadAll(input).iterator();
+      final Iterator<Object> iterator = yaml.loadAll(input).iterator();
       @SuppressWarnings("unchecked") List<Object> configurationSections = (List) iterator.next();
       return configurationSections;
     }
@@ -184,9 +160,6 @@ public class ConfigLoader {
 
   }
 
-  /**
-   * Created by yifengliu on 6/30/16.
-   */
   abstract static class AbstractConfig<E extends Enum<E>> {
 
     private static final String NAME = "name";
@@ -203,7 +176,7 @@ public class ConfigLoader {
     public final int crystal;
     public final boolean isCollectible;
 
-    AbstractConfig(final Map map) {
+    protected AbstractConfig(final Map map) {
       this.name = loadName((String) map.get(NAME));
       this.displayName = getByDefault(map, DISPLAY, lowerUnderscoreToUpperWhitespace(name));
       this.className = ConstClass.valueOf(getUpperCaseStringValue(map, CLASS));

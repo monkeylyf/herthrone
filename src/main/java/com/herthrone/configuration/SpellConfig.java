@@ -25,7 +25,8 @@ public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
     this.targetConfigOptional = (map.containsKey(TARGET)) ?
         Optional.of(new TargetConfig((Map) map.get(TARGET))) : Optional.absent();
     this.effects = ((List<Object>) map.get(MECHANICS)).stream()
-        .map(object -> new EffectConfig((Map) object))
+        .map(object -> (Map) object)
+        .map(EffectConfig::new)
         .collect(Collectors.toList());
   }
 
