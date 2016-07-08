@@ -22,12 +22,6 @@ public class EffectQueue {
     this.queue = new LinkedList<>();
   }
 
-  public void enqueue(final Effect effect) {
-    logger.debug("Enqueuing effect: " + effect.effectType().toString());
-    queue.add(effect);
-    executeUntilEmpty();
-  }
-
   private void executeUntilEmpty() {
     while (!queue.isEmpty()) {
       final Effect effect = queue.remove();

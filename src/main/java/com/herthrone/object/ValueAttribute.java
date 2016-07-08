@@ -13,13 +13,13 @@ import java.util.Map;
 public class ValueAttribute implements Resettable, Round {
 
   private final Buff buff;
-  private final int rawValue;
+  private final Value rawValue;
   private final AuraBuff auraBuff;
   private Value currentValue;
 
   public ValueAttribute(final int value) {
     this.currentValue = new Value(value);
-    this.rawValue = value;
+    this.rawValue = new Value(value);
     this.auraBuff = new AuraBuff();
     this.buff = new Buff();
   }
@@ -41,7 +41,7 @@ public class ValueAttribute implements Resettable, Round {
   }
 
   public void reset() {
-    currentValue.setTo(rawValue);
+    currentValue.setTo(rawValue.value());
     buff.reset();
     auraBuff.reset();
   }

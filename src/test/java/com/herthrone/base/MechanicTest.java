@@ -607,6 +607,20 @@ public class MechanicTest extends TestCase {
     gm.activeSide.bind(frostwolfWarlord);
 
     gm.playCard(frostwolfWarlord);
-    System.out.println(frostwolfWarlord);
+    // TODO: not finished.
+  }
+
+  @Test
+  public void testTakeDamage() {
+    final Minion gurubashiBerserker = MinionFactory.create(ConstMinion.GURUBASHI_BERSERKER);
+    gm.activeSide.bind(gurubashiBerserker);
+
+    final int attack = gurubashiBerserker.attack().value();
+    gm.playCard(gurubashiBerserker);
+
+    for (int i = 1; i <= gurubashiBerserker.health().value(); ++i) {
+      gurubashiBerserker.takeDamage(1);
+      assertThat(gurubashiBerserker.attack().value()).isEqualTo(attack + 3 * i);
+    }
   }
 }

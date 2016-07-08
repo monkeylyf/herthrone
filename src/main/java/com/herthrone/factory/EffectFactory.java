@@ -63,6 +63,7 @@ public class EffectFactory {
         break;
       case Constant.MAX_HEALTH:
         target.maxHealth().addAuraBuff(minion, effectConfig.value);
+        target.health().addAuraBuff(minion, effectConfig.value);
         break;
       default:
         throw new RuntimeException(effectConfig.type + " not supported for aura");
@@ -79,6 +80,8 @@ public class EffectFactory {
         target.health().removeAuraBuff(minion);
         break;
       case Constant.MAX_HEALTH:
+        // TODO: this is incorrect..
+        target.health().removeAuraBuff(minion);
         target.maxHealth().removeAuraBuff(minion);
         break;
       default:
@@ -212,6 +215,8 @@ public class EffectFactory {
     switch (effect) {
       case ATTRIBUTE:
         return getAttributeEffect(config, creature);
+      case BUFF:
+        return getBuffEffect(config, creature);
       case CRYSTAL:
         return getCrystalEffect(config, creature);
       case DRAW:
@@ -234,6 +239,29 @@ public class EffectFactory {
         return getEquipWeaponEffect((Hero) creature, config);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
+    }
+  }
+
+  private static List<Effect> getBuffEffect(final EffectConfig effect, final Creature creature) {
+    final Side side = creature.binder().getSide();
+    final String type = effect.type;
+    switch (type) {
+      case (Constant.HEALTH):
+        return Arrays.asList(getHealthAttributeEffect(creature, effect));
+      case (Constant.ATTACK):
+        return Arrays.asList(getGeneralAttributeEffect(side, creature.attack(), effect));
+      case (Constant.CRYSTAL):
+        return Arrays.asList(getGeneralAttributeEffect(side, creature.manaCost(), effect));
+      case (Constant.MAX_HEALTH):
+        return Arrays.asList(
+            getGeneralAttributeEffect(side, creature.maxHealth(), effect),
+            getHealthAttributeEffect(creature, effect));
+      case (Constant.ARMOR):
+        Preconditions.checkArgument(
+            creature instanceof Hero, "Armor Attribute does not applies to " + creature.type());
+        return Arrays.asList(getGeneralAttributeEffect(side, ((Hero) creature).armor(), effect));
+      default:
+        throw new IllegalArgumentException("Unknown effect type: " + type);
     }
   }
 
@@ -372,6 +400,7 @@ public class EffectFactory {
       value = effect.value;
       Preconditions.checkArgument(value != 0, "Health change must be non-zero");
     }
+
     final int adjustChange = (value > 0) ? Math.min(value, creature.healthLoss()) : value;
     return new AttributeEffect(creature.health(), adjustChange, effect.isPermanent);
   }
@@ -420,23 +449,28 @@ public class EffectFactory {
   public static class AttackFactory {
 
     public static void getPhysicalDamageEffect(final Creature attacker, final Creature attackee) {
-      final Effect effect = attacker.booleanMechanics().has(ConstMechanic.FORGETFUL) ?
-          getForgetfulPhysicalDamageEffect(attacker, attackee) : new PhysicalDamageEffect(attacker, attackee);
-      attacker.binder().getSide().getEffectQueue().enqueue(effect);
+      final List<Effect> effects = attacker.booleanMechanics().has(ConstMechanic.FORGETFUL) ?
+          getForgetfulPhysicalDamageEffect(attacker, attackee) :
+          Arrays.asList(new PhysicalDamageEffect(attacker, attackee));
+      attacker.binder().getSide().getEffectQueue().enqueue(effects);
     }
 
-    private static Effect getForgetfulPhysicalDamageEffect(final Creature attacker, final Creature attackee) {
+    private static List<Effect> getForgetfulPhysicalDamageEffect(final Creature attacker, final
+    Creature attackee) {
       final boolean isForgetfulToPickNewTarget = RandomMinionGenerator.getBool();
+      final Effect attackEffect;
       if (isForgetfulToPickNewTarget) {
         logger.debug("Forgetful triggered");
         final Creature substituteAttackee = RandomMinionGenerator.randomExcept(attackee.binder().getSide().allCreatures(), attackee);
         logger.debug(String.format("Change attackee from %s to %s", attackee.toString(), substituteAttackee.toString()));
         Preconditions.checkArgument(substituteAttackee != attackee);
-        return new PhysicalDamageEffect(attacker, substituteAttackee);
+        attackEffect = new PhysicalDamageEffect(attacker, substituteAttackee);
       } else {
         logger.debug("Forgetful not triggered");
-        return new PhysicalDamageEffect(attacker, attackee);
+        attackEffect = new PhysicalDamageEffect(attacker, attackee);
       }
+
+      return Arrays.asList(attackEffect);
     }
   }
 }

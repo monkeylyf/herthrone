@@ -24,6 +24,7 @@ public enum ConstMechanic {
   CHOOSE_ONE,
   COMBO,
   COPY,
+  TAKE_DAMAGE,
   DEAL_DAMAGE,
   DEATHRATTLE,
   DESTROY,

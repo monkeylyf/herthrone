@@ -333,14 +333,6 @@
       target:
         scope: own
         type: minion
-    - name: aura
-      trigger: on_presence
-      effect: attribute
-      type: health
-      value: 1
-      target:
-        scope: own
-        type: minion
 
 - name: bloodfen_raptor
   class: neutral
@@ -626,7 +618,7 @@
   mechanics:
     - name: battlecry
       trigger: on_play
-      effect: attribute
+      effect: buff
       type: max_health
       value_dependency: board_size
       value: 0
@@ -635,10 +627,231 @@
         type: board
     - name: battlecry
       trigger: on_play
-      effect: attribute
+      effect: buff
       type: attack
       value_dependency: board_size
       value: 0
       target:
         scope: own
         type: board
+
+- name: goldshire_footman
+  class: neutral
+  attack: 1
+  health: 2
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: taunt
+
+- name: grimscale_oracle
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  type: murloc
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: attribute
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: murloc
+
+- name: gurubashi_berserker
+  class: neutral
+  attack: 2
+  health: 7
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: take_damage
+      trigger: on_take_damage
+      effect: attribute
+      type: attack
+      value: 3
+      target:
+        scope: own
+        type: minion
+
+- name: ironforge_rifleman
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: -1
+      target:
+        scope: opponent
+        type: all
+
+- name: kobold_geomancer
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: lord_of_the_arena
+  class: neutral
+  attack: 6
+  health: 5
+  crystal: 6
+  collectible: true
+  mechanics:
+    - name: taunt
+
+- name: murloc_tidehunter
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 2
+  type: murloc
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: opponent
+        type: board
+      choices:
+        - murloc_scout
+
+- name: murloc_scout
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 0
+  type: murloc
+  collectible: false
+
+- name: ogre_magi
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: razorfen_hunter
+  class: neutral
+  attack: 2
+  health: 3
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices:
+        - boar
+
+- name: boar
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  type: beast
+  collectible: true
+
+- name: shattered_sun_cleric
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: max_health
+      value: 1
+      target:
+        scope: own
+        type: minion
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: silverback_patriarch
+  class: neutral
+  attack: 1
+  health: 4
+  crystal: 3
+  type: beast
+  collectible: true
+  mechanics:
+    - name: taunt
+
+- name: stormpike_commando
+  class: neutral
+  attack: 4
+  health: 2
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: -2
+      target:
+        scope: opponent
+        type: all
+
+- name: stormwind_knight
+  class: neutral
+  attack: 2
+  health: 5
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: charge
+
+- name: war_golem
+  class: neutral
+  attack: 7
+  health: 7
+  crystal: 7
+  collectible: true
