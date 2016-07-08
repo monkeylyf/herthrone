@@ -82,7 +82,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1AttackHero2() {
-    EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, hero2);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero1, hero2);
   }
 
   @Test
@@ -107,7 +107,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero2AttackHero1() {
-    EffectFactory.AttackFactory.getPhysicalDamageAction(hero2, hero1);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero2, hero1);
   }
 
   @Test
@@ -174,7 +174,7 @@ public class HeroTest extends TestCase {
   public void testHeroAttackMinion() {
     hero1.equip(weapon1);
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(yeti, hero1);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, hero1);
     assertEquals(0, yeti.healthLoss());
     assertEquals(yeti.attack().value(), hero1.healthLoss());
   }
@@ -182,7 +182,7 @@ public class HeroTest extends TestCase {
   @Test
   public void testMinionAttackHero() {
     hero1.equip(weapon1);
-    EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, yeti);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero1, yeti);
 
     assertEquals(weapon1.getAttackAttr().value(), yeti.healthLoss());
     assertEquals(yeti.attack().value(), hero1.healthLoss());

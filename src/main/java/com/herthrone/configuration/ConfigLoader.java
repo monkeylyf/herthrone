@@ -1,6 +1,7 @@
 package com.herthrone.configuration;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
@@ -76,6 +77,15 @@ public class ConfigLoader {
   static String getUpperCaseStringValue(final Map map, final String key) {
     final String value = (String) map.get(key);
     return value.toUpperCase();
+  }
+
+  static Objects.ToStringHelper addIfConditionIsTrue(final boolean condition,
+                                                     final Objects.ToStringHelper toStringHelper,
+                                                     final String key, final Object object) {
+    if (condition) {
+      toStringHelper.add(key, object.toString());
+    }
+    return toStringHelper;
   }
 
   public static ResourceBundle getResource() {

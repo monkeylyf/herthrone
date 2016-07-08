@@ -135,7 +135,7 @@ public class MinionFactory {
         final List<Effect> onSummonEffects = board.stream()
             .sorted(EffectFactory.compareBySequenceId)
             .flatMap(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_SUMMON).stream())
-            .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
+            .flatMap(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this).stream())
             .collect(Collectors.toList());
 
         // Put minion onto board.

@@ -538,6 +538,7 @@
   attack: 1
   health: 4
   crystal: 3
+  collectible: true
   mechanics:
     - name: aura
       trigger: on_spell_damage
@@ -553,6 +554,7 @@
   attack: 4
   health: 5
   crystal: 5
+  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -562,3 +564,81 @@
       target:
         scope: own
         type: minion
+
+- name: dragonling_mechanic
+  class: neutral
+  attack: 2
+  health: 4
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: board
+      value: 1
+      target:
+        scope: own
+        type: minion
+      choices:
+        - mechanical_dragonling
+
+- name: mechanical_dragonling
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  type: mech
+  collectible: false
+
+- name: elven_archer
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: -1
+      target:
+        scope: opponent
+        type: all
+
+- name: frostwolf_grunt
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: taunt
+
+- name: frostwolf_warlord
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: attribute
+      type: max_health
+      value_dependency: board_size
+      value: 0
+      target:
+        scope: own
+        type: board
+    - name: battlecry
+      trigger: on_play
+      effect: attribute
+      type: attack
+      value_dependency: board_size
+      value: 0
+      target:
+        scope: own
+        type: board

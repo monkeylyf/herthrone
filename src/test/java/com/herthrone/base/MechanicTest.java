@@ -136,14 +136,14 @@ public class MechanicTest extends TestCase {
     final BooleanAttribute divineShield = scarletCrusader.booleanMechanics().get(ConstMechanic.DIVINE_SHIELD).get();
     assertThat(divineShield.isOn()).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, scarletCrusader);
 
     // Yeti takes damage. Crusader takes no damage because of divine shield.
     assertThat(divineShield.isOn()).isFalse();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
     assertThat(yeti.healthLoss()).isGreaterThan(0);
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(yeti, scarletCrusader);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, scarletCrusader);
 
     // Crusader has no more divine shield and takes damage.
     assertThat(scarletCrusader.isDead()).isTrue();
@@ -161,7 +161,7 @@ public class MechanicTest extends TestCase {
     assertThat(stealth.isPresent()).isTrue();
     assertThat(stealth.get().isOn()).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(worgenInfiltrator, stoneclawTotem);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(worgenInfiltrator, stoneclawTotem);
 
     // Stealth deactivated after attack.
     assertThat(stealth.isPresent()).isTrue();
@@ -171,12 +171,12 @@ public class MechanicTest extends TestCase {
   @Test
   public void testFreeze() {
     // Scarlet crusader has divine shield so take no damage. No damage no frozen.
-    EffectFactory.AttackFactory.getPhysicalDamageAction(waterElemental, scarletCrusader);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(waterElemental, scarletCrusader);
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
     assertThat(scarletCrusader.booleanMechanics().get(ConstMechanic.FROZEN).isPresent()).isFalse();
 
     // Yeti takes damage and gets frozen.
-    EffectFactory.AttackFactory.getPhysicalDamageAction(waterElemental, yeti);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(waterElemental, yeti);
     final Optional<BooleanAttribute> frozen = yeti.booleanMechanics().get(ConstMechanic.FROZEN);
     assertThat(yeti.healthLoss()).isGreaterThan(0);
     assertThat(frozen.isPresent()).isTrue();
@@ -185,12 +185,12 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testFrozen() {
-    EffectFactory.AttackFactory.getPhysicalDamageAction(yeti, waterElemental);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, waterElemental);
     final Optional<BooleanAttribute> frozen = yeti.booleanMechanics().get(ConstMechanic.FROZEN);
     assertThat(frozen.isPresent()).isTrue();
     assertThat(frozen.get().isOn()).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(waterElemental, hero);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(waterElemental, hero);
 
     final Optional<BooleanAttribute> heroFrozen = yeti.booleanMechanics().get(ConstMechanic.FROZEN);
 
@@ -204,21 +204,21 @@ public class MechanicTest extends TestCase {
     Minion emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
     gm.playCard(emperorCobra);
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(emperorCobra, hero);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(emperorCobra, hero);
 
     // Poison does not trigger destroy on Hero.
     assertThat(emperorCobra.healthLoss()).isEqualTo(0);
     assertThat(hero.isDead()).isFalse();
 
     // Point triggers destroy on Minion when minion is damaged.
-    EffectFactory.AttackFactory.getPhysicalDamageAction(emperorCobra, yeti);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(emperorCobra, yeti);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(yeti.healthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
     emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
     gm.playCard(emperorCobra);
-    EffectFactory.AttackFactory.getPhysicalDamageAction(emperorCobra, scarletCrusader);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
     assertThat(activeSide.board.contains(emperorCobra)).isFalse();
@@ -259,7 +259,7 @@ public class MechanicTest extends TestCase {
     ogreBrute.health().getTemporaryBuff().increase(buffHealth);
 
     for (int i = 0; i < total; ++i) {
-      EffectFactory.AttackFactory.getPhysicalDamageAction(ogreBrute, inactiveSide.hero);
+      EffectFactory.AttackFactory.getPhysicalDamageEffect(ogreBrute, inactiveSide.hero);
     }
     Range<Double> mainTargetGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter), total * forgetfulFactor * (1 + jitter));
     Range<Double> otherTargetsGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter) / minionNum, total * forgetfulFactor * (1 + jitter) / minionNum);
@@ -490,7 +490,7 @@ public class MechanicTest extends TestCase {
   }
 
   @Test
-  public void testDealDamageAsBattlecry() {
+  public void testDealDamageAsBattlecryWithoutTarget() {
     final Minion nightblade = createAndBindMinion(ConstMinion.NIGHTBLADE);
     gm.playCard(nightblade);
     assertThat(inactiveSide.hero.healthLoss()).isAtLeast(1);
@@ -590,5 +590,23 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.healthLoss()).isEqualTo(damage - 2);
     assertThat(waterElemental.healthLoss()).isEqualTo(damage - 2);
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
+  }
+
+  @Test
+  public void testDealDamageAsBattlecryWithTarget() {
+    final Minion elvenArcher = MinionFactory.create(ConstMinion.ELVEN_ARCHER);
+    gm.activeSide.bind(elvenArcher);
+    gm.playCard(elvenArcher, gm.inactiveSide.hero);
+
+    assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(1);
+  }
+
+  @Test
+  public void testEffectDependingOnBoardSize() {
+    final Minion frostwolfWarlord = MinionFactory.create(ConstMinion.FROSTWOLF_WARLORD);
+    gm.activeSide.bind(frostwolfWarlord);
+
+    gm.playCard(frostwolfWarlord);
+    System.out.println(frostwolfWarlord);
   }
 }

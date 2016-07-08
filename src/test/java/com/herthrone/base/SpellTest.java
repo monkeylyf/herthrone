@@ -39,6 +39,7 @@ public class SpellTest extends TestCase {
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
     this.minion = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(minion);
   }
 
   @Test
@@ -137,7 +138,7 @@ public class SpellTest extends TestCase {
     EffectFactory.pipeEffectsByConfig(daggerMastery, hero1);
     assertThat(hero1.canDamage()).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageAction(hero1, hero2);
+    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero1, hero2);
     assertThat(daggerMastery.getEffects().get(0).value).isEqualTo(hero2.healthLoss());
   }
 

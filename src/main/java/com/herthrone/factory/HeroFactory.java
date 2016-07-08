@@ -239,7 +239,7 @@ public class HeroFactory {
         List<Effect> useHeroPowerMechanics = side.board.stream()
             .sorted(EffectFactory.compareBySequenceId)
             .flatMap(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_USE_HERO_POWER).stream())
-            .map(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this))
+            .flatMap(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this).stream())
             .collect(Collectors.toList());
 
         side.getEffectQueue().enqueue(useHeroPowerMechanics);

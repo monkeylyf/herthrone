@@ -266,7 +266,7 @@ public class GameManager implements Round {
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MINION_ATTACK.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      EffectFactory.AttackFactory.getPhysicalDamageAction(attacker, attackee);
+      EffectFactory.AttackFactory.getPhysicalDamageEffect(attacker, attackee);
       // Cost one move point.
       attacker.attackMovePoints().getTemporaryBuff().increase(-1);
     } else {
