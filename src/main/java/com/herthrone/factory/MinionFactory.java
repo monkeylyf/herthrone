@@ -124,8 +124,7 @@ public class MinionFactory {
         // TODO: on-play mechanics happen before summon triggered events.
         summonOnBoard(board);
         // On-play mechanics.
-        List<MechanicConfig> onPlayEffects = getEffectMechanics().get(ConstTrigger.ON_PLAY);
-        onPlayEffects.stream()
+        getEffectMechanics().get(ConstTrigger.ON_PLAY).stream()
             .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                 Optional.of(mechanic), binder().getSide(), this, target));
       }
@@ -256,19 +255,24 @@ public class MinionFactory {
       @Override
       public boolean takeDamage(final int damage) {
         final Optional<BooleanAttribute> divineShield = booleanMechanics.get(ConstMechanic.DIVINE_SHIELD);
-        final boolean willTakeDamage = !BooleanAttribute.isPresentAndOn(divineShield);
-        if (willTakeDamage) {
+        final boolean isDamaged = !BooleanAttribute.isPresentAndOn(divineShield);
+        if (isDamaged) {
           healthAttr.decrease(damage);
         } else {
           logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
           booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
         }
 
+        if (isDamaged) {
+          getEffectMechanics().get(ConstTrigger.ON_TAKE_DAMAGE).stream()
+              .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                  Optional.of(mechanic), binder().getSide(), this, this));
+        }
         if (isDead()) {
           death();
         }
 
-        return willTakeDamage;
+        return isDamaged;
       }
 
       @Override
