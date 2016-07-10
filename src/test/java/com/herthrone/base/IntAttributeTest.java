@@ -1,7 +1,6 @@
 package com.herthrone.base;
 
 import com.herthrone.object.ValueAttribute;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

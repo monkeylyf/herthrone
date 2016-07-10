@@ -11,8 +11,7 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.object.BooleanMechanics;
-import com.herthrone.object.EffectMechanics;
+import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 
 import java.util.List;
@@ -44,8 +43,7 @@ public class WeaponFactory {
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);
       private final ValueAttribute durabilityAttr = new ValueAttribute(durability);
-      private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
-      private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
+      private final TriggeringMechanics triggeringMechanics = new TriggeringMechanics(mechanics);
       private final Binder binder = new Binder();
 
       @Override
@@ -110,14 +108,8 @@ public class WeaponFactory {
         return attackAttr;
       }
 
-      @Override
-      public EffectMechanics getEffectMechanics() {
-        return effectMechanics;
-      }
-
-      @Override
-      public BooleanMechanics getBooleanMechanics() {
-        return booleanMechanics;
+      public TriggeringMechanics getTriggeringMechanics() {
+        return triggeringMechanics;
       }
     };
   }

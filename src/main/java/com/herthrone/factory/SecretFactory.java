@@ -7,6 +7,7 @@ import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
+import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
@@ -64,6 +65,12 @@ public class SecretFactory {
       public Binder binder() {
         return binder;
       }
+
+      @Override
+      public TriggeringMechanics getTriggeringMechanics() {
+        return null;
+      }
+
     };
   }
 }

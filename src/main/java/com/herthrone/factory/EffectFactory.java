@@ -118,54 +118,18 @@ public class EffectFactory {
   public static void triggerEndTurnMechanics(final Side side) {
     List<Minion> minions = side.board.stream()
         .sorted(compareBySequenceId)
-        .filter(minion -> minion.getEffectMechanics().has(ConstTrigger.ON_END_TURN))
+        .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_END_TURN))
         .collect(Collectors.toList());
 
     for (final Minion minion : minions) {
-      for (MechanicConfig mechanic : minion.getEffectMechanics().get(ConstTrigger.ON_END_TURN)) {
-        final List<Creature> targets = getProperTargets(mechanic.effect.get().target, side, minion);
+      for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(ConstTrigger.ON_END_TURN)) {
+        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.effect.get().target, side, minion);
         final List<Effect> effects = targets.stream()
             .flatMap(target -> pipeMechanicEffect(mechanic, target).stream())
             .collect(Collectors.toList());
         side.getEffectQueue().enqueue(effects);
       }
     }
-  }
-
-  static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side,
-                                         final Creature caster) {
-    switch (targetConfig.scope) {
-      case OWN:
-        return getProperTargetsBySide(targetConfig, side, caster);
-      case OPPONENT:
-        return getProperTargetsBySide(targetConfig, side.getOpponentSide(), caster);
-      case ALL:
-        final List<Creature> targets = getProperTargetsBySide(targetConfig, side, caster);
-        targets.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide(), caster));
-        return targets;
-      default:
-        throw new RuntimeException("Unknown scope: " + targetConfig.scope);
-    }
-  }
-
-  private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
-                                                       final Side side, final Creature caster) {
-    final List<Creature> targets = new ArrayList<>();
-    switch (targetConfig.type) {
-      case HERO:
-        targets.add(side.hero);
-        break;
-      case MINION:
-        side.board.stream().sorted(EffectFactory.compareBySequenceId).forEach(targets::add);
-        break;
-      case ALL:
-        side.board.stream().sorted(EffectFactory.compareBySequenceId).forEach(targets::add);
-        targets.add(side.hero);
-        break;
-      default:
-        targets.add(caster);
-    }
-    return targets;
   }
 
   private static boolean isConditionTriggered(final Optional<EffectConfig> effectConfigOptional,
@@ -181,7 +145,7 @@ public class EffectFactory {
         case COMBO:
           return target.binder().getSide().replay.size() > 1;
         case WEAPON_EQUIPED:
-          final List<Destroyable> destroyables = getDestroyables(
+          final List<Destroyable> destroyables = TargetFactory.getDestroyables(
               effectConfigOptional.get().target, target.binder().getSide());
           if (destroyables.size() == 0) {
             return false;
@@ -282,48 +246,9 @@ public class EffectFactory {
   }
 
   private static List<Effect> getDestroyEffect(final EffectConfig config, final Creature creature) {
-    return getDestroyables(config.target, creature.binder().getSide()).stream()
+    return TargetFactory.getDestroyables(config.target, creature.binder().getSide()).stream()
         .map(DestroyEffect::new)
         .collect(Collectors.toList());
-  }
-
-  private static List<Destroyable> getDestroyables(final TargetConfig target, final Side side) {
-    switch (target.scope) {
-      case OWN:
-        return getDestroyablesBySide(target, side);
-      case OPPONENT:
-        return getDestroyablesBySide(target, side.getOpponentSide());
-      case ALL:
-        final List<Destroyable> targets = getDestroyablesBySide(target, side);
-        targets.addAll(getDestroyablesBySide(target, side.getOpponentSide()));
-        return targets;
-      default:
-        throw new RuntimeException("Unknown scope: " + target.scope);
-    }
-  }
-
-  private static List<Destroyable> getDestroyablesBySide(final TargetConfig target,
-                                                         final Side side) {
-    final List<Destroyable> destroyables = new ArrayList<>();
-    switch (target.type) {
-      case MINION:
-        side.board.stream().forEach(destroyables::add);
-        break;
-      case WEAPON:
-        if (side.hero.getWeapon().isPresent()) {
-          destroyables.add(side.hero.getWeapon().get());
-        }
-        break;
-      case ALL:
-        side.board.stream().forEach(destroyables::add);
-        if (side.hero.getWeapon().isPresent()) {
-          destroyables.add(side.hero.getWeapon().get());
-        }
-        break;
-      default:
-        throw new RuntimeException("Unknown type: " + target.type);
-    }
-    return destroyables;
   }
 
   private static List<Effect> getReturnToHandEffect(final Minion target) {

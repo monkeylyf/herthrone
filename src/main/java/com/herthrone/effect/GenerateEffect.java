@@ -2,15 +2,14 @@ package com.herthrone.effect;
 
 import com.herthrone.base.Card;
 import com.herthrone.base.Effect;
-import com.herthrone.base.Minion;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstType;
+import com.herthrone.factory.TargetFactory;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,28 +36,12 @@ public class GenerateEffect implements Effect {
 
   @Override
   public void act() {
-    List<Side> sideToTakeEffect = new ArrayList<>();
-    switch (target.scope) {
-      case ALL:
-        sideToTakeEffect.add(side);
-        sideToTakeEffect.add(side.getOpponentSide());
-        break;
-      case OWN:
-        sideToTakeEffect.add(side);
-        break;
-      case OPPONENT:
-        sideToTakeEffect.add(side.getOpponentSide());
-        break;
-      default:
-        throw new RuntimeException("Unknown target scope: " + target.scope);
-    }
+    final List<Side> sideToTakeEffect = TargetFactory.getSide(target, side);
 
     sideToTakeEffect.stream().forEach(side -> {
       final String randomCardName = RandomMinionGenerator.randomOne(cardNames);
       final Card card = GameManager.createCardInstance(randomCardName, cardType);
-      if (card instanceof Minion) {
-        card.binder().bind(side);
-      }
+      side.bind(card);
 
       switch (target.type) {
         case HAND:

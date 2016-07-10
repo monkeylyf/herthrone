@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 /**
  * Created by yifengliu on 6/14/16.
  */
-public class EffectMechanics {
+public class TriggeringMechanics {
 
   private final Map<ConstTrigger, List<MechanicConfig>> mechanics;
 
-  public EffectMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
+  public TriggeringMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     this.mechanics = mechanics.entrySet().stream()
         .filter(entry -> !entry.getKey().equals(ConstTrigger.NO_TRIGGER))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

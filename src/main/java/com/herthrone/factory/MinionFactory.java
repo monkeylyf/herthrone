@@ -8,7 +8,6 @@ import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstClass;
@@ -20,14 +19,12 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.object.BooleanAttribute;
 import com.herthrone.object.BooleanMechanics;
-import com.herthrone.object.EffectMechanics;
+import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -44,7 +41,7 @@ public class MinionFactory {
   private static final Logger logger = Logger.getLogger(MinionFactory.class.getName());
 
   public static Minion create(final ConstMinion minionName) {
-    MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
+    final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
     return create(config.health, config.attack, config.crystal, config.className,
         config.name, config.displayName, config.isCollectible, config.mechanics);
@@ -61,7 +58,7 @@ public class MinionFactory {
       private final ValueAttribute attackAttr = new ValueAttribute(attack);
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
-      private final EffectMechanics effectMechanics = new EffectMechanics(mechanics);
+      private final TriggeringMechanics effectMechanics = new TriggeringMechanics(mechanics);
       private final ValueAttribute movePoints = new ValueAttribute(
           booleanMechanics.has(ConstMechanic.WINDFURY) ?
               WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
@@ -70,7 +67,7 @@ public class MinionFactory {
       private OptionalInt seqId = OptionalInt.empty();
 
       @Override
-      public EffectMechanics getEffectMechanics() {
+      public TriggeringMechanics getTriggeringMechanics() {
         return effectMechanics;
       }
 
@@ -101,39 +98,21 @@ public class MinionFactory {
       @Override
       public void playOnBoard(final Container<Minion> board) {
         summonOnBoard(board);
-        // On-play mechanics.
-        final List<MechanicConfig> onPlayMechanics = getEffectMechanics().get(ConstTrigger.ON_PLAY);
-        final Side side = binder().getSide();
-        onPlayMechanics.stream()
-            .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
-            .forEach(mechanic -> {
-              final EffectConfig effectConfig = mechanic.effect.get();
-              List<Creature> targets = EffectFactory.getProperTargets(
-                  effectConfig.target, side, this);
-              targets = effectConfig.isRandom ?
-                  Arrays.asList(RandomMinionGenerator.randomOne(targets)) : targets;
-              targets.stream().forEach(
-                  target -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                      Optional.of(mechanic), side, this, target)
-              );
-            });
+        TriggerFactory.trigger(this, ConstTrigger.ON_PLAY, binder().getSide(), this);
       }
 
       @Override
       public void playOnBoard(final Container<Minion> board, final Creature target) {
         // TODO: on-play mechanics happen before summon triggered events.
         summonOnBoard(board);
-        // On-play mechanics.
-        getEffectMechanics().get(ConstTrigger.ON_PLAY).stream()
-            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), this, target));
+        TriggerFactory.activeTrigger(this, ConstTrigger.ON_PLAY, binder().getSide(), this, target);
       }
 
       @Override
       public void summonOnBoard(final Container<Minion> board) {
         final List<Effect> onSummonEffects = board.stream()
             .sorted(EffectFactory.compareBySequenceId)
-            .flatMap(minion -> minion.getEffectMechanics().get(ConstTrigger.ON_SUMMON).stream())
+            .flatMap(minion -> minion.getTriggeringMechanics().get(ConstTrigger.ON_SUMMON).stream())
             .flatMap(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this).stream())
             .collect(Collectors.toList());
 
@@ -141,13 +120,13 @@ public class MinionFactory {
         board.add(this);
 
         final boolean boardHasAura = board.stream().anyMatch(
-            minion -> minion.getEffectMechanics().has(ConstTrigger.ON_PRESENCE));
+            minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_PRESENCE));
         if (boardHasAura) {
           logger.debug("Updating aura effects on all minions");
           board.stream().forEach(Minion::refresh);
         }
 
-        if (getEffectMechanics().has(ConstTrigger.ON_SPELL_DAMAGE)) {
+        if (getTriggeringMechanics().has(ConstTrigger.ON_SPELL_DAMAGE)) {
           binder().getSide().hand.stream()
               .filter(card -> card instanceof Spell)
               .map(card -> (Spell) card)
@@ -264,7 +243,7 @@ public class MinionFactory {
         }
 
         if (isDamaged) {
-          getEffectMechanics().get(ConstTrigger.ON_TAKE_DAMAGE).stream()
+          getTriggeringMechanics().get(ConstTrigger.ON_TAKE_DAMAGE).stream()
               .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                   Optional.of(mechanic), binder().getSide(), this, this));
         }
@@ -291,7 +270,7 @@ public class MinionFactory {
         side.board.remove(this);
 
         // Remove aura effects if the dead one has it.
-        getEffectMechanics().get(ConstTrigger.ON_PRESENCE).stream()
+        getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
             .forEach(config -> {
               side.board.stream()
                   .filter(minion -> {
@@ -307,11 +286,8 @@ public class MinionFactory {
             .map(card -> (Spell) card)
             .forEach(Spell::refresh);
 
-        // Trigger deathrattle if the dead one has it.
-        getEffectMechanics().get(ConstTrigger.ON_DEATH).stream()
-            .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanic), binder().getSide(), this, this));
-      }
+        TriggerFactory.activeTrigger(this, ConstTrigger.ON_DEATH, binder().getSide(), this, this);
+     }
 
       @Override
       public boolean canMove() {
@@ -338,10 +314,10 @@ public class MinionFactory {
         final Container<Minion> board = binder().getSide().board;
         // Refresh aura effects.
         final List<Minion> auraMinions = binder().getSide().board.stream()
-            .filter(minion -> minion.getEffectMechanics().has(ConstTrigger.ON_PRESENCE))
+            .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_PRESENCE))
             .collect(Collectors.toList());
         for (final Minion auraMinion : auraMinions) {
-          final List<MechanicConfig> onPresenceConfigs = auraMinion.getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
+          final List<MechanicConfig> onPresenceConfigs = auraMinion.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE);
           if (this != auraMinion) {
             onPresenceConfigs.stream().forEach(
                 config -> {
