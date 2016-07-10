@@ -22,9 +22,11 @@ import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.effect.AttributeEffect;
+import com.herthrone.effect.BuffEffect;
 import com.herthrone.effect.DestroyEffect;
 import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
+import com.herthrone.effect.MaxHealthBuffEffect;
 import com.herthrone.effect.MoveCardEffect;
 import com.herthrone.effect.OverloadEffect;
 import com.herthrone.effect.PhysicalDamageEffect;
@@ -246,23 +248,37 @@ public class EffectFactory {
     final Side side = creature.binder().getSide();
     final String type = effect.type;
     switch (type) {
-      case (Constant.HEALTH):
-        return Arrays.asList(getHealthAttributeEffect(creature, effect));
       case (Constant.ATTACK):
-        return Arrays.asList(getGeneralAttributeEffect(side, creature.attack(), effect));
+        return Arrays.asList(getGeneralBuffEffect(side, creature.attack(), effect));
       case (Constant.CRYSTAL):
-        return Arrays.asList(getGeneralAttributeEffect(side, creature.manaCost(), effect));
+        return Arrays.asList(getGeneralBuffEffect(side, creature.manaCost(), effect));
       case (Constant.MAX_HEALTH):
-        return Arrays.asList(
-            getGeneralAttributeEffect(side, creature.maxHealth(), effect),
-            getHealthAttributeEffect(creature, effect));
-      case (Constant.ARMOR):
         Preconditions.checkArgument(
-            creature instanceof Hero, "Armor Attribute does not applies to " + creature.type());
-        return Arrays.asList(getGeneralAttributeEffect(side, ((Hero) creature).armor(), effect));
+            creature instanceof Minion, "max health buff does not support: " + creature.type());
+        return Arrays.asList(getMaxHealthBuffEffect((Minion) creature, effect));
       default:
-        throw new IllegalArgumentException("Unknown effect type: " + type);
+        throw new IllegalArgumentException("Unknown effect type for buff: " + type);
     }
+  }
+
+  private static Effect getMaxHealthBuffEffect(final Minion minion, final EffectConfig effect) {
+    final int gain = getGain(minion.binder().getSide(), effect);
+    return new MaxHealthBuffEffect(minion, gain);
+  }
+
+  private static int getGain(final Side side, final EffectConfig effectConfig) {
+    if (effectConfig.valueDependency.isPresent()) {
+      return getValueByDependency(effectConfig.valueDependency.get(), side);
+    } else {
+      Preconditions.checkArgument(effectConfig.value != 0, "Gain value must be non-zero");
+      return effectConfig.value;
+    }
+  }
+
+  private static Effect getGeneralBuffEffect(final Side side, final ValueAttribute attribute,
+                                             final EffectConfig effect) {
+    final int gain = getGain(side, effect);
+    return new BuffEffect(attribute, gain, effect.isPermanent);
   }
 
   private static List<Effect> getDestroyEffect(final EffectConfig config, final Creature creature) {
@@ -408,7 +424,8 @@ public class EffectFactory {
   private static int getValueByDependency(final ConstDependency constDependency, final Side side) {
     switch (constDependency) {
       case BOARD_SIZE:
-        return side.board.size();
+        // Minus one because at this moment the minion is put on board already.
+        return side.board.size() - 1;
       case HEALTH_LOSS:
         return side.hero.healthLoss();
       case MINIONS_PLAYED:

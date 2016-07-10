@@ -14,6 +14,7 @@ public enum ConstEffectType {
   DRAW,
   EQUIP_WEAPON,
   GENERATE,
+  MAX_HEALTH_BUFF,
   MOVE_CARD,
   PLAY_MINION,
   RETURN_TO_HAND,

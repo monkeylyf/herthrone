@@ -17,6 +17,8 @@ import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +29,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Created by yifeng on 4/4/16.
  */
+@RunWith(JUnit4.class)
 public class HeroTest extends TestCase {
 
   private final int weaponAttackVal1 = 2;

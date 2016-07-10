@@ -319,7 +319,7 @@
   mechanics:
     - name: aura
       trigger: on_presence
-      effect: attribute
+      effect: buff
       type: attack
       value: 1
       target:
@@ -327,7 +327,7 @@
         type: minion
     - name: aura
       trigger: on_presence
-      effect: attribute
+      effect: buff
       type: max_health
       value: 1
       target:
@@ -413,7 +413,7 @@
   mechanics:
     - name: aura
       trigger: on_presence
-      effect: attribute
+      effect: buff
       type: attack
       value: 1
       target:
@@ -654,7 +654,7 @@
   mechanics:
     - name: aura
       trigger: on_presence
-      effect: attribute
+      effect: buff
       type: attack
       value: 1
       target:

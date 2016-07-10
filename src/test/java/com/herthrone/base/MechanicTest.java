@@ -19,6 +19,8 @@ import com.herthrone.object.BooleanAttribute;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +31,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Created by yifengliu on 5/10/16.
  */
+@RunWith(JUnit4.class)
 public class MechanicTest extends TestCase {
 
   private Hero hero;
@@ -331,6 +334,8 @@ public class MechanicTest extends TestCase {
     // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 3);
     assertThat(activeSide.board.get(activeSide.board.size() - 1).cardName()).isEqualTo(ConstMinion.DEFIAS_BANDIT.toString());
+    // TODO: how to handle the sequence ID of a summoned minion...?
+    //activeSide.board.get(activeSide.board.size() - 1).getSequenceId();
   }
 
   @Test
@@ -544,7 +549,6 @@ public class MechanicTest extends TestCase {
     activeSide.hand.add(fireball);
 
     final Minion archmage = createAndBindMinion(ConstMinion.ARCHMAGE);
-    activeSide.bind(archmage);
     gm.playCard(archmage);
     gm.playCard(fireball, yeti);
 
@@ -562,7 +566,6 @@ public class MechanicTest extends TestCase {
     // reflected on that spell in the hand by adding the buff.
     assertThat(yeti.healthLoss()).isEqualTo(2 * damage + 2);
 
-
     // Test that spell is held in hand then remove the spell damage minion, it should be
     // reflected on that spell in the hand by removing the buff.
     fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
@@ -576,9 +579,19 @@ public class MechanicTest extends TestCase {
   }
 
   @Test
+  public void testAuraWithSelectiveBeneficiary() {
+    final Minion grimscaleOracle = createAndBindMinion(ConstMinion.GRIMSCALE_ORACLE);
+    final Minion blueGillWarrior = createAndBindMinion(ConstMinion.BLUEGILL_WARRIOR);
+    gm.playCard(blueGillWarrior);
+    gm.playCard(grimscaleOracle);
+    assertThat(yeti.attack().value()).isEqualTo(4);
+    assertThat(scarletCrusader.attack().value()).isEqualTo(3);
+    assertThat(waterElemental.attack().value()).isEqualTo(3);
+  }
+
+  @Test
   public void testAoeHeal() {
-    final Minion darkscaleHealer = MinionFactory.create(ConstMinion.DARKSCALE_HEALER);
-    gm.activeSide.bind(darkscaleHealer);
+    final Minion darkscaleHealer = createAndBindMinion(ConstMinion.DARKSCALE_HEALER);
 
     final int damage = 3;
     yeti.takeDamage(3);
@@ -594,8 +607,7 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDealDamageAsBattlecryWithTarget() {
-    final Minion elvenArcher = MinionFactory.create(ConstMinion.ELVEN_ARCHER);
-    gm.activeSide.bind(elvenArcher);
+    final Minion elvenArcher = createAndBindMinion(ConstMinion.ELVEN_ARCHER);
     gm.playCard(elvenArcher, gm.inactiveSide.hero);
 
     assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(1);
@@ -603,18 +615,17 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testEffectDependingOnBoardSize() {
-    final Minion frostwolfWarlord = MinionFactory.create(ConstMinion.FROSTWOLF_WARLORD);
-    gm.activeSide.bind(frostwolfWarlord);
+    final Minion frostwolfWarlord = createAndBindMinion(ConstMinion.FROSTWOLF_WARLORD);
 
     gm.playCard(frostwolfWarlord);
-    // TODO: not finished.
+
+    assertThat(frostwolfWarlord.attack().value()).isEqualTo(4 + initialBoardSize);
+    assertThat(frostwolfWarlord.health().value()).isEqualTo(4 + initialBoardSize);
   }
 
   @Test
   public void testTakeDamage() {
-    final Minion gurubashiBerserker = MinionFactory.create(ConstMinion.GURUBASHI_BERSERKER);
-    gm.activeSide.bind(gurubashiBerserker);
-
+    final Minion gurubashiBerserker = createAndBindMinion(ConstMinion.GURUBASHI_BERSERKER);
     final int attack = gurubashiBerserker.attack().value();
     gm.playCard(gurubashiBerserker);
 
@@ -622,5 +633,17 @@ public class MechanicTest extends TestCase {
       gurubashiBerserker.takeDamage(1);
       assertThat(gurubashiBerserker.attack().value()).isEqualTo(attack + 3 * i);
     }
+  }
+
+  @Test
+  public void testBuffAsBattlecry() {
+    final Minion sunCleric = createAndBindMinion(ConstMinion.SHATTERED_SUN_CLERIC);
+
+    final int attack = yeti.attack().value();
+    final int health = yeti.health().value();
+    gm.playCard(sunCleric, yeti);
+
+    assertThat(yeti.attack().value()).isEqualTo(attack + 1);
+    assertThat(yeti.health().value()).isEqualTo(health + 1);
   }
 }

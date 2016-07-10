@@ -293,8 +293,13 @@ public class MinionFactory {
         // Remove aura effects if the dead one has it.
         getEffectMechanics().get(ConstTrigger.ON_PRESENCE).stream()
             .forEach(config -> {
-              side.board.stream().forEach(
-                  minion -> EffectFactory.removeAuraEffect(config.effect.get(), this, minion));
+              side.board.stream()
+                  .filter(minion -> {
+                    final ConstType type = config.effect.get().target.type;
+                    return type.equals(ConstType.MINION) || type.equals(minion.type());
+                  })
+                  .forEach(minion -> EffectFactory.removeAuraEffect(
+                      config.effect.get(), this, minion));
             });
         // Remove spell damage effects if the dead one has it.
         binder().getSide().hand.stream()
@@ -339,7 +344,12 @@ public class MinionFactory {
           final List<MechanicConfig> onPresenceConfigs = auraMinion.getEffectMechanics().get(ConstTrigger.ON_PRESENCE);
           if (this != auraMinion) {
             onPresenceConfigs.stream().forEach(
-                config -> EffectFactory.addAuraEffect(config.effect.get(), auraMinion, this));
+                config -> {
+                  final ConstType type = config.effect.get().target.type;
+                  if (type.equals(ConstType.MINION) || type().equals(type)) {
+                    EffectFactory.addAuraEffect(config.effect.get(), auraMinion, this);
+                  }
+                });
           }
         }
       }

@@ -13,6 +13,8 @@ import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Collections;
 import java.util.Set;
@@ -23,6 +25,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Created by yifeng on 4/20/16.
  */
+@RunWith(JUnit4.class)
 public class SpellTest extends TestCase {
 
   private Hero hero1;

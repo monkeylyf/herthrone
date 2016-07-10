@@ -2,56 +2,70 @@ package com.herthrone.base;
 
 import com.herthrone.object.ValueAttribute;
 import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-public class IntAttributeTest extends TestCase {
+import static com.google.common.truth.Truth.assertThat;
+
+@RunWith(JUnit4.class)
+public class IntAttributeTest {
 
   private static final int FOUR = 4;
   private static final int BUFF = 1;
   private static final int DEBUFF = -2;
   private ValueAttribute attr;
 
+  @Before
   public void setUp() throws Exception {
     attr = new ValueAttribute(IntAttributeTest.FOUR);
   }
 
+  @Test
   public void testGetVal() throws Exception {
-    assertEquals(IntAttributeTest.FOUR, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR);
   }
 
+  @Test
   public void testSetBuff() throws Exception {
     attr.getPermanentBuff().increase(IntAttributeTest.BUFF);
-    assertEquals(IntAttributeTest.BUFF + IntAttributeTest.FOUR, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.BUFF + IntAttributeTest.FOUR);
   }
 
+  @Test
   public void testResetBuff() throws Exception {
     attr.getPermanentBuff().increase(IntAttributeTest.DEBUFF);
-    assertEquals(IntAttributeTest.DEBUFF + IntAttributeTest.FOUR, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.DEBUFF + IntAttributeTest.FOUR);
 
     attr.resetBuff();
-    assertEquals(IntAttributeTest.FOUR, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR);
   }
 
+  @Test
   public void testReset() throws Exception {
     int decreaseVal = 1;
     attr.decrease(decreaseVal);
-    assertEquals(IntAttributeTest.FOUR - decreaseVal, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR - decreaseVal);
     attr.getPermanentBuff().increase(IntAttributeTest.BUFF);
-    assertEquals(IntAttributeTest.FOUR - decreaseVal + IntAttributeTest.BUFF, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR - decreaseVal + IntAttributeTest.BUFF);
 
     attr.reset();
 
-    assertEquals(IntAttributeTest.FOUR, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR);
   }
 
+  @Test
   public void testIncrease() throws Exception {
     final int val = 2;
     attr.increase(val);
-    assertEquals(IntAttributeTest.FOUR + val, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR + val);
   }
 
+  @Test
   public void testDecrease() throws Exception {
     final int val = 2;
     attr.decrease(val);
-    assertEquals(IntAttributeTest.FOUR - val, attr.value());
+    assertThat(attr.value()).isEqualTo(IntAttributeTest.FOUR - val);
   }
 }

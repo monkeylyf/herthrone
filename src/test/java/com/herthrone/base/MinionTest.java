@@ -10,6 +10,8 @@ import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Collections;
 
@@ -18,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Created by yifeng on 4/15/16.
  */
+@RunWith(JUnit4.class)
 public class MinionTest extends TestCase {
 
   private Minion yeti1;
