@@ -93,9 +93,11 @@ public class WeaponFactory {
       }
 
       @Override
-      public int use() {
+      public void use() {
         durabilityAttr.decrease(1);
-        return attackAttr.value();
+        if (!durabilityAttr.isPositive()) {
+          binder().getSide().hero.unequip();
+        }
       }
 
       @Override

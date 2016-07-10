@@ -9,7 +9,7 @@ import com.herthrone.object.ValueAttribute;
  */
 public interface Weapon extends Card, Destroyable {
 
-  int use();
+  void use();
 
   ValueAttribute getDurabilityAttr();
 

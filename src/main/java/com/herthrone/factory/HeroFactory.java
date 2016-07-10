@@ -137,9 +137,13 @@ public class HeroFactory {
 
       @Override
       public void dealDamage(final Creature attackee) {
-        attackee.takeDamage(weaponOptional.get().use());
-        if (weaponOptional.get().getDurabilityAttr().value() == 0) {
-          unequip();
+        int attackValue = attack().value();
+        if (weaponOptional.isPresent()) {
+          attackValue += weaponOptional.get().getAttackAttr().value();
+        }
+        attackee.takeDamage(attackValue);
+        if (weaponOptional.isPresent()) {
+          weaponOptional.get().use();
         }
       }
 
@@ -217,7 +221,14 @@ public class HeroFactory {
 
       @Override
       public void unequip() {
-        weaponOptional = Optional.absent();
+        if (weaponOptional.isPresent()) {
+          final Weapon weapon = weaponOptional.get();
+          weaponOptional = Optional.absent();
+          weapon.getEffectMechanics().get(ConstTrigger.ON_DEATH).stream()
+              .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                  Optional.of(mechanicConfig), binder().getSide(), this, this)
+              );
+        }
       }
 
       @Override

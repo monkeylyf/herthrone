@@ -55,12 +55,14 @@ public class HeroTest extends TestCase {
 
     this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    yeti.binder().bind(gm.activeSide);
+    gm.activeSide.bind(yeti);
     final Map<ConstTrigger, List<MechanicConfig>> emptyMap = Collections.emptyMap();
     this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
         weaponAttackVal1, weaponDurability1, 0, true, emptyMap);
+    gm.activeSide.bind(weapon1);
     this.weapon2 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE, "", ConstClass.WARRIOR,
         weaponAttackVal2, weaponDurability2, 0, true, emptyMap);
+    gm.inactiveSide.bind(weapon2);
   }
 
   @Test
