@@ -55,6 +55,7 @@ public class MechanicConfig {
   public String toString() {
     return Objects.toStringHelper(this)
         .add(NAME, mechanic)
+        .add(TRIGGER_ONLY_WITH_TARGET, triggerOnlyWithTarget)
         .add(EFFECT, effect)
         .toString();
   }

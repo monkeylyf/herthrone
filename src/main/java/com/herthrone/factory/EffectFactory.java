@@ -105,8 +105,8 @@ public class EffectFactory {
   }
 
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
-      final Optional<MechanicConfig> mechanicConfigOptional, final Side side,
-      final Creature caster, final Creature target) {
+      final Optional<MechanicConfig> mechanicConfigOptional,
+      final Side side, final Creature target) {
     if (isTriggerConditionMet(mechanicConfigOptional, side, target)) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
@@ -116,14 +116,14 @@ public class EffectFactory {
   }
 
   public static void triggerEndTurnMechanics(final Side side) {
-    List<Minion> minions = side.board.stream()
+    final List<Minion> minions = side.board.stream()
         .sorted(compareBySequenceId)
         .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_END_TURN))
         .collect(Collectors.toList());
 
     for (final Minion minion : minions) {
       for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(ConstTrigger.ON_END_TURN)) {
-        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.effect.get().target, side, minion);
+        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.effect.get().target, side);
         final List<Effect> effects = targets.stream()
             .flatMap(target -> pipeMechanicEffect(mechanic, target).stream())
             .collect(Collectors.toList());

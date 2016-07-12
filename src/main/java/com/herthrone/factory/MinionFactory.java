@@ -98,14 +98,14 @@ public class MinionFactory {
       @Override
       public void playOnBoard(final Container<Minion> board) {
         summonOnBoard(board);
-        TriggerFactory.trigger(this, ConstTrigger.ON_PLAY, binder().getSide(), this);
+        TriggerFactory.passiveTrigger(this, ConstTrigger.ON_PLAY);
       }
 
       @Override
       public void playOnBoard(final Container<Minion> board, final Creature target) {
         // TODO: on-play mechanics happen before summon triggered events.
         summonOnBoard(board);
-        TriggerFactory.activeTrigger(this, ConstTrigger.ON_PLAY, binder().getSide(), this, target);
+        TriggerFactory.activeTrigger(this, ConstTrigger.ON_PLAY, target);
       }
 
       @Override
@@ -243,9 +243,7 @@ public class MinionFactory {
         }
 
         if (isDamaged) {
-          getTriggeringMechanics().get(ConstTrigger.ON_TAKE_DAMAGE).stream()
-              .forEach(mechanic -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                  Optional.of(mechanic), binder().getSide(), this, this));
+          TriggerFactory.passiveTrigger(this, ConstTrigger.ON_TAKE_DAMAGE);
         }
         if (isDead()) {
           death();
@@ -286,7 +284,7 @@ public class MinionFactory {
             .map(card -> (Spell) card)
             .forEach(Spell::refresh);
 
-        TriggerFactory.activeTrigger(this, ConstTrigger.ON_DEATH, binder().getSide(), this, this);
+        TriggerFactory.passiveTrigger(this, ConstTrigger.ON_DEATH);
      }
 
       @Override

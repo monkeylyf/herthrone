@@ -348,6 +348,7 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(2);
 
     final Weapon stormforgedAxe = WeaponFactory.create(ConstWeapon.STORMFORGED_AXE);
+    gm.activeSide.bind(stormforgedAxe);
 
     assertThat(hero.canDamage()).isFalse();
     hero.playToEquip(stormforgedAxe);

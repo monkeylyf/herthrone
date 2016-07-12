@@ -18,16 +18,22 @@ public class TargetFactory {
 
   private static final Logger logger = Logger.getLogger(TargetFactory.class.getName());
 
-  static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side,
-                                         final Creature caster) {
+  public static class NoTargetFoundException extends RuntimeException {
+
+    private NoTargetFoundException(final String message) {
+      super(message);
+    }
+  }
+
+  static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side) {
     switch (targetConfig.scope) {
       case OWN:
-        return getProperTargetsBySide(targetConfig, side, caster);
+        return getProperTargetsBySide(targetConfig, side);
       case OPPONENT:
-        return getProperTargetsBySide(targetConfig, side.getOpponentSide(), caster);
+        return getProperTargetsBySide(targetConfig, side.getOpponentSide());
       case ALL:
-        final List<Creature> targets = getProperTargetsBySide(targetConfig, side, caster);
-        targets.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide(), caster));
+        final List<Creature> targets = getProperTargetsBySide(targetConfig, side);
+        targets.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
         return targets;
       default:
         throw new RuntimeException("Unknown scope: " + targetConfig.scope);
@@ -35,7 +41,7 @@ public class TargetFactory {
   }
 
   private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
-                                                       final Side side, final Creature caster) {
+                                                       final Side side) {
     switch (targetConfig.type) {
       case HERO:
         return Arrays.asList(side.hero);
@@ -48,7 +54,7 @@ public class TargetFactory {
         targets.add(side.hero);
         return targets;
       default:
-        return Arrays.asList(caster);
+        throw new NoTargetFoundException("No target found");
     }
   }
 

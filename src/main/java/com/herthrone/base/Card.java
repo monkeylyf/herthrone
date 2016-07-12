@@ -2,14 +2,13 @@ package com.herthrone.base;
 
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstType;
-import com.herthrone.game.Binder;
 import com.herthrone.object.ValueAttribute;
 
 /**
  * Created by yifeng on 4/2/16.
  */
 
-public interface Card extends View {
+public interface Card extends View, Bind {
 
   String cardName();
 
@@ -22,6 +21,4 @@ public interface Card extends View {
   ValueAttribute manaCost();
 
   boolean isCollectible();
-
-  Binder binder();
 }

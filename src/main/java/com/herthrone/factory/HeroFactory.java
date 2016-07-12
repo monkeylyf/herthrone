@@ -223,13 +223,20 @@ public class HeroFactory {
         if (weaponOptional.isPresent()) {
           final Weapon weapon = weaponOptional.get();
           weaponOptional = Optional.absent();
-          TriggerFactory.activeTrigger(weapon, ConstTrigger.ON_DEATH, binder().getSide(), this);
+          TriggerFactory.passiveTrigger(weapon, ConstTrigger.ON_DEATH);
         }
       }
 
       @Override
       public void playToEquip(final Weapon weapon) {
-        TriggerFactory.activeTrigger(weapon, ConstTrigger.ON_PLAY, binder().getSide(), this);
+        TriggerFactory.passiveTrigger(weapon, ConstTrigger.ON_PLAY);
+        equip(weapon);
+      }
+
+      @Override
+      public void playToEquip(final Weapon weapon, final Creature target) {
+        TriggerFactory.activeTrigger(
+            weapon, ConstTrigger.ON_PLAY, target);
         equip(weapon);
       }
 

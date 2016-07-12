@@ -1,14 +1,17 @@
 package com.herthrone.factory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Mechanic;
+import com.herthrone.base.Minion;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,43 +19,35 @@ import java.util.List;
  */
 public class TriggerFactory {
 
-  static void activeTrigger(final Mechanic.TriggeringMechanic listener, final ConstTrigger trigger,
-                            final Side side, final Creature caster, final Creature target) {
-    listener.getTriggeringMechanics().get(trigger).stream()
+  static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
+                            final ConstTrigger triggerType, final Creature target) {
+    triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .forEach(mechanicConfig ->
             EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(mechanicConfig), side, caster, target)
+                Optional.of(mechanicConfig), triggerrer.binder().getSide(), target)
       );
   }
 
-  static void activeTrigger(final Mechanic.TriggeringMechanic listener, final ConstTrigger trigger,
-                            final Side side, final Creature caster) {
-    activeTrigger(listener, trigger, side, caster, caster);
-  }
-
-  static void trigger(final Mechanic.TriggeringMechanic listener, final ConstTrigger trigger,
-                      final Side side, final Creature caster, final Creature target) {
+  static void passiveTrigger(final Mechanic.TriggeringMechanic listener, final ConstTrigger trigger) {
+    final Side side = listener.binder().getSide();
     listener.getTriggeringMechanics().get(trigger).stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
-        .forEach(mechanic -> {
-          final EffectConfig effectConfig = mechanic.effect.get();
-          List<Creature> targets = TargetFactory.getProperTargets(
-              effectConfig.target, side, target);
+        .forEach(mechanicConfig -> {
+          Preconditions.checkArgument(mechanicConfig.effect.isPresent());
+          final EffectConfig effectConfig = mechanicConfig.effect.get();
+          List<Creature> targets;
+          try {
+            targets = TargetFactory.getProperTargets(effectConfig.target, side);
+          } catch (TargetFactory.NoTargetFoundException error) {
+            targets = (listener instanceof Minion) ?
+                Arrays.asList((Minion) listener) : Collections.emptyList();
+          }
           targets = effectConfig.isRandom ?
               Arrays.asList(RandomMinionGenerator.randomOne(targets)) : targets;
           targets.stream().forEach(
               realTarget -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                  Optional.of(mechanic), side, caster, realTarget)
+                  Optional.of(mechanicConfig), side, realTarget)
           );
         });
-  }
-
-  static void trigger(final Mechanic.TriggeringMechanic listener, final ConstTrigger trigger,
-                      final Side side, final Creature caster) {
-    trigger(listener, trigger, side, caster, caster);
-  }
-
-  static void passiveTrigger() {
-
   }
 }
