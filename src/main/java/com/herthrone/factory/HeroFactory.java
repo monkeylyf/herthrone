@@ -126,7 +126,8 @@ public class HeroFactory {
 
       @Override
       public ValueAttribute attackMovePoints() {
-        return attackMovePoints;
+        return (weaponOptional.isPresent()) ?
+            weaponOptional.get().attackMovePoints() : attackMovePoints;
       }
 
       @Override
@@ -258,7 +259,7 @@ public class HeroFactory {
 
       @Override
       public void endTurn() {
-        this.attackMovePoints.endTurn();
+        attackMovePoints().endTurn();
       }
 
       @Override

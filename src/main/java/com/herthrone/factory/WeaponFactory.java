@@ -6,11 +6,13 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
+import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 
@@ -34,15 +36,14 @@ public class WeaponFactory {
                               final int crystalManaCost, final boolean isCollectible,
                               final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     return new Weapon() {
-      @Override
-      public void destroy() {
-        durabilityAttr.decrease(durabilityAttr.value());
-        binder().getSide().hero.unequip();
-      }
 
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);
       private final ValueAttribute durabilityAttr = new ValueAttribute(durability);
+      private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
+      private final ValueAttribute attackMovePoints = new ValueAttribute(
+          booleanMechanics.has(ConstMechanic.WINDFURY) ?
+              Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS);
       private final TriggeringMechanics triggeringMechanics = new TriggeringMechanics(mechanics);
       private final Binder binder = new Binder();
 
@@ -53,6 +54,12 @@ public class WeaponFactory {
             .put(Constant.ATTACK, getAttackAttr().toString())
             .put(Constant.CRYSTAL, manaCost().toString())
             .put(Constant.TYPE, type().toString()).build();
+      }
+
+      @Override
+      public void destroy() {
+        durabilityAttr.decrease(durabilityAttr.value());
+        binder().getSide().hero.unequip();
       }
 
       @Override
@@ -106,6 +113,11 @@ public class WeaponFactory {
       @Override
       public ValueAttribute getAttackAttr() {
         return attackAttr;
+      }
+
+      @Override
+      public ValueAttribute attackMovePoints() {
+        return attackMovePoints;
       }
 
       public TriggeringMechanics getTriggeringMechanics() {

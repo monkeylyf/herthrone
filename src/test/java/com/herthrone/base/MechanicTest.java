@@ -71,6 +71,8 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testCharge() {
+    assertThat(MinionFactory.create(ConstMinion.WORGEN_INFILTRATOR).attackMovePoints().value())
+        .isEqualTo(0);
     final ConstMinion minionName = ConstMinion.WOLFRIDER;
     final Minion wolfrider = createAndBindMinion(minionName);
     gm.playCard(wolfrider);
@@ -473,10 +475,11 @@ public class MechanicTest extends TestCase {
     worgenInfiltrator.attack().reset();
     assertThat(worgenInfiltrator.attack().value()).isEqualTo(worgenInfiltratorAttack);
 
+    yeti.takeDamage(yeti.health().value() - 1);
     stormwindChampion.death();
 
-
-    checkHealthAttackMaxHealth(yeti, yetiHealth, yetiMaxHealth, yetiAttack);
+    // Test that the aura removal "heals" minion when it's damaged before aura is removed.
+    checkHealthAttackMaxHealth(yeti, 1, yetiMaxHealth, yetiAttack);
 
     checkHealthAttackMaxHealth(scarletCrusader, scarletCrusaderHealth, scarletCrusaderMaxHealth,
         scarletCrusaderAttack);
@@ -491,7 +494,7 @@ public class MechanicTest extends TestCase {
   private void checkHealthAttackMaxHealth(final Minion minion, final int expectedHealth,
                                           final int expectedMaxHealth, final int expectedAttack) {
     assertThat(minion.attack().value()).isEqualTo(expectedAttack);
-    assertThat(minion.health().value()).isEqualTo(expectedHealth );
+    assertThat(minion.health().value()).isEqualTo(expectedHealth);
     assertThat(minion.maxHealth().value()).isEqualTo(expectedMaxHealth);
   }
 

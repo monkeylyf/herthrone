@@ -30,4 +30,6 @@ public class Constant {
   public static final String MAX_HEALTH = "max_health";
   public static final String MOVE_POINTS = "move_points";
 
+  public static final int INIT_MOVE_POINTS = 1;
+  public static final int WINDFURY_INIT_MOVE_POINTS = 2;
 }

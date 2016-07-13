@@ -24,6 +24,13 @@ public class ValueAttribute implements Resettable, Round {
     this.buff = new Buff();
   }
 
+  public ValueAttribute(final int value, final boolean initAsIs) {
+    this(value);
+    if (!initAsIs) {
+      buff.temporaryBuff.increase(-value);
+    }
+  }
+
   public void increase(final int gain) {
     currentValue.increase(gain);
   }

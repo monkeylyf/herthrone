@@ -13,4 +13,5 @@ public interface Weapon extends Card, Destroyable, Mechanic.TriggeringMechanic {
 
   ValueAttribute getAttackAttr();
 
+  ValueAttribute attackMovePoints();
 }

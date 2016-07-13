@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
  */
 public class MinionFactory {
 
-  private static final int MINION_INIT_MOVE_POINTS = 1;
-  private static final int WINDFURY_INIT_MOVE_POINTS = 2;
   private static final Logger logger = Logger.getLogger(MinionFactory.class.getName());
 
   public static Minion create(final ConstMinion minionName) {
@@ -51,7 +49,7 @@ public class MinionFactory {
                                final ConstClass className, final ConstMinion name,
                                final String displayName, final boolean isCollectible,
                                final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
-    final Minion minion = new Minion() {
+    return new Minion() {
 
       private final ValueAttribute healthAttr = new ValueAttribute(health);
       private final ValueAttribute healthUpperAttr = new ValueAttribute(health);
@@ -61,9 +59,10 @@ public class MinionFactory {
       private final TriggeringMechanics effectMechanics = new TriggeringMechanics(mechanics);
       private final ValueAttribute movePoints = new ValueAttribute(
           booleanMechanics.has(ConstMechanic.WINDFURY) ?
-              WINDFURY_INIT_MOVE_POINTS : MINION_INIT_MOVE_POINTS);
+              Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS,
+          booleanMechanics.has(ConstMechanic.CHARGE)
+          );
       private final Binder binder = new Binder();
-      // use OptionalInt
       private OptionalInt seqId = OptionalInt.empty();
 
       @Override
@@ -205,7 +204,7 @@ public class MinionFactory {
 
       @Override
       public ValueAttribute attackMovePoints() {
-        return this.movePoints;
+        return movePoints;
       }
 
       @Override
@@ -333,15 +332,6 @@ public class MinionFactory {
         return view().toString();
       }
     };
-
-    if (!mechanics.containsKey(ConstMechanic.CHARGE)) {
-      // Minion with no charge ability waits until next turn to move.
-      // TODO: also when a minion switch side due to TAKE_CONTROLL effect, the CHARGE also apply
-      // the right after it switches side.
-      minion.attackMovePoints().getTemporaryBuff().reset();
-    }
-
-    return minion;
   }
 
 }

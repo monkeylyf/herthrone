@@ -6,7 +6,7 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTrigger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class MechanicConfig {
         if (configs.containsKey(config.trigger)) {
           configs.get(config.trigger).add(config);
         } else {
-          configs.put(config.trigger, new ArrayList<>(Arrays.asList(config)));
+          configs.put(config.trigger, new ArrayList<>(Collections.singletonList(config)));
         }
       }
     }

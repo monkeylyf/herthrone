@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,14 +55,11 @@ public class EffectFactory {
   static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
-  public static void addAuraEffect(final EffectConfig effectConfig, final Minion minion,
+  static void addAuraEffect(final EffectConfig effectConfig, final Minion minion,
                                    final Minion target) {
     switch (effectConfig.type) {
       case Constant.ATTACK:
         target.attack().addAuraBuff(minion, effectConfig.value);
-        break;
-      case Constant.HEALTH:
-        target.health().addAuraBuff(minion, effectConfig.value);
         break;
       case Constant.MAX_HEALTH:
         target.maxHealth().addAuraBuff(minion, effectConfig.value);
@@ -72,19 +70,21 @@ public class EffectFactory {
     }
   }
 
-  public static void removeAuraEffect(final EffectConfig effectConfig, final Minion minion,
-                                      final Minion target) {
+  static void removeAuraEffect(final EffectConfig effectConfig, final Minion minion,
+                               final Minion target) {
     switch (effectConfig.type) {
       case Constant.ATTACK:
         target.attack().removeAuraBuff(minion);
         break;
-      case Constant.HEALTH:
-        target.health().removeAuraBuff(minion);
-        break;
       case Constant.MAX_HEALTH:
-        // TODO: this is incorrect..
+        // http://us.battle.net/hearthstone/en/forum/topic/13423772774
+        final int healthBeforeAuraRemoval = target.health().value();
+        final boolean isDamage = target.healthLoss() > 0;
         target.health().removeAuraBuff(minion);
         target.maxHealth().removeAuraBuff(minion);
+        if (isDamage) {
+          target.health().increase(healthBeforeAuraRemoval - target.health().value());
+        }
         break;
       default:
         throw new RuntimeException(effectConfig.type + " not supported for aura");
@@ -166,7 +166,7 @@ public class EffectFactory {
   public static List<Effect> pipeMechanicEffect(final MechanicConfig mechanic,
                                                 final Creature target) {
     final Optional<EffectConfig> config = mechanic.effect;
-    Preconditions.checkArgument(config.isPresent(), "Mechanic " + mechanic + " has no effect");
+    Preconditions.checkArgument(config.isPresent(), "Mechanic %s has no effect", mechanic);
     final EffectConfig effectConfig = config.get();
     final Creature realTarget = effectConfig.isRandom ?
         RandomMinionGenerator.randomCreature(effectConfig.target, target.binder().getSide()) :
@@ -193,7 +193,7 @@ public class EffectFactory {
         return getDestroyEffect(config, creature);
       case RETURN_TO_HAND:
         Preconditions.checkArgument(
-            creature instanceof Minion, creature.type() + " can not be returned to player's hand");
+            creature instanceof Minion, "%s can not be returned to player's hand", creature.type());
         return getReturnToHandEffect((Minion) creature);
       case SUMMON:
         return getSummonEffect(config, creature.binder().getSide());
@@ -201,7 +201,7 @@ public class EffectFactory {
         return getTakeControlEffect(config, creature);
       case WEAPON:
         Preconditions.checkArgument(
-            creature instanceof Hero, creature.type() + " can not equip weapon");
+            creature instanceof Hero, "%s can not equip weapon", creature.type());
         return getEquipWeaponEffect((Hero) creature, config);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
@@ -213,13 +213,13 @@ public class EffectFactory {
     final String type = effect.type;
     switch (type) {
       case (Constant.ATTACK):
-        return Arrays.asList(getGeneralBuffEffect(side, creature.attack(), effect));
+        return Collections.singletonList(getGeneralBuffEffect(side, creature.attack(), effect));
       case (Constant.CRYSTAL):
-        return Arrays.asList(getGeneralBuffEffect(side, creature.manaCost(), effect));
+        return Collections.singletonList(getGeneralBuffEffect(side, creature.manaCost(), effect));
       case (Constant.MAX_HEALTH):
         Preconditions.checkArgument(
-            creature instanceof Minion, "max health buff does not support: " + creature.type());
-        return Arrays.asList(getMaxHealthBuffEffect((Minion) creature, effect));
+            creature instanceof Minion, "max health buff does not support %s", creature.type());
+        return Collections.singletonList(getMaxHealthBuffEffect((Minion) creature, effect));
       default:
         throw new IllegalArgumentException("Unknown effect type for buff: " + type);
     }
@@ -252,13 +252,13 @@ public class EffectFactory {
   }
 
   private static List<Effect> getReturnToHandEffect(final Minion target) {
-    return Arrays.asList(new ReturnToHandEffect(target));
+    return Collections.singletonList(new ReturnToHandEffect(target));
   }
 
   private static List<Effect> getGenerateEffect(EffectConfig config, Creature creature) {
     final Effect generateEffect = new GenerateEffect(
         config.choices, config.type, config.target, creature.binder().getSide());
-    return Arrays.asList(generateEffect);
+    return Collections.singletonList(generateEffect);
   }
 
   private static List<Effect> getTakeControlEffect(final EffectConfig effect,
@@ -266,7 +266,7 @@ public class EffectFactory {
     final Creature traitorMinion = RandomMinionGenerator.randomCreature(
         effect.target, creature.binder().getSide());
     Preconditions.checkArgument(traitorMinion instanceof Minion);
-    return Arrays.asList(new TakeControlEffect((Minion) traitorMinion));
+    return Collections.singletonList(new TakeControlEffect((Minion) traitorMinion));
   }
 
   private static List<Effect> getAttributeEffect(final EffectConfig effect,
@@ -275,19 +275,22 @@ public class EffectFactory {
     final String type = effect.type;
     switch (type) {
       case (Constant.HEALTH):
-        return Arrays.asList(getHealthAttributeEffect(creature, effect));
+        return Collections.singletonList(getHealthAttributeEffect(creature, effect));
       case (Constant.ATTACK):
-        return Arrays.asList(getGeneralAttributeEffect(side, creature.attack(), effect));
+        return Collections.singletonList(
+            getGeneralAttributeEffect(side, creature.attack(), effect));
       case (Constant.CRYSTAL):
-        return Arrays.asList(getGeneralAttributeEffect(side, creature.manaCost(), effect));
+        return Collections.singletonList(
+            getGeneralAttributeEffect(side, creature.manaCost(), effect));
       case (Constant.MAX_HEALTH):
         return Arrays.asList(
             getGeneralAttributeEffect(side, creature.maxHealth(), effect),
             getHealthAttributeEffect(creature, effect));
       case (Constant.ARMOR):
         Preconditions.checkArgument(
-            creature instanceof Hero, "Armor Attribute does not applies to " + creature.type());
-        return Arrays.asList(getGeneralAttributeEffect(side, ((Hero) creature).armor(), effect));
+            creature instanceof Hero, "Armor Attribute does not applies to %s", creature.type());
+        return Collections.singletonList(
+            getGeneralAttributeEffect(side, ((Hero) creature).armor(), effect));
       default:
         throw new IllegalArgumentException("Unknown effect type: " + type);
     }
@@ -297,7 +300,7 @@ public class EffectFactory {
     final String weaponName = effect.type;
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
     final Weapon weaponInstance = WeaponFactory.create(weapon);
-    return Arrays.asList(new EquipWeaponEffect(hero, weaponInstance));
+    return Collections.singletonList(new EquipWeaponEffect(hero, weaponInstance));
   }
 
   private static List<Effect> getSummonEffect(final EffectConfig effect, final Side side) {
@@ -310,7 +313,7 @@ public class EffectFactory {
         RandomMinionGenerator.randomOne(summonChoices);
     final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
     final Minion minion = MinionFactory.create(summonTarget);
-    return Arrays.asList(new SummonEffect(side.board, minion));
+    return Collections.singletonList(new SummonEffect(side.board, minion));
   }
 
   private static List<Effect> getDrawCardEffect(final EffectConfig effect, final Side side) {
@@ -319,7 +322,7 @@ public class EffectFactory {
     switch (target.type) {
 
     }
-    return Arrays.asList(new MoveCardEffect(side.hand, side.deck, side));
+    return Collections.singletonList(new MoveCardEffect(side.hand, side.deck, side));
   }
 
   private static List<Effect> getCrystalEffect(final EffectConfig config, final Creature creature) {
@@ -327,7 +330,7 @@ public class EffectFactory {
     final ManaCrystal manaCrystal = creature.binder().getSide().manaCrystal;
     switch (type) {
       case (Constant.CRYSTAL_LOCK):
-        return Arrays.asList(new OverloadEffect(manaCrystal, config.value));
+        return Collections.singletonList(new OverloadEffect(manaCrystal, config.value));
       default:
         throw new IllegalArgumentException("Unknown type: " + type);
     }
@@ -393,7 +396,7 @@ public class EffectFactory {
     public static void getPhysicalDamageEffect(final Creature attacker, final Creature attackee) {
       final List<Effect> effects = attacker.booleanMechanics().has(ConstMechanic.FORGETFUL) ?
           getForgetfulPhysicalDamageEffect(attacker, attackee) :
-          Arrays.asList(new PhysicalDamageEffect(attacker, attackee));
+          Collections.singletonList(new PhysicalDamageEffect(attacker, attackee));
       attacker.binder().getSide().getEffectQueue().enqueue(effects);
     }
 
@@ -412,7 +415,7 @@ public class EffectFactory {
         attackEffect = new PhysicalDamageEffect(attacker, attackee);
       }
 
-      return Arrays.asList(attackEffect);
+      return Collections.singletonList(attackEffect);
     }
   }
 }

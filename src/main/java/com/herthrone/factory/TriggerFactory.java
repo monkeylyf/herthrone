@@ -9,6 +9,7 @@ import com.herthrone.configuration.EffectConfig;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +20,8 @@ import java.util.List;
  */
 public class TriggerFactory {
 
+  private final static Logger logger = Logger.getLogger(TriggerFactory.class.getName());
+
   static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
                             final ConstTrigger triggerType, final Creature target) {
     triggerrer.getTriggeringMechanics().get(triggerType).stream()
@@ -28,9 +31,10 @@ public class TriggerFactory {
       );
   }
 
-  static void passiveTrigger(final Mechanic.TriggeringMechanic listener, final ConstTrigger trigger) {
-    final Side side = listener.binder().getSide();
-    listener.getTriggeringMechanics().get(trigger).stream()
+  static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
+                             final ConstTrigger triggerType) {
+    final Side side = triggerrer.binder().getSide();
+    triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .forEach(mechanicConfig -> {
           Preconditions.checkArgument(mechanicConfig.effect.isPresent());
@@ -39,11 +43,12 @@ public class TriggerFactory {
           try {
             targets = TargetFactory.getProperTargets(effectConfig.target, side);
           } catch (TargetFactory.NoTargetFoundException error) {
-            targets = (listener instanceof Minion) ?
-                Arrays.asList((Minion) listener) : Collections.emptyList();
+            targets = (triggerrer instanceof Minion) ?
+                Collections.singletonList((Minion) triggerrer) : Collections.emptyList();
           }
           targets = effectConfig.isRandom ?
-              Arrays.asList(RandomMinionGenerator.randomOne(targets)) : targets;
+              Collections.singletonList(RandomMinionGenerator.randomOne(targets)) : targets;
+          logger.debug("Total " + targets.size() + " passive targets for " + mechanicConfig);
           targets.stream().forEach(
               realTarget -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                   Optional.of(mechanicConfig), side, realTarget)

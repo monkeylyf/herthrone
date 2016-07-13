@@ -44,7 +44,7 @@ public class TargetFactory {
                                                        final Side side) {
     switch (targetConfig.type) {
       case HERO:
-        return Arrays.asList(side.hero);
+        return Collections.singletonList(side.hero);
       case MINION:
         return side.board.stream().sorted(
             EffectFactory.compareBySequenceId).collect(Collectors.toList());
@@ -64,7 +64,7 @@ public class TargetFactory {
         return side.board.stream().collect(Collectors.toList());
       case WEAPON:
         return (side.hero.getWeapon().isPresent()) ?
-          Arrays.asList(side.hero.getWeapon().get()) : Collections.emptyList();
+          Collections.singletonList(side.hero.getWeapon().get()) : Collections.emptyList();
       case ALL:
         final List<Destroyable> destroyables = side.board.stream().collect(Collectors.toList());
         if (side.hero.getWeapon().isPresent()) {
@@ -94,9 +94,9 @@ public class TargetFactory {
   public static List<Side> getSide(final TargetConfig target, final Side side) {
     switch (target.scope) {
       case OWN:
-        return Arrays.asList(side);
+        return Collections.singletonList(side);
       case OPPONENT:
-        return Arrays.asList(side.getOpponentSide());
+        return Collections.singletonList(side.getOpponentSide());
       case ALL:
         return Arrays.asList(side, side.getOpponentSide());
       default:

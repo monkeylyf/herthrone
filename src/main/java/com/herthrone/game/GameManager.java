@@ -252,13 +252,13 @@ public class GameManager implements Round {
       // Use hero power without a specific target.
       EffectFactory.pipeEffectsByConfig(activeSide.hero.getHeroPower(), activeSide.hero);
       consumeCrystal(activeSide.hero.getHeroPower());
-      activeSide.hero.attackMovePoints().getTemporaryBuff().increase(-1);
+      activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
       EffectFactory.pipeEffectsByConfig(activeSide.hero.getHeroPower(), creature);
       consumeCrystal(activeSide.hero.getHeroPower());
-      activeSide.hero.attackMovePoints().getTemporaryBuff().increase(-1);
+      activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
       final Card card = activeSide.hand.get(leafNode.index);
       playCard(leafNode.index);
