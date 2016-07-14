@@ -24,7 +24,7 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
     super(map);
     this.attack = (int) map.get(ATTACK);
     this.health = (int) map.get(HEALTH);
-    this.mechanics = MechanicConfig.mechanicConfigFactory(map.get(MECHANICS));
+    this.mechanics = MechanicConfig.getTriggerToMechanicMap(map.get(MECHANICS));
   }
 
   @Override

@@ -1,11 +1,9 @@
 package com.herthrone.factory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
-import com.herthrone.configuration.EffectConfig;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
@@ -35,9 +33,7 @@ public class TriggerFactory {
     final Side side = triggerrer.binder().getSide();
     triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
-        .forEach(mechanicConfig -> {
-          Preconditions.checkArgument(mechanicConfig.effect.isPresent());
-          final EffectConfig effectConfig = mechanicConfig.effect.get();
+        .forEach(effectConfig -> {
           List<Creature> targets;
           try {
             targets = TargetFactory.getProperTargets(effectConfig.target, side);
@@ -47,10 +43,10 @@ public class TriggerFactory {
           }
           targets = effectConfig.isRandom ?
               Collections.singletonList(RandomMinionGenerator.randomOne(targets)) : targets;
-          logger.debug("Total " + targets.size() + " passive targets for " + mechanicConfig);
+          logger.debug("Total " + targets.size() + " passive targets for " + effectConfig);
           targets.stream().forEach(
               realTarget -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                  Optional.of(mechanicConfig), side, realTarget)
+                  Optional.of(effectConfig), side, realTarget)
           );
         });
   }

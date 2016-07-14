@@ -15,7 +15,7 @@ public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
 
   private static final String MECHANICS = "mechanics";
   private static final String TARGET = "target";
-  public final List<EffectConfig> effects;
+  public final List<MechanicConfig> effects;
   public final Optional<TargetConfig> targetConfigOptional;
   public final ConstType type = ConstType.SPELL;
 
@@ -26,7 +26,7 @@ public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
         Optional.of(new TargetConfig((Map) map.get(TARGET))) : Optional.absent();
     this.effects = ((List<Object>) map.get(MECHANICS)).stream()
         .map(object -> (Map) object)
-        .map(EffectConfig::new)
+        .map(MechanicConfig::new)
         .collect(Collectors.toList());
   }
 

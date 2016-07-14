@@ -1,14 +1,110 @@
 - name: fire_ball
   class: mage
   crystal: 4
+  collectible: true
   target:
     scope: all
     type: all
   mechanics:
-    - trigger: on_play
+    - name: deal_damage
+      trigger: on_play
       effect: attribute
       type: health
       value: -6
       target:
         scope: all
         type: all
+
+- name: claw
+  class: druid
+  crystal: 1
+  collectible: true
+  target:
+    scope: own
+    type: hero
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      permanent: false
+      target:
+        scope: own
+        type: hero
+    - name: gain
+      trigger: on_play
+      effect: attribute
+      type: armor
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+
+- name: healing_touch
+  class: druid
+  crystal: 3
+  collectible: true
+  target:
+    scope: all
+    type: all
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 8
+      target:
+        scope: all
+        type: all
+
+- name: innervate
+  class: druid
+  crystal: 0
+  collectible: true
+  target:
+    scope: own
+    type: hero
+  mechanics:
+    - name: mana
+      trigger: on_play
+      effect: attribute
+      type: mana_crystal
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: mark_of_the_wild
+  class: druid
+  crystal: 2
+  collectible: true
+  target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: taunt
+      trigger: on_play
+      effect: add_mechanic
+      type: taunt
+      value: 1
+      target:
+        scope: all
+        type: minion
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+      target:
+        scope: all
+        type: minion
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      target:
+        scope: all
+        type: minion

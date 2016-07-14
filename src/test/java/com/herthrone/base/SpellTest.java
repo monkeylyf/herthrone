@@ -128,9 +128,8 @@ public class SpellTest extends TestCase {
     assertThat(hero1.attack().value()).isEqualTo(attack);
     assertThat(hero1.armor().value()).isEqualTo(armor);
 
-    hero1.attack().endTurn();
-    // TODO:
-    //assertEquals(0, hero1.getAttackAttr().value());
+    hero1.endTurn();
+    assertThat(hero1.attack().value()).isEqualTo(0);
   }
 
   @Test

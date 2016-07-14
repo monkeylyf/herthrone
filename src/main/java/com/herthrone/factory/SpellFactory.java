@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.EffectConfig;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
@@ -37,14 +37,14 @@ public class SpellFactory {
 
   static Spell create(final ConstSpell name, final String displayName, final ConstClass className,
                       final int crystal, final ConstType type,
-                      final Optional<TargetConfig> targetConfig, final List<EffectConfig> effects) {
+                      final Optional<TargetConfig> targetConfig, final List<MechanicConfig> effects) {
     return new Spell() {
 
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystal);
       private final Binder binder = new Binder();
       private final AuraBuff auraBuff = new AuraBuff();
-      private final List<EffectConfig> effectConfigs = effects.stream()
-          .map(EffectConfig::clone)
+      private final List<MechanicConfig> mechanicConfigs = effects.stream()
+          .map(MechanicConfig::clone)
           .collect(Collectors.toList());
 
       @Override
@@ -111,19 +111,19 @@ public class SpellFactory {
             .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_SPELL_DAMAGE))
             .forEach(minion -> {
               minion.getTriggeringMechanics().get(ConstTrigger.ON_SPELL_DAMAGE).stream()
-                  .forEach(config -> auraBuff.add(minion, config.effect.get().value));
+                  .forEach(config -> auraBuff.add(minion, config.value));
             });
         final int spellDamageBuffDelta = auraBuff.accumulatedBuffValue - accumulatedSpellDamage;
 
         if (spellDamageBuffDelta != 0) {
           logger.debug("Updating spell damage buff: " + spellDamageBuffDelta);
-          effectConfigs.stream().forEach(effect -> effect.value -= spellDamageBuffDelta);
+          mechanicConfigs.stream().forEach(effect -> effect.value -= spellDamageBuffDelta);
         }
       }
 
       @Override
-      public List<EffectConfig> getEffects() {
-        return effectConfigs;
+      public List<MechanicConfig> getEffects() {
+        return mechanicConfigs;
       }
 
       @Override

@@ -2,6 +2,7 @@ package com.herthrone.configuration;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
@@ -76,6 +77,7 @@ public class ConfigLoader {
 
   static String getUpperCaseStringValue(final Map map, final String key) {
     final String value = (String) map.get(key);
+    Preconditions.checkNotNull(value, "Map %s does not contain key %s", map, key);
     return value.toUpperCase();
   }
 

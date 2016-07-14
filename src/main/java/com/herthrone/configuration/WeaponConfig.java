@@ -28,7 +28,7 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
     this.attack = (int) map.get(ATTACK);
     this.durability = (int) map.get(DURABILITY);
     this.mechanics = map.containsKey(MECHANICS) ?
-        MechanicConfig.mechanicConfigFactory(map.get(MECHANICS)) : Collections.EMPTY_MAP;
+        MechanicConfig.getTriggerToMechanicMap(map.get(MECHANICS)) : Collections.EMPTY_MAP;
   }
 
   @Override

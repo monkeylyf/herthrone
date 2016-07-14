@@ -10,7 +10,6 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConditionConfig;
-import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstDependency;
@@ -54,24 +53,24 @@ public class EffectFactory {
   static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
-  static void addAuraEffect(final EffectConfig effectConfig, final Minion minion,
-                                   final Minion target) {
-    switch (effectConfig.type) {
+  static void addAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
+                            final Minion target) {
+    switch (mechanicConfig.type) {
       case Constant.ATTACK:
-        target.attack().addAuraBuff(minion, effectConfig.value);
+        target.attack().addAuraBuff(minion, mechanicConfig.value);
         break;
       case Constant.MAX_HEALTH:
-        target.maxHealth().addAuraBuff(minion, effectConfig.value);
-        target.health().addAuraBuff(minion, effectConfig.value);
+        target.maxHealth().addAuraBuff(minion, mechanicConfig.value);
+        target.health().addAuraBuff(minion, mechanicConfig.value);
         break;
       default:
-        throw new RuntimeException(effectConfig.type + " not supported for aura");
+        throw new RuntimeException(mechanicConfig.type + " not supported for aura");
     }
   }
 
-  static void removeAuraEffect(final EffectConfig effectConfig, final Minion minion,
+  static void removeAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
                                final Minion target) {
-    switch (effectConfig.type) {
+    switch (mechanicConfig.type) {
       case Constant.ATTACK:
         target.attack().removeAuraBuff(minion);
         break;
@@ -86,7 +85,7 @@ public class EffectFactory {
         }
         break;
       default:
-        throw new RuntimeException(effectConfig.type + " not supported for aura");
+        throw new RuntimeException(mechanicConfig.type + " not supported for aura");
     }
   }
 
@@ -95,7 +94,7 @@ public class EffectFactory {
     if (!mechanicConfigOptional.isPresent()) {
       logger.debug("Mechanic configuration is absent");
       return false;
-    } else if (!isConditionTriggered(mechanicConfigOptional.get().effect, target)) {
+    } else if (!isConditionTriggered(mechanicConfigOptional, target)) {
       logger.debug("Condition not met and mechanic effect not triggered");
       return false;
     } else {
@@ -122,7 +121,7 @@ public class EffectFactory {
 
     for (final Minion minion : minions) {
       for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(ConstTrigger.ON_END_TURN)) {
-        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.effect.get().target, side);
+        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.target, side);
         final List<Effect> effects = targets.stream()
             .flatMap(target -> pipeMechanicEffect(mechanic, target).stream())
             .collect(Collectors.toList());
@@ -131,7 +130,7 @@ public class EffectFactory {
     }
   }
 
-  private static boolean isConditionTriggered(final Optional<EffectConfig> effectConfigOptional,
+  private static boolean isConditionTriggered(final Optional<MechanicConfig> effectConfigOptional,
                                               final Creature target) {
     if (effectConfigOptional.isPresent() &&
         effectConfigOptional.get().conditionConfigOptional.isPresent()) {
@@ -164,19 +163,16 @@ public class EffectFactory {
 
   public static List<Effect> pipeMechanicEffect(final MechanicConfig mechanic,
                                                 final Creature target) {
-    final Optional<EffectConfig> config = mechanic.effect;
-    Preconditions.checkArgument(config.isPresent(), "Mechanic %s has no effect", mechanic);
-    final EffectConfig effectConfig = config.get();
-    final Creature realTarget = effectConfig.isRandom ?
-        RandomMinionGenerator.randomCreature(effectConfig.target, target.binder().getSide()) :
+    final Creature realTarget = mechanic.isRandom ?
+        RandomMinionGenerator.randomCreature(mechanic.target, target.binder().getSide()) :
         target;
 
-    return pipeEffectsByConfig(effectConfig,  realTarget);
+    return pipeEffectsByConfig(mechanic, realTarget);
   }
 
-  public static List<Effect> pipeEffectsByConfig(final EffectConfig config,
+  public static List<Effect> pipeEffectsByConfig(final MechanicConfig config,
                                                  final Creature target) {
-    ConstEffectType effect = config.name;
+    ConstEffectType effect = config.effectType;
     switch (effect) {
       case ATTRIBUTE:
         return getAttributeEffect(config, target);
@@ -207,7 +203,7 @@ public class EffectFactory {
     }
   }
 
-  private static List<Effect> getBuffEffect(final EffectConfig effect, final Creature creature) {
+  private static List<Effect> getBuffEffect(final MechanicConfig effect, final Creature creature) {
     final Side side = creature.binder().getSide();
     final String type = effect.type;
     switch (type) {
@@ -224,27 +220,27 @@ public class EffectFactory {
     }
   }
 
-  private static Effect getMaxHealthBuffEffect(final Minion minion, final EffectConfig effect) {
+  private static Effect getMaxHealthBuffEffect(final Minion minion, final MechanicConfig effect) {
     final int gain = getGain(minion.binder().getSide(), effect);
     return new MaxHealthBuffEffect(minion, gain);
   }
 
-  private static int getGain(final Side side, final EffectConfig effectConfig) {
-    if (effectConfig.valueDependency.isPresent()) {
-      return getValueByDependency(effectConfig.valueDependency.get(), side);
+  private static int getGain(final Side side, final MechanicConfig mechanicConfig) {
+    if (mechanicConfig.valueDependency.isPresent()) {
+      return getValueByDependency(mechanicConfig.valueDependency.get(), side);
     } else {
-      Preconditions.checkArgument(effectConfig.value != 0, "Gain value must be non-zero");
-      return effectConfig.value;
+      Preconditions.checkArgument(mechanicConfig.value != 0, "Gain value must be non-zero");
+      return mechanicConfig.value;
     }
   }
 
   private static Effect getGeneralBuffEffect(final Side side, final ValueAttribute attribute,
-                                             final EffectConfig effect) {
+                                             final MechanicConfig effect) {
     final int gain = getGain(side, effect);
     return new BuffEffect(attribute, gain, effect.isPermanent);
   }
 
-  private static List<Effect> getDestroyEffect(final EffectConfig config, final Creature creature) {
+  private static List<Effect> getDestroyEffect(final MechanicConfig config, final Creature creature) {
     return TargetFactory.getDestroyables(config.target, creature.binder().getSide()).stream()
         .map(DestroyEffect::new)
         .collect(Collectors.toList());
@@ -254,13 +250,13 @@ public class EffectFactory {
     return Collections.singletonList(new ReturnToHandEffect(target));
   }
 
-  private static List<Effect> getGenerateEffect(EffectConfig config, Creature creature) {
+  private static List<Effect> getGenerateEffect(MechanicConfig config, Creature creature) {
     final Effect generateEffect = new GenerateEffect(
         config.choices, config.type, config.target, creature.binder().getSide());
     return Collections.singletonList(generateEffect);
   }
 
-  private static List<Effect> getTakeControlEffect(final EffectConfig effect,
+  private static List<Effect> getTakeControlEffect(final MechanicConfig effect,
                                                    final Creature creature) {
     final Creature traitorMinion = RandomMinionGenerator.randomCreature(
         effect.target, creature.binder().getSide());
@@ -268,7 +264,7 @@ public class EffectFactory {
     return Collections.singletonList(new TakeControlEffect((Minion) traitorMinion));
   }
 
-  private static List<Effect> getAttributeEffect(final EffectConfig effect,
+  private static List<Effect> getAttributeEffect(final MechanicConfig effect,
                                                  final Creature creature) {
     final Side side = creature.binder().getSide();
     final String type = effect.type;
@@ -295,14 +291,14 @@ public class EffectFactory {
     }
   }
 
-  private static List<Effect> getEquipWeaponEffect(final Hero hero, final EffectConfig effect) {
+  private static List<Effect> getEquipWeaponEffect(final Hero hero, final MechanicConfig effect) {
     final String weaponName = effect.type;
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
     final Weapon weaponInstance = WeaponFactory.create(weapon);
     return Collections.singletonList(new EquipWeaponEffect(hero, weaponInstance));
   }
 
-  private static List<Effect> getSummonEffect(final EffectConfig effect, final Side side) {
+  private static List<Effect> getSummonEffect(final MechanicConfig effect, final Side side) {
     final List<String> summonChoices = effect.choices.stream()
         .map(String::toUpperCase)
         .collect(Collectors.toList());
@@ -315,7 +311,7 @@ public class EffectFactory {
     return Collections.singletonList(new SummonEffect(side.board, minion));
   }
 
-  private static List<Effect> getDrawCardEffect(final EffectConfig effect, final Side side) {
+  private static List<Effect> getDrawCardEffect(final MechanicConfig effect, final Side side) {
     // TODO: draw from own deck/opponent deck/opponent hand
     final TargetConfig target = effect.target;
     switch (target.type) {
@@ -324,7 +320,7 @@ public class EffectFactory {
     return Collections.singletonList(new MoveCardEffect(side.hand, side.deck, side));
   }
 
-  private static List<Effect> getCrystalEffect(final EffectConfig config, final Creature creature) {
+  private static List<Effect> getCrystalEffect(final MechanicConfig config, final Creature creature) {
     final String type = config.type;
     final ManaCrystal manaCrystal = creature.binder().getSide().manaCrystal;
     switch (type) {
@@ -335,7 +331,7 @@ public class EffectFactory {
     }
   }
 
-  private static Effect getHealthAttributeEffect(final Creature creature, final EffectConfig effect) {
+  private static Effect getHealthAttributeEffect(final Creature creature, final MechanicConfig effect) {
     final int value;
     if (effect.valueDependency.isPresent()) {
       value = getValueByDependency(effect.valueDependency.get(), creature.binder().getSide());
@@ -364,7 +360,7 @@ public class EffectFactory {
   }
 
   private static Effect getGeneralAttributeEffect(final Side side, final ValueAttribute attr,
-                                                  final EffectConfig effect) {
+                                                  final MechanicConfig effect) {
     final int value;
     if (effect.valueDependency.isPresent()) {
       value = getValueByDependency(effect.valueDependency.get(), side);

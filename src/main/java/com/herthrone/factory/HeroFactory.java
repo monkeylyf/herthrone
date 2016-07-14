@@ -258,11 +258,13 @@ public class HeroFactory {
 
       @Override
       public void endTurn() {
-        attackMovePoints().endTurn();
+        // Reset attack of hero but not the one of weapon is any. Do not call attackAttribute().
+        attackAttr.reset();
       }
 
       @Override
       public void startTurn() {
+        attackMovePoints().endTurn();
         booleanMechanics.resetIfPresent(ConstMechanic.FROZEN);
       }
 

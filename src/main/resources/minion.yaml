@@ -13,7 +13,8 @@
   crystal: 4
   collectible: true
   mechanics:
-    - name: Taunt
+    - name: taunt
+      effect: status
 
 - name: silver_hand_recruit
   class: paladin
@@ -59,7 +60,8 @@
   crystal: 1
   collectible: false
   mechanics:
-    - name: Taunt
+    - name: taunt
+      effect: status
 
 - name: wolfrider
   class: neutral
@@ -69,6 +71,7 @@
   collectible: true
   mechanics:
     - name: charge
+      effect: status
 
 - name: gnomish_inventor
   class: neutral
@@ -111,6 +114,7 @@
   collectible: true
   mechanics:
     - name: elusive
+      effect: status
 
 - name: ironfur_grizzly
   class: neutral
@@ -121,6 +125,7 @@
   collectible: true
   mechanics:
     - name: taunt
+      effect: status
 
 - name: water_elemental
   class: mage
@@ -130,6 +135,7 @@
   collectible: true
   mechanics:
     - name: freeze
+      effect: status
 
 - name: scarlet_crusader
   class: mage
@@ -139,6 +145,7 @@
   collectible: true
   mechanics:
     - name: divine_shield
+      effect: status
 
 - name: worgen_infiltrator
   class: neutral
@@ -148,6 +155,7 @@
   collectible: true
   mechanics:
     - name: stealth
+      effect: status
 
 - name: emperor_cobra
   class: neutral
@@ -157,6 +165,7 @@
   collectible: true
   mechanics:
     - name: poison
+      effect: status
 
 - name: ogre_brute
   class: neutral
@@ -166,6 +175,7 @@
   collectible: true
   mechanics:
     - name: forgetful
+      effect: status
 
 - name: windfury_harpy
   class: neutral
@@ -175,6 +185,7 @@
   collectible: true
   mechanics:
     - name: windfury
+      effect: status
 
 - name: jungle_panther
   class: neutral
@@ -184,6 +195,7 @@
   collectible: true
   mechanics:
     - name: stealth
+      effect: status
 
 - name: defias_ringleader
   class: rogue
@@ -428,6 +440,7 @@
   collectible: true
   mechanics:
     - name: charge
+      effect: status
 
 - name: river_crocolisk
   class: neutral
@@ -445,6 +458,7 @@
   collectible: true
   mechanics:
     - name: charge
+      effect: status
 
 - name: voodoo_doctor
   class: neutral
@@ -507,6 +521,7 @@
   collectible: true
   mechanics:
     - name: charge
+      effect: status
 
 - name: booty_bay_bodyguard
   class: neutral
@@ -516,6 +531,7 @@
   collectible: true
   mechanics:
     - name: taunt
+      effect: status
 
 - name: core_hound
   class: neutral
@@ -608,6 +624,7 @@
   collectible: true
   mechanics:
     - name: taunt
+      effect: status
 
 - name: frostwolf_warlord
   class: neutral
@@ -643,6 +660,7 @@
   collectible: true
   mechanics:
     - name: taunt
+      effect: status
 
 - name: grimscale_oracle
   class: neutral
@@ -718,6 +736,7 @@
   collectible: true
   mechanics:
     - name: taunt
+      effect: status
 
 - name: murloc_tidehunter
   class: neutral
@@ -822,6 +841,7 @@
   collectible: true
   mechanics:
     - name: taunt
+      effect: status
 
 - name: stormpike_commando
   class: neutral
@@ -848,6 +868,7 @@
   collectible: true
   mechanics:
     - name: charge
+      effect: status
 
 - name: war_golem
   class: neutral

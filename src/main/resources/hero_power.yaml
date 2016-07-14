@@ -3,7 +3,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - trigger: on_play
+    - name: gain
+      trigger: on_play
       effect: attribute
       type: armor
       value: 2
@@ -16,7 +17,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - trigger: on_play
+    - name: equip
+      trigger: on_play
       effect: weapon
       type: wicked_blade
       value: 1
@@ -32,7 +34,8 @@
     scope: all
     type: all
   mechanics:
-    - trigger: on_play
+    - name: deal_damage
+      trigger: on_play
       effect: attribute
       type: health
       value: -1
@@ -48,7 +51,8 @@
     scope: all
     type: all
   mechanics:
-    - trigger: on_play
+    - name: restore_health
+      trigger: on_play
       effect: attribute
       type: health
       value: 2
@@ -61,14 +65,16 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - trigger: on_play
+    - name: deal_damage
+      trigger: on_play
       effect: attribute
       type: health
       value: -2
       target:
         scope: own
         type: hero
-    - trigger: on_play
+    - name: card_draw
+      trigger: on_play
       effect: draw
       type: card
       value: 1
@@ -81,7 +87,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - trigger: on_play
+    - name: summon
+      trigger: on_play
       effect: summon
       type: minion
       value: 1
@@ -97,15 +104,17 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - trigger: on_play
-      effect: attribute
+    - name: gain
+      trigger: on_play
+      effect: buff
       type: attack
       permanent: false  # true by default
       value: 1
       target:
         scope: own
         type: hero
-    - trigger: on_play
+    - name: gain
+      trigger: on_play
       effect: attribute
       type: armor
       value: 1
@@ -121,7 +130,8 @@
      scope: opponent
      type: hero
   mechanics:
-    - trigger: on_play
+    - name: deal_damage
+      trigger: on_play
       effect: attribute
       type: health
       value: -2
@@ -134,7 +144,8 @@
   crystal: 2
   type: hero_power
   mechanics:
-    - trigger: on_play
+    - name: summon
+      trigger: on_play
       effect: summon
       type: minion
       value: 1

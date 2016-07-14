@@ -212,7 +212,6 @@ public class MinionFactory {
 
       @Override
       public void dealDamage(final Creature creature) {
-        // TODO: but this is not the only way to reveal a minion in stealth.
         // http://hearthstone.gamepedia.com/Stealth
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
         boolean isDamaged = creature.takeDamage(attackAttr.value());
@@ -267,11 +266,11 @@ public class MinionFactory {
             .forEach(config -> {
               side.board.stream()
                   .filter(minion -> {
-                    final ConstType type = config.effect.get().target.type;
+                    final ConstType type = config.target.type;
                     return type.equals(ConstType.MINION) || type.equals(minion.type());
                   })
                   .forEach(minion -> EffectFactory.removeAuraEffect(
-                      config.effect.get(), this, minion));
+                      config, this, minion));
             });
         // Remove spell damage effects if the dead one has it.
         binder().getSide().hand.stream()
@@ -310,13 +309,14 @@ public class MinionFactory {
             .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_PRESENCE))
             .collect(Collectors.toList());
         for (final Minion auraMinion : auraMinions) {
-          final List<MechanicConfig> onPresenceConfigs = auraMinion.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE);
+          final List<MechanicConfig> onPresenceConfigs = auraMinion.getTriggeringMechanics().get(
+              ConstTrigger.ON_PRESENCE);
           if (this != auraMinion) {
             onPresenceConfigs.stream().forEach(
                 config -> {
-                  final ConstType type = config.effect.get().target.type;
+                  final ConstType type = config.target.type;
                   if (type.equals(ConstType.MINION) || type().equals(type)) {
-                    EffectFactory.addAuraEffect(config.effect.get(), auraMinion, this);
+                    EffectFactory.addAuraEffect(config, auraMinion, this);
                   }
                 });
           }

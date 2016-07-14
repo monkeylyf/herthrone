@@ -1,7 +1,7 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
-import com.herthrone.configuration.EffectConfig;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.object.AuraBuff;
 
@@ -14,7 +14,7 @@ public interface Spell extends Card, Refreshable {
 
   Optional<TargetConfig> getTargetConfig();
 
-  List<EffectConfig> getEffects();
+  List<MechanicConfig> getEffects();
 
   AuraBuff getAuraBuff();
 }
