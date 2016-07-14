@@ -1,11 +1,11 @@
 package com.herthrone.object;
 
-import com.google.common.base.Optional;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTrigger;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class BooleanMechanics {
   private Map<ConstMechanic, BooleanAttribute> booleanAttributeMap;
 
   public BooleanMechanics() {
-    this.booleanAttributeMap = new HashMap<>();
+    this(Collections.emptyMap());
   }
 
   public BooleanMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
@@ -33,20 +33,20 @@ public class BooleanMechanics {
     }
   }
 
-  public Optional<BooleanAttribute> get(final ConstMechanic mechanic) {
-    final BooleanAttribute booleanAttribute = booleanAttributeMap.get(mechanic);
-    return Optional.fromNullable(booleanAttribute);
-  }
-
   public void resetIfPresent(final ConstMechanic mechanic) {
-    if (has(mechanic)) {
+    if (booleanAttributeMap.containsKey(mechanic)) {
       logger.debug("Reset boolean mechanic " + mechanic);
       booleanAttributeMap.get(mechanic).reset();
     }
   }
 
-  public boolean has(final ConstMechanic mechanic) {
-    return booleanAttributeMap.containsKey(mechanic);
+  public boolean isOff(final ConstMechanic mechanic) {
+    return !isOn(mechanic);
+  }
+
+  public boolean isOn(final ConstMechanic mechanic) {
+    return booleanAttributeMap.containsKey(mechanic) ?
+        booleanAttributeMap.get(mechanic).isOn() : false;
   }
 
   public void initialize(final ConstMechanic mechanic) {

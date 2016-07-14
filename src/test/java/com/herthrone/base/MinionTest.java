@@ -66,7 +66,7 @@ public class MinionTest extends TestCase {
   }
 
   private void attackEachOther() {
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti1, yeti2);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(yeti1, yeti2);
   }
 
   @Test

@@ -1,6 +1,5 @@
 package com.herthrone.base;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Range;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
@@ -11,11 +10,11 @@ import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
-import com.herthrone.object.BooleanAttribute;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,9 +100,9 @@ public class MechanicTest extends TestCase {
   @Test
   public void testElusive() {
     final Minion faerieDragon = createAndBindMinion(ConstMinion.FAERIE_DRAGON);
-    assertThat(GameManager.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL)).isFalse();
+    assertThat(TargetFactory.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL)).isFalse();
 
-    assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isTrue();
+    assertThat(TargetFactory.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isTrue();
   }
 
   @Test
@@ -120,10 +119,10 @@ public class MechanicTest extends TestCase {
     board.add(senjin);
     board.add(grizzly);
 
-    assertThat(GameManager.isMinionTargetable(yeti, board, ConstType.ATTACK)).isFalse();
-    assertThat(GameManager.isHeroTargetable(hero, board, ConstType.ATTACK)).isFalse();
-    assertThat(GameManager.isMinionTargetable(senjin, board, ConstType.ATTACK)).isTrue();
-    assertThat(GameManager.isMinionTargetable(grizzly, board, ConstType.ATTACK)).isTrue();
+    assertThat(TargetFactory.isMinionTargetable(yeti, board, ConstType.ATTACK)).isFalse();
+    assertThat(TargetFactory.isHeroTargetable(hero, board, ConstType.ATTACK)).isFalse();
+    assertThat(TargetFactory.isMinionTargetable(senjin, board, ConstType.ATTACK)).isTrue();
+    assertThat(TargetFactory.isMinionTargetable(grizzly, board, ConstType.ATTACK)).isTrue();
 
     board.remove(senjin);
     board.remove(grizzly);
@@ -131,24 +130,22 @@ public class MechanicTest extends TestCase {
 
     // Yeti and another minion with both stealth and taunt on board. Yeti should be targetable
     // because stealth prevents taunt prevents Yeti being targeted.
-    assertThat(GameManager.isMinionTargetable(yeti, board, ConstType.ATTACK)).isTrue();
-    assertThat(GameManager.isMinionTargetable(junglePanther, board, ConstType.ATTACK)).isFalse();
+    assertThat(TargetFactory.isMinionTargetable(yeti, board, ConstType.ATTACK)).isTrue();
+    assertThat(TargetFactory.isMinionTargetable(junglePanther, board, ConstType.ATTACK)).isFalse();
   }
 
   @Test
   public void testDivineShield() {
-    assertThat(scarletCrusader.booleanMechanics().get(ConstMechanic.DIVINE_SHIELD).isPresent()).isTrue();
-    final BooleanAttribute divineShield = scarletCrusader.booleanMechanics().get(ConstMechanic.DIVINE_SHIELD).get();
-    assertThat(divineShield.isOn()).isTrue();
+    assertThat(scarletCrusader.booleanMechanics().isOn(ConstMechanic.DIVINE_SHIELD)).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, scarletCrusader);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(yeti, scarletCrusader);
 
     // Yeti takes damage. Crusader takes no damage because of divine shield.
-    assertThat(divineShield.isOn()).isFalse();
+    assertThat(scarletCrusader.booleanMechanics().isOn(ConstMechanic.DIVINE_SHIELD)).isFalse();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
     assertThat(yeti.healthLoss()).isGreaterThan(0);
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, scarletCrusader);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(yeti, scarletCrusader);
 
     // Crusader has no more divine shield and takes damage.
     assertThat(scarletCrusader.isDead()).isTrue();
@@ -162,46 +159,41 @@ public class MechanicTest extends TestCase {
     final Minion worgenInfiltrator = createAndBindMinion(ConstMinion.WORGEN_INFILTRATOR);
     gm.playCard(worgenInfiltrator);
 
-    final Optional<BooleanAttribute> stealth = worgenInfiltrator.booleanMechanics().get(ConstMechanic.STEALTH);
-    assertThat(stealth.isPresent()).isTrue();
-    assertThat(stealth.get().isOn()).isTrue();
+    assertThat(worgenInfiltrator.booleanMechanics().isOn(ConstMechanic.STEALTH)).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(worgenInfiltrator, stoneclawTotem);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(worgenInfiltrator, stoneclawTotem);
 
     // Stealth deactivated after attack.
-    assertThat(stealth.isPresent()).isTrue();
-    assertThat(stealth.get().isOn()).isFalse();
+    assertThat(worgenInfiltrator.booleanMechanics().isOn(ConstMechanic.STEALTH)).isFalse();
   }
 
   @Test
   public void testFreeze() {
     // Scarlet crusader has divine shield so take no damage. No damage no frozen.
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(waterElemental, scarletCrusader);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(waterElemental, scarletCrusader);
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
-    assertThat(scarletCrusader.booleanMechanics().get(ConstMechanic.FROZEN).isPresent()).isFalse();
+    assertThat(scarletCrusader.booleanMechanics().isOn(ConstMechanic.FROZEN)).isFalse();
 
     // Yeti takes damage and gets frozen.
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(waterElemental, yeti);
-    final Optional<BooleanAttribute> frozen = yeti.booleanMechanics().get(ConstMechanic.FROZEN);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(waterElemental, yeti);
     assertThat(yeti.healthLoss()).isGreaterThan(0);
-    assertThat(frozen.isPresent()).isTrue();
-    assertThat(frozen.get().isOn()).isTrue();
+    assertThat(yeti.booleanMechanics().isOn(ConstMechanic.FROZEN)).isTrue();
   }
 
   @Test
   public void testFrozen() {
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, waterElemental);
-    final Optional<BooleanAttribute> frozen = yeti.booleanMechanics().get(ConstMechanic.FROZEN);
-    assertThat(frozen.isPresent()).isTrue();
-    assertThat(frozen.get().isOn()).isTrue();
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(yeti, waterElemental);
+    assertThat(yeti.booleanMechanics().isOn(ConstMechanic.FROZEN)).isTrue();
+    yeti.startTurn();
+    assertThat(yeti.booleanMechanics().isOn(ConstMechanic.FROZEN)).isFalse();
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(waterElemental, hero);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(waterElemental, hero);
 
-    final Optional<BooleanAttribute> heroFrozen = yeti.booleanMechanics().get(ConstMechanic.FROZEN);
+    assertThat(hero.booleanMechanics().isOn(ConstMechanic.FROZEN)).isTrue();
 
-    assertThat(heroFrozen.isPresent()).isTrue();
-
-    // TODO: next round the frozen bool attribute should be unset(when startRound).
+    // Test that next round the negative status will be reset including frozen.
+    hero.startTurn();
+    assertThat(hero.booleanMechanics().isOn(ConstMechanic.FROZEN)).isFalse();
   }
 
   @Test
@@ -209,21 +201,21 @@ public class MechanicTest extends TestCase {
     Minion emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
     gm.playCard(emperorCobra);
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(emperorCobra, hero);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(emperorCobra, hero);
 
     // Poison does not trigger destroy on Hero.
     assertThat(emperorCobra.healthLoss()).isEqualTo(0);
     assertThat(hero.isDead()).isFalse();
 
     // Point triggers destroy on Minion when minion is damaged.
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(emperorCobra, yeti);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(emperorCobra, yeti);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(yeti.healthLoss()).isGreaterThan(0);
     assertThat(yeti.isDead()).isTrue();
 
     emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
     gm.playCard(emperorCobra);
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(emperorCobra, scarletCrusader);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
     assertThat(activeSide.board.contains(emperorCobra)).isFalse();
@@ -234,13 +226,13 @@ public class MechanicTest extends TestCase {
     // No minions so far has default immune mechanic yet.
     // Init IMMUNE for Yeti.
     yeti.booleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.ATTACK)).isFalse();
-    assertThat(GameManager.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isFalse();
+    assertThat(TargetFactory.isMinionTargetable(yeti, activeSide.board, ConstType.ATTACK)).isFalse();
+    assertThat(TargetFactory.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isFalse();
 
     // Test Hero immune.
     hero.booleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(GameManager.isHeroTargetable(hero, activeSide.board, ConstType.ATTACK)).isFalse();
-    assertThat(GameManager.isHeroTargetable(hero, activeSide.board, ConstType.SPELL)).isFalse();
+    assertThat(TargetFactory.isHeroTargetable(hero, activeSide.board, ConstType.ATTACK)).isFalse();
+    assertThat(TargetFactory.isHeroTargetable(hero, activeSide.board, ConstType.SPELL)).isFalse();
   }
 
   @Test
@@ -264,7 +256,7 @@ public class MechanicTest extends TestCase {
     ogreBrute.health().getTemporaryBuff().increase(buffHealth);
 
     for (int i = 0; i < total; ++i) {
-      EffectFactory.AttackFactory.getPhysicalDamageEffect(ogreBrute, inactiveSide.hero);
+      EffectFactory.AttackFactory.pipePhysicalDamageEffect(ogreBrute, inactiveSide.hero);
     }
     Range<Double> mainTargetGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter), total * forgetfulFactor * (1 + jitter));
     Range<Double> otherTargetsGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter) / minionNum, total * forgetfulFactor * (1 + jitter) / minionNum);

@@ -12,7 +12,6 @@ import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConditionConfig;
 import com.herthrone.configuration.EffectConfig;
 import com.herthrone.configuration.MechanicConfig;
-import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstDependency;
 import com.herthrone.constant.ConstEffectType;
@@ -176,33 +175,33 @@ public class EffectFactory {
   }
 
   public static List<Effect> pipeEffectsByConfig(final EffectConfig config,
-                                                 final Creature creature) {
+                                                 final Creature target) {
     ConstEffectType effect = config.name;
     switch (effect) {
       case ATTRIBUTE:
-        return getAttributeEffect(config, creature);
+        return getAttributeEffect(config, target);
       case BUFF:
-        return getBuffEffect(config, creature);
+        return getBuffEffect(config, target);
       case CRYSTAL:
-        return getCrystalEffect(config, creature);
+        return getCrystalEffect(config, target);
       case DRAW:
-        return getDrawCardEffect(config, creature.binder().getSide());
+        return getDrawCardEffect(config, target.binder().getSide());
       case GENERATE:
-        return getGenerateEffect(config, creature);
+        return getGenerateEffect(config, target);
       case DESTROY:
-        return getDestroyEffect(config, creature);
+        return getDestroyEffect(config, target);
       case RETURN_TO_HAND:
         Preconditions.checkArgument(
-            creature instanceof Minion, "%s can not be returned to player's hand", creature.type());
-        return getReturnToHandEffect((Minion) creature);
+            target instanceof Minion, "%s can not be returned to player's hand", target.type());
+        return getReturnToHandEffect((Minion) target);
       case SUMMON:
-        return getSummonEffect(config, creature.binder().getSide());
+        return getSummonEffect(config, target.binder().getSide());
       case TAKE_CONTROL:
-        return getTakeControlEffect(config, creature);
+        return getTakeControlEffect(config, target);
       case WEAPON:
         Preconditions.checkArgument(
-            creature instanceof Hero, "%s can not equip weapon", creature.type());
-        return getEquipWeaponEffect((Hero) creature, config);
+            target instanceof Hero, "%s can not equip weapon", target.type());
+        return getEquipWeaponEffect((Hero) target, config);
       default:
         throw new IllegalArgumentException("Unknown effect: " + effect);
     }
@@ -377,24 +376,17 @@ public class EffectFactory {
     return new AttributeEffect(attr, value, effect.isPermanent);
   }
 
-  public static void pipeEffectsByConfig(final Spell spell, final Creature creature) {
+  public static void pipeEffectsByConfig(final Spell spell, final Creature target) {
     final List<Effect> effects = spell.getEffects().stream()
-        .flatMap(effect -> pipeEffectsByConfig(effect, creature).stream())
+        .flatMap(effect -> pipeEffectsByConfig(effect, target).stream())
         .collect(Collectors.toList());
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }
 
-  public static List<Effect> pipeEffectsByConfig(final SpellConfig config, final Creature creature) {
-    return config.effects.stream()
-        .flatMap(effect -> pipeEffectsByConfig(effect, creature).stream())
-        .collect(Collectors.toList());
-  }
-
-
   public static class AttackFactory {
 
-    public static void getPhysicalDamageEffect(final Creature attacker, final Creature attackee) {
-      final List<Effect> effects = attacker.booleanMechanics().has(ConstMechanic.FORGETFUL) ?
+    public static void pipePhysicalDamageEffect(final Creature attacker, final Creature attackee) {
+      final List<Effect> effects = attacker.booleanMechanics().isOn(ConstMechanic.FORGETFUL) ?
           getForgetfulPhysicalDamageEffect(attacker, attackee) :
           Collections.singletonList(new PhysicalDamageEffect(attacker, attackee));
       attacker.binder().getSide().getEffectQueue().enqueue(effects);

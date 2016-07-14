@@ -11,7 +11,6 @@ import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

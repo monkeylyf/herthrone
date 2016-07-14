@@ -141,7 +141,7 @@ public class SpellTest extends TestCase {
     EffectFactory.pipeEffectsByConfig(daggerMastery, hero1);
     assertThat(hero1.canDamage()).isTrue();
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero1, hero2);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(hero1, hero2);
     assertThat(daggerMastery.getEffects().get(0).value).isEqualTo(hero2.healthLoss());
   }
 

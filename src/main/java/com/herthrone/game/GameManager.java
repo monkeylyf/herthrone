@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Hero;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
@@ -15,7 +14,6 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstAction;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
-import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
@@ -27,7 +25,6 @@ import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.WeaponFactory;
-import com.herthrone.object.BooleanAttribute;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -99,67 +96,6 @@ public class GameManager implements Round {
     }
 
     throw new RuntimeException(String.format("Unknown card %s", name));
-  }
-
-  public static boolean isMinionTargetable(final Minion minion, final Container<Minion> board, final ConstType type) {
-    if (BooleanAttribute.isPresentAndOn(minion.booleanMechanics().get(ConstMechanic.IMMUNE))) {
-      return false;
-    } else {
-      switch (type) {
-        case ATTACK:
-          return isMinionTargetableByAttack(minion, board);
-        case SPELL:
-          return isMinionTargetableBySpell(minion, board);
-        default:
-          throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
-      }
-    }
-  }
-
-  private static boolean isMinionTargetableByAttack(final Minion minion, final Container<Minion> board) {
-    // A stealth minion can not be targeted, even it is a taunt minion.
-    final Optional<BooleanAttribute> stealth = minion.booleanMechanics().get(ConstMechanic.STEALTH);
-    if (BooleanAttribute.isPresentAndOn(stealth)) {
-      return false;
-    }
-
-    // A taunt minion is targetable.
-    final Optional<BooleanAttribute> taunt = minion.booleanMechanics().get(ConstMechanic.TAUNT);
-    if (BooleanAttribute.isPresentAndOn(taunt)) {
-      return true;
-    }
-
-    // If there is any other minions on the board with taunt but not stealth ability, this minion
-    // cannot be targeted.
-    return !board.stream().anyMatch(m -> BooleanAttribute.isPresentAndOn(m.booleanMechanics().get(ConstMechanic.TAUNT)) && BooleanAttribute.isAbsentOrOff(m.booleanMechanics().get(ConstMechanic.STEALTH)));
-  }
-
-  private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion> board) {
-    final Optional<BooleanAttribute> elusive = minion.booleanMechanics().get(ConstMechanic.ELUSIVE);
-    return !BooleanAttribute.isPresentAndOn(elusive);
-  }
-
-  public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board, final ConstType type) {
-    if (BooleanAttribute.isPresentAndOn(hero.booleanMechanics().get(ConstMechanic.IMMUNE))) {
-      return false;
-    } else {
-      switch (type) {
-        case ATTACK:
-          return isHeroTargetableByAttack(hero, board);
-        case SPELL:
-          return isHeroTargetableBySpell(hero, board);
-        default:
-          throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
-      }
-    }
-  }
-
-  private static boolean isHeroTargetableByAttack(final Hero hero, final Container<Minion> board) {
-    return !board.stream().anyMatch(m -> BooleanAttribute.isPresentAndOn(m.booleanMechanics().get(ConstMechanic.TAUNT)));
-  }
-
-  private static boolean isHeroTargetableBySpell(final Hero hero, final Container<Minion> board) {
-    return true;
   }
 
   public static void main(String[] args) {
@@ -266,7 +202,7 @@ public class GameManager implements Round {
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MINION_ATTACK.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
       final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      EffectFactory.AttackFactory.getPhysicalDamageEffect(attacker, attackee);
+      EffectFactory.AttackFactory.pipePhysicalDamageEffect(attacker, attackee);
       // Cost one move point.
       attacker.attackMovePoints().getTemporaryBuff().increase(-1);
     } else {

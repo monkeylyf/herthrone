@@ -1,6 +1,5 @@
 package com.herthrone.factory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
@@ -19,7 +18,6 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.object.BooleanAttribute;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
@@ -58,9 +56,9 @@ public class MinionFactory {
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final TriggeringMechanics effectMechanics = new TriggeringMechanics(mechanics);
       private final ValueAttribute movePoints = new ValueAttribute(
-          booleanMechanics.has(ConstMechanic.WINDFURY) ?
+          booleanMechanics.isOn(ConstMechanic.WINDFURY) ?
               Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS,
-          booleanMechanics.has(ConstMechanic.CHARGE)
+          booleanMechanics.isOn(ConstMechanic.CHARGE)
           );
       private final Binder binder = new Binder();
       private OptionalInt seqId = OptionalInt.empty();
@@ -219,12 +217,11 @@ public class MinionFactory {
         booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
         boolean isDamaged = creature.takeDamage(attackAttr.value());
         if (isDamaged) {
-          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.FREEZE))) {
+          if (booleanMechanics().isOn(ConstMechanic.FREEZE)) {
             creature.booleanMechanics().initialize(ConstMechanic.FROZEN, 1);
           }
 
-          if (BooleanAttribute.isPresentAndOn(booleanMechanics.get(ConstMechanic.POISON)) &&
-              creature instanceof Minion) {
+          if (booleanMechanics().isOn(ConstMechanic.POISON) && creature instanceof Minion) {
             ((Minion) creature).destroy();
           }
         }
@@ -232,8 +229,7 @@ public class MinionFactory {
 
       @Override
       public boolean takeDamage(final int damage) {
-        final Optional<BooleanAttribute> divineShield = booleanMechanics.get(ConstMechanic.DIVINE_SHIELD);
-        final boolean isDamaged = !BooleanAttribute.isPresentAndOn(divineShield);
+        final boolean isDamaged = booleanMechanics.isOff(ConstMechanic.DIVINE_SHIELD);
         if (isDamaged) {
           healthAttr.decrease(damage);
         } else {
@@ -288,8 +284,7 @@ public class MinionFactory {
 
       @Override
       public boolean canMove() {
-        return movePoints.value() > 0 &&
-            BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.CHARGE));
+        return movePoints.value() > 0 && booleanMechanics().isOff(ConstMechanic.FROZEN);
       }
 
       @Override
@@ -304,6 +299,7 @@ public class MinionFactory {
 
       @Override
       public void startTurn() {
+        booleanMechanics().resetIfPresent(ConstMechanic.FROZEN);
       }
 
       @Override

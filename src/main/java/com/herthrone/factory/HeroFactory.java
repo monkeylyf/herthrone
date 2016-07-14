@@ -20,7 +20,6 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
-import com.herthrone.object.BooleanAttribute;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.ValueAttribute;
 
@@ -178,7 +177,7 @@ public class HeroFactory {
       public boolean canMove() {
         return weaponOptional.isPresent() &&
             attackMovePoints.value() > 0 &&
-            BooleanAttribute.isAbsentOrOff(booleanMechanics.get(ConstMechanic.FROZEN));
+            booleanMechanics().isOn(ConstMechanic.FROZEN);
       }
 
       @Override
@@ -264,7 +263,7 @@ public class HeroFactory {
 
       @Override
       public void startTurn() {
-
+        booleanMechanics.resetIfPresent(ConstMechanic.FROZEN);
       }
 
       @Override

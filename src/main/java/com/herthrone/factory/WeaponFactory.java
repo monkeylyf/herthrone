@@ -42,7 +42,7 @@ public class WeaponFactory {
       private final ValueAttribute durabilityAttr = new ValueAttribute(durability);
       private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
       private final ValueAttribute attackMovePoints = new ValueAttribute(
-          booleanMechanics.has(ConstMechanic.WINDFURY) ?
+          booleanMechanics.isOn(ConstMechanic.WINDFURY) ?
               Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS);
       private final TriggeringMechanics triggeringMechanics = new TriggeringMechanics(mechanics);
       private final Binder binder = new Binder();

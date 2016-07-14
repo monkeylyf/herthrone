@@ -1,12 +1,9 @@
 package com.herthrone.base;
 
-import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
-import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
-import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -41,7 +38,6 @@ public class HeroTest extends TestCase {
   private Hero hero1;
   private Hero hero2;
   private Minion yeti;
-  private SpellConfig armorUp;
   private Weapon weapon1;
   private Weapon weapon2;
   private GameManager gm;
@@ -53,7 +49,6 @@ public class HeroTest extends TestCase {
     this.hero1 = gm.activeSide.hero;
     this.hero2 = gm.inactiveSide.hero;
 
-    this.armorUp = ConfigLoader.getHeroPowerConfigByName(ConstSpell.ARMOR_UP);
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     gm.activeSide.bind(yeti);
     final Map<ConstTrigger, List<MechanicConfig>> emptyMap = Collections.emptyMap();
@@ -87,7 +82,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1AttackHero2() {
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero1, hero2);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(hero1, hero2);
   }
 
   @Test
@@ -112,7 +107,7 @@ public class HeroTest extends TestCase {
   }
 
   private void hero2AttackHero1() {
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero2, hero1);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(hero2, hero1);
   }
 
   @Test
@@ -154,11 +149,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    EffectFactory.pipeEffectsByConfig(armorUp, hero1).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(hero1.getHeroPower(), hero1);
   }
 
   private void hero2ArmorUp() {
-    EffectFactory.pipeEffectsByConfig(armorUp, hero2).stream().forEach(Effect::act);
+    EffectFactory.pipeEffectsByConfig(hero2.getHeroPower(), hero2);
   }
 
   @Test
@@ -179,7 +174,7 @@ public class HeroTest extends TestCase {
   public void testHeroAttackMinion() {
     hero1.equip(weapon1);
 
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(yeti, hero1);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(yeti, hero1);
     assertEquals(0, yeti.healthLoss());
     assertEquals(yeti.attack().value(), hero1.healthLoss());
   }
@@ -187,7 +182,7 @@ public class HeroTest extends TestCase {
   @Test
   public void testMinionAttackHero() {
     hero1.equip(weapon1);
-    EffectFactory.AttackFactory.getPhysicalDamageEffect(hero1, yeti);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(hero1, yeti);
 
     assertEquals(weapon1.getAttackAttr().value(), yeti.healthLoss());
     assertEquals(yeti.attack().value(), hero1.healthLoss());
