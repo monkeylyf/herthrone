@@ -237,10 +237,10 @@
       effect: attribute
       type: health
       value: -1
-      random: true
       target:
         scope: opponent
         type: all
+        random: true
 
 - name: mind_control_tech
   class: neutral
@@ -254,11 +254,11 @@
       effect: take_control
       type: minion
       permanent: true
-      random: true
       value: 1
       target:
         scope: opponent
         type: minion
+        random: true
       condition:
         type: board_size
         range_start: 4  # Inclusive
@@ -641,7 +641,7 @@
       value: 0
       target:
         scope: own
-        type: board
+        type: minion
     - name: battlecry
       trigger: on_play
       effect: buff
@@ -650,7 +650,7 @@
       value: 0
       target:
         scope: own
-        type: board
+        type: minion
 
 - name: goldshire_footman
   class: neutral

@@ -9,6 +9,7 @@ import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.TriggerFactory;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -50,7 +51,7 @@ public class SpellTest extends TestCase {
     final Spell fireBall = SpellFactory.create(ConstSpell.FIRE_BALL);
     gm.activeSide.bind(fireBall);
 
-    EffectFactory.pipeEffectsByConfig(fireBall, minion);
+    EffectFactory.pipeEffects(fireBall, minion);
     assertThat(minion.health().value()).isEqualTo(yetiConfig.health + fireBall.getEffects().get(0).value);
     assertThat(minion.isDead()).isTrue();
   }
@@ -61,7 +62,7 @@ public class SpellTest extends TestCase {
     final Spell armorUp = HeroPowerFactory.createHeroPowerByName(ConstSpell.ARMOR_UP);
     gm.activeSide.bind(armorUp);
 
-    EffectFactory.pipeEffectsByConfig(armorUp, hero1);
+    EffectFactory.pipeEffects(armorUp, hero1);
     assertThat(hero1.armor().value()).isEqualTo(armorUp.getEffects().get(0).value);
   }
 
@@ -75,12 +76,12 @@ public class SpellTest extends TestCase {
     hero1.takeDamage(largeDamage);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage);
 
-    EffectFactory.pipeEffectsByConfig(lesserHeal, hero1);
+    EffectFactory.pipeEffects(lesserHeal, hero1);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage - healVol);
-    EffectFactory.pipeEffectsByConfig(lesserHeal, hero1);
+    EffectFactory.pipeEffects(lesserHeal, hero1);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage - healVol * 2);
     // Healing cannot exceed the health upper bound.
-    EffectFactory.pipeEffectsByConfig(lesserHeal, hero1);
+    EffectFactory.pipeEffects(lesserHeal, hero1);
     assertThat(hero1.healthLoss()).isEqualTo(0);
   }
 
@@ -91,10 +92,10 @@ public class SpellTest extends TestCase {
     final int damage = fireBlast.getEffects().get(0).value;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
-    EffectFactory.pipeEffectsByConfig(fireBlast, hero2);
+    EffectFactory.pipeEffects(fireBlast, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage);
 
-    EffectFactory.pipeEffectsByConfig(fireBlast, hero2);
+    EffectFactory.pipeEffects(fireBlast, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage * 2);
   }
 
@@ -106,10 +107,10 @@ public class SpellTest extends TestCase {
     final int damage = steadyShot.getEffects().get(0).value;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
-    EffectFactory.pipeEffectsByConfig(steadyShot, hero2);
+    EffectFactory.pipeEffects(steadyShot, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage);
 
-    EffectFactory.pipeEffectsByConfig(steadyShot, hero2);
+    EffectFactory.pipeEffects(steadyShot, hero2);
     assertThat(hero2.healthLoss()).isEqualTo(-damage * 2);
   }
 
@@ -123,7 +124,7 @@ public class SpellTest extends TestCase {
     assertThat(hero1.attack().value()).isEqualTo(0);
     assertThat(hero1.armor().value()).isEqualTo(0);
 
-    EffectFactory.pipeEffectsByConfig(shapeshift, hero1);
+    EffectFactory.pipeEffects(shapeshift, hero1);
 
     assertThat(hero1.attack().value()).isEqualTo(attack);
     assertThat(hero1.armor().value()).isEqualTo(armor);
@@ -137,7 +138,7 @@ public class SpellTest extends TestCase {
     final Spell daggerMastery = HeroPowerFactory.createHeroPowerByName(ConstSpell.DAGGER_MASTERY);
     gm.activeSide.bind(daggerMastery);
     assertThat(hero1.canDamage()).isFalse();
-    EffectFactory.pipeEffectsByConfig(daggerMastery, hero1);
+    EffectFactory.pipeEffects(daggerMastery, hero1);
     assertThat(hero1.canDamage()).isTrue();
 
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(hero1, hero2);
@@ -149,7 +150,7 @@ public class SpellTest extends TestCase {
     final Spell reinforce = HeroPowerFactory.createHeroPowerByName(ConstSpell.REINFORCE);
     gm.activeSide.bind(reinforce);
     assertThat(gm.activeSide.board.size()).isEqualTo(0);
-    EffectFactory.pipeEffectsByConfig(reinforce, hero1);
+    EffectFactory.pipeEffects(reinforce, hero1);
     assertThat(gm.activeSide.board.size()).isEqualTo(1);
 
     final Minion minion = gm.activeSide.board.get(0);
@@ -163,7 +164,7 @@ public class SpellTest extends TestCase {
     final int size = totemicCall.getEffects().get(0).choices.size();
 
     for (int i = 0; i < size; ++i) {
-      EffectFactory.pipeEffectsByConfig(totemicCall, hero1);
+      EffectFactory.pipeEffects(totemicCall, hero1);
       assertThat(gm.activeSide.board.size()).isEqualTo(i + 1);
     }
 
@@ -184,7 +185,8 @@ public class SpellTest extends TestCase {
 
     assertThat(gm.activeSide.hand.size()).isEqualTo(0);
     assertThat(hero1.healthLoss()).isEqualTo(0);
-    EffectFactory.pipeEffectsByConfig(lifeTap, hero1);
+
+    EffectFactory.pipeEffects(lifeTap, hero1);
 
     assertThat(gm.activeSide.hand.size()).isEqualTo(1);
     assertThat(gm.activeSide.deck.size()).isEqualTo(0);

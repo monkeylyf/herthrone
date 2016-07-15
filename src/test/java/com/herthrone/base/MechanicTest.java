@@ -44,7 +44,8 @@ public class MechanicTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.JAINA_PROUDMOORE,
+        Collections.emptyList(), Collections.emptyList());
     this.hero = gm.activeSide.hero;
     this.activeSide = gm.activeSide;
     this.inactiveSide = gm.inactiveSide;
@@ -375,7 +376,7 @@ public class MechanicTest extends TestCase {
       inactiveSide.bind(yeti);
       gm.playCard(yeti);
     }
-    final List<Minion> opponentMinions = new ArrayList<>(inactiveSide.board.asList());
+    final List<Minion> opponentMinionsBackup = new ArrayList<>(inactiveSide.board.asList());
     // Test take control effect triggered because it satisfies the condition.
     gm.switchTurn();
     gm.playCard(createAndBindMinion(ConstMinion.MIND_CONTROL_TECH));
@@ -383,12 +384,12 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
     // Test the right-most minion is stolen from opponent board.
-    assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinions);
+    assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinionsBackup);
 
     gm.playCard(createAndBindMinion(ConstMinion.MIND_CONTROL_TECH));
-    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2 + 1);
-    // Test control effect not triggered because of opponent has less than 4 minions.
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
+    // Test control effect not triggered because of opponent has less than 4 minions.
+    assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2 + 1);
   }
 
   @Test

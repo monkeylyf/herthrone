@@ -23,6 +23,7 @@ import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
@@ -38,7 +39,7 @@ public class MinionFactory {
 
   public static Minion create(final ConstMinion minionName) {
     final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
-    Preconditions.checkNotNull(config, String.format("Minion %s undefined", minionName.toString()));
+    Preconditions.checkNotNull(config, "Minion %s undefined", minionName);
     return create(config.health, config.attack, config.crystal, config.className,
         config.name, config.displayName, config.isCollectible, config.mechanics);
   }
@@ -76,7 +77,9 @@ public class MinionFactory {
 
       @Override
       public void setSequenceId(final int sequenceId) {
-        Preconditions.checkArgument(!seqId.isPresent(), "Minion sequence ID already set");
+        if (seqId.isPresent()) {
+          logger.debug("Updating sequence ID from " + seqId.getAsInt() + " to " + sequenceId);
+        }
         seqId = OptionalInt.of(sequenceId);
         logger.debug(String.format("%s ID set to %d", cardName(), sequenceId));
       }
@@ -110,27 +113,18 @@ public class MinionFactory {
         final List<Effect> onSummonEffects = board.stream()
             .sorted(EffectFactory.compareBySequenceId)
             .flatMap(minion -> minion.getTriggeringMechanics().get(ConstTrigger.ON_SUMMON).stream())
-            .flatMap(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this).stream())
+            .flatMap(mechanic -> EffectFactory.getMechanicEffects(mechanic, this).stream())
             .collect(Collectors.toList());
 
         // Put minion onto board.
         board.add(this);
 
-        final boolean boardHasAura = board.stream().anyMatch(
-            minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_PRESENCE));
-        if (boardHasAura) {
-          logger.debug("Updating aura effects on all minions");
-          board.stream().forEach(Minion::refresh);
-        }
+        final Side side = binder().getSide();
+        TriggerFactory.refreshAura(side);
+        TriggerFactory.refreshSpellDamage(side);
 
-        if (getTriggeringMechanics().has(ConstTrigger.ON_SPELL_DAMAGE)) {
-          binder().getSide().hand.stream()
-              .filter(card -> card instanceof Spell)
-              .map(card -> (Spell) card)
-              .forEach(Spell::refresh);
-        }
         // Execute effects.
-        binder().getSide().getEffectQueue().enqueue(onSummonEffects);
+        side.getEffectQueue().enqueue(onSummonEffects);
       }
 
       @Override
@@ -232,7 +226,6 @@ public class MinionFactory {
         if (isDamaged) {
           healthAttr.decrease(damage);
         } else {
-          logger.debug(ConstMechanic.DIVINE_SHIELD + " absorbed the damage");
           booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
         }
 
@@ -269,15 +262,11 @@ public class MinionFactory {
                     final ConstType type = config.target.type;
                     return type.equals(ConstType.MINION) || type.equals(minion.type());
                   })
-                  .forEach(minion -> EffectFactory.removeAuraEffect(
+                  .forEach(minion -> EffectFactory.AuraEffectFactory.removeAuraEffect(
                       config, this, minion));
             });
         // Remove spell damage effects if the dead one has it.
-        binder().getSide().hand.stream()
-            .filter(card -> card instanceof Spell)
-            .map(card -> (Spell) card)
-            .forEach(Spell::refresh);
-
+        TriggerFactory.refreshSpellDamage(side);
         TriggerFactory.passiveTrigger(this, ConstTrigger.ON_DEATH);
      }
 
@@ -303,25 +292,16 @@ public class MinionFactory {
 
       @Override
       public void refresh() {
-        final Container<Minion> board = binder().getSide().board;
-        // Refresh aura effects.
-        final List<Minion> auraMinions = binder().getSide().board.stream()
-            .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_PRESENCE))
-            .collect(Collectors.toList());
-        for (final Minion auraMinion : auraMinions) {
-          final List<MechanicConfig> onPresenceConfigs = auraMinion.getTriggeringMechanics().get(
-              ConstTrigger.ON_PRESENCE);
-          if (this != auraMinion) {
-            onPresenceConfigs.stream().forEach(
-                config -> {
-                  final ConstType type = config.target.type;
-                  if (type.equals(ConstType.MINION) || type().equals(type)) {
-                    EffectFactory.addAuraEffect(config, auraMinion, this);
-                  }
-                });
-          }
-        }
+        binder().getSide().board.stream()
+            .filter(minion -> minion != this)
+            .forEach(m ->
+              m.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
+                  .filter(c -> c.target.type.equals(ConstType.MINION) || type().equals(c.target.type))
+                  .forEach(c -> EffectFactory.AuraEffectFactory.addAuraEffect(c, m, this)
+                )
+            );
       }
+
 
       @Override
       public String toString() {

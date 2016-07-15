@@ -149,11 +149,11 @@ public class HeroTest extends TestCase {
   }
 
   private void hero1ArmorUp() {
-    EffectFactory.pipeEffectsByConfig(hero1.getHeroPower(), hero1);
+    EffectFactory.pipeEffects(hero1.getHeroPower(), hero1);
   }
 
   private void hero2ArmorUp() {
-    EffectFactory.pipeEffectsByConfig(hero2.getHeroPower(), hero2);
+    EffectFactory.pipeEffects(hero2.getHeroPower(), hero2);
   }
 
   @Test

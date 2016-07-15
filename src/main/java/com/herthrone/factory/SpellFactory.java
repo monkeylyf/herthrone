@@ -108,11 +108,10 @@ public class SpellFactory {
         final int accumulatedSpellDamage = auraBuff.accumulatedBuffValue;
         auraBuff.reset();
         side.board.stream()
-            .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_SPELL_DAMAGE))
-            .forEach(minion -> {
+            .forEach(minion ->
               minion.getTriggeringMechanics().get(ConstTrigger.ON_SPELL_DAMAGE).stream()
-                  .forEach(config -> auraBuff.add(minion, config.value));
-            });
+                  .forEach(config -> auraBuff.add(minion, config.value)
+            ));
         final int spellDamageBuffDelta = auraBuff.accumulatedBuffValue - accumulatedSpellDamage;
 
         if (spellDamageBuffDelta != 0) {

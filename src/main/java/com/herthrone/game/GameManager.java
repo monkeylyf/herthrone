@@ -186,13 +186,13 @@ public class GameManager implements Round {
 
     if (leafNode.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power without a specific target.
-      EffectFactory.pipeEffectsByConfig(activeSide.hero.getHeroPower(), activeSide.hero);
+      EffectFactory.pipeEffects(activeSide.hero.getHeroPower(), activeSide.hero);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
       final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
-      EffectFactory.pipeEffectsByConfig(activeSide.hero.getHeroPower(), creature);
+      EffectFactory.pipeEffects(activeSide.hero.getHeroPower(), creature);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
@@ -260,7 +260,7 @@ public class GameManager implements Round {
       minion.playOnBoard(activeSide.board, target);
     } else if (card instanceof Spell) {
       final Spell spell = (Spell) card;
-      EffectFactory.pipeEffectsByConfig(spell, target);
+      EffectFactory.pipeEffects(spell, target);
     }
   }
 
@@ -290,4 +290,5 @@ public class GameManager implements Round {
   public void useHeroPower(final Creature creature) {
     activeSide.hero.useHeroPower(creature);
   }
+
 }

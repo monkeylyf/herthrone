@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Effect;
 import com.herthrone.base.Hero;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
@@ -23,9 +22,7 @@ import com.herthrone.game.Side;
 import com.herthrone.object.BooleanMechanics;
 import com.herthrone.object.ValueAttribute;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by yifeng on 4/8/16.
@@ -243,17 +240,11 @@ public class HeroFactory {
       @Override
       public void useHeroPower(final Creature creature) {
         Preconditions.checkArgument(heroPowerMovePoints.value() > 0, HERO_POWER_ERROR_MESSAGE);
-        EffectFactory.pipeEffectsByConfig(heroPower, creature);
+        EffectFactory.pipeEffects(heroPower, creature);
         heroPowerMovePoints.decrease(1);
 
         final Side side = binder().getSide();
-        List<Effect> useHeroPowerMechanics = side.board.stream()
-            .sorted(EffectFactory.compareBySequenceId)
-            .flatMap(minion -> minion.getTriggeringMechanics().get(ConstTrigger.ON_USE_HERO_POWER).stream())
-            .flatMap(mechanic -> EffectFactory.pipeMechanicEffect(mechanic, this).stream())
-            .collect(Collectors.toList());
-
-        side.getEffectQueue().enqueue(useHeroPowerMechanics);
+        TriggerFactory.passiveTrigger(side, ConstTrigger.ON_USE_HERO_POWER);
       }
 
       @Override

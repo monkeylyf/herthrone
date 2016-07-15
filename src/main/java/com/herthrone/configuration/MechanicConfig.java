@@ -29,7 +29,6 @@ public class MechanicConfig {
   private static final String PERMANENT = "permanent";
   private static final String UNIQUE = "unique";
   private static final String CHOICES = "choices";
-  private static final String RANDOM = "random";
   private static final String TARGET = "target";
   private static final String VALUE_DEPENDENCY = "value_dependency";
   private static final String CONDITION = "condition";
@@ -40,7 +39,6 @@ public class MechanicConfig {
   public final ConstEffectType effectType;
   public final String type;  // TODO: get rid of all String.
   public final boolean isUnique;
-  public final boolean isRandom;
   public final boolean isPermanent;
   public final List<String> choices;
   public final TargetConfig target;
@@ -59,7 +57,6 @@ public class MechanicConfig {
     this.value = ConfigLoader.getByDefault(map, VALUE, 0);
     this.isPermanent = ConfigLoader.getByDefault(map, PERMANENT, false);
     this.isUnique = ConfigLoader.getByDefault(map, UNIQUE, false);
-    this.isRandom = ConfigLoader.getByDefault(map, RANDOM, false);
     this.choices = ConfigLoader.getByDefault(map, CHOICES, Collections.EMPTY_LIST);
     this.target = (map.containsKey(TARGET)) ? new TargetConfig((Map) map.get(TARGET)) : null;
     this.valueDependency = (map.containsKey(VALUE_DEPENDENCY)) ?
@@ -78,7 +75,6 @@ public class MechanicConfig {
     this.value = mechanicConfig.value;
     this.isPermanent = mechanicConfig.isPermanent;
     this.isUnique = mechanicConfig.isUnique;
-    this.isRandom = mechanicConfig.isRandom;
     this.choices = mechanicConfig.choices;
     this.target = mechanicConfig.target;
     this.valueDependency = mechanicConfig.valueDependency;
@@ -116,7 +112,6 @@ public class MechanicConfig {
     }
     addIfConditionIsTrue(value > 0, stringHelper, VALUE, value);
     addIfConditionIsTrue(isPermanent, stringHelper, PERMANENT, isPermanent);
-    addIfConditionIsTrue(isRandom, stringHelper, RANDOM, isRandom);
     addIfConditionIsTrue(isUnique, stringHelper, UNIQUE, isUnique);
     addIfConditionIsTrue(choices.size() > 0, stringHelper, CHOICES, choices);
     return stringHelper.toString();

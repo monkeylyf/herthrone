@@ -1,16 +1,20 @@
 package com.herthrone.factory;
 
 import com.google.common.base.Optional;
+import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
+import com.herthrone.base.Effect;
 import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
+import com.herthrone.base.Spell;
 import com.herthrone.constant.ConstTrigger;
+import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.helper.RandomMinionGenerator;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by yifengliu on 7/10/16.
@@ -28,26 +32,46 @@ public class TriggerFactory {
       );
   }
 
+  static void passiveTrigger(final Side side, final ConstTrigger triggerType) {
+    List<Effect> useHeroPowerMechanics = side.board.stream()
+        .sorted(EffectFactory.compareBySequenceId)
+        .flatMap(minion -> minion.getTriggeringMechanics().get(triggerType).stream())
+        .flatMap(mechanic -> EffectFactory.getMechanicEffects(mechanic, side).stream())
+        .collect(Collectors.toList());
+
+    side.getEffectQueue().enqueue(useHeroPowerMechanics);
+  }
+
   static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
                              final ConstTrigger triggerType) {
     final Side side = triggerrer.binder().getSide();
     triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .forEach(effectConfig -> {
-          List<Creature> targets;
           try {
-            targets = TargetFactory.getProperTargets(effectConfig.target, side);
+            TargetFactory.getProperTargets(effectConfig.target, side).stream()
+                .forEach(
+                    target -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                        Optional.of(effectConfig), side, target)
+            );
           } catch (TargetFactory.NoTargetFoundException error) {
-            targets = (triggerrer instanceof Minion) ?
-                Collections.singletonList((Minion) triggerrer) : Collections.emptyList();
+            EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                Optional.of(effectConfig), side);
           }
-          targets = effectConfig.isRandom ?
-              Collections.singletonList(RandomMinionGenerator.randomOne(targets)) : targets;
-          logger.debug("Total " + targets.size() + " passive targets for " + effectConfig);
-          targets.stream().forEach(
-              realTarget -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                  Optional.of(effectConfig), side, realTarget)
-          );
         });
   }
+
+  static void refreshAura(final Side side) {
+    logger.debug("Updating aura effects on all minions");
+    side.board.stream().forEach(Minion::refresh);
+  }
+
+  static void refreshSpellDamage(final Side side)  {
+    logger.debug("Updating spell damage on all spells in hand");
+    side.hand.stream()
+        .filter(card -> card instanceof Spell)
+        .map(card -> (Spell) card)
+        .forEach(Spell::refresh);
+  }
+
 }

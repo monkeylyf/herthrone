@@ -9,8 +9,10 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstType;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
+import com.herthrone.helper.RandomMinionGenerator;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -90,18 +92,24 @@ public class TargetFactory {
   }
 
   static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side) {
+    final List<Creature> candidates = new ArrayList<>();
     switch (targetConfig.scope) {
       case OWN:
-        return getProperTargetsBySide(targetConfig, side);
+        candidates.addAll(getProperTargetsBySide(targetConfig, side));
+        break;
       case OPPONENT:
-        return getProperTargetsBySide(targetConfig, side.getOpponentSide());
+        candidates.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
+        break;
       case ALL:
-        final List<Creature> targets = getProperTargetsBySide(targetConfig, side);
-        targets.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
-        return targets;
+        candidates.addAll(getProperTargetsBySide(targetConfig, side));
+        candidates.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
+        break;
       default:
         throw new RuntimeException("Unknown scope: " + targetConfig.scope);
     }
+
+    return targetConfig.isRandom ?
+        Collections.singletonList(RandomMinionGenerator.randomOne(candidates)) : candidates;
   }
 
   private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
@@ -118,7 +126,7 @@ public class TargetFactory {
         targets.add(side.hero);
         return targets;
       default:
-        throw new NoTargetFoundException("No target found");
+        throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
     }
   }
 

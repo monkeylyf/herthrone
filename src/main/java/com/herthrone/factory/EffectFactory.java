@@ -13,7 +13,6 @@ import com.herthrone.configuration.ConditionConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstDependency;
-import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
@@ -44,72 +43,85 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by yifeng on 4/14/16.
- */
 public class EffectFactory {
 
   private static Logger logger = Logger.getLogger(EffectFactory.class.getName());
   static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
-  static void addAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
-                            final Minion target) {
-    switch (mechanicConfig.type) {
-      case Constant.ATTACK:
-        target.attack().addAuraBuff(minion, mechanicConfig.value);
-        break;
-      case Constant.MAX_HEALTH:
-        target.maxHealth().addAuraBuff(minion, mechanicConfig.value);
-        target.health().addAuraBuff(minion, mechanicConfig.value);
-        break;
-      default:
-        throw new RuntimeException(mechanicConfig.type + " not supported for aura");
-    }
-  }
+  public static class AuraEffectFactory {
 
-  static void removeAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
-                               final Minion target) {
-    switch (mechanicConfig.type) {
-      case Constant.ATTACK:
-        target.attack().removeAuraBuff(minion);
-        break;
-      case Constant.MAX_HEALTH:
-        // http://us.battle.net/hearthstone/en/forum/topic/13423772774
-        final int healthBeforeAuraRemoval = target.health().value();
-        final boolean isDamage = target.healthLoss() > 0;
-        target.health().removeAuraBuff(minion);
-        target.maxHealth().removeAuraBuff(minion);
-        if (isDamage) {
-          target.health().increase(healthBeforeAuraRemoval - target.health().value());
-        }
-        break;
-      default:
-        throw new RuntimeException(mechanicConfig.type + " not supported for aura");
+    static void addAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
+                              final Minion target) {
+      switch (mechanicConfig.type) {
+        case Constant.ATTACK:
+          target.attack().addAuraBuff(minion, mechanicConfig.value);
+          break;
+        case Constant.MAX_HEALTH:
+          target.maxHealth().addAuraBuff(minion, mechanicConfig.value);
+          target.health().addAuraBuff(minion, mechanicConfig.value);
+          break;
+        default:
+          throw new RuntimeException(mechanicConfig.type + " not supported for aura");
+      }
+    }
+
+    static void removeAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
+                                 final Minion target) {
+      switch (mechanicConfig.type) {
+        case Constant.ATTACK:
+          target.attack().removeAuraBuff(minion);
+          break;
+        case Constant.MAX_HEALTH:
+          // http://us.battle.net/hearthstone/en/forum/topic/13423772774
+          final int healthBeforeAuraRemoval = target.health().value();
+          final boolean isDamage = target.healthLoss() > 0;
+          target.health().removeAuraBuff(minion);
+          target.maxHealth().removeAuraBuff(minion);
+          if (isDamage) {
+            target.health().increase(healthBeforeAuraRemoval - target.health().value());
+          }
+          break;
+        default:
+          throw new RuntimeException(mechanicConfig.type + " not supported for aura");
+      }
     }
   }
 
   public static boolean isTriggerConditionMet(final Optional<MechanicConfig> mechanicConfigOptional,
-                                              final Side side, final Creature target) {
+                                              final Side side) {
     if (!mechanicConfigOptional.isPresent()) {
       logger.debug("Mechanic configuration is absent");
       return false;
-    } else if (!isConditionTriggered(mechanicConfigOptional, target)) {
-      logger.debug("Condition not met and mechanic effect not triggered");
-      return false;
-    } else {
-      return true;
     }
+    final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
+    final List<Side> realSide = TargetFactory.getSide(mechanicConfig.target, side);
+    Preconditions.checkArgument(realSide.size() == 1, "Does not support two side check");
+    final boolean willBeTriggered = isConditionTriggered(mechanicConfig, realSide.get(0));
+    final String word = willBeTriggered ? "is" : "is not";
+    logger.debug(String.format("Condition %s met and mechanic effect %s triggered", word, word));
+    return willBeTriggered;
   }
 
   public static void pipeMechanicEffectIfPresentAndMeetCondition(
       final Optional<MechanicConfig> mechanicConfigOptional,
       final Side side, final Creature target) {
-    if (isTriggerConditionMet(mechanicConfigOptional, side, target)) {
+    if (isTriggerConditionMet(mechanicConfigOptional, side)) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
-      final List<Effect> effects = pipeMechanicEffect(mechanicConfig, target);
-      target.binder().getSide().getEffectQueue().enqueue(effects);
+      final List<Effect> effects = getMechanicEffects(mechanicConfig, target);
+      side.getEffectQueue().enqueue(effects);
+    }
+  }
+
+  public static void pipeMechanicEffectIfPresentAndMeetCondition(
+      final Optional<MechanicConfig> mechanicConfigOptional,
+      final Side side) {
+    if (isTriggerConditionMet(mechanicConfigOptional, side)) {
+      final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
+      logger.debug("Triggering " + mechanicConfig.mechanic.toString());
+      final List<Effect> effects = getMechanicEffects(mechanicConfig, side);
+      side.getEffectQueue().enqueue(effects);
     }
   }
 
@@ -123,57 +135,81 @@ public class EffectFactory {
       for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(ConstTrigger.ON_END_TURN)) {
         final List<Creature> targets = TargetFactory.getProperTargets(mechanic.target, side);
         final List<Effect> effects = targets.stream()
-            .flatMap(target -> pipeMechanicEffect(mechanic, target).stream())
+            .flatMap(target -> getMechanicEffects(mechanic, target).stream())
             .collect(Collectors.toList());
         side.getEffectQueue().enqueue(effects);
       }
     }
   }
 
-  private static boolean isConditionTriggered(final Optional<MechanicConfig> effectConfigOptional,
-                                              final Creature target) {
-    if (effectConfigOptional.isPresent() &&
-        effectConfigOptional.get().conditionConfigOptional.isPresent()) {
-      // Check if there is condition config. If there is, return whether condition is met.
-      final ConditionConfig conditionConfig = effectConfigOptional.get()
-          .conditionConfigOptional.get();
-      switch (conditionConfig.conditionType) {
-        case BOARD_SIZE:
-          return conditionConfig.inRange(target.binder().getSide().board.size());
-        case COMBO:
-          return target.binder().getSide().replay.size() > 1;
-        case WEAPON_EQUIPED:
-          final List<Destroyable> destroyables = TargetFactory.getDestroyables(
-              effectConfigOptional.get().target, target.binder().getSide());
-          if (destroyables.size() == 0) {
-            return false;
-          } else {
-            Preconditions.checkArgument(destroyables.size() == 1, "More than one destroyable object");
-            Preconditions.checkArgument(destroyables.get(0) instanceof Weapon, "Only support weapon");
-            return true;
-          }
-        default:
-          throw new RuntimeException("Unknown condition: " + conditionConfig.conditionType);
-      }
-    } else {
+  private static boolean isConditionTriggered(final MechanicConfig mechanicConfig,
+                                              final Side side) {
+    if (!mechanicConfig.conditionConfigOptional.isPresent()) {
       // If no condition configured, return true and the effect should be triggered any way.
       return true;
     }
+    // Check if there is condition config. If there is, return whether condition is met.
+    final ConditionConfig conditionConfig = mechanicConfig.conditionConfigOptional.get();
+    switch (conditionConfig.conditionType) {
+      case BOARD_SIZE:
+        return conditionConfig.inRange(side.board.size());
+      case COMBO:
+        return side.replay.size() > 1;
+      case WEAPON_EQUIPED:
+        // Call getDestroyablesBySide instead of getDestroyables because side is already picked
+        // given target config.
+        final List<Destroyable> destroyables = TargetFactory.getDestroyablesBySide(
+            mechanicConfig.target, side);
+        if (destroyables.size() == 0) {
+          return false;
+        } else {
+          Preconditions.checkArgument(destroyables.size() == 1, "More than one destroyable object");
+          Preconditions.checkArgument(destroyables.get(0) instanceof Weapon, "Only support weapon");
+          return true;
+        }
+      default:
+        throw new RuntimeException("Unknown condition: " + conditionConfig.conditionType);
+    }
   }
 
-  public static List<Effect> pipeMechanicEffect(final MechanicConfig mechanic,
+  public static List<Effect> getMechanicEffects(final MechanicConfig mechanic, final Side side) {
+    try {
+      List<Creature> targets = TargetFactory.getProperTargets(mechanic.target, side);
+      return targets.stream()
+          .flatMap(target -> pipeEffects(mechanic, target).stream())
+          .collect(Collectors.toList());
+    } catch (TargetFactory.NoTargetFoundException error) {
+      return pipeEffects(mechanic, side);
+    }
+  }
+
+  public static List<Effect> getMechanicEffects(final MechanicConfig mechanic,
                                                 final Creature target) {
-    final Creature realTarget = mechanic.isRandom ?
+    final Creature realTarget = mechanic.target.isRandom ?
         RandomMinionGenerator.randomCreature(mechanic.target, target.binder().getSide()) :
         target;
 
-    return pipeEffectsByConfig(mechanic, realTarget);
+    List<Effect> effects = pipeEffects(mechanic, realTarget);
+    return effects;
   }
 
-  public static List<Effect> pipeEffectsByConfig(final MechanicConfig config,
-                                                 final Creature target) {
-    ConstEffectType effect = config.effectType;
-    switch (effect) {
+  public static List<Effect> pipeEffects(final MechanicConfig config, final Side side) {
+    switch (config.effectType) {
+      case SUMMON:
+        return getSummonEffect(config, side);
+      case GENERATE:
+        return getGenerateEffect(config, side);
+      case DRAW:
+        return getDrawCardEffect(config, side);
+      case DESTROY:
+        return getDestroyEffect(config, side);
+      default:
+        throw new IllegalArgumentException("unknown: " + config.effectType);
+    }
+  }
+
+  public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target) {
+    switch (config.effectType) {
       case ATTRIBUTE:
         return getAttributeEffect(config, target);
       case BUFF:
@@ -182,10 +218,6 @@ public class EffectFactory {
         return getCrystalEffect(config, target);
       case DRAW:
         return getDrawCardEffect(config, target.binder().getSide());
-      case GENERATE:
-        return getGenerateEffect(config, target);
-      case DESTROY:
-        return getDestroyEffect(config, target);
       case RETURN_TO_HAND:
         Preconditions.checkArgument(
             target instanceof Minion, "%s can not be returned to player's hand", target.type());
@@ -197,9 +229,9 @@ public class EffectFactory {
       case WEAPON:
         Preconditions.checkArgument(
             target instanceof Hero, "%s can not equip weapon", target.type());
-        return getEquipWeaponEffect((Hero) target, config);
+        return getEquipWeaponEffect(config, (Hero) target);
       default:
-        throw new IllegalArgumentException("Unknown effect: " + effect);
+        throw new IllegalArgumentException("Unknown effect type: " + config.effectType);
     }
   }
 
@@ -240,19 +272,21 @@ public class EffectFactory {
     return new BuffEffect(attribute, gain, effect.isPermanent);
   }
 
-  private static List<Effect> getDestroyEffect(final MechanicConfig config, final Creature creature) {
-    return TargetFactory.getDestroyables(config.target, creature.binder().getSide()).stream()
+  private static List<Effect> getDestroyEffect(final MechanicConfig config, final Side side) {
+    List<Effect> effects = TargetFactory.getDestroyables(config.target, side)
+        .stream()
         .map(DestroyEffect::new)
         .collect(Collectors.toList());
+    return effects;
   }
 
   private static List<Effect> getReturnToHandEffect(final Minion target) {
     return Collections.singletonList(new ReturnToHandEffect(target));
   }
 
-  private static List<Effect> getGenerateEffect(MechanicConfig config, Creature creature) {
+  private static List<Effect> getGenerateEffect(final MechanicConfig config, final Side side) {
     final Effect generateEffect = new GenerateEffect(
-        config.choices, config.type, config.target, creature.binder().getSide());
+        config.choices, config.type, config.target, side);
     return Collections.singletonList(generateEffect);
   }
 
@@ -291,7 +325,7 @@ public class EffectFactory {
     }
   }
 
-  private static List<Effect> getEquipWeaponEffect(final Hero hero, final MechanicConfig effect) {
+  private static List<Effect> getEquipWeaponEffect(final MechanicConfig effect, final Hero hero) {
     final String weaponName = effect.type;
     final ConstWeapon weapon = ConstWeapon.valueOf(weaponName.toUpperCase());
     final Weapon weaponInstance = WeaponFactory.create(weapon);
@@ -372,9 +406,21 @@ public class EffectFactory {
     return new AttributeEffect(attr, value, effect.isPermanent);
   }
 
-  public static void pipeEffectsByConfig(final Spell spell, final Creature target) {
+  public static void pipeEffects(final Spell spell, final Creature target) {
     final List<Effect> effects = spell.getEffects().stream()
-        .flatMap(effect -> pipeEffectsByConfig(effect, target).stream())
+        .flatMap(effect -> pipeEffects(effect, target).stream())
+        .collect(Collectors.toList());
+    spell.binder().getSide().getEffectQueue().enqueue(effects);
+  }
+
+  public static void pipeEffects(final Spell spell, final Side side) {
+    final List<Creature> targets = TargetFactory.getProperTargets(spell.getTargetConfig().get(),
+        side);
+
+    final List<Effect> effects = targets.stream()
+        .flatMap(target -> spell.getEffects().stream()
+            .flatMap(effect -> pipeEffects(effect,
+            target).stream()))
         .collect(Collectors.toList());
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }
@@ -388,14 +434,14 @@ public class EffectFactory {
       attacker.binder().getSide().getEffectQueue().enqueue(effects);
     }
 
-    private static List<Effect> getForgetfulPhysicalDamageEffect(final Creature attacker, final
-    Creature attackee) {
+    private static List<Effect> getForgetfulPhysicalDamageEffect(final Creature attacker,
+                                                                 final Creature attackee) {
       final boolean isForgetfulToPickNewTarget = RandomMinionGenerator.getBool();
       final Effect attackEffect;
       if (isForgetfulToPickNewTarget) {
         logger.debug("Forgetful triggered");
         final Creature substituteAttackee = RandomMinionGenerator.randomExcept(attackee.binder().getSide().allCreatures(), attackee);
-        logger.debug(String.format("Change attackee from %s to %s", attackee.toString(), substituteAttackee.toString()));
+        logger.debug(String.format("Change attackee from %s to %s", attackee, substituteAttackee));
         Preconditions.checkArgument(substituteAttackee != attackee);
         attackEffect = new PhysicalDamageEffect(attacker, substituteAttackee);
       } else {
