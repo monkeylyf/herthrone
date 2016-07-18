@@ -33,7 +33,7 @@ public class CommandLine {
     final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
     for (int i = 0; i < mySide.hand.size(); ++i) {
       final Card card = mySide.hand.get(i);
-      if (mySide.manaCrystal.getCrystal() >= card.manaCost().value()) {
+      if (mySide.hero.manaCrystal().getCrystal() >= card.manaCost().value()) {
         playCardNode.addChildNode(new CommandNode(card.view().toString(), i));
       }
     }
@@ -74,7 +74,7 @@ public class CommandLine {
     }
     // Populate use hero power option if can use hero power.
     if (mySide.hero.heroPowerMovePoints().isPositive() &&
-        !mySide.hero.getHeroPower().manaCost().isGreaterThan(mySide.manaCrystal.getCrystal())) {
+        !mySide.hero.getHeroPower().manaCost().isGreaterThan(mySide.hero.manaCrystal().getCrystal())) {
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
       scanTargets(useHeroPower, mySide.hero.getHeroPower().getTargetConfig(), battlefield);

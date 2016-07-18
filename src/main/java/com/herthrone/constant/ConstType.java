@@ -13,16 +13,16 @@ public enum ConstType {
   PIRATE,
   TOTEM,
   GENERAL,
-  //
   ALL, // Either minion or hero.
-  BOARD,
-  HERO,
-  SPELL,
-  MINION,
-  SECRET,
   ATTACK, // Physical attack.
-  HERO_POWER,
+  BOARD,
   DECK,
   HAND,
+  HERO,
+  HERO_POWER,
+  MINION,
+  OTHER,
+  SECRET,
+  SPELL,
   WEAPON;
 }

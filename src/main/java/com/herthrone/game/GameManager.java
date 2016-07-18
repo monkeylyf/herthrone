@@ -167,7 +167,7 @@ public class GameManager implements Round {
   }
 
   void increaseCrystalUpperBound() {
-    activeSide.manaCrystal.endTurn();
+    activeSide.hero.manaCrystal().endTurn();
   }
 
   void drawCard() {
@@ -216,7 +216,7 @@ public class GameManager implements Round {
 
   void consumeCrystal(final Card card) {
     final int cost = card.manaCost().value();
-    activeSide.manaCrystal.consume(cost);
+    activeSide.hero.manaCrystal().consume(cost);
   }
 
   void playCard(final int index) {
@@ -228,7 +228,9 @@ public class GameManager implements Round {
   private void checkManaCost(final int index) {
     final Card card = activeSide.hand.get(index);
     final int manaCost = card.manaCost().value();
-    Preconditions.checkArgument(manaCost <= activeSide.manaCrystal.getCrystal(), "Not enough mana for: " + card.cardName());
+    Preconditions.checkArgument(
+        manaCost <= activeSide.hero.manaCrystal().getCrystal(),
+        "Not enough mana for: " + card.cardName());
   }
 
   public void playCard(final Card card) {

@@ -356,7 +356,7 @@ public class EffectFactory {
 
   private static List<Effect> getCrystalEffect(final MechanicConfig config, final Creature creature) {
     final String type = config.type;
-    final ManaCrystal manaCrystal = creature.binder().getSide().manaCrystal;
+    final ManaCrystal manaCrystal = creature.binder().getSide().hero.manaCrystal();
     switch (type) {
       case (Constant.CRYSTAL_LOCK):
         return Collections.singletonList(new OverloadEffect(manaCrystal, config.value));

@@ -9,7 +9,6 @@ import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
-import com.herthrone.factory.TriggerFactory;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;

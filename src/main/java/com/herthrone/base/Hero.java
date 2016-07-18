@@ -1,6 +1,7 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
+import com.herthrone.object.ManaCrystal;
 import com.herthrone.object.ValueAttribute;
 
 /**
@@ -11,6 +12,8 @@ public interface Hero extends Creature {
   ValueAttribute armor();
 
   ValueAttribute heroPowerMovePoints();
+
+  ManaCrystal manaCrystal();
 
   Optional<Weapon> getWeapon();
 

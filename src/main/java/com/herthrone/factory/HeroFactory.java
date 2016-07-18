@@ -20,6 +20,7 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
 import com.herthrone.object.BooleanMechanics;
+import com.herthrone.object.ManaCrystal;
 import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
@@ -52,6 +53,7 @@ public class HeroFactory {
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(0);
       private final ValueAttribute attackMovePoints = new ValueAttribute(HERO_INIT_MOVE_POINTS);
       private final ValueAttribute heroPowerMovePoints = new ValueAttribute(HERO_INIT_MOVE_POINTS);
+      private final ManaCrystal manaCrystal = new ManaCrystal();
       private final BooleanMechanics booleanMechanics = new BooleanMechanics();
       private final Binder binder = new Binder();
       private Spell heroPower = HeroPowerFactory.createHeroPowerByName(heroPowerName);
@@ -190,6 +192,11 @@ public class HeroFactory {
       @Override
       public ValueAttribute heroPowerMovePoints() {
         return heroPowerMovePoints;
+      }
+
+      @Override
+      public ManaCrystal manaCrystal() {
+        return manaCrystal;
       }
 
       @Override

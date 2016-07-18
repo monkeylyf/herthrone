@@ -19,9 +19,6 @@
   class: druid
   crystal: 1
   collectible: true
-  target:
-    scope: own
-    type: hero
   mechanics:
     - name: gain
       trigger: on_play
@@ -41,7 +38,6 @@
         scope: own
         type: hero
 
-
 - name: healing_touch
   class: druid
   crystal: 3
@@ -55,17 +51,11 @@
       effect: attribute
       type: health
       value: 8
-      target:
-        scope: all
-        type: all
 
 - name: innervate
   class: druid
   crystal: 0
   collectible: true
-  target:
-    scope: own
-    type: hero
   mechanics:
     - name: mana
       trigger: on_play
@@ -89,22 +79,100 @@
       effect: add_mechanic
       type: taunt
       value: 1
-      target:
-        scope: all
-        type: minion
     - name: gain
       trigger: on_play
       effect: buff
       type: max_health
       value: 2
-      target:
-        scope: all
-        type: minion
     - name: gain
       trigger: on_play
       effect: buff
       type: attack
       value: 2
+
+- name: wild_growth
+  class: druid
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: mana
+      trigger: on_play
+      effect: attribute
+      type: max_mana_crystal
+      value: 1
       target:
-        scope: all
-        type: minion
+        scope: own
+        type: hero
+
+- name: moonfire
+  class: druid
+  crystal: 0
+  collectible: true
+  target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -1
+
+- name: savage_roar
+  class: druid
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      permanent: false
+      value: 2
+      target:
+        scope: own
+        type: all
+
+- name: starfire
+  class: druid
+  crystal: 6
+  collectible: true
+  target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -5
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: swipe
+  class: druid
+  crystal: 4
+  collectible: true
+  target:
+    scope: opponent
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -4
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -1
+      target:
+        scope: opponent
+        type: other

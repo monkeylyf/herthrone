@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
-import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
@@ -23,7 +22,6 @@ import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;

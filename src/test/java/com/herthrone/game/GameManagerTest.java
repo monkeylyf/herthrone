@@ -7,6 +7,7 @@ import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.HeroFactory;
+import com.herthrone.object.ManaCrystal;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,12 +65,17 @@ public class GameManagerTest {
 
   @Test
   public void testInitCrystal() {
-    assertThat(gm.activeSide.manaCrystal.getCrystal()).isEqualTo(0);
-    assertThat(gm.inactiveSide.manaCrystal.getCrystal()).isEqualTo(0);
-    gm.activeSide.manaCrystal.startTurn();
-    assertThat(gm.activeSide.manaCrystal.getCrystal()).isEqualTo(1);
-    gm.inactiveSide.manaCrystal.startTurn();
-    assertThat(gm.inactiveSide.manaCrystal.getCrystal()).isEqualTo(1);
+    final ManaCrystal manaCrystal1 = gm.activeSide.hero.manaCrystal();
+    final ManaCrystal manaCrystal2 = gm.inactiveSide.hero.manaCrystal();
+
+    assertThat(manaCrystal1.getCrystal()).isEqualTo(0);
+    assertThat(manaCrystal2.getCrystal()).isEqualTo(0);
+
+    manaCrystal1.startTurn();
+    assertThat(manaCrystal1.getCrystal()).isEqualTo(1);
+
+    manaCrystal2.startTurn();
+    assertThat(manaCrystal2.getCrystal()).isEqualTo(1);
   }
 
   @Test
@@ -92,8 +98,8 @@ public class GameManagerTest {
 
   @Test
   public void testInitHeroPowerMovePoints() {
-    assertThat(gm.activeSide.heroPowerMovePoints.value()).isEqualTo(1);
-    assertThat(gm.inactiveSide.heroPowerMovePoints.value()).isEqualTo(1);
+    assertThat(gm.activeSide.hero.heroPowerMovePoints().value()).isEqualTo(1);
+    assertThat(gm.inactiveSide.hero.heroPowerMovePoints().value()).isEqualTo(1);
   }
 
   @Test
@@ -144,7 +150,7 @@ public class GameManagerTest {
     final Card card = gm.activeSide.hand.get(0);
     final int requiredCrystalCost = card.manaCost().value();
 
-    while (gm.activeSide.manaCrystal.getCrystal() < requiredCrystalCost) {
+    while (gm.activeSide.hero.manaCrystal().getCrystal() < requiredCrystalCost) {
       try {
         gm.activeSide.replay.startTurn();
         gm.playCard(0);
@@ -152,7 +158,7 @@ public class GameManagerTest {
         assertThat(expected).hasMessage("Not enough mana for: " + card.cardName());
       }
 
-      gm.activeSide.manaCrystal.startTurn();
+      gm.activeSide.hero.manaCrystal().startTurn();
     }
 
     gm.activeSide.replay.startTurn();
@@ -211,7 +217,7 @@ public class GameManagerTest {
     // At least 4 crystals so YETI can be played and show up as options.
     for (int i = 0; i < 8; ++i) {
       gm.drawCard();
-      gm.activeSide.manaCrystal.startTurn();
+      gm.activeSide.hero.manaCrystal().startTurn();
       gm.switchTurn();
     }
   }

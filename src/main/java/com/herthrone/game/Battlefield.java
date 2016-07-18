@@ -85,7 +85,7 @@ public class Battlefield implements View {
       sideViewBuilder.put(Constant.BOARD + i, side.board.get(i).view().toString());
     }
     // Add crystals as part of view.
-    sideViewBuilder.put(Constant.CRYSTAL, side.manaCrystal.toString());
+    sideViewBuilder.put(Constant.CRYSTAL, side.hero.manaCrystal().toString());
     // Add hero power as part of view.
     sideViewBuilder.put(Constant.HERO_POWER, side.hero.getHeroPower().view().toString());
 

@@ -15,6 +15,7 @@ import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 import com.herthrone.game.Side;
+import com.herthrone.object.ManaCrystal;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -335,12 +336,13 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testOverload() {
+    final ManaCrystal manaCrystal = activeSide.hero.manaCrystal();
     // Turn 1.
-    activeSide.manaCrystal.startTurn();
-    assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(1);
+    manaCrystal.startTurn();
+    assertThat(manaCrystal.getCrystal()).isEqualTo(1);
     // Turn 2.
-    activeSide.manaCrystal.startTurn();
-    assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(2);
+    manaCrystal.startTurn();
+    assertThat(manaCrystal.getCrystal()).isEqualTo(2);
 
     final Weapon stormforgedAxe = WeaponFactory.create(ConstWeapon.STORMFORGED_AXE);
     gm.activeSide.bind(stormforgedAxe);
@@ -350,8 +352,8 @@ public class MechanicTest extends TestCase {
     assertThat(hero.canDamage()).isTrue();
 
     // Turn 3.
-    activeSide.manaCrystal.startTurn();
-    assertThat(activeSide.manaCrystal.getCrystal()).isEqualTo(1);
+    manaCrystal.startTurn();
+    assertThat(manaCrystal.getCrystal()).isEqualTo(1);
   }
 
   @Test

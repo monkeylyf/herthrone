@@ -876,3 +876,13 @@
   health: 7
   crystal: 7
   collectible: true
+
+- name: ironbark_protector
+  class: druid
+  attack: 8
+  health: 8
+  crystal: 8
+  collectible: true
+  mechanics:
+    - name: taunt
+      effect: status
