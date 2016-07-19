@@ -41,7 +41,7 @@ public class MechanicConfig {
   public final boolean isUnique;
   public final boolean isPermanent;
   public final List<String> choices;
-  public final TargetConfig target;
+  public final Optional<TargetConfig> target;
   public final Optional<ConstDependency> valueDependency;
   public final Optional<ConditionConfig> conditionConfigOptional;
   public int value;
@@ -58,7 +58,9 @@ public class MechanicConfig {
     this.isPermanent = ConfigLoader.getByDefault(map, PERMANENT, false);
     this.isUnique = ConfigLoader.getByDefault(map, UNIQUE, false);
     this.choices = ConfigLoader.getByDefault(map, CHOICES, Collections.EMPTY_LIST);
-    this.target = new TargetConfig((Map) map.get(TARGET));
+    this.target = (map.containsKey(TARGET)) ?
+        Optional.of(new TargetConfig((Map) map.get(TARGET))) :
+        Optional.absent();
     this.valueDependency = (map.containsKey(VALUE_DEPENDENCY)) ?
         Optional.of(ConstDependency.valueOf(getUpperCaseStringValue(map, VALUE_DEPENDENCY))) :
         Optional.absent();

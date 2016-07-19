@@ -14,14 +14,11 @@ import org.apache.log4j.Logger;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by yifengliu on 7/10/16.
- */
 public class TriggerFactory {
 
   private final static Logger logger = Logger.getLogger(TriggerFactory.class.getName());
 
-  static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
+  public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
                             final ConstTrigger triggerType, final Creature target) {
     triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .forEach(mechanicConfig ->
@@ -40,19 +37,20 @@ public class TriggerFactory {
     side.getEffectQueue().enqueue(useHeroPowerMechanics);
   }
 
-  static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
+  public static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
                              final ConstTrigger triggerType) {
     final Side side = triggerrer.binder().getSide();
     List<MechanicConfig> mechanicConfigs = triggerrer.getTriggeringMechanics().get(triggerType);
     triggerWithoutTarget(mechanicConfigs, side);
   }
 
-  static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side side) {
+  static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side
+      side) {
     mechanicConfigs.stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .forEach(effectConfig -> {
           try {
-            TargetFactory.getProperTargets(effectConfig.target, side).stream()
+            TargetFactory.getProperTargets(effectConfig.target.get(), side).stream()
                 .forEach(
                     target -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                         Optional.of(effectConfig), side, target)

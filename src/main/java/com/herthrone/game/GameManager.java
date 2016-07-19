@@ -17,6 +17,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -24,6 +25,7 @@ import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
 import org.apache.log4j.Logger;
 
@@ -31,9 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/14/16.
- */
 public class GameManager implements Round {
 
   private static final Logger logger = Logger.getLogger(GameManager.class.getName());
@@ -234,7 +233,6 @@ public class GameManager implements Round {
   }
 
   public void playCard(final Card card) {
-    //card.binder().bind(activeSide);
     if (card instanceof Minion) {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
@@ -246,14 +244,13 @@ public class GameManager implements Round {
     } else if (card instanceof Weapon) {
       activeSide.hero.equip((Weapon) card);
     } else if (card instanceof Spell) {
-      EffectFactory.pipeEffects((Spell) card);
+      TriggerFactory.passiveTrigger((Spell) card, ConstTrigger.ON_PLAY);
     } else {
 
     }
   }
 
   public void playCard(final Card card, final Creature target) {
-    //card.binder().bind(activeSide);
     if (card instanceof Minion) {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
@@ -262,7 +259,7 @@ public class GameManager implements Round {
       minion.playOnBoard(activeSide.board, target);
     } else if (card instanceof Spell) {
       final Spell spell = (Spell) card;
-      EffectFactory.pipeEffects(spell, target);
+      TriggerFactory.activeTrigger((Spell) card, ConstTrigger.ON_PLAY, target);
     }
   }
 
@@ -282,8 +279,6 @@ public class GameManager implements Round {
       Weapon weapon = (Weapon) card;
       activeSide.hero.equip(weapon);
     } else if (card instanceof Spell) {
-      Spell spell = (Spell) card;
-      //spell.getEffects().
     } else {
 
     }

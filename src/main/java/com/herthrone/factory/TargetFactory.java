@@ -1,5 +1,6 @@
 package com.herthrone.factory;
 
+import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
 import com.herthrone.base.Hero;
@@ -18,9 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by yifengliu on 7/10/16.
- */
 public class TargetFactory {
 
   private static final Logger logger = Logger.getLogger(TargetFactory.class.getName());
@@ -51,9 +49,9 @@ public class TargetFactory {
       // If there is any other minions on the board with taunt but not stealth ability, this minion
       // cannot be targeted.
       return !board.stream()
-          .anyMatch(m ->
-              m.booleanMechanics().isOn(ConstMechanic.TAUNT) &&
-              m.booleanMechanics().isOff(ConstMechanic.STEALTH));
+          .anyMatch(minionOnBoard ->
+              minionOnBoard.booleanMechanics().isOn(ConstMechanic.TAUNT) &&
+              minionOnBoard.booleanMechanics().isOff(ConstMechanic.STEALTH));
     }
   }
 
@@ -174,5 +172,28 @@ public class TargetFactory {
       default:
         throw new RuntimeException("Unknown target scope: " + target.scope);
     }
+  }
+
+  public static Container<Card> getContainer(final TargetConfig target, final Side side) {
+    switch (target.type) {
+      case HAND:
+        return side.hand;
+      case DECK:
+        return side.deck;
+      default:
+        throw new RuntimeException("Unsupported " + target.type + " type for generate effect");
+    }
+  }
+
+  public static List<Creature> getOtherTargets(final Creature target) {
+    List<Creature> targets = new ArrayList<>();
+    final Side side = target.binder().getSide();
+    if (side.hero != target) {
+      targets.add(side.hero);
+    }
+    side.board.stream()
+        .filter(m -> m != target)
+        .forEach(m -> targets.add(m));
+    return targets;
   }
 }

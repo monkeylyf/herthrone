@@ -22,7 +22,8 @@ public class GenerateEffect implements Effect {
   private final TargetConfig target;
   private final Side side;
 
-  public GenerateEffect(final List<String> cardNames, final String cardType, final TargetConfig target, final Side side) {
+  public GenerateEffect(final List<String> cardNames, final String cardType,
+                        final TargetConfig target, final Side side) {
     this.cardNames = cardNames;
     this.cardType = ConstType.valueOf(cardType.toUpperCase());
     this.target = target;
@@ -42,17 +43,7 @@ public class GenerateEffect implements Effect {
       final String randomCardName = RandomMinionGenerator.randomOne(cardNames);
       final Card card = GameManager.createCardInstance(randomCardName, cardType);
       side.bind(card);
-
-      switch (target.type) {
-        case HAND:
-          side.hand.add(card);
-          break;
-        case DECK:
-          side.deck.add(card);
-          break;
-        default:
-          throw new RuntimeException("Unsupported " + target.type + " type for generate effect");
-      }
+      TargetFactory.getContainer(target, side).add(card);
     });
   }
 

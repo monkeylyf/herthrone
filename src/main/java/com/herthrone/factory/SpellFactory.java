@@ -15,6 +15,7 @@ import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
 import com.herthrone.object.AuraBuff;
+import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
@@ -43,9 +44,9 @@ public class SpellFactory {
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystal);
       private final Binder binder = new Binder();
       private final AuraBuff auraBuff = new AuraBuff();
-      private final List<MechanicConfig> mechanicConfigs = effects.stream()
-          .map(MechanicConfig::clone)
-          .collect(Collectors.toList());
+      private final TriggeringMechanics triggeringMechanics = TriggeringMechanics.create(
+          ConstTrigger.ON_PLAY,
+          effects.stream().map(MechanicConfig::clone).collect(Collectors.toList()));
 
       @Override
       public String toString() {
@@ -116,19 +117,16 @@ public class SpellFactory {
 
         if (spellDamageBuffDelta != 0) {
           logger.debug("Updating spell damage buff: " + spellDamageBuffDelta);
-          mechanicConfigs.stream().forEach(effect -> effect.value -= spellDamageBuffDelta);
+          getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()
+              .forEach(effect -> effect.value -= spellDamageBuffDelta);
         }
       }
 
       @Override
-      public List<MechanicConfig> getEffects() {
-        return mechanicConfigs;
+      public TriggeringMechanics getTriggeringMechanics() {
+        return triggeringMechanics;
       }
 
-      @Override
-      public AuraBuff getAuraBuff() {
-        return auraBuff;
-      }
     };
   }
 

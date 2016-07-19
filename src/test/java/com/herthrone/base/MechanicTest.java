@@ -543,7 +543,7 @@ public class MechanicTest extends TestCase {
   @Test
   public void testSpellDamage() {
     Spell fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
-    final int damage = -fireball.getEffects().get(0).value;
+    final int damage = 6;
     activeSide.bind(fireball);
     activeSide.hand.add(fireball);
 

@@ -33,4 +33,9 @@ public class TriggeringMechanics {
   public boolean has(final ConstTrigger trigger) {
     return mechanics.containsKey(trigger);
   }
+
+  public static TriggeringMechanics create(final ConstTrigger trigger,
+                                           final List<MechanicConfig> mechanicConfigs) {
+    return new TriggeringMechanics(Collections.singletonMap(trigger, mechanicConfigs));
+  }
 }

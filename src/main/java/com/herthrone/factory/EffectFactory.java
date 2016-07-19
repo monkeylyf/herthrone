@@ -16,6 +16,7 @@ import com.herthrone.constant.ConstDependency;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
+import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.effect.AddMechanicEffect;
@@ -95,10 +96,13 @@ public class EffectFactory {
                                               final Side side) {
     if (!mechanicConfigOptional.isPresent()) {
       logger.debug("Mechanic configuration is absent");
-      return false;
+      return true;
     }
     final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
-    final List<Side> realSide = TargetFactory.getSide(mechanicConfig.target, side);
+    if (!mechanicConfig.target.isPresent()) {
+      return true;
+    }
+    final List<Side> realSide = TargetFactory.getSide(mechanicConfig.target.get(), side);
     Preconditions.checkArgument(realSide.size() == 1, "Does not support two side check");
     final boolean willBeTriggered = isConditionTriggered(mechanicConfig, realSide.get(0));
     final String word = willBeTriggered ? "is" : "is not";
@@ -136,7 +140,7 @@ public class EffectFactory {
 
     for (final Minion minion : minions) {
       for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(ConstTrigger.ON_END_TURN)) {
-        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.target, side);
+        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.target.get(), side);
         final List<Effect> effects = targets.stream()
             .flatMap(target -> getMechanicEffects(mechanic, target).stream())
             .collect(Collectors.toList());
@@ -162,7 +166,7 @@ public class EffectFactory {
         // Call getDestroyablesBySide instead of getDestroyables because side is already picked
         // given target config.
         final List<Destroyable> destroyables = TargetFactory.getDestroyablesBySide(
-            mechanicConfig.target, side);
+            mechanicConfig.target.get(), side);
         if (destroyables.size() == 0) {
           return false;
         } else {
@@ -177,7 +181,7 @@ public class EffectFactory {
 
   public static List<Effect> getMechanicEffects(final MechanicConfig mechanic, final Side side) {
     try {
-      List<Creature> targets = TargetFactory.getProperTargets(mechanic.target, side);
+      List<Creature> targets = TargetFactory.getProperTargets(mechanic.target.get(), side);
       return targets.stream()
           .flatMap(target -> pipeEffects(mechanic, target).stream())
           .collect(Collectors.toList());
@@ -188,12 +192,21 @@ public class EffectFactory {
 
   public static List<Effect> getMechanicEffects(final MechanicConfig mechanic,
                                                 final Creature target) {
-    final Creature realTarget = mechanic.target.isRandom ?
-        RandomMinionGenerator.randomCreature(mechanic.target, target.binder().getSide()) :
-        target;
-
-    List<Effect> effects = pipeEffects(mechanic, realTarget);
-    return effects;
+    if (mechanic.target.isPresent()) {
+      final TargetConfig targetConfig = mechanic.target.get();
+      if (targetConfig.type.equals(ConstType.OTHER)) {
+        // For swipe.
+        return TargetFactory.getOtherTargets(target).stream()
+            .flatMap(realTarget -> pipeEffects(mechanic, realTarget).stream())
+            .collect(Collectors.toList());
+      } else {
+        final Creature realTarget = targetConfig.isRandom ?
+            RandomMinionGenerator.randomCreature(targetConfig, target.binder().getSide()) : target;
+        return pipeEffects(mechanic, realTarget);
+      }
+    } else {
+      return pipeEffects(mechanic, target);
+    }
   }
 
   public static List<Effect> pipeEffects(final MechanicConfig config, final Side side) {
@@ -273,7 +286,7 @@ public class EffectFactory {
   }
 
   private static List<Effect> getDestroyEffect(final MechanicConfig config, final Side side) {
-    List<Effect> effects = TargetFactory.getDestroyables(config.target, side)
+    List<Effect> effects = TargetFactory.getDestroyables(config.target.get(), side)
         .stream()
         .map(DestroyEffect::new)
         .collect(Collectors.toList());
@@ -286,14 +299,14 @@ public class EffectFactory {
 
   private static List<Effect> getGenerateEffect(final MechanicConfig config, final Side side) {
     final Effect generateEffect = new GenerateEffect(
-        config.choices, config.type, config.target, side);
+        config.choices, config.type, config.target.get(), side);
     return Collections.singletonList(generateEffect);
   }
 
   private static List<Effect> getTakeControlEffect(final MechanicConfig effect,
                                                    final Creature creature) {
     final Creature traitorMinion = RandomMinionGenerator.randomCreature(
-        effect.target, creature.binder().getSide());
+        effect.target.get(), creature.binder().getSide());
     Preconditions.checkArgument(traitorMinion instanceof Minion);
     return Collections.singletonList(new TakeControlEffect((Minion) traitorMinion));
   }
@@ -363,7 +376,7 @@ public class EffectFactory {
 
   private static List<Effect> getDrawCardEffect(final MechanicConfig effect, final Side side) {
     // TODO: draw from own deck/opponent deck/opponent hand
-    final TargetConfig target = effect.target;
+    final TargetConfig target = effect.target.get();
     switch (target.type) {
 
     }
@@ -423,14 +436,15 @@ public class EffectFactory {
   }
 
   public static void pipeEffects(final Spell spell, final Creature target) {
-    final List<Effect> effects = spell.getEffects().stream()
+    final List<Effect> effects = spell.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()
         .flatMap(effect -> pipeEffects(effect, target).stream())
         .collect(Collectors.toList());
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }
 
   public static void pipeEffects(final Spell spell) {
-    TriggerFactory.triggerWithoutTarget(spell.getEffects(), spell.binder().getSide());
+    TriggerFactory.triggerWithoutTarget(
+        spell.getTriggeringMechanics().get(ConstTrigger.ON_PLAY), spell.binder().getSide());
   }
 
   public static class AttackFactory {

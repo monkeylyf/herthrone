@@ -28,9 +28,6 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 
-/**
- * Created by yifeng on 4/13/16.
- */
 public class MinionFactory {
 
   private static final Logger logger = Logger.getLogger(MinionFactory.class.getName());
@@ -257,7 +254,8 @@ public class MinionFactory {
             .forEach(config -> {
               side.board.stream()
                   .filter(minion -> {
-                    final ConstType type = config.target.type;
+                    Preconditions.checkArgument(config.target.isPresent());
+                    final ConstType type = config.target.get().type;
                     return type.equals(ConstType.MINION) || type.equals(minion.type());
                   })
                   .forEach(minion -> EffectFactory.AuraEffectFactory.removeAuraEffect(
@@ -294,8 +292,9 @@ public class MinionFactory {
             .filter(minion -> minion != this)
             .forEach(m ->
               m.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
-                  .filter(c -> c.target.type.equals(ConstType.MINION) || type().equals(c.target.type))
-                  .forEach(c -> EffectFactory.AuraEffectFactory.addAuraEffect(c, m, this)
+                  .filter(config -> config.target.get().type.equals(ConstType.MINION) ||
+                                    type().equals(config.target.get().type))
+                  .forEach(config -> EffectFactory.AuraEffectFactory.addAuraEffect(config, m, this)
                 )
             );
       }

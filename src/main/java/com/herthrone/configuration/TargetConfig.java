@@ -21,15 +21,9 @@ public class TargetConfig {
   public final boolean isRandom;
 
   TargetConfig(final Map map) {
-    if (map != null) {
-      this.scope = ConstTarget.valueOf(getUpperCaseStringValue(map, SCOPE));
-      this.type = ConstType.valueOf(getUpperCaseStringValue(map, TYPE));
-      this.isRandom = ConfigLoader.getByDefault(map, RANDOM, false);
-    } else {
-      this.scope = null;
-      this.type = null;
-      this.isRandom = false;
-    }
+    this.scope = ConstTarget.valueOf(getUpperCaseStringValue(map, SCOPE));
+    this.type = ConstType.valueOf(getUpperCaseStringValue(map, TYPE));
+    this.isRandom = ConfigLoader.getByDefault(map, RANDOM, false);
   }
 
   @Override

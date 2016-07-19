@@ -11,9 +11,6 @@
       effect: attribute
       type: health
       value: -6
-      target:
-        scope: all
-        type: all
 
 - name: claw
   class: druid

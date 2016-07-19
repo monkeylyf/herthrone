@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * Created by yifeng on 4/20/16.
- */
 @RunWith(JUnit4.class)
 public class SpellTest extends TestCase {
 
@@ -59,7 +56,7 @@ public class SpellTest extends TestCase {
     final Spell fireBall = createSpellAndBind(ConstSpell.FIRE_BALL);
     final int health = yeti.health().value();
     EffectFactory.pipeEffects(fireBall, yeti);
-    assertThat(yeti.health().value()).isEqualTo(health + fireBall.getEffects().get(0).value);
+    assertThat(yeti.health().value()).isEqualTo(health - 6);
     assertThat(yeti.isDead()).isTrue();
   }
 
@@ -68,7 +65,7 @@ public class SpellTest extends TestCase {
     assertThat(hero1.armor().value()).isEqualTo(0);
     final Spell armorUp = createHeroPowerAndBind(ConstSpell.ARMOR_UP);
     EffectFactory.pipeEffects(armorUp, hero1);
-    assertThat(hero1.armor().value()).isEqualTo(armorUp.getEffects().get(0).value);
+    assertThat(hero1.armor().value()).isEqualTo(2);
   }
 
   @Test
@@ -76,7 +73,7 @@ public class SpellTest extends TestCase {
     final Spell lesserHeal = createHeroPowerAndBind(ConstSpell.LESSER_HEAL);
     assertThat(hero1.healthLoss()).isEqualTo(0);
     final int largeDamage = 5;
-    final int healVol = lesserHeal.getEffects().get(0).value;
+    final int healVol = 2;
     hero1.takeDamage(largeDamage);
     assertThat(hero1.healthLoss()).isEqualTo(largeDamage);
 
@@ -92,34 +89,34 @@ public class SpellTest extends TestCase {
   @Test
   public void testFireBlast() {
     final Spell fireBlast = createHeroPowerAndBind(ConstSpell.FIRE_BLAST);
-    final int damage = fireBlast.getEffects().get(0).value;
+    final int damage = 1;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
     EffectFactory.pipeEffects(fireBlast, hero2);
-    assertThat(hero2.healthLoss()).isEqualTo(-damage);
+    assertThat(hero2.healthLoss()).isEqualTo(damage);
 
     EffectFactory.pipeEffects(fireBlast, hero2);
-    assertThat(hero2.healthLoss()).isEqualTo(-damage * 2);
+    assertThat(hero2.healthLoss()).isEqualTo(damage * 2);
   }
 
   @Test
   public void testSteadyShot() {
     final Spell steadyShot = createHeroPowerAndBind(ConstSpell.STEADY_SHOT);
-    final int damage = steadyShot.getEffects().get(0).value;
+    final int damage = 2;
     assertThat(hero2.healthLoss()).isEqualTo(0);
 
     EffectFactory.pipeEffects(steadyShot, hero2);
-    assertThat(hero2.healthLoss()).isEqualTo(-damage);
+    assertThat(hero2.healthLoss()).isEqualTo(damage);
 
     EffectFactory.pipeEffects(steadyShot, hero2);
-    assertThat(hero2.healthLoss()).isEqualTo(-damage * 2);
+    assertThat(hero2.healthLoss()).isEqualTo(damage * 2);
   }
 
   @Test
   public void testShapeshift() {
     final Spell shapeshift = createHeroPowerAndBind(ConstSpell.SHAPESHIFT);
-    final int attack = shapeshift.getEffects().get(0).value;
-    final int armor = shapeshift.getEffects().get(1).value;
+    final int attack = 1;
+    final int armor = 1;
 
     assertThat(hero1.attack().value()).isEqualTo(0);
     assertThat(hero1.armor().value()).isEqualTo(0);
@@ -141,7 +138,7 @@ public class SpellTest extends TestCase {
     assertThat(hero1.canDamage()).isTrue();
 
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(hero1, hero2);
-    assertThat(daggerMastery.getEffects().get(0).value).isEqualTo(hero2.healthLoss());
+    assertThat(hero2.healthLoss()).isEqualTo(1);
   }
 
   @Test
@@ -158,7 +155,7 @@ public class SpellTest extends TestCase {
   @Test
   public void testTotemicCall() {
     final Spell totemicCall = createHeroPowerAndBind(ConstSpell.TOTEMIC_CALL);
-    final int size = totemicCall.getEffects().get(0).choices.size();
+    final int size = 4;
     for (int i = 0; i < size; ++i) {
       EffectFactory.pipeEffects(totemicCall, hero1);
       assertThat(gm.activeSide.board.size()).isEqualTo(i + 1);
@@ -174,7 +171,7 @@ public class SpellTest extends TestCase {
   public void testLifeTap() {
     final Spell lifeTap = createHeroPowerAndBind(ConstSpell.LIFE_TAP);
     final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    final int damage = -lifeTap.getEffects().get(0).value;
+    final int damage = 2;
 
     assertThat(gm.activeSide.deck.size()).isEqualTo(0);
     gm.activeSide.deck.add(yeti);
@@ -238,5 +235,22 @@ public class SpellTest extends TestCase {
     assertThat(yeti.attack().value()).isEqualTo(attack + 2);
     assertThat(yeti.health().value()).isEqualTo(health + 2);
     assertThat(yeti.maxHealth().value()).isEqualTo(maxHealth + 2);
+  }
+
+  @Test
+  public void testSwipe() {
+    final Spell swipe = createSpellAndBind(ConstSpell.SWIPE);
+    final Minion yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.inactiveSide.bind(yeti1);
+    gm.inactiveSide.board.add(yeti1);
+    final Minion yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.inactiveSide.bind(yeti2);
+    gm.inactiveSide.board.add(yeti2);
+
+    gm.playCard(swipe, yeti1);
+
+    assertThat(yeti1.healthLoss()).isEqualTo(4);
+    assertThat(yeti2.healthLoss()).isEqualTo(1);
+    assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(1);
   }
 }

@@ -7,9 +7,6 @@ import java.util.Map;
 
 import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
 
-/**
- * Created by yifengliu on 6/29/16.
- */
 public class ConditionConfig {
 
   private static final String TYPE = "type";

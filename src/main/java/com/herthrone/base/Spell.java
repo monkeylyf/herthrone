@@ -1,20 +1,13 @@
 package com.herthrone.base;
 
 import com.google.common.base.Optional;
-import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.TargetConfig;
-import com.herthrone.object.AuraBuff;
-
-import java.util.List;
 
 /**
  * Created by yifeng on 4/4/16.
  */
-public interface Spell extends Card, Refreshable {
+public interface Spell extends Card, Refreshable, Mechanic.TriggeringMechanic {
 
   Optional<TargetConfig> getTargetConfig();
 
-  List<MechanicConfig> getEffects();
-
-  AuraBuff getAuraBuff();
 }
