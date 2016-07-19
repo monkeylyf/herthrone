@@ -58,7 +58,7 @@ public class MechanicConfig {
     this.isPermanent = ConfigLoader.getByDefault(map, PERMANENT, false);
     this.isUnique = ConfigLoader.getByDefault(map, UNIQUE, false);
     this.choices = ConfigLoader.getByDefault(map, CHOICES, Collections.EMPTY_LIST);
-    this.target = (map.containsKey(TARGET)) ? new TargetConfig((Map) map.get(TARGET)) : null;
+    this.target = new TargetConfig((Map) map.get(TARGET));
     this.valueDependency = (map.containsKey(VALUE_DEPENDENCY)) ?
         Optional.of(ConstDependency.valueOf(getUpperCaseStringValue(map, VALUE_DEPENDENCY))) :
         Optional.absent();

@@ -1,8 +1,7 @@
 package com.herthrone.base;
 
-import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
+import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.factory.EffectFactory;
@@ -29,8 +28,7 @@ public class SpellTest extends TestCase {
 
   private Hero hero1;
   private Hero hero2;
-  private MinionConfig yetiConfig;
-  private Minion minion;
+  private Minion yeti;
   private GameManager gm;
 
   private Spell createSpellAndBind(final ConstSpell spellName) {
@@ -52,17 +50,17 @@ public class SpellTest extends TestCase {
     this.hero1 = gm.activeSide.hero;
     this.hero2 = gm.inactiveSide.hero;
 
-    this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
-    this.minion = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.activeSide.bind(minion);
+    this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti);
   }
 
   @Test
   public void testFireBall() {
     final Spell fireBall = createSpellAndBind(ConstSpell.FIRE_BALL);
-    EffectFactory.pipeEffects(fireBall, minion);
-    assertThat(minion.health().value()).isEqualTo(yetiConfig.health + fireBall.getEffects().get(0).value);
-    assertThat(minion.isDead()).isTrue();
+    final int health = yeti.health().value();
+    EffectFactory.pipeEffects(fireBall, yeti);
+    assertThat(yeti.health().value()).isEqualTo(health + fireBall.getEffects().get(0).value);
+    assertThat(yeti.isDead()).isTrue();
   }
 
   @Test
@@ -197,15 +195,48 @@ public class SpellTest extends TestCase {
     final Spell wildGrowth = createSpellAndBind(ConstSpell.WILD_GROWTH);
     final int manaCrystalCount = gm.activeSide.hero.manaCrystal().getCrystalUpperBound();
     gm.playCard(wildGrowth);
-    assertThat(gm.activeSide.hero.manaCrystal().getCrystalUpperBound())
-        .isEqualTo(manaCrystalCount + 1);
+    assertThat(hero1.manaCrystal().getCrystalUpperBound()).isEqualTo(manaCrystalCount + 1);
   }
 
   @Test
   public void testInnervate() {
     final Spell innervate = createSpellAndBind(ConstSpell.INNERVATE);
-    final int manaCrystalCount = gm.activeSide.hero.manaCrystal().getCrystal();
+    final int manaCrystalCount = hero1.manaCrystal().getCrystal();
     gm.playCard(innervate);
-    assertThat(gm.activeSide.hero.manaCrystal().getCrystal()).isEqualTo(manaCrystalCount + 2);
+    assertThat(hero1.manaCrystal().getCrystal()).isEqualTo(manaCrystalCount + 2);
+  }
+
+  @Test
+  public void testClaw() {
+    final Spell claw = createSpellAndBind(ConstSpell.CLAW);
+    final int attack = hero1.attack().value();
+    final int armor = hero1.armor().value();
+
+    gm.playCard(claw);
+
+    assertThat(hero1.attack().value()).isEqualTo(attack + 2);
+    assertThat(hero1.armor().value()).isEqualTo(armor + 2);
+
+    hero1.endTurn();
+
+    // Test that attack is valid only for one turn but armor gain is permanent.
+    assertThat(hero1.attack().value()).isEqualTo(attack);
+    assertThat(hero1.armor().value()).isEqualTo(armor + 2);
+  }
+
+  @Test
+  public void testMarkOfTheWild() {
+    final Spell markOfTheWild = createSpellAndBind(ConstSpell.MARK_OF_THE_WILD);
+    final int attack = yeti.attack().value();
+    final int health = yeti.health().value();
+    final int maxHealth = yeti.maxHealth().value();
+    assertThat(yeti.booleanMechanics().isOff(ConstMechanic.TAUNT));
+
+    gm.playCard(markOfTheWild, yeti);
+
+    assertThat(yeti.booleanMechanics().isOn(ConstMechanic.TAUNT));
+    assertThat(yeti.attack().value()).isEqualTo(attack + 2);
+    assertThat(yeti.health().value()).isEqualTo(health + 2);
+    assertThat(yeti.maxHealth().value()).isEqualTo(maxHealth + 2);
   }
 }

@@ -13,6 +13,6 @@ public class HeroPowerFactory {
   public static Spell create(final ConstSpell heroPower) {
     final SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
     return SpellFactory.create(config.name, config.displayName, config.className, config.crystal,
-        config.type, config.targetConfigOptional, config.effects);
+        config.type, config.singleTargetConfigOptional, config.effects);
   }
 }

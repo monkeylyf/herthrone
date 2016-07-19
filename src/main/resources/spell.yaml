@@ -2,7 +2,7 @@
   class: mage
   crystal: 4
   collectible: true
-  target:
+  single_target:
     scope: all
     type: all
   mechanics:
@@ -42,7 +42,7 @@
   class: druid
   crystal: 3
   collectible: true
-  target:
+  single_target:
     scope: all
     type: all
   mechanics:
@@ -70,7 +70,7 @@
   class: druid
   crystal: 2
   collectible: true
-  target:
+  single_target:
     scope: all
     type: minion
   mechanics:
@@ -108,7 +108,7 @@
   class: druid
   crystal: 0
   collectible: true
-  target:
+  single_target:
     scope: all
     type: all
   mechanics:
@@ -137,7 +137,7 @@
   class: druid
   crystal: 6
   collectible: true
-  target:
+  single_target:
     scope: all
     type: all
   mechanics:
@@ -159,7 +159,7 @@
   class: druid
   crystal: 4
   collectible: true
-  target:
+  single_target:
     scope: opponent
     type: all
   mechanics:

@@ -18,6 +18,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
+import com.herthrone.effect.AddMechanicEffect;
 import com.herthrone.effect.AttributeEffect;
 import com.herthrone.effect.BuffEffect;
 import com.herthrone.effect.DestroyEffect;
@@ -212,6 +213,9 @@ public class EffectFactory {
 
   public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target) {
     switch (config.effectType) {
+      case ADD_MECHANIC:
+        final ConstMechanic mechanic = ConstMechanic.valueOf(config.type.toUpperCase());
+        return Collections.singletonList(new AddMechanicEffect(mechanic, target));
       case ATTRIBUTE:
         return getAttributeEffect(config, target);
       case BUFF:
@@ -221,17 +225,13 @@ public class EffectFactory {
       case DRAW:
         return getDrawCardEffect(config, target.binder().getSide());
       case RETURN_TO_HAND:
-        Preconditions.checkArgument(
-            target instanceof Minion, "%s can not be returned to player's hand", target.type());
-        return getReturnToHandEffect((Minion) target);
+        return getReturnToHandEffect(creatureToMinion(target));
       case SUMMON:
         return getSummonEffect(config, target.binder().getSide());
       case TAKE_CONTROL:
         return getTakeControlEffect(config, target);
       case WEAPON:
-        Preconditions.checkArgument(
-            target instanceof Hero, "%s can not equip weapon", target.type());
-        return getEquipWeaponEffect(config, (Hero) target);
+        return getEquipWeaponEffect(config, creatureToHero(target));
       default:
         throw new IllegalArgumentException("Unknown effect type: " + config.effectType);
     }
@@ -246,9 +246,7 @@ public class EffectFactory {
       case (Constant.CRYSTAL):
         return Collections.singletonList(getGeneralBuffEffect(side, creature.manaCost(), effect));
       case (Constant.MAX_HEALTH):
-        Preconditions.checkArgument(
-            creature instanceof Minion, "max health buff does not support %s", creature.type());
-        return Collections.singletonList(getMaxHealthBuffEffect((Minion) creature, effect));
+        return Collections.singletonList(getMaxHealthBuffEffect(creatureToMinion(creature), effect));
       default:
         throw new IllegalArgumentException("Unknown effect type for buff: " + type);
     }

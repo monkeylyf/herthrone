@@ -32,7 +32,7 @@ public class SpellFactory {
   public static Spell create(final ConstSpell spell) {
     SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
     return create(config.name, config.displayName, config.className, config.crystal, config.type,
-        config.targetConfigOptional, config.effects);
+        config.singleTargetConfigOptional, config.effects);
   }
 
   static Spell create(final ConstSpell name, final String displayName, final ConstClass className,
