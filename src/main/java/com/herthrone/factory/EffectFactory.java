@@ -23,7 +23,9 @@ import com.herthrone.effect.BuffEffect;
 import com.herthrone.effect.DestroyEffect;
 import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
+import com.herthrone.effect.ManaCrystalEffect;
 import com.herthrone.effect.MaxHealthBuffEffect;
+import com.herthrone.effect.MaxManaCrystalEffect;
 import com.herthrone.effect.MoveCardEffect;
 import com.herthrone.effect.OverloadEffect;
 import com.herthrone.effect.PhysicalDamageEffect;
@@ -298,28 +300,44 @@ public class EffectFactory {
     return Collections.singletonList(new TakeControlEffect((Minion) traitorMinion));
   }
 
+  private static Hero creatureToHero(final Creature creature) {
+    Preconditions.checkArgument(
+        creature instanceof Hero, "Expect Hero instance, not %s", creature.type());
+    return (Hero) creature;
+  }
+
+  private static Minion creatureToMinion(final Creature creature) {
+    Preconditions.checkArgument(
+        creature instanceof Minion, "Expect Minion instance, not %s", creature.type());
+    return (Minion) creature;
+  }
+
   private static List<Effect> getAttributeEffect(final MechanicConfig effect,
                                                  final Creature creature) {
     final Side side = creature.binder().getSide();
     final String type = effect.type;
     switch (type) {
-      case (Constant.HEALTH):
-        return Collections.singletonList(getHealthAttributeEffect(creature, effect));
+      case (Constant.ARMOR):
+        return Collections.singletonList(
+            getGeneralAttributeEffect(side, creatureToHero(creature).armor(), effect));
       case (Constant.ATTACK):
         return Collections.singletonList(
             getGeneralAttributeEffect(side, creature.attack(), effect));
       case (Constant.CRYSTAL):
         return Collections.singletonList(
             getGeneralAttributeEffect(side, creature.manaCost(), effect));
+      case (Constant.HEALTH):
+        return Collections.singletonList(getHealthAttributeEffect(creature, effect));
       case (Constant.MAX_HEALTH):
         return Arrays.asList(
             getGeneralAttributeEffect(side, creature.maxHealth(), effect),
             getHealthAttributeEffect(creature, effect));
-      case (Constant.ARMOR):
-        Preconditions.checkArgument(
-            creature instanceof Hero, "Armor Attribute does not applies to %s", creature.type());
+      case (Constant.MANA_CRYSTAL):
         return Collections.singletonList(
-            getGeneralAttributeEffect(side, ((Hero) creature).armor(), effect));
+            new ManaCrystalEffect(creatureToHero(creature).manaCrystal(), effect.value));
+      case (Constant.MAX_MANA_CRYSTAL):
+        return Collections.singletonList(
+            new MaxManaCrystalEffect(creatureToHero(creature).manaCrystal(), effect.value));
       default:
         throw new IllegalArgumentException("Unknown effect type: " + type);
     }
@@ -413,16 +431,8 @@ public class EffectFactory {
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }
 
-  public static void pipeEffects(final Spell spell, final Side side) {
-    final List<Creature> targets = TargetFactory.getProperTargets(spell.getTargetConfig().get(),
-        side);
-
-    final List<Effect> effects = targets.stream()
-        .flatMap(target -> spell.getEffects().stream()
-            .flatMap(effect -> pipeEffects(effect,
-            target).stream()))
-        .collect(Collectors.toList());
-    spell.binder().getSide().getEffectQueue().enqueue(effects);
+  public static void pipeEffects(final Spell spell) {
+    TriggerFactory.triggerWithoutTarget(spell.getEffects(), spell.binder().getSide());
   }
 
   public static class AttackFactory {

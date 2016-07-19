@@ -6,6 +6,7 @@ import com.herthrone.base.Effect;
 import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
+import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.game.Side;
 import org.apache.log4j.Logger;
@@ -42,7 +43,12 @@ public class TriggerFactory {
   static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
                              final ConstTrigger triggerType) {
     final Side side = triggerrer.binder().getSide();
-    triggerrer.getTriggeringMechanics().get(triggerType).stream()
+    List<MechanicConfig> mechanicConfigs = triggerrer.getTriggeringMechanics().get(triggerType);
+    triggerWithoutTarget(mechanicConfigs, side);
+  }
+
+  static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side side) {
+    mechanicConfigs.stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .forEach(effectConfig -> {
           try {
@@ -50,12 +56,16 @@ public class TriggerFactory {
                 .forEach(
                     target -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                         Optional.of(effectConfig), side, target)
-            );
+                );
           } catch (TargetFactory.NoTargetFoundException error) {
             EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
                 Optional.of(effectConfig), side);
           }
         });
+  }
+
+  static void triggerWithTarget() {
+
   }
 
   static void refreshAura(final Side side) {

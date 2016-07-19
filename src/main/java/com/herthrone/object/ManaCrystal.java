@@ -42,14 +42,19 @@ public class ManaCrystal implements Round {
     applyOverload();
   }
 
-  public void increaseUpperBound() {
-    crystalUpperBound = Math.min(crystalUpperBound + 1, ManaCrystal.MAX_CRYSTALS);
-  }
-
   private void applyOverload() {
     crystal -= overloaded;
     lockedCrystal = overloaded;
     overloaded = 0;
+  }
+
+  public void increase(final int gain) {
+    Preconditions.checkArgument(gain > 0, "Mana crystal gain must be positive");
+    crystal += gain;
+  }
+
+  public void increaseUpperBound() {
+    crystalUpperBound = Math.min(crystalUpperBound + 1, ManaCrystal.MAX_CRYSTALS);
   }
 
   public void increaseUpperBound(final int incrementValue) {

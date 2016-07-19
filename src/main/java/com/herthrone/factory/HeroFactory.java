@@ -56,7 +56,7 @@ public class HeroFactory {
       private final ManaCrystal manaCrystal = new ManaCrystal();
       private final BooleanMechanics booleanMechanics = new BooleanMechanics();
       private final Binder binder = new Binder();
-      private Spell heroPower = HeroPowerFactory.createHeroPowerByName(heroPowerName);
+      private Spell heroPower = HeroPowerFactory.create(heroPowerName);
       private Optional<Weapon> weaponOptional = Optional.absent();
 
       @Override

@@ -246,7 +246,7 @@ public class GameManager implements Round {
     } else if (card instanceof Weapon) {
       activeSide.hero.equip((Weapon) card);
     } else if (card instanceof Spell) {
-      //spell.getEffects().
+      EffectFactory.pipeEffects((Spell) card);
     } else {
 
     }

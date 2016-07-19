@@ -10,7 +10,7 @@ import com.herthrone.constant.ConstSpell;
  */
 public class HeroPowerFactory {
 
-  public static Spell createHeroPowerByName(final ConstSpell heroPower) {
+  public static Spell create(final ConstSpell heroPower) {
     final SpellConfig config = ConfigLoader.getHeroPowerConfigByName(heroPower);
     return SpellFactory.create(config.name, config.displayName, config.className, config.crystal,
         config.type, config.targetConfigOptional, config.effects);

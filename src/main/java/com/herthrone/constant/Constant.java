@@ -21,6 +21,7 @@ public class Constant {
   public static final String HAND = "hand";
   public static final String HAND_SIZE = "hand_size";
   public static final String HERO_POWER = "hero_power";
+  public static final String MANA_CRYSTAL = "mana_crystal";
   public static final String SECRET_SIZE = "secret_size";
   public static final String SECRET = "secret";
   public static final String HEALTH = "health";
@@ -28,6 +29,7 @@ public class Constant {
   public static final String HERO = "hero";
   public static final String WEAPON = "weapon";
   public static final String MAX_HEALTH = "max_health";
+  public static final String MAX_MANA_CRYSTAL = "max_mana_crystal";
   public static final String MOVE_POINTS = "move_points";
 
   public static final int INIT_MOVE_POINTS = 1;
