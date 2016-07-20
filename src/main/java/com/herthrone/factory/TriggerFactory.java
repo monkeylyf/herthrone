@@ -52,7 +52,7 @@ public class TriggerFactory {
     validMechanicConfigs.stream()
         .forEach(effectConfig -> {
           try {
-            TargetFactory.getProperTargets(effectConfig.target.get(), side).stream()
+            TargetFactory.getProperTargets(effectConfig.targetOptional.get(), side).stream()
                 .forEach(
                     target -> EffectFactory.pipeMechanicEffectConditionally(
                         Optional.of(effectConfig), side, target)

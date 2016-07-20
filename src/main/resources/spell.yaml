@@ -268,3 +268,33 @@
       effect: set
       type: max_health
       value: 1
+
+- name: kill_command
+  class: hunter
+  crystal: 3
+  collectible: true
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    # Mutually exclusive.
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -5
+      target:
+        scope: own
+        type: minion
+      condition:
+        type: beast_presence
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -3
+      target:
+        scope: own
+        type: minion
+      condition:
+        type: beast_absence

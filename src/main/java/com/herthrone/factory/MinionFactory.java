@@ -35,13 +35,14 @@ public class MinionFactory {
   public static Minion create(final ConstMinion minionName) {
     final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, "Minion %s undefined", minionName);
-    return create(config.health, config.attack, config.crystal, config.className,
+    return create(config.health, config.attack, config.crystal, config.className, config.type,
         config.name, config.displayName, config.isCollectible, config.mechanics);
   }
 
   private static Minion create(final int health, final int attack, final int crystalManaCost,
-                               final ConstClass className, final ConstMinion name,
-                               final String displayName, final boolean isCollectible,
+                               final ConstClass className, final ConstType type,
+                               final ConstMinion name, final String displayName,
+                               final boolean isCollectible,
                                final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     return new Minion() {
 
@@ -139,7 +140,7 @@ public class MinionFactory {
 
       @Override
       public ConstType type() {
-        return ConstType.MINION;
+        return type;
       }
 
       @Override
@@ -169,7 +170,8 @@ public class MinionFactory {
             .put(Constant.HEALTH, health().toString() + "/" + maxHealth().toString())
             .put(Constant.ATTACK, attack().toString())
             .put(Constant.CRYSTAL, manaCost().toString())
-            .put(Constant.TYPE, className().toString())
+            .put(Constant.TYPE, type().toString())
+            .put(Constant.CLASS, className().toString())
             .put(Constant.MOVE_POINTS, attackMovePoints().toString())
             .build();
       }
@@ -254,8 +256,8 @@ public class MinionFactory {
             .forEach(config -> {
               side.board.stream()
                   .filter(minion -> {
-                    Preconditions.checkArgument(config.target.isPresent());
-                    final ConstType type = config.target.get().type;
+                    Preconditions.checkArgument(config.targetOptional.isPresent());
+                    final ConstType type = config.targetOptional.get().type;
                     return type.equals(ConstType.MINION) || type.equals(minion.type());
                   })
                   .forEach(minion -> EffectFactory.AuraEffectFactory.removeAuraEffect(
@@ -292,8 +294,8 @@ public class MinionFactory {
             .filter(minion -> minion != this)
             .forEach(m ->
               m.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
-                  .filter(config -> config.target.get().type.equals(ConstType.MINION) ||
-                                    type().equals(config.target.get().type))
+                  .filter(config -> config.targetOptional.get().type.equals(ConstType.MINION) ||
+                                    type().equals(config.targetOptional.get().type))
                   .forEach(config -> EffectFactory.AuraEffectFactory.addAuraEffect(config, m, this)
                 )
             );

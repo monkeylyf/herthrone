@@ -17,9 +17,6 @@ import java.util.Collections;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * Created by yifeng on 4/15/16.
- */
 @RunWith(JUnit4.class)
 public class MinionTest extends TestCase {
 
@@ -30,7 +27,8 @@ public class MinionTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, Collections.emptyList(), Collections.emptyList());
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN,
+        Collections.emptyList(), Collections.emptyList());
     this.yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     gm.activeSide.bind(yeti1);
     gm.startTurn();

@@ -1,5 +1,6 @@
 package com.herthrone.base;
 
+import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -26,29 +28,22 @@ public class SpellTest extends TestCase {
   private Hero hero1;
   private Hero hero2;
   private Minion yeti;
+  private int initBoardSize;
   private GameManager gm;
-
-  private Spell createSpellAndBind(final ConstSpell spellName) {
-    final Spell spell = SpellFactory.create(spellName);
-    gm.activeSide.bind(spell);
-    return spell;
-  }
-
-  private Spell createHeroPowerAndBind(final ConstSpell spellName) {
-    final Spell spell = HeroPowerFactory.create(spellName);
-    gm.activeSide.bind(spell);
-    return spell;
-  }
+  private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
-        Collections.emptyList(), Collections.emptyList());
+    final List<Enum> cards = Collections.nCopies(DECK_SIZE, ConstMinion.CHILLWIND_YETI);
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
     this.hero1 = gm.activeSide.hero;
     this.hero2 = gm.inactiveSide.hero;
 
+    gm.startTurn();
     this.yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     gm.activeSide.bind(yeti);
+    gm.playCard(yeti);
+    initBoardSize = gm.activeSide.board.size();
   }
 
   @Test
@@ -60,12 +55,24 @@ public class SpellTest extends TestCase {
     assertThat(yeti.isDead()).isTrue();
   }
 
+  private Spell createSpellAndBind(final ConstSpell spellName) {
+    final Spell spell = SpellFactory.create(spellName);
+    gm.activeSide.bind(spell);
+    return spell;
+  }
+
   @Test
   public void testArmorUp() {
     assertThat(hero1.armor().value()).isEqualTo(0);
     final Spell armorUp = createHeroPowerAndBind(ConstSpell.ARMOR_UP);
     EffectFactory.pipeEffects(armorUp, hero1);
     assertThat(hero1.armor().value()).isEqualTo(2);
+  }
+
+  private Spell createHeroPowerAndBind(final ConstSpell spellName) {
+    final Spell spell = HeroPowerFactory.create(spellName);
+    gm.activeSide.bind(spell);
+    return spell;
   }
 
   @Test
@@ -144,11 +151,11 @@ public class SpellTest extends TestCase {
   @Test
   public void testReinforce() {
     final Spell reinforce = createHeroPowerAndBind(ConstSpell.REINFORCE);
-    assertThat(gm.activeSide.board.size()).isEqualTo(0);
+    final int boardSize = gm.activeSide.board.size();
     EffectFactory.pipeEffects(reinforce, hero1);
-    assertThat(gm.activeSide.board.size()).isEqualTo(1);
+    assertThat(gm.activeSide.board.size()).isEqualTo(boardSize + 1);
 
-    final Minion minion = gm.activeSide.board.get(0);
+    final Minion minion = gm.activeSide.board.get(boardSize);
     assertThat(minion.cardName()).isEqualTo(ConstMinion.SILVER_HAND_RECRUIT.toString());
   }
 
@@ -158,32 +165,28 @@ public class SpellTest extends TestCase {
     final int size = 4;
     for (int i = 0; i < size; ++i) {
       EffectFactory.pipeEffects(totemicCall, hero1);
-      assertThat(gm.activeSide.board.size()).isEqualTo(i + 1);
+      assertThat(gm.activeSide.board.size()).isEqualTo(initBoardSize + i + 1);
     }
 
     final int totemCount = gm.activeSide.board.stream()
-        .map(minion -> minion.cardName())
-        .collect(Collectors.toSet()).size();
-    assertThat(totemCount).isEqualTo(size);
+        .map(Minion::cardName).collect(Collectors.toSet()).size();
+    assertThat(totemCount).isEqualTo(initBoardSize + size);
   }
 
   @Test
   public void testLifeTap() {
     final Spell lifeTap = createHeroPowerAndBind(ConstSpell.LIFE_TAP);
-    final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     final int damage = 2;
 
-    assertThat(gm.activeSide.deck.size()).isEqualTo(0);
-    gm.activeSide.deck.add(yeti);
-    assertThat(gm.activeSide.deck.size()).isEqualTo(1);
+    final int deckSize = gm.activeSide.deck.size();
+    final int handSize = gm.activeSide.hand.size();
 
-    assertThat(gm.activeSide.hand.size()).isEqualTo(0);
     assertThat(hero1.healthLoss()).isEqualTo(0);
 
     EffectFactory.pipeEffects(lifeTap, hero1);
 
-    assertThat(gm.activeSide.hand.size()).isEqualTo(1);
-    assertThat(gm.activeSide.deck.size()).isEqualTo(0);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
     assertThat(hero1.healthLoss()).isEqualTo(damage);
   }
 
@@ -294,5 +297,25 @@ public class SpellTest extends TestCase {
 
     assertThat(yeti.health().value()).isEqualTo(value);
     assertThat(yeti.maxHealth().value()).isEqualTo(value);
+  }
+
+  @Test
+  public void testKillCommand() {
+    final int damage = 3;
+    final int damageBoosted = 5;
+    // Test without beast on board.
+    gm.playCard(createSpellAndBind(ConstSpell.KILL_COMMAND), yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(damage);
+
+    final Minion boar = MinionFactory.create(ConstMinion.BOAR);
+    gm.activeSide.bind(boar);
+    gm.playCard(boar);
+
+    System.out.println(boar);
+
+    // Test with beast on board.
+    yeti.health().increase(damage);
+    gm.playCard(createSpellAndBind(ConstSpell.KILL_COMMAND), yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(damageBoosted);
   }
 }

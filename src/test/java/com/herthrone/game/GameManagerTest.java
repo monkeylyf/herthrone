@@ -22,9 +22,6 @@ import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * Created by yifengliu on 5/17/16.
- */
 @RunWith(JUnit4.class)
 public class GameManagerTest {
 
@@ -37,13 +34,10 @@ public class GameManagerTest {
 
   @Before
   public void setUp() {
-    List<Enum> cards1 = Collections.nCopies(DECK_SIZE, MINION);
-    List<Enum> cards2 = Collections.nCopies(DECK_SIZE, MINION);
-
+    final List<Enum> cards1 = Collections.nCopies(DECK_SIZE, MINION);
+    final List<Enum> cards2 = Collections.nCopies(DECK_SIZE, MINION);
     gm = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-
     CommandLine.turnOffStdout();
-
   }
 
   @Test

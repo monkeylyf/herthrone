@@ -7,6 +7,8 @@ import com.herthrone.constant.ConstType;
 import java.util.List;
 import java.util.Map;
 
+import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
+
 /**
  * Created by yifeng on 4/12/16.
  */
@@ -15,15 +17,18 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   private static final String ATTACK = "attack";
   private static final String HEALTH = "health";
   private static final String MECHANICS = "mechanics";
+  private static final String TYPE = "type";
   public final int attack;
   public final int health;
+  public final ConstType type;
   public final Map<ConstTrigger, List<MechanicConfig>> mechanics;
-  public final ConstType type = ConstType.MINION;
 
   MinionConfig(final Map map) {
     super(map);
     this.attack = (int) map.get(ATTACK);
     this.health = (int) map.get(HEALTH);
+    this.type = (map.containsKey(TYPE)) ?
+        ConstType.valueOf(getUpperCaseStringValue(map, TYPE)) : ConstType.MINION;
     this.mechanics = MechanicConfig.getTriggerToMechanicMap(map.get(MECHANICS));
   }
 
