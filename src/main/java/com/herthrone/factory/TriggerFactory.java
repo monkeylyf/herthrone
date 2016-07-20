@@ -22,7 +22,7 @@ public class TriggerFactory {
                             final ConstTrigger triggerType, final Creature target) {
     triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .forEach(mechanicConfig ->
-            EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+            EffectFactory.pipeMechanicEffectConditionally(
                 Optional.of(mechanicConfig), triggerrer.binder().getSide(), target)
       );
   }
@@ -46,18 +46,19 @@ public class TriggerFactory {
 
   static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side
       side) {
-    mechanicConfigs.stream()
+    final List<MechanicConfig> validMechanicConfigs = mechanicConfigs.stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
+        .collect(Collectors.toList());
+    validMechanicConfigs.stream()
         .forEach(effectConfig -> {
           try {
             TargetFactory.getProperTargets(effectConfig.target.get(), side).stream()
                 .forEach(
-                    target -> EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
+                    target -> EffectFactory.pipeMechanicEffectConditionally(
                         Optional.of(effectConfig), side, target)
                 );
           } catch (TargetFactory.NoTargetFoundException error) {
-            EffectFactory.pipeMechanicEffectIfPresentAndMeetCondition(
-                Optional.of(effectConfig), side);
+            EffectFactory.pipeMechanicEffectConditionally(Optional.of(effectConfig), side);
           }
         });
   }

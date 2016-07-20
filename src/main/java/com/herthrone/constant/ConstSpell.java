@@ -4,23 +4,28 @@ package com.herthrone.constant;
  * Created by yifengliu on 5/15/16.
  */
 public enum ConstSpell {
+  ANIMAL_COMPANION,
+  ARCANE_SHOT,
   ARMOR_UP,
   CLAW,
   DAGGER_MASTERY,
   FIRE_BLAST,
   FIRE_BALL,
   HEALING_TOUCH,
+  HUNTERS_MARK,
   INNERVATE,
   LESSER_HEAL,
   LIFE_TAP,
   MARK_OF_THE_WILD,
   MOONFIRE,
+  MULTI_SHOT,
   REINFORCE,
   SAVAGE_ROAR,
   SHAPESHIFT,
   STARFIRE,
   STEADY_SHOT,
   SWIPE,
+  TRACKING,
   TOTEMIC_CALL,
   WILD_GROWTH;
 }

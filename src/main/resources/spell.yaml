@@ -173,3 +173,98 @@
       target:
         scope: opponent
         type: other
+
+- name: arcane_shot
+  class: hunter
+  crystal: 1
+  collectible: true
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -2
+
+- name: multi_shot
+  display_name: Multi-Shot
+  class: hunter
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -3
+      target:
+        scope: opponent
+        type: minion
+        random: true
+      condition:
+        type: board_size
+        range_start: 2
+        range_end: 999
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -3
+      random: true
+      target:
+        scope: opponent
+        type: minion
+        random: true
+      condition:
+        type: board_size
+        range_start: 2
+        range_end: 999
+
+- name: tracking
+  class: hunter
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: discard
+      trigger: on_play
+      effect: choose_card
+      type: discard
+      value: 3
+      target:
+        scope: own
+        type: deck
+
+- name: animal_companion
+  class: hunter
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: summon
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices:
+        - huffer
+        - leokk
+        - misha
+
+- name: hunters_mark
+  display: Hunter's Mark
+  class: hunter
+  crystal: 1
+  collectible: true
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: set_attribute
+      trigger: on_play
+      effect: set
+      type: max_health
+      value: 1

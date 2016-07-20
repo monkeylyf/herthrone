@@ -645,4 +645,20 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.attack().value()).isEqualTo(attack + 1);
     assertThat(yeti.health().value()).isEqualTo(health + 1);
   }
+
+  @Test
+  public void testSelectiveBuff() {
+    final Minion houndmaster = createAndBindMinion(ConstMinion.HOUNDMASTER);
+    final Minion boar = createAndBindMinion(ConstMinion.BOAR);
+    final int attack  = boar.attack().value();
+    final int health = boar.health().value();
+    final int maxHealth = boar.maxHealth().value();
+    assertThat(boar.booleanMechanics().isOff(ConstMechanic.TAUNT));
+
+    gm.playCard(houndmaster, boar);
+    assertThat(boar.attack().value()).isEqualTo(attack + 2);
+    assertThat(boar.health().value()).isEqualTo(health + 2);
+    assertThat(boar.maxHealth().value()).isEqualTo(maxHealth + 2);
+    assertThat(boar.booleanMechanics().isOn(ConstMechanic.TAUNT));
+  }
 }

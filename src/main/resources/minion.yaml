@@ -886,3 +886,88 @@
   mechanics:
     - name: taunt
       effect: status
+
+- name: houndmaster
+  class: hunter
+  attack: 4
+  health: 3
+  crystal: 4
+  collectible: true
+  single_target:
+    scope: own
+    type: beast
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: max_health
+      value: 2
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: attack
+      value: 2
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: add_mechanic
+      type: taunt
+      value: 1
+
+- name: timber_wolf
+  class: hunter
+  type: beast
+  attack: 1
+  health: 1
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: beast
+
+- name: huffer
+  class: hunter
+  type: beast
+  attack: 4
+  health: 2
+  crystal: 3
+  collectible: false
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: leokk
+  class: hunter
+  type: beast
+  attack: 2
+  health: 4
+  crystal: 3
+  collectible: false
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: misha
+  class: hunter
+  type: beast
+  attack: 4
+  health: 4
+  crystal: 3
+  collectible: false
+  mechanics:
+    - name: taunt
+      effect: status

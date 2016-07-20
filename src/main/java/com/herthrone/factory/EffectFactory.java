@@ -32,6 +32,7 @@ import com.herthrone.effect.MoveCardEffect;
 import com.herthrone.effect.OverloadEffect;
 import com.herthrone.effect.PhysicalDamageEffect;
 import com.herthrone.effect.ReturnToHandEffect;
+import com.herthrone.effect.SetAttributeEffect;
 import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
 import com.herthrone.game.Side;
@@ -110,7 +111,7 @@ public class EffectFactory {
     return willBeTriggered;
   }
 
-  public static void pipeMechanicEffectIfPresentAndMeetCondition(
+  public static void pipeMechanicEffectConditionally(
       final Optional<MechanicConfig> mechanicConfigOptional,
       final Side side, final Creature target) {
     if (isTriggerConditionMet(mechanicConfigOptional, side)) {
@@ -121,7 +122,7 @@ public class EffectFactory {
     }
   }
 
-  public static void pipeMechanicEffectIfPresentAndMeetCondition(
+  public static void pipeMechanicEffectConditionally(
       final Optional<MechanicConfig> mechanicConfigOptional,
       final Side side) {
     if (isTriggerConditionMet(mechanicConfigOptional, side)) {
@@ -202,6 +203,9 @@ public class EffectFactory {
       } else {
         final Creature realTarget = targetConfig.isRandom ?
             RandomMinionGenerator.randomCreature(targetConfig, target.binder().getSide()) : target;
+        //RandomMinionGenerator.randomOne(
+        //    TargetFactory.getProperTargetsBySide(targetConfig, target.binder().getSide())) :
+        //    target;
         return pipeEffects(mechanic, realTarget);
       }
     } else {
@@ -239,12 +243,27 @@ public class EffectFactory {
         return getDrawCardEffect(config, target.binder().getSide());
       case RETURN_TO_HAND:
         return getReturnToHandEffect(creatureToMinion(target));
+      case SET:
+        return getSetAttributeEffect(config, target);
       case SUMMON:
         return getSummonEffect(config, target.binder().getSide());
       case TAKE_CONTROL:
         return getTakeControlEffect(config, target);
       case WEAPON:
         return getEquipWeaponEffect(config, creatureToHero(target));
+      default:
+        throw new IllegalArgumentException("Unknown effect type: " + config.effectType);
+    }
+  }
+
+  private static List<Effect> getSetAttributeEffect(final MechanicConfig config,
+                                                    final Creature target) {
+    switch (config.type) {
+      case Constant.MAX_HEALTH:
+        return Arrays.asList(
+            new SetAttributeEffect(target.maxHealth(), config.value),
+            new SetAttributeEffect(target.health(), config.value)
+        );
       default:
         throw new IllegalArgumentException("Unknown effect type: " + config.effectType);
     }

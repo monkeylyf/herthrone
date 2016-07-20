@@ -240,17 +240,59 @@ public class SpellTest extends TestCase {
   @Test
   public void testSwipe() {
     final Spell swipe = createSpellAndBind(ConstSpell.SWIPE);
+
+    gm.switchTurn();
     final Minion yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.inactiveSide.bind(yeti1);
-    gm.inactiveSide.board.add(yeti1);
+    gm.activeSide.bind(yeti1);
+    gm.playCard(yeti1);
     final Minion yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.inactiveSide.bind(yeti2);
-    gm.inactiveSide.board.add(yeti2);
+    gm.activeSide.bind(yeti2);
+    gm.playCard(yeti2);
+    gm.switchTurn();
 
     gm.playCard(swipe, yeti1);
 
     assertThat(yeti1.healthLoss()).isEqualTo(4);
     assertThat(yeti2.healthLoss()).isEqualTo(1);
     assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(1);
+  }
+
+  @Test
+  public void testMultiShot() {
+    final Spell multiShot = createSpellAndBind(ConstSpell.MULTI_SHOT);
+    final int damage = 3;
+
+    gm.switchTurn();
+    final Minion yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti1);
+    gm.playCard(yeti1);
+    final Minion yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti2);
+    gm.playCard(yeti2);
+    gm.switchTurn();
+
+    //gm.playCard(multiShot);
+    //System.out.println(yeti1);
+    //System.out.println(yeti2);
+    //assertThat(yeti1.healthLoss()).isEqualTo(damage);
+    //assertThat(yeti2.healthLoss()).isEqualTo(damage);
+  }
+
+  @Test
+  public void testTracking() {
+    // TODO: to be implemented
+  }
+
+  @Test
+  public void testHuntersMark() {
+    final Spell huntersMark = createSpellAndBind(ConstSpell.HUNTERS_MARK);
+    final int value = 1;
+    assertThat(yeti.health().value()).isGreaterThan(value);
+    assertThat(yeti.maxHealth().value()).isGreaterThan(value);
+
+    gm.playCard(huntersMark, yeti);
+
+    assertThat(yeti.health().value()).isEqualTo(value);
+    assertThat(yeti.maxHealth().value()).isEqualTo(value);
   }
 }

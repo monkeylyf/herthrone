@@ -30,7 +30,7 @@
   class: mage
   crystal: 2
   type: hero_power
-  target:
+  single_target:
     scope: all
     type: all
   mechanics:
@@ -47,7 +47,7 @@
   class: priest
   crystal: 2
   type: hero_power
-  target:
+  single_target:
     scope: all
     type: all
   mechanics:
@@ -126,9 +126,6 @@
   class: hunter
   crystal: 2
   type: hero_power
-  target:
-     scope: opponent
-     type: hero
   mechanics:
     - name: deal_damage
       trigger: on_play

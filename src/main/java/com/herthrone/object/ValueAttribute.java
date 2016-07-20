@@ -53,6 +53,13 @@ public class ValueAttribute implements Resettable, Round {
     auraBuff.reset();
   }
 
+  public void set(final int valueToSet) {
+    currentValue.setTo(valueToSet);
+    if (buff.value() > 0) {
+      buff.reset();
+    }
+  }
+
   public boolean isGreaterThan(final int value) {
     return value() > value;
   }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
 
   private static final String MECHANICS = "mechanics";
-  private static final String TARGET = "target";
+  private static final String TARGET = "single_target";
   public final List<MechanicConfig> effects;
   public final Optional<TargetConfig> singleTargetConfigOptional;
   public final ConstType type = ConstType.SPELL;
