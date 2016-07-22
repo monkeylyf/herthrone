@@ -684,4 +684,26 @@ public class MechanicTest extends TestCase {
     //assertThat(gm.activeSide.deck.size()).isEqualTo(initDeckSize - 1);
     assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize + 1);
   }
+
+  @Test
+  public void testTundraRhino() {
+    final Minion rhino = createAndBindMinion(ConstMinion.TUNDRA_RHINO);
+    final Minion boar = createAndBindMinion(ConstMinion.BOAR);
+    final Minion timberWolf = createAndBindMinion(ConstMinion.TIMBER_WOLF);
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(boar);
+
+    assertThat(yeti.canMove()).isFalse();
+    assertThat(boar.canMove()).isFalse();
+    // Test after putting rhino on board, yeti still cannot move but board can.
+    gm.playCard(rhino);
+    assertThat(yeti.canMove()).isFalse();
+    assertThat(boar.canMove()).isTrue();
+    // Test adding a beast on board with rhino present, the beast has charge.
+    gm.playCard(timberWolf);
+    assertThat(timberWolf.canMove()).isTrue();
+    // Test adding a non-beast on board with rhino present, it cannot move.
+    gm.playCard(ooze);
+    assertThat(ooze.canMove()).isFalse();
+  }
 }

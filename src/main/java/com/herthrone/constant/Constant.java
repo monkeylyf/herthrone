@@ -14,6 +14,7 @@ public class Constant {
   public static final String ATTACK = "attack";
   public static final String BOARD = "board";
   public static final String CARD_NAME = "card_name";
+  public static final String CHARGE = "charge";
   public static final String CLASS = "class";
   public static final String CRYSTAL = "crystal";
   public static final String CRYSTAL_LOCK = "crystal_lock";
@@ -34,4 +35,5 @@ public class Constant {
 
   public static final int INIT_MOVE_POINTS = 1;
   public static final int WINDFURY_INIT_MOVE_POINTS = 2;
+
 }

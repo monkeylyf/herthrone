@@ -802,7 +802,7 @@
   health: 1
   crystal: 1
   type: beast
-  collectible: true
+  collectible: false
 
 - name: shattered_sun_cleric
   class: neutral
@@ -991,3 +991,20 @@
         # should at least two beasts on board to trigger the effect.
         type: beast_count
         range_start: 2
+
+- name: tundra_rhino
+  class: hunter
+  type: beast
+  attack: 2
+  health: 5
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: add_mechanic
+      type: charge
+      value: 1
+      target:
+        scope: own
+        type: beast

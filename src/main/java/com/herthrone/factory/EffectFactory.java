@@ -66,6 +66,12 @@ public class EffectFactory {
           target.maxHealth().addAuraBuff(minion, mechanicConfig.value);
           target.health().addAuraBuff(minion, mechanicConfig.value);
           break;
+        case Constant.CHARGE:
+          final ValueAttribute movePoints = target.attackMovePoints();
+          if (movePoints.getTemporaryBuff().value() == -1) {
+            movePoints.getTemporaryBuff().increase(1);
+          }
+          break;
         default:
           throw new RuntimeException(mechanicConfig.type + " not supported for aura");
       }
