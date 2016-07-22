@@ -34,9 +34,8 @@ public class GameManagerTest {
 
   @Before
   public void setUp() {
-    final List<Enum> cards1 = Collections.nCopies(DECK_SIZE, MINION);
-    final List<Enum> cards2 = Collections.nCopies(DECK_SIZE, MINION);
-    gm = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
+    final List<Enum> cards = Collections.nCopies(DECK_SIZE, MINION);
+    gm = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards, cards);
     CommandLine.turnOffStdout();
   }
 

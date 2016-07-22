@@ -311,8 +311,6 @@ public class SpellTest extends TestCase {
     gm.activeSide.bind(boar);
     gm.playCard(boar);
 
-    System.out.println(boar);
-
     // Test with beast on board.
     yeti.health().increase(damage);
     gm.playCard(createSpellAndBind(ConstSpell.KILL_COMMAND), yeti);

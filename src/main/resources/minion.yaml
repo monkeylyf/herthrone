@@ -969,3 +969,25 @@
   mechanics:
     - name: taunt
       effect: status
+
+- name: starving_buzzard
+  class: hunter
+  type: beast
+  attack: 3
+  health: 2
+  crystal: 5
+  collectible: true
+  mechanics:
+    - name: summoning
+      trigger: on_summon
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+      condition:
+        # this minion itself is a beast so after play a beast on board there
+        # should at least two beasts on board to trigger the effect.
+        type: beast_count
+        range_start: 2

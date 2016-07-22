@@ -159,10 +159,11 @@ public class EffectFactory {
     // Check if there is condition config. If there is, return whether condition is met.
     final ConditionConfig conditionConfig = mechanicConfig.conditionConfigOptional.get();
     switch (conditionConfig.conditionType) {
-      case BEAST_ABSENCE:
-        return !side.board.stream().anyMatch(m -> m.type().equals(ConstType.BEAST));
-      case BEAST_PRESENCE:
-        return side.board.stream().anyMatch(m -> m.type().equals(ConstType.BEAST));
+      case BEAST_COUNT:
+        final int beastCount = side.board.stream()
+            .filter(m -> m.type().equals(ConstType.BEAST))
+            .collect(Collectors.toList()).size();
+        return conditionConfig.inRange(beastCount);
       case BOARD_SIZE:
         return conditionConfig.inRange(side.board.size());
       case COMBO:

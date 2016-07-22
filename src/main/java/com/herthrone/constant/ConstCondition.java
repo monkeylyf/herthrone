@@ -5,8 +5,7 @@ package com.herthrone.constant;
  */
 public enum ConstCondition {
   ATTACK_VALUE,
-  BEAST_ABSENCE,
-  BEAST_PRESENCE,
+  BEAST_COUNT,
   BOARD_SIZE,
   COMBO,
   HERO_HEALTH,

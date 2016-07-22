@@ -49,6 +49,7 @@ public class TriggerFactory {
     final List<MechanicConfig> validMechanicConfigs = mechanicConfigs.stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .collect(Collectors.toList());
+    logger.debug(String.format("Total %d valid mechanic configs", validMechanicConfigs.size()));
     validMechanicConfigs.stream()
         .forEach(effectConfig -> {
           try {
@@ -63,7 +64,19 @@ public class TriggerFactory {
         });
   }
 
-  static void triggerWithTarget() {
+  static void scanBoardAndTrigger(final Minion newMinion, final ConstTrigger triggerType) {
+    final Side side = newMinion.binder().getSide();
+    side.board.stream()
+        .filter(m -> m != newMinion)
+        .sorted(EffectFactory.compareBySequenceId)
+        .forEach(minion ->
+            minion.getTriggeringMechanics().get(triggerType).stream()
+              .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
+                  Optional.of(mechanicConfig), side, minion))
+        );
+  }
+
+  static void triggerByAction() {
 
   }
 

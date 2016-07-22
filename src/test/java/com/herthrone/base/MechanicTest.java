@@ -1,6 +1,7 @@
 package com.herthrone.base;
 
 import com.google.common.collect.Range;
+import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
@@ -45,8 +46,9 @@ public class MechanicTest extends TestCase {
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GARROSH_HELLSCREAM, ConstHero.JAINA_PROUDMOORE,
-        Collections.emptyList(), Collections.emptyList());
+    //final List<Enum> cards = Collections.nCopies(30, ConstMinion.CHILLWIND_YETI);
+    final List<Enum> cards = Collections.emptyList();
+    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
     this.hero = gm.activeSide.hero;
     this.activeSide = gm.activeSide;
     this.inactiveSide = gm.inactiveSide;
@@ -660,5 +662,26 @@ public class MechanicTest extends TestCase {
     assertThat(boar.health().value()).isEqualTo(health + 2);
     assertThat(boar.maxHealth().value()).isEqualTo(maxHealth + 2);
     assertThat(boar.booleanMechanics().isOn(ConstMechanic.TAUNT));
+  }
+
+  @Test
+  public void testStarvingBuzzard() {
+    final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    for (int i = 0; i < deckSize; ++i) {
+      gm.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+    }
+    final int initHandSize = gm.activeSide.hand.size();
+    final Minion starvingBuzzard = createAndBindMinion(ConstMinion.STARVING_BUZZARD);
+    gm.playCard(starvingBuzzard);
+
+    // Test that putting a non-beast minion on board does not trigger draw card effect.
+    gm.playCard(createAndBindMinion(ConstMinion.WOLFRIDER));
+    //assertThat(gm.activeSide.deck.size()).isEqualTo(initDeckSize);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize);
+
+    // Test that putting a beast minion on board triggers draw card effect.
+    gm.playCard(createAndBindMinion(ConstMinion.TIMBER_WOLF));
+    //assertThat(gm.activeSide.deck.size()).isEqualTo(initDeckSize - 1);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize + 1);
   }
 }

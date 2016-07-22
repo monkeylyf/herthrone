@@ -287,7 +287,9 @@
         scope: own
         type: minion
       condition:
-        type: beast_presence
+        type: beast_count
+        range_start: 1
+        range_end: 999
     - name: deal_damage
       trigger: on_play
       effect: attribute
@@ -297,4 +299,6 @@
         scope: own
         type: minion
       condition:
-        type: beast_absence
+        type: beast_count
+        range_start: 0
+        range_end: 0

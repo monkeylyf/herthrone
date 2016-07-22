@@ -3,7 +3,6 @@ package com.herthrone.factory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
@@ -25,7 +24,6 @@ import org.apache.log4j.Logger;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
-import java.util.stream.Collectors;
 
 
 public class MinionFactory {
@@ -106,21 +104,13 @@ public class MinionFactory {
 
       @Override
       public void summonOnBoard(final Container<Minion> board) {
-        final List<Effect> onSummonEffects = board.stream()
-            .sorted(EffectFactory.compareBySequenceId)
-            .flatMap(minion -> minion.getTriggeringMechanics().get(ConstTrigger.ON_SUMMON).stream())
-            .flatMap(mechanic -> EffectFactory.getMechanicEffects(mechanic, this).stream())
-            .collect(Collectors.toList());
-
         // Put minion onto board.
         board.add(this);
 
         final Side side = binder().getSide();
         TriggerFactory.refreshAura(side);
         TriggerFactory.refreshSpellDamage(side);
-
-        // Execute effects.
-        side.getEffectQueue().enqueue(onSummonEffects);
+        TriggerFactory.scanBoardAndTrigger(this, ConstTrigger.ON_SUMMON);
       }
 
       @Override
@@ -300,7 +290,6 @@ public class MinionFactory {
                 )
             );
       }
-
 
       @Override
       public String toString() {
