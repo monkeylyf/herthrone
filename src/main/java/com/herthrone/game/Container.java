@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 /**
  * Created by yifeng on 4/9/16.
  */
-public class Container<T extends Card> implements Iterator<T> {
+public class Container<T extends Card> {
 
   static Logger logger = Logger.getLogger(Container.class.getName());
 
@@ -126,24 +126,8 @@ public class Container<T extends Card> implements Iterator<T> {
     Preconditions.checkArgument(foundAndRemoved);
   }
 
-  @Override
-  public boolean hasNext() {
-    return this.container.iterator().hasNext();
-  }
-
-  @Override
-  public T next() {
-    return this.container.iterator().next();
-  }
-
-  @Override
-  public void remove() {
-    this.container.iterator().remove();
-  }
-
-  @Override
-  public void forEachRemaining(Consumer<? super T> action) {
-    this.container.forEach(action);
+  public int indexOf(final T card) {
+    return container.indexOf(card);
   }
 
   @Override

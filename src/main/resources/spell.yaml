@@ -302,3 +302,55 @@
         type: beast_count
         range_start: 0
         range_end: 0
+
+- name: arcane_explosion
+  class: mage
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -1
+      target:
+        scope: opponent
+        type: minion
+
+- name: arcane_intellect
+  class: mage
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: polymorph
+  class: mage
+  crystal: 4
+  collectible: true
+  target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: transform
+      trigger: on_play
+      effect: transform
+      type: minion
+      value: 1
+      choices:
+        - sheep

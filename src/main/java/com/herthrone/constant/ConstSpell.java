@@ -5,6 +5,8 @@ package com.herthrone.constant;
  */
 public enum ConstSpell {
   ANIMAL_COMPANION,
+  ARCANE_EXPLOSION,
+  ARCANE_INTELLECT,
   ARCANE_SHOT,
   ARMOR_UP,
   CLAW,
@@ -20,6 +22,7 @@ public enum ConstSpell {
   MARK_OF_THE_WILD,
   MOONFIRE,
   MULTI_SHOT,
+  POLYMORPH,
   REINFORCE,
   SAVAGE_ROAR,
   SHAPESHIFT,

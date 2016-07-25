@@ -316,4 +316,15 @@ public class SpellTest extends TestCase {
     gm.playCard(createSpellAndBind(ConstSpell.KILL_COMMAND), yeti);
     assertThat(yeti.healthLoss()).isEqualTo(damageBoosted);
   }
+
+  @Test
+  public void testPolymorph() {
+    final Spell polymorph = createSpellAndBind(ConstSpell.POLYMORPH);
+
+    final int position = gm.activeSide.board.indexOf(yeti);
+    assertThat(gm.activeSide.board.get(position)).isEqualTo(yeti);
+    gm.playCard(polymorph, yeti);
+    assertThat(gm.activeSide.board.get(position)).isNotEqualTo(yeti);
+    assertThat(gm.activeSide.board.get(position).cardName()).isEqualTo(ConstMinion.SHEEP.toString());
+  }
 }

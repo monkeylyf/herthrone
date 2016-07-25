@@ -25,5 +25,6 @@ public enum ConstEffectType {
   SUMMON,
   STATUS,
   TAKE_CONTROL,
+  TRANSFORM,
   WEAPON;
 }

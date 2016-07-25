@@ -35,6 +35,7 @@ import com.herthrone.effect.ReturnToHandEffect;
 import com.herthrone.effect.SetAttributeEffect;
 import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
+import com.herthrone.effect.TransformEffect;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.object.ManaCrystal;
@@ -260,6 +261,9 @@ public class EffectFactory {
         return getSummonEffect(config, target.binder().getSide());
       case TAKE_CONTROL:
         return getTakeControlEffect(config, target);
+      case TRANSFORM:
+        final Minion minionTarget = creatureToMinion(target);
+        return Collections.singletonList(new TransformEffect(minionTarget, config.choices));
       case WEAPON:
         return getEquipWeaponEffect(config, creatureToHero(target));
       default:
