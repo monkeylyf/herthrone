@@ -25,9 +25,6 @@ import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/8/16.
- */
 public class HeroFactory {
 
   public static final int HEALTH = 30;
@@ -210,6 +207,7 @@ public class HeroFactory {
           unequip();
         }
         weaponOptional = Optional.of(newWeapon);
+        binder().getSide().bind(newWeapon);
       }
 
       @Override

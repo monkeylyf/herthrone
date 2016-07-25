@@ -1026,3 +1026,18 @@
   mechanics:
     - name: taunt
       effect: status
+
+- name: guardian_of_kings
+  class: paladin
+  attack: 5
+  health: 6
+  crystal: 7
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 6
+      target:
+        scope: own
+        type: hero

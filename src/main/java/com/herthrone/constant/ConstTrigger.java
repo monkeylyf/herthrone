@@ -17,5 +17,6 @@ public enum ConstTrigger {
   ON_SUMMON,
   ON_START_TURN,
   ON_TAKE_DAMAGE,
-  ON_USE_HERO_POWER;
+  ON_USE_HERO_POWER,
+  ON_USE_WEAPON;
 }

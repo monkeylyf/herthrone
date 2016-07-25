@@ -706,4 +706,30 @@ public class MechanicTest extends TestCase {
     gm.playCard(ooze);
     assertThat(ooze.canMove()).isFalse();
   }
+
+  @Test
+  public void testGuardianOfKings() {
+    final Minion guardianOfKings = createAndBindMinion(ConstMinion.GUARDIAN_OF_KINGS);
+    gm.activeSide.hero.takeDamage(6);
+    gm.playCard(guardianOfKings);
+    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(0);
+  }
+
+  @Test
+  public void testTruesilverChampion() {
+    // TODO: create weapon test suite.
+    final Weapon truesilverChampion = WeaponFactory.create(ConstWeapon.TRUESILVER_CHAMPION);
+    gm.activeSide.hero.takeDamage(2);
+    gm.activeSide.hero.equip(truesilverChampion);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(gm.activeSide.hero, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(4);
+    // Heal for 2 first, which has no effect because hero has full health already then take 4 damage
+    // from yeti. Should have 26 health left.
+    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(4);
+
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(gm.activeSide.hero, yeti);
+    // Heal for 2 first when take 4 from yeti. Should have 24 health left.
+    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(4 - 2 + 4);
+    assertThat(gm.activeSide.hero.getWeapon().isPresent()).isFalse();
+  }
 }

@@ -378,4 +378,23 @@ public class SpellTest extends TestCase {
     assertThat(gm.activeSide.board.get(initBoardSize).cardName()).isEqualTo(
         ConstMinion.MIRROR_IMAGE_MINION.toString());
   }
+
+  @Test
+  public void testDealDamageAndDrawCardMixture() {
+    final Spell hammerOfWrath = createSpellAndBind(ConstSpell.HAMMER_OF_WRATH);
+    final int deckSize = gm.activeSide.deck.size();
+    final int handSize = gm.activeSide.hand.size();
+
+    gm.playCard(hammerOfWrath, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(3);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+  }
+
+  @Test
+  public void testHumility() {
+    final Spell humility = createSpellAndBind(ConstSpell.HUMILITY);
+    gm.playCard(humility, yeti);
+    assertThat(yeti.attack().value()).isEqualTo(1);
+  }
 }

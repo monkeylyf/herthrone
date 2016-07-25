@@ -100,6 +100,7 @@ public class WeaponFactory {
       @Override
       public void use() {
         durabilityAttr.decrease(1);
+        TriggerFactory.passiveTrigger(this, ConstTrigger.ON_USE_WEAPON);
         if (!durabilityAttr.isPositive()) {
           binder().getSide().hero.unequip();
         }

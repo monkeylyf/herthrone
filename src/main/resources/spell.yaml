@@ -374,7 +374,7 @@
   crystal: 3
   collectible: true
   mechanics:
-    - name: freeze
+    - name: frozen
       trigger: on_play
       effect: add_mechanic
       type: frozen
@@ -396,7 +396,7 @@
       effect: attribute
       type: health
       value: -3
-    - name: freeze
+    - name: frozen
       trigger: on_play
       effect: add_mechanic
       type: frozen
@@ -417,3 +417,113 @@
         type: board
       choices:
         - mirror_image_minion
+
+- name: blessing_of_might
+  class: paladin
+  crystal: 1
+  collectible: true
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 3
+      permanent: false
+
+- name: hammer_of_wrath
+  class: paladin
+  crystal: 4
+  collectible: true
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -3
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: hand_of_protection
+  class: paladin
+  crystal: 1
+  collectible: true
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: divine_shield
+      trigger: on_play
+      effect: add_mechanic
+      type: divine_shield
+      value: 1
+
+- name: holy_light
+  class: paladin
+  crystal: 2
+  collectible: true
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 6
+
+- name: blessing_of_kings
+  class: paladin
+  crystal: 4
+  collectible: true
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 4
+      permanent: true
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 4
+
+- name: consecration
+  class: paladin
+  crystal: 4
+  collectible: true
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -2
+      target:
+        scope: opponent
+        type: all
+
+- name: humility
+  class: paladin
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: set_attribute
+      trigger: on_play
+      effect: set
+      type: attack
+      value: 1

@@ -277,8 +277,9 @@ public class EffectFactory {
       case Constant.MAX_HEALTH:
         return Arrays.asList(
             new SetAttributeEffect(target.maxHealth(), config.value),
-            new SetAttributeEffect(target.health(), config.value)
-        );
+            new SetAttributeEffect(target.health(), config.value));
+      case Constant.ATTACK:
+        return Collections.singletonList(new SetAttributeEffect(target.attack(), config.value));
       default:
         throw new IllegalArgumentException("Unknown effect type: " + config.effectType);
     }

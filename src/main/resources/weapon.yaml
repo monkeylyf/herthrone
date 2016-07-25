@@ -19,7 +19,7 @@
   crystal: 4
   collectible: true
   mechanics:
-    - trigger: on_attack
+    - trigger: on_use_weapon
       name: restore_health
       effect: attribute
       type: health
@@ -27,8 +27,6 @@
       target:
         scope: own
         type: hero
-  class: paladin
-  crystal: 4
 
 - name: stormforged_axe
   class: shaman
@@ -45,3 +43,11 @@
       target:
         scope: own
         type: hero
+
+- name: lights_justice
+  class: paladin
+  display: Light's Justice
+  attack: 1
+  durability: 4
+  crystal: 1
+  collectible: true
