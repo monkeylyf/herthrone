@@ -46,6 +46,18 @@ public class SpellTest extends TestCase {
     initBoardSize = gm.activeSide.board.size();
   }
 
+  private Spell createSpellAndBind(final ConstSpell spellName) {
+    final Spell spell = SpellFactory.create(spellName);
+    gm.activeSide.bind(spell);
+    return spell;
+  }
+
+  private Minion createAndBindMinion(final ConstMinion minionName) {
+    final Minion minion = MinionFactory.create(minionName);
+    gm.activeSide.bind(minion);
+    return minion;
+  }
+
   @Test
   public void testFireBall() {
     final Spell fireBall = createSpellAndBind(ConstSpell.FIRE_BALL);
@@ -53,12 +65,6 @@ public class SpellTest extends TestCase {
     EffectFactory.pipeEffects(fireBall, yeti);
     assertThat(yeti.health().value()).isEqualTo(health - 6);
     assertThat(yeti.isDead()).isTrue();
-  }
-
-  private Spell createSpellAndBind(final ConstSpell spellName) {
-    final Spell spell = SpellFactory.create(spellName);
-    gm.activeSide.bind(spell);
-    return spell;
   }
 
   @Test
@@ -326,5 +332,50 @@ public class SpellTest extends TestCase {
     gm.playCard(polymorph, yeti);
     assertThat(gm.activeSide.board.get(position)).isNotEqualTo(yeti);
     assertThat(gm.activeSide.board.get(position).cardName()).isEqualTo(ConstMinion.SHEEP.toString());
+  }
+
+  @Test
+  public void testFrostNova() {
+    final Spell frostNova = createSpellAndBind(ConstSpell.FROST_NOVA);
+
+    gm.switchTurn();
+    final Minion yeti1 = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti1);
+    gm.playCard(yeti1);
+    final Minion yeti2 = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti2);
+    gm.playCard(yeti2);
+    gm.switchTurn();
+
+    assertThat(yeti1.booleanMechanics().isOff(ConstMechanic.FROZEN)).isTrue();
+    assertThat(yeti2.booleanMechanics().isOff(ConstMechanic.FROZEN)).isTrue();
+    gm.playCard(frostNova);
+    assertThat(yeti1.booleanMechanics().isOn(ConstMechanic.FROZEN)).isTrue();
+    assertThat(yeti2.booleanMechanics().isOn(ConstMechanic.FROZEN)).isTrue();
+
+    yeti1.startTurn();
+    yeti2.startTurn();
+    assertThat(yeti1.booleanMechanics().isOff(ConstMechanic.FROZEN)).isTrue();
+    assertThat(yeti2.booleanMechanics().isOff(ConstMechanic.FROZEN)).isTrue();
+  }
+
+  @Test
+  public void testFrostbolt() {
+    final Spell frostbolt = createSpellAndBind(ConstSpell.FROSTBOLT);
+    assertThat(yeti.booleanMechanics().isOff(ConstMechanic.FROZEN)).isTrue();
+    gm.playCard(frostbolt, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(3);
+    assertThat(yeti.booleanMechanics().isOn(ConstMechanic.FROZEN)).isTrue();
+  }
+
+  @Test
+  public void testMirrorImage() {
+    final Spell mirrorImage = createSpellAndBind(ConstSpell.MIRROR_IMAGE);
+    gm.playCard(mirrorImage);
+    assertThat(gm.activeSide.board.size()).isEqualTo(initBoardSize + 2);
+    assertThat(gm.activeSide.board.get(initBoardSize + 1).cardName()).isEqualTo(
+        ConstMinion.MIRROR_IMAGE_MINION.toString());
+    assertThat(gm.activeSide.board.get(initBoardSize).cardName()).isEqualTo(
+        ConstMinion.MIRROR_IMAGE_MINION.toString());
   }
 }

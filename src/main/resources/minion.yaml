@@ -1016,3 +1016,13 @@
   health: 1
   crysatl: 0
   collectible: false
+
+- name: mirror_image_minion
+  display: Mirror Image
+  class: mage
+  attack: 0
+  health: 2
+  crystal: 0
+  mechanics:
+    - name: taunt
+      effect: status

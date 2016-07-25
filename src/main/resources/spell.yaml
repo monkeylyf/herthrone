@@ -343,7 +343,7 @@
   class: mage
   crystal: 4
   collectible: true
-  target:
+  single_target:
     scope: opponent
     type: minion
   mechanics:
@@ -354,3 +354,66 @@
       value: 1
       choices:
         - sheep
+
+- name: flamestrike
+  class: mage
+  crystal: 7
+  collectible: true
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -4
+      target:
+        scope: opponent
+        type: minion
+
+- name: frost_nova
+  class: mage
+  crystal: 3
+  collectible: true
+  mechanics:
+    - name: freeze
+      trigger: on_play
+      effect: add_mechanic
+      type: frozen
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+
+- name: frostbolt
+  class: mage
+  crystal: 2
+  collectible: true
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: -3
+    - name: freeze
+      trigger: on_play
+      effect: add_mechanic
+      type: frozen
+      value: 1
+
+- name: mirror_image
+  class: mage
+  crystal: 1
+  collectible: true
+  mechanics:
+    - name: summon
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 2
+      target:
+        scope: own
+        type: board
+      choices:
+        - mirror_image_minion

@@ -396,16 +396,19 @@ public class EffectFactory {
   }
 
   private static List<Effect> getSummonEffect(final MechanicConfig effect, final Side side) {
-    final List<String> summonChoices = effect.choices.stream()
-        .map(String::toUpperCase)
-        .collect(Collectors.toList());
-    // Summon candidates must be non-existing on the board to avoid dups.
-    final String summonTargetName = effect.isUnique ?
-        RandomMinionGenerator.randomUnique(summonChoices, new ArrayList<>(side.board.asList())) :
-        RandomMinionGenerator.randomOne(summonChoices);
-    final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
-    final Minion minion = MinionFactory.create(summonTarget);
-    return Collections.singletonList(new SummonEffect(side.board, minion));
+    List<Effect> summonEffects = new ArrayList<>(effect.value);
+    for (int i = 0; i < effect.value; ++i) {
+      final List<String> summonChoices = effect.choices.stream()
+          .map(String::toUpperCase).collect(Collectors.toList());
+      // Summon candidates must be non-existing on the board to avoid dups.
+      final String summonTargetName = effect.isUnique ?
+          RandomMinionGenerator.randomUnique(summonChoices, new ArrayList<>(side.board.asList())) :
+          RandomMinionGenerator.randomOne(summonChoices);
+      final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
+      final Minion minion = MinionFactory.create(summonTarget);
+      summonEffects.add(new SummonEffect(side.board, minion));
+    }
+    return summonEffects;
   }
 
   private static List<Effect> getDrawCardEffect(final MechanicConfig effect, final Side side) {

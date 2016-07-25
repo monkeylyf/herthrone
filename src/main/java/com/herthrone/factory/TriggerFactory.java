@@ -28,13 +28,12 @@ public class TriggerFactory {
   }
 
   static void passiveTrigger(final Side side, final ConstTrigger triggerType) {
-    List<Effect> useHeroPowerMechanics = side.board.stream()
+    List<Effect> effects = side.board.stream()
         .sorted(EffectFactory.compareBySequenceId)
         .flatMap(minion -> minion.getTriggeringMechanics().get(triggerType).stream())
         .flatMap(mechanic -> EffectFactory.getMechanicEffects(mechanic, side).stream())
         .collect(Collectors.toList());
-
-    side.getEffectQueue().enqueue(useHeroPowerMechanics);
+    side.getEffectQueue().enqueue(effects);
   }
 
   public static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
