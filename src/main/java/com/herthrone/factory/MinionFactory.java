@@ -110,7 +110,7 @@ public class MinionFactory {
         final Side side = binder().getSide();
         TriggerFactory.refreshAura(side);
         TriggerFactory.refreshSpellDamage(side);
-        TriggerFactory.scanBoardAndTrigger(this, ConstTrigger.ON_SUMMON);
+        TriggerFactory.triggerByBoard(this, ConstTrigger.ON_SUMMON);
       }
 
       @Override

@@ -121,12 +121,12 @@ public class EffectFactory {
 
   public static void pipeMechanicEffectConditionally(
       final Optional<MechanicConfig> mechanicConfigOptional,
-      final Side side, final Creature target) {
-    if (isTriggerConditionMet(mechanicConfigOptional, side)) {
+      final Side triggeringSide, final Creature target) {
+    if (isTriggerConditionMet(mechanicConfigOptional, triggeringSide)) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
-      final List<Effect> effects = getMechanicEffects(mechanicConfig, target);
-      side.getEffectQueue().enqueue(effects);
+      final List<Effect> effects = getMechanicEffects(mechanicConfig, target, triggeringSide);
+      triggeringSide.getEffectQueue().enqueue(effects);
     }
   }
 
@@ -142,16 +142,18 @@ public class EffectFactory {
   }
 
   public static void triggerEndTurnMechanics(final Side side) {
+    final ConstTrigger endTurnTrigger = ConstTrigger.ON_END_TURN;
     final List<Minion> minions = side.board.stream()
         .sorted(compareBySequenceId)
-        .filter(minion -> minion.getTriggeringMechanics().has(ConstTrigger.ON_END_TURN))
+        .filter(minion -> minion.getTriggeringMechanics().has(endTurnTrigger))
         .collect(Collectors.toList());
 
     for (final Minion minion : minions) {
-      for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(ConstTrigger.ON_END_TURN)) {
-        final List<Creature> targets = TargetFactory.getProperTargets(mechanic.targetOptional.get(), side);
+      for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(endTurnTrigger)) {
+        final List<Creature> targets = TargetFactory.getProperTargets(
+            mechanic.targetOptional.get(), side);
         final List<Effect> effects = targets.stream()
-            .flatMap(target -> getMechanicEffects(mechanic, target).stream())
+            .flatMap(target -> getMechanicEffects(mechanic, target, side).stream())
             .collect(Collectors.toList());
         side.getEffectQueue().enqueue(effects);
       }
@@ -197,7 +199,7 @@ public class EffectFactory {
     try {
       List<Creature> targets = TargetFactory.getProperTargets(mechanic.targetOptional.get(), side);
       return targets.stream()
-          .flatMap(target -> pipeEffects(mechanic, target).stream())
+          .flatMap(target -> pipeEffects(mechanic, target, side).stream())
           .collect(Collectors.toList());
     } catch (TargetFactory.NoTargetFoundException error) {
       return pipeEffects(mechanic, side);
@@ -205,13 +207,13 @@ public class EffectFactory {
   }
 
   public static List<Effect> getMechanicEffects(final MechanicConfig mechanic,
-                                                final Creature target) {
+                                                final Creature target, final Side triggeringSide) {
     if (mechanic.targetOptional.isPresent()) {
       final TargetConfig targetConfig = mechanic.targetOptional.get();
       if (targetConfig.type.equals(ConstType.OTHER)) {
         // For swipe.
         return TargetFactory.getOtherTargets(target).stream()
-            .flatMap(realTarget -> pipeEffects(mechanic, realTarget).stream())
+            .flatMap(realTarget -> pipeEffects(mechanic, realTarget, triggeringSide).stream())
             .collect(Collectors.toList());
       } else {
         final Creature realTarget = targetConfig.isRandom ?
@@ -219,10 +221,10 @@ public class EffectFactory {
         //RandomMinionGenerator.randomOne(
         //    TargetFactory.getProperTargetsBySide(targetConfig, target.binder().getSide())) :
         //    target;
-        return pipeEffects(mechanic, realTarget);
+        return pipeEffects(mechanic, realTarget, triggeringSide);
       }
     } else {
-      return pipeEffects(mechanic, target);
+      return pipeEffects(mechanic, target, triggeringSide);
     }
   }
 
@@ -242,6 +244,11 @@ public class EffectFactory {
   }
 
   public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target) {
+    return pipeEffects(config, target, target.binder().getSide());
+  }
+
+  public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target,
+                                         final Side triggeringSide) {
     switch (config.effectType) {
       case ADD_MECHANIC:
         final ConstMechanic mechanic = ConstMechanic.valueOf(config.type.toUpperCase());
@@ -253,9 +260,13 @@ public class EffectFactory {
       case CRYSTAL:
         return getCrystalEffect(config, target);
       case DRAW:
-        return getDrawCardEffect(config, target.binder().getSide());
+        return getDrawCardEffect(config, triggeringSide);
       case HEAL:
-        return Collections.singletonList(new HealEffect(target, config.value));
+        if (target.healthLoss() > 0) {
+          return Collections.singletonList(new HealEffect(target, config.value));
+        } else {
+          return Collections.emptyList();
+        }
       case RETURN_TO_HAND:
         return getReturnToHandEffect(creatureToMinion(target));
       case SET:
@@ -472,8 +483,12 @@ public class EffectFactory {
   }
 
   public static void pipeEffects(final Spell spell, final Creature target) {
+    pipeEffects(spell, target, target.binder().getSide());
+  }
+  public static void pipeEffects(final Spell spell, final Creature target,
+                                 final Side triggeringSide) {
     final List<Effect> effects = spell.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()
-        .flatMap(effect -> pipeEffects(effect, target).stream())
+        .flatMap(effect -> pipeEffects(effect, target, triggeringSide).stream())
         .collect(Collectors.toList());
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }

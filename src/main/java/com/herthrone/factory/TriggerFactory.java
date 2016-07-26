@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TriggerFactory {
 
@@ -63,10 +64,11 @@ public class TriggerFactory {
         });
   }
 
-  static void scanBoardAndTrigger(final Minion newMinion, final ConstTrigger triggerType) {
-    final Side side = newMinion.binder().getSide();
+  public static void triggerByBoard(final Minion excludedMinion,
+                                    final ConstTrigger triggerType) {
+    final Side side = excludedMinion.binder().getSide();
     side.board.stream()
-        .filter(m -> m != newMinion)
+        .filter(minion -> minion != excludedMinion)
         .sorted(EffectFactory.compareBySequenceId)
         .forEach(minion ->
             minion.getTriggeringMechanics().get(triggerType).stream()
@@ -75,8 +77,21 @@ public class TriggerFactory {
         );
   }
 
-  static void triggerByAction() {
+  public static void triggerByBoard(final Stream<Minion> minionStream, final Side triggeringSide,
+                                    final ConstTrigger triggerType) {
+    minionStream
+        .sorted(EffectFactory.compareBySequenceId)
+        .forEach(minion ->
+            minion.getTriggeringMechanics().get(triggerType).stream()
+                .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
+                    Optional.of(mechanicConfig), triggeringSide, minion))
+        );
+  }
 
+  public static void triggerByBoard(final Side side, final Side opponentSide,
+                                    final ConstTrigger triggerType) {
+    triggerByBoard(side.board.stream(), side, triggerType);
+    triggerByBoard(opponentSide.board.stream(), side, triggerType);
   }
 
   static void refreshAura(final Side side) {

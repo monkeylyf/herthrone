@@ -29,4 +29,8 @@ public class HealEffect implements Effect {
     final int cappedHealVolume = Math.min(healVolume, healTarget.healthLoss());
     healTarget.health().increase(cappedHealVolume);
   }
+
+  public Creature getTarget() {
+    return healTarget;
+  }
 }

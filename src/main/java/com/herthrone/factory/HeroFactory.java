@@ -245,7 +245,7 @@ public class HeroFactory {
       @Override
       public void useHeroPower(final Creature creature) {
         Preconditions.checkArgument(heroPowerMovePoints.value() > 0, HERO_POWER_ERROR_MESSAGE);
-        EffectFactory.pipeEffects(heroPower, creature);
+        EffectFactory.pipeEffects(heroPower, creature, binder().getSide());
         heroPowerMovePoints.decrease(1);
 
         final Side side = binder().getSide();

@@ -735,4 +735,40 @@ public class MechanicTest extends TestCase {
     assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(4 - 2 + 4);
     assertThat(gm.activeSide.hero.getWeapon().isPresent()).isFalse();
   }
+
+  @Test
+  public void testTriggerOnHealMinion() {
+    // Fill both deck.
+    final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    for (int i = 0; i < deckSize; ++i) {
+      gm.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+      gm.inactiveSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+    }
+    final Minion northshireCleric = createAndBindMinion(ConstMinion.NORTHSHIRE_CLERIC);
+    gm.playCard(northshireCleric);
+    final int handSize = gm.activeSide.hand.size();
+
+    // Wound own minion and heal it.
+    yeti.takeDamage(2);
+    gm.playCard(createAndBindMinion(ConstMinion.DARKSCALE_HEALER));
+
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+
+    // Put northshire on opponent's board.
+    gm.switchTurn();
+    gm.playCard(createAndBindMinion(ConstMinion.NORTHSHIRE_CLERIC));
+    gm.switchTurn();
+
+    // Wound two minion and heal it.
+    yeti.takeDamage(2);
+    northshireCleric.takeDamage(2);
+    gm.playCard(createAndBindMinion(ConstMinion.DARKSCALE_HEALER));
+
+    // With two northshire on board, should draw 2 x 2 = 4 cards.
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1 - 2 * 2);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1 + 2 * 2);
+  }
 }
