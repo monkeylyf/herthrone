@@ -1,8 +1,5 @@
 package com.herthrone.constant;
 
-/**
- * Created by yifengliu on 5/15/16.
- */
 public enum ConstMinion {
   ACIDIC_SWAMP_OOZE,
   ARCHMAGE,
@@ -49,6 +46,7 @@ public enum ConstMinion {
   MURLOC_SCOUT,
   MURLOC_TIDEHUNTER,
   NIGHTBLADE,
+  NORTHSHIRE_CLERIC,
   NOVICE_ENGINEER,
   OASIS_SNAPJAW,
   OGRE_BRUTE,

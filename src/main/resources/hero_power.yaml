@@ -38,10 +38,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -1
-      target:
-        scope: all
-        type: all
+      value: 1
 
 - name: lesser_heal
   class: priest
@@ -53,12 +50,9 @@
   mechanics:
     - name: restore_health
       trigger: on_play
-      effect: attribute
+      effect: heal
       type: health
       value: 2
-      target:
-        scope: all
-        type: all
 
 - name: life_tap
   class: warlock
@@ -69,7 +63,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -2
+      value: 2
       target:
         scope: own
         type: hero
@@ -131,7 +125,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -2
+      value: 2
       target:
          scope: opponent
          type: hero

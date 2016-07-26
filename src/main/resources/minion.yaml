@@ -32,7 +32,7 @@
   mechanics:
     - name: restore_health
       trigger: on_end_turn
-      effect: attribute
+      effect: heal
       type: health
       value: 1
       target:
@@ -236,7 +236,7 @@
       trigger: on_summon
       effect: attribute
       type: health
-      value: -1
+      value: 1
       target:
         scope: opponent
         type: all
@@ -387,7 +387,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -3
+      value: 3
       target:
         scope: opponent
         type: hero
@@ -469,7 +469,7 @@
   mechanics:
     - name: restore_health
       trigger: on_play
-      effect: attribute
+      effect: heal
       type: health
       value: 2
       target:
@@ -564,7 +564,7 @@
   mechanics:
     - name: battlecry
       trigger: on_play
-      effect: attribute
+      effect: heal
       type: health
       value: 2
       target:
@@ -609,7 +609,7 @@
       trigger_only_with_target: true
       effect: attribute
       type: health
-      value: -1
+      value: 1
       target:
         scope: opponent
         type: all
@@ -705,7 +705,7 @@
       trigger_only_with_target: true
       effect: attribute
       type: health
-      value: -1
+      value: 1
       target:
         scope: opponent
         type: all
@@ -853,7 +853,7 @@
       trigger_only_with_target: true
       effect: attribute
       type: health
-      value: -2
+      value: 2
       target:
         scope: opponent
         type: all
@@ -1035,9 +1035,24 @@
   mechanics:
     - name: restore_health
       trigger: on_play
-      effect: attribute
+      effect: heal
       type: health
       value: 6
       target:
         scope: own
         type: hero
+
+- name: northshire_cleric
+  class: priest
+  attack: 1
+  health: 3
+  crystal: 1
+  mechanics:
+    - name: card_draw
+      trigger: on_heal_minion
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck

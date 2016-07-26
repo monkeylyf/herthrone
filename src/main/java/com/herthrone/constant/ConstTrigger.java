@@ -1,8 +1,5 @@
 package com.herthrone.constant;
 
-/**
- * Created by yifengliu on 6/25/16.
- */
 public enum ConstTrigger {
   NO_TRIGGER,
   ON_ATTACK,
@@ -10,7 +7,7 @@ public enum ConstTrigger {
   ON_DEATH,
   ON_DRAW,
   ON_END_TURN,
-  ON_HEAL,
+  ON_HEAL_MINION,
   ON_PLAY,
   ON_PRESENCE,
   ON_SPELL_DAMAGE,

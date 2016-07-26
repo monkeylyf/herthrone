@@ -265,7 +265,9 @@ public class MinionFactory {
 
       @Override
       public int healthLoss() {
-        return maxHealth().value() - health().value();
+        final int healthLoss = maxHealth().value() - health().value();
+        Preconditions.checkArgument(healthLoss >= 0, "Health loss must be non-negative");
+        return healthLoss;
       }
 
       @Override

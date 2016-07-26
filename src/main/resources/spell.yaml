@@ -10,7 +10,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -6
+      value: 6
 
 - name: claw
   class: druid
@@ -45,7 +45,7 @@
   mechanics:
     - name: restore_health
       trigger: on_play
-      effect: attribute
+      effect: heal
       type: health
       value: 8
 
@@ -113,7 +113,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -1
+      value: 1
 
 - name: savage_roar
   class: druid
@@ -142,7 +142,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -5
+      value: 5
     - name: card_draw
       trigger: on_play
       effect: draw
@@ -164,12 +164,12 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -4
+      value: 4
     - name: deal_damage
       trigger: on_play
       effect: attribute
       type: health
-      value: -1
+      value: 1
       target:
         scope: opponent
         type: other
@@ -186,7 +186,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -2
+      value: 2
 
 - name: multi_shot
   display_name: Multi-Shot
@@ -198,7 +198,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -3
+      value: 3
       target:
         scope: opponent
         type: minion
@@ -211,7 +211,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -3
+      value: 3
       random: true
       target:
         scope: opponent
@@ -282,7 +282,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -5
+      value: 5
       target:
         scope: own
         type: minion
@@ -294,7 +294,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -3
+      value: 3
       target:
         scope: own
         type: minion
@@ -312,7 +312,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -1
+      value: 1
       target:
         scope: opponent
         type: minion
@@ -364,7 +364,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -4
+      value: 4
       target:
         scope: opponent
         type: minion
@@ -395,7 +395,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -3
+      value: 3
     - name: frozen
       trigger: on_play
       effect: add_mechanic
@@ -445,7 +445,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -3
+      value: 3
     - name: card_draw
       trigger: on_play
       effect: draw
@@ -479,7 +479,7 @@
   mechanics:
     - name: restore_health
       trigger: on_play
-      effect: attribute
+      effect: heal
       type: health
       value: 6
 
@@ -512,7 +512,7 @@
       trigger: on_play
       effect: attribute
       type: health
-      value: -2
+      value: 2
       target:
         scope: opponent
         type: all
@@ -527,3 +527,31 @@
       effect: set
       type: attack
       value: 1
+
+- name: holy_smite
+  class: priest
+  crystal: 1
+  collectible: true
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+
+- name: mind_blast
+  class: priest
+  crystal: 2
+  collectible: true
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 5
+      targets:
+        scope: opponent
+        type: hero

@@ -21,7 +21,7 @@
   mechanics:
     - trigger: on_use_weapon
       name: restore_health
-      effect: attribute
+      effect: heal
       type: health
       value: 2
       target:

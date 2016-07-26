@@ -118,7 +118,7 @@ public class SpellFactory {
         if (spellDamageBuffDelta != 0) {
           logger.debug("Updating spell damage buff: " + spellDamageBuffDelta);
           getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()
-              .forEach(effect -> effect.value -= spellDamageBuffDelta);
+              .forEach(effect -> effect.value += spellDamageBuffDelta);
         }
       }
 

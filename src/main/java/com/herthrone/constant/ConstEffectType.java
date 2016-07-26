@@ -1,8 +1,5 @@
 package com.herthrone.constant;
 
-/**
- * Created by yifengliu on 5/15/16.
- */
 public enum ConstEffectType {
   ADD_MECHANIC,
   ATTACK,
@@ -16,6 +13,7 @@ public enum ConstEffectType {
   DRAW,
   EQUIP_WEAPON,
   GENERATE,
+  HEAL,
   MAX_HEALTH_BUFF,
   MOVE_CARD,
   PLAY_MINION,

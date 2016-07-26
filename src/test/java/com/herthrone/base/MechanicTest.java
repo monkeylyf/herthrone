@@ -29,9 +29,6 @@ import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * Created by yifengliu on 5/10/16.
- */
 @RunWith(JUnit4.class)
 public class MechanicTest extends TestCase {
 
@@ -252,22 +249,28 @@ public class MechanicTest extends TestCase {
       // Buff Yeti health enough so that it doesn't die and gets removed from board.
       final Minion yeti = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
       yeti.health().getTemporaryBuff().increase(buffHealth);
+      yeti.maxHealth().getTemporaryBuff().increase(buffHealth);
       inactiveSide.board.add(yeti);
     }
     // TODO: find another way to test randomness or not to test it at all.
     final double jitter = .10;
     final double forgetfulFactor = .5;
     ogreBrute.health().getTemporaryBuff().increase(buffHealth);
+    ogreBrute.maxHealth().getTemporaryBuff().increase(buffHealth);
 
     for (int i = 0; i < total; ++i) {
       EffectFactory.AttackFactory.pipePhysicalDamageEffect(ogreBrute, inactiveSide.hero);
     }
-    Range<Double> mainTargetGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter), total * forgetfulFactor * (1 + jitter));
-    Range<Double> otherTargetsGotAttackedNumRange = Range.closed(total * forgetfulFactor * (1 - jitter) / minionNum, total * forgetfulFactor * (1 + jitter) / minionNum);
+    Range<Double> mainTargetGotAttackedNumRange = Range.closed(
+        total * forgetfulFactor * (1 - jitter),
+        total * forgetfulFactor * (1 + jitter));
+    Range<Double> otherTargetsGotAttackedNumRange = Range.closed(
+        total * forgetfulFactor * (1 - jitter) / minionNum,
+        total * forgetfulFactor * (1 + jitter) / minionNum);
     final double numOfHeroGotAttacked = inactiveSide.hero.healthLoss() / attackVal;
     assertThat(mainTargetGotAttackedNumRange.contains(numOfHeroGotAttacked)).isTrue();
     for (int i = 0; i < minionNum; ++i) {
-      final double numGetAttacked = (buffHealth + inactiveSide.board.get(i).healthLoss()) / attackVal;
+      final double numGetAttacked = (inactiveSide.board.get(i).healthLoss()) / attackVal;
       assertThat(otherTargetsGotAttackedNumRange.contains(numGetAttacked)).isTrue();
     }
   }

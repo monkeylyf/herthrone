@@ -25,6 +25,7 @@ import com.herthrone.effect.BuffEffect;
 import com.herthrone.effect.DestroyEffect;
 import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
+import com.herthrone.effect.HealEffect;
 import com.herthrone.effect.ManaCrystalEffect;
 import com.herthrone.effect.MaxHealthBuffEffect;
 import com.herthrone.effect.MaxManaCrystalEffect;
@@ -253,6 +254,8 @@ public class EffectFactory {
         return getCrystalEffect(config, target);
       case DRAW:
         return getDrawCardEffect(config, target.binder().getSide());
+      case HEAL:
+        return Collections.singletonList(new HealEffect(target, config.value));
       case RETURN_TO_HAND:
         return getReturnToHandEffect(creatureToMinion(target));
       case SET:
@@ -433,16 +436,11 @@ public class EffectFactory {
   }
 
   private static Effect getHealthAttributeEffect(final Creature creature, final MechanicConfig effect) {
-    final int value;
-    if (effect.valueDependency.isPresent()) {
-      value = getValueByDependency(effect.valueDependency.get(), creature.binder().getSide());
-    } else {
-      value = effect.value;
-      Preconditions.checkArgument(value != 0, "Health change must be non-zero");
-    }
-
-    final int adjustChange = (value > 0) ? Math.min(value, creature.healthLoss()) : value;
-    return new AttributeEffect(creature.health(), adjustChange, effect.isPermanent);
+    final int value = (effect.valueDependency.isPresent()) ?
+      getValueByDependency(effect.valueDependency.get(), creature.binder().getSide()) :
+      effect.value;
+    Preconditions.checkArgument(value >= 0, "damage must be non-negative");
+    return new AttributeEffect(creature.health(), -value, effect.isPermanent);
   }
 
   private static int getValueByDependency(final ConstDependency constDependency, final Side side) {
