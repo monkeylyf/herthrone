@@ -2,6 +2,7 @@ package com.herthrone.factory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
 import com.herthrone.base.Effect;
@@ -22,6 +23,7 @@ import com.herthrone.constant.Constant;
 import com.herthrone.effect.AddMechanicEffect;
 import com.herthrone.effect.AttributeEffect;
 import com.herthrone.effect.BuffEffect;
+import com.herthrone.effect.CopyCardEffect;
 import com.herthrone.effect.DestroyEffect;
 import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
@@ -230,6 +232,8 @@ public class EffectFactory {
 
   public static List<Effect> pipeEffects(final MechanicConfig config, final Side side) {
     switch (config.effectType) {
+      case COPY_CARD:
+        return getCopyCardEffect(config, side);
       case SUMMON:
         return getSummonEffect(config, side);
       case GENERATE:
@@ -240,6 +244,21 @@ public class EffectFactory {
         return getDestroyEffect(config, side);
       default:
         throw new IllegalArgumentException("unknown: " + config.effectType);
+    }
+  }
+
+  private static List<Effect> getCopyCardEffect(MechanicConfig config, Side side) {
+    final Side opponentSide = side.getOpponentSide();
+    switch (config.type) {
+      case Constant.HAND:
+        if (opponentSide.hand.isEmpty()) {
+          return Collections.emptyList();
+        } else {
+          final Card cardToCopy = RandomMinionGenerator.randomOne(opponentSide.hand.asList());
+          return Collections.singletonList(new CopyCardEffect(cardToCopy, side.hand));
+        }
+      default:
+        throw new IllegalArgumentException("unknown copy card type: " + config.type);
     }
   }
 
@@ -315,7 +334,9 @@ public class EffectFactory {
   }
 
   private static Effect getMaxHealthBuffEffect(final Minion minion, final MechanicConfig effect) {
-    final int gain = getGain(minion.binder().getSide(), effect);
+    final int gain = (effect.isFolded) ?
+        minion.maxHealth().value() * (effect.value - 1) :
+        getGain(minion.binder().getSide(), effect);
     return new MaxHealthBuffEffect(minion, gain);
   }
 
@@ -354,8 +375,10 @@ public class EffectFactory {
 
   private static List<Effect> getTakeControlEffect(final MechanicConfig effect,
                                                    final Creature creature) {
-    final Creature traitorMinion = RandomMinionGenerator.randomCreature(
-        effect.targetOptional.get(), creature.binder().getSide());
+    final Creature traitorMinion = effect.targetOptional.isPresent() ?
+        RandomMinionGenerator.randomCreature(
+            effect.targetOptional.get(), creature.binder().getSide()) :
+        creature;
     Preconditions.checkArgument(traitorMinion instanceof Minion);
     return Collections.singletonList(new TakeControlEffect((Minion) traitorMinion));
   }

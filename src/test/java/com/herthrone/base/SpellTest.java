@@ -397,4 +397,84 @@ public class SpellTest extends TestCase {
     gm.playCard(humility, yeti);
     assertThat(yeti.attack().value()).isEqualTo(1);
   }
+
+  @Test
+  public void testPowerWordShield() {
+    final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    for (int i = 0; i < deckSize; ++i) {
+      gm.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+    }
+    final int handSize = gm.activeSide.hand.size();
+    gm.switchTurn();
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(ooze);
+    gm.switchTurn();
+
+    final Spell powerWordShield = createSpellAndBind(ConstSpell.POWER_WORD_SHIELD);
+    gm.playCard(powerWordShield, ooze);
+
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+    assertThat(ooze.health().value()).isEqualTo(4);
+  }
+
+  @Test
+  public void testDivineSpirit() {
+    final Spell divineSpirit = createSpellAndBind(ConstSpell.DIVINE_SPIRIT);
+    final int health = yeti.health().value();
+    gm.playCard(divineSpirit, yeti);
+
+    assertThat(yeti.health().value()).isEqualTo(2 * health);
+  }
+
+  @Test
+  public void testHolyNova() {
+    final Spell holyNova = createSpellAndBind(ConstSpell.HOLY_NOVA);
+    yeti.takeDamage(2);
+    gm.activeSide.hero.takeDamage(2);
+
+    gm.switchTurn();
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(ooze);
+    gm.switchTurn();
+
+    gm.playCard(holyNova);
+
+    // Test own side all healed by 2.
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(0);
+    // Test opponent side all damage by 2.
+    assertThat(ooze.healthLoss()).isEqualTo(2);
+    assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(2);
+  }
+
+  @Test
+  public void testMindControl() {
+    final Spell mindControl = createSpellAndBind(ConstSpell.MIND_CONTROL);
+
+    gm.switchTurn();
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(ooze);
+    gm.switchTurn();
+
+    gm.playCard(mindControl, ooze);
+
+    assertThat(gm.activeSide.board.get(gm.activeSide.board.size() - 1)).isEqualTo(ooze);
+    assertThat(gm.inactiveSide.board.contains(ooze)).isFalse();
+  }
+
+  @Test
+  public void testMindVision() {
+    final Spell mindVision = createSpellAndBind(ConstSpell.MIND_VISION);
+
+    gm.switchTurn();
+    gm.activeSide.hand.add(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    gm.switchTurn();
+
+    final int handSize = gm.activeSide.hand.size();
+    gm.playCard(mindVision);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+    assertThat(gm.activeSide.hand.get(gm.activeSide.hand.size() - 1).cardName())
+        .isEqualTo(ConstMinion.ACIDIC_SWAMP_OOZE.toString());
+  }
 }

@@ -258,8 +258,7 @@ public class GameManager implements Round {
       setIncrementalSequenceId(minion);
       minion.playOnBoard(activeSide.board, target);
     } else if (card instanceof Spell) {
-      final Spell spell = (Spell) card;
-      TriggerFactory.activeTrigger((Spell) card, ConstTrigger.ON_PLAY, target);
+      TriggerFactory.activeTrigger((Spell) card, ConstTrigger.ON_PLAY, target, activeSide);
     }
   }
 

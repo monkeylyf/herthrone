@@ -4,6 +4,7 @@ import com.herthrone.base.Card;
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Container;
+import com.herthrone.game.GameManager;
 
 /**
  * Created by yifeng on 4/16/16.
@@ -27,7 +28,6 @@ public class CopyCardEffect implements Effect {
   public void act() {
     final String cardName = cardToCopy.cardName();
     // TODO: deep copy is not so fun. Will create createCardByName method.
-    final Card copiedCard = null;
-    container.add(copiedCard);
+    container.add(GameManager.createCardInstance(cardName, cardToCopy.type()));
   }
 }

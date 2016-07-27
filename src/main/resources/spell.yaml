@@ -555,3 +555,127 @@
       targets:
         scope: opponent
         type: hero
+
+- name: power_word_shield
+  display: >
+    Power Word: Shield  # pipe sign used to escape colon
+  class: priest
+  crystal: 1
+  collectible: true
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: shadow_word_pain
+  display: >
+    Shadow Word: Pain
+  class: priest
+  crystal: 2
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+      condition:
+      condition:
+        type: attack_value
+        range_end: 3
+
+- name: divine_spirit
+  class: priest
+  crystal: 2
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+      fold: true
+
+- name: shadow_word_death
+  display: >
+    Shadow Word: Death
+  class: priest
+  crystal: 3
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+      condition:
+        type: attack_value
+        range_start: 5
+
+- name: holy_nova
+  class: priest
+  crystal: 5
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: all
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: all
+
+- name: mind_control
+  class: priest
+  crystal: 10
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: take_control
+      trigger: on_play
+      effect: take_control
+      type: minion
+      permanent: true
+      value: 1
+
+- name: mind_vision
+  class: priest
+  crystal: 1
+  mechanics:
+    - name: copy
+      trigger: on_play
+      effect: copy_card
+      type: hand
+      value: 1
+      target:
+        scope: opponent
+        type: hand
+        random: true

@@ -771,4 +771,5 @@ public class MechanicTest extends TestCase {
     assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1 - 2 * 2);
     assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1 + 2 * 2);
   }
+
 }

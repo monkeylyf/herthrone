@@ -26,6 +26,7 @@ public class MechanicConfig {
   private static final String TYPE = "type";
   private static final String EFFECT = "effect";
   private static final String VALUE = "value";
+  private static final String FOLD = "fold";
   private static final String PERMANENT = "permanent";
   private static final String UNIQUE = "unique";
   private static final String CHOICES = "choices";
@@ -40,6 +41,7 @@ public class MechanicConfig {
   public final String type;  // TODO: get rid of all String.
   public final boolean isUnique;
   public final boolean isPermanent;
+  public final boolean isFolded;
   public final List<String> choices;
   public final Optional<TargetConfig> targetOptional;
   public final Optional<ConstDependency> valueDependency;
@@ -57,6 +59,7 @@ public class MechanicConfig {
     this.value = ConfigLoader.getByDefault(map, VALUE, 0);
     this.isPermanent = ConfigLoader.getByDefault(map, PERMANENT, false);
     this.isUnique = ConfigLoader.getByDefault(map, UNIQUE, false);
+    this.isFolded = ConfigLoader.getByDefault(map, FOLD, false);
     this.choices = ConfigLoader.getByDefault(map, CHOICES, Collections.EMPTY_LIST);
     this.targetOptional = (map.containsKey(TARGET)) ?
         Optional.of(new TargetConfig((Map) map.get(TARGET))) :
@@ -76,6 +79,7 @@ public class MechanicConfig {
     this.type = mechanicConfig.type;
     this.value = mechanicConfig.value;
     this.isPermanent = mechanicConfig.isPermanent;
+    this.isFolded = mechanicConfig.isFolded;
     this.isUnique = mechanicConfig.isUnique;
     this.choices = mechanicConfig.choices;
     this.targetOptional = mechanicConfig.targetOptional;

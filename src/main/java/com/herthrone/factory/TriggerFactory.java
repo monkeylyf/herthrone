@@ -20,11 +20,17 @@ public class TriggerFactory {
   private final static Logger logger = Logger.getLogger(TriggerFactory.class.getName());
 
   public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
-                            final ConstTrigger triggerType, final Creature target) {
+                                   final ConstTrigger triggerType, final Creature target) {
+    activeTrigger(triggerrer, triggerType, target, target.binder().getSide());
+
+  }
+  public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
+                                   final ConstTrigger triggerType, final Creature target,
+                                   final Side triggeringSide) {
     triggerrer.getTriggeringMechanics().get(triggerType).stream()
         .forEach(mechanicConfig ->
             EffectFactory.pipeMechanicEffectConditionally(
-                Optional.of(mechanicConfig), triggerrer.binder().getSide(), target)
+                Optional.of(mechanicConfig), triggeringSide, target)
       );
   }
 
