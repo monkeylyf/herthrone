@@ -4,6 +4,7 @@ package com.herthrone.constant;
  * Created by yifengliu on 5/15/16.
  */
 public enum ConstSpell {
+  ANCESTRAL_HEALING,
   ANIMAL_COMPANION,
   ARCANE_EXPLOSION,
   ARCANE_INTELLECT,
@@ -13,6 +14,7 @@ public enum ConstSpell {
   BACKSTAB,
   BLESSING_OF_KINGS,
   BLESSING_OF_MIGHT,
+  BLOODLUST,
   CLAW,
   CONSECRATION,
   DAGGER_MASTERY,
@@ -24,9 +26,11 @@ public enum ConstSpell {
   FLAMESTRIKE,
   FROSTBOLT,
   FROST_NOVA,
+  FROST_SHOCK,
   HAND_OF_PROTECTION,
   HAMMER_OF_WRATH,
   HEALING_TOUCH,
+  HEX,
   HOLY_LIGHT,
   HOLY_SMITE,
   HOLY_NOVA,
@@ -46,6 +50,7 @@ public enum ConstSpell {
   POLYMORPH,
   POWER_WORD_SHIELD,
   REINFORCE,
+  ROCKBITER_WEAPON,
   SAP,
   SAVAGE_ROAR,
   SHADOW_WORD_DEATH,
@@ -59,6 +64,8 @@ public enum ConstSpell {
   SWIPE,
   TRACKING,
   TOTEMIC_CALL,
+  TOTEMIC_MIGHT,
   VANISH,
-  WILD_GROWTH;
+  WILD_GROWTH,
+  WINDFURY;
 }

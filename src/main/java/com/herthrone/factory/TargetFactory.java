@@ -125,6 +125,9 @@ public class TargetFactory {
             EffectFactory.compareBySequenceId).collect(Collectors.toList());
         targets.add(side.hero);
         return targets;
+      case TOTEM:
+        return side.board.stream()
+            .filter(minion -> minion.type().equals(ConstType.TOTEM)).collect(Collectors.toList());
       default:
         throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
     }

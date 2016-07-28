@@ -772,4 +772,29 @@ public class MechanicTest extends TestCase {
     assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1 + 2 * 2);
   }
 
+  @Test
+  public void testFlametongueTotem() {
+    final Minion flametongueTotem = createAndBindMinion(ConstMinion.FLAMETONGUE_TOTEM);
+    final int flametongueTotemAttack = flametongueTotem.attack().value();
+    final int yetiAttack = yeti.attack().value();
+    final int waterElementalAttack = waterElemental.attack().value();
+    final int scarletCrusaderAttack = scarletCrusader.attack().value();
+    assertThat(gm.activeSide.board.get(0)).isEqualTo(yeti);
+    assertThat(gm.activeSide.board.get(1)).isEqualTo(waterElemental);
+    assertThat(gm.activeSide.board.get(2)).isEqualTo(scarletCrusader);
+    gm.playCard(flametongueTotem);
+    assertThat(gm.activeSide.board.get(3)).isEqualTo(flametongueTotem);
+
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    final int oozeAttack = ooze.attack().value();
+    gm.playCard(ooze);
+    assertThat(gm.activeSide.board.get(4)).isEqualTo(ooze);
+
+    // Test that only adjacent minion gets affected by aura.
+    assertThat(yeti.attack().value()).isEqualTo(yetiAttack);
+    assertThat(waterElemental.attack().value()).isEqualTo(waterElementalAttack);
+    assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack + 2);
+    assertThat(flametongueTotem.attack().value()).isEqualTo(flametongueTotemAttack);
+    assertThat(ooze.attack().value()).isEqualTo(oozeAttack + 2);
+  }
 }

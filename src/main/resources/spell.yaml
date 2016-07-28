@@ -817,3 +817,106 @@
       target:
         scope: own
         type: minion
+
+- name: ancestral_healing
+  class: shaman
+  crystal: 0
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: full_heal
+      type: health
+      value: 1
+    - name: taunt
+      trigger: on_play
+      effect: add_mechanic
+      type: taunt
+      value: 1
+
+- name: frost_shock
+  class: shaman
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+    - name: frozen
+      trigger: on_play
+      effect: add_mechanic
+      type: frozen
+      value: 1
+
+- name: hex
+  class: shaman
+  crystal: 3
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: transform
+      trigger: on_play
+      effect: transform
+      type: minion
+      value: 1
+      choices:
+        - frog
+
+- name: rockbiter_weapon
+  class: shaman
+  crystal: 1
+  single_target:
+    scope: own
+    type: all
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 3
+
+- name: windfury
+  class: shaman
+  crystal: 2
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: windfury
+      trigger: on_play
+      effect: add_mechanic
+      type: windfury
+      value: 1
+
+- name: bloodlust
+  class: shaman
+  crystal: 5
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 3
+      target:
+        scope: own
+        type: minion
+
+- name: totemic_might
+  class: shaman
+  crystal: 0
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+      target:
+        scope: own
+        type: totem

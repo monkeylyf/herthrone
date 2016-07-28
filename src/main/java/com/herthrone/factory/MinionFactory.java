@@ -53,8 +53,7 @@ public class MinionFactory {
       private final ValueAttribute movePoints = new ValueAttribute(
           booleanMechanics.isOn(ConstMechanic.WINDFURY) ?
               Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS,
-          booleanMechanics.isOn(ConstMechanic.CHARGE)
-          );
+          booleanMechanics.isOn(ConstMechanic.CHARGE));
       private final Binder binder = new Binder();
       private OptionalInt seqId = OptionalInt.empty();
 
@@ -274,7 +273,8 @@ public class MinionFactory {
 
       @Override
       public void endTurn() {
-        this.movePoints.endTurn();
+        movePoints.endTurn();
+        attackAttr.endTurn();
       }
 
       @Override

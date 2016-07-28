@@ -62,9 +62,17 @@ public class EffectFactory {
 
     static void addAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
                               final Minion target) {
+      Preconditions.checkArgument(mechanicConfig.targetOptional.isPresent());
+      final TargetConfig targetConfig = mechanicConfig.targetOptional.get();
       switch (mechanicConfig.type) {
         case Constant.ATTACK:
-          target.attack().addAuraBuff(minion, mechanicConfig.value);
+          if (targetConfig.isAdjacent &&
+              !target.binder().getSide().board.isAdjacent(target, minion)) {
+            logger.debug(minion + " and " + target + " is not adjacent. " + target +
+                " will not be effected by aura");
+          } else {
+            target.attack().addAuraBuff(minion, mechanicConfig.value);
+          }
           break;
         case Constant.MAX_HEALTH:
           target.maxHealth().addAuraBuff(minion, mechanicConfig.value);
@@ -293,6 +301,12 @@ public class EffectFactory {
         return Collections.singletonList(new DestroyEffect(creatureToDestroyable(target)));
       case DRAW:
         return getDrawCardEffect(config, triggeringSide);
+      case FULL_HEAL:
+        if (target.healthLoss() > 0) {
+          return Collections.singletonList(new HealEffect(target, target.healthLoss()));
+        } else {
+          return Collections.emptyList();
+        }
       case HEAL:
         if (target.healthLoss() > 0) {
           return Collections.singletonList(new HealEffect(target, config.value));

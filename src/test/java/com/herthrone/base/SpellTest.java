@@ -558,4 +558,81 @@ public class SpellTest extends TestCase {
     assertThat(gm.inactiveSide.board.size()).isEqualTo(0);
     assertThat(gm.inactiveSide.hand.size()).isEqualTo(inactiveSideHandSize + inactiveSideBoardSize);
   }
+
+  @Test
+  public void testAncestralHealing() {
+    final Spell ancestralHealing = createSpellAndBind(ConstSpell.ANCESTRAL_HEALING);
+    yeti.takeDamage(1);
+    assertThat(yeti.booleanMechanics().isOff(ConstMechanic.TAUNT));
+    gm.playCard(ancestralHealing, yeti);
+
+    assertThat(yeti.booleanMechanics().isOn(ConstMechanic.TAUNT));
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+
+    yeti.takeDamage(4);
+    gm.playCard(ancestralHealing, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+  }
+
+  @Test
+  public void testRockbiterWeapon() {
+    final Spell rockbiterWeapon = createSpellAndBind(ConstSpell.ROCKBITER_WEAPON);
+    final int minionAttack = yeti.attack().value();
+    gm.playCard(rockbiterWeapon, yeti);
+    assertThat(yeti.attack().value()).isEqualTo(minionAttack + 3);
+    yeti.endTurn();
+    assertThat(yeti.attack().value()).isEqualTo(minionAttack);
+
+    final int heroAttack = hero1.attack().value();
+    gm.playCard(rockbiterWeapon, hero1);
+    assertThat(hero1.attack().value()).isEqualTo(heroAttack + 3);
+    hero1.endTurn();
+    assertThat(hero1.attack().value()).isEqualTo(heroAttack);
+  }
+
+  @Test
+  public void testWindfury() {
+    final Spell windfury = createSpellAndBind(ConstSpell.WINDFURY);
+    // Test a minion just put on board.
+    assertThat(yeti.attackMovePoints().value()).isEqualTo(0);
+    gm.playCard(windfury, yeti);
+    assertThat(yeti.attackMovePoints().value()).isEqualTo(0);
+    yeti.endTurn();
+    assertThat(yeti.attackMovePoints().value()).isEqualTo(2);
+    // Test a minion in second round.
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(ooze);
+    assertThat(ooze.attackMovePoints().value()).isEqualTo(0);
+    ooze.endTurn();
+    assertThat(ooze.attackMovePoints().value()).isEqualTo(1);
+    gm.playCard(windfury, ooze);
+    assertThat(ooze.attackMovePoints().value()).isEqualTo(2);
+    // Test a minion in second round that has attacked already.
+    final Minion bodyguard = createAndBindMinion(ConstMinion.BOOTY_BAY_BODYGUARD);
+    bodyguard.endTurn();
+    assertThat(bodyguard.attackMovePoints().value()).isEqualTo(1);
+    bodyguard.attackMovePoints().decrease(1);
+    assertThat(bodyguard.attackMovePoints().value()).isEqualTo(0);
+    gm.playCard(windfury, bodyguard);
+    assertThat(bodyguard.attackMovePoints().value()).isEqualTo(1);
+  }
+
+  @Test
+  public void testTotemicMight() {
+    final Minion healingTotem = createAndBindMinion(ConstMinion.HEALING_TOTEM);
+    final Minion searingTotem = createAndBindMinion(ConstMinion.SEARING_TOTEM);
+
+    final int healingTotemHealth = healingTotem.health().value();
+    final int searingTotemHealth = searingTotem.health().value();
+    final int yetiHealth = yeti.health().value();
+
+    final Spell totemicMight = createSpellAndBind(ConstSpell.TOTEMIC_MIGHT);
+    gm.playCard(healingTotem);
+    gm.playCard(searingTotem);
+    gm.playCard(totemicMight);
+
+    assertThat(healingTotem.health().value()).isEqualTo(healingTotemHealth + 2);
+    assertThat(searingTotem.health().value()).isEqualTo(searingTotemHealth + 2);
+    assertThat(yeti.health().value()).isEqualTo(yetiHealth);
+  }
 }

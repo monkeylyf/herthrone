@@ -25,6 +25,7 @@
 
 - name: healing_totem
   class: shaman
+  type: totem
   attack: 0
   health: 2
   crystal: 1
@@ -41,6 +42,7 @@
 
 - name: searing_totem
   class: shaman
+  type: totem
   attack: 1
   health: 1
   crystal: 1
@@ -48,6 +50,7 @@
 
 - name: wrath_of_air_totem
   class: shaman
+  type: totem
   attack: 0
   health: 2
   crystal: 1
@@ -55,6 +58,7 @@
 
 - name: stoneclaw_totem
   class: shaman
+  type: totem
   attack: 0
   health: 2
   crystal: 1
@@ -138,7 +142,7 @@
       effect: status
 
 - name: scarlet_crusader
-  class: mage
+  class: neutral
   attack: 3
   health: 1
   crystal: 3
@@ -1056,3 +1060,61 @@
       target:
         scope: own
         type: deck
+
+- name: frog
+  class: shaman
+  attack: 0
+  health: 1
+  crystal: 0
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: fire_elemental
+  class: shaman
+  attack: 6
+  health: 5
+  crystal: 6
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: all
+        type: all
+
+- name: flametongue_totem
+  class: shaman
+  type: totem
+  attack: 0
+  health: 3
+  crystal: 2
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 2
+      target:
+        scope: own
+        type: minion
+        adjacent: true
+
+- name: windspeaker
+  class: shaman
+  attack: 3
+  health: 3
+  crystal: 4
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: add_mechanic
+      type: windfury
+      value: 1
+      target:
+        scope: own
+        type: minion

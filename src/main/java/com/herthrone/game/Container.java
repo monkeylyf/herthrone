@@ -129,6 +129,12 @@ public class Container<T extends Card> {
     return container.indexOf(card);
   }
 
+  public boolean isAdjacent(final T card1, final T card2) {
+    final int index1 = indexOf(card1);
+    final int index2 = indexOf(card2);
+    return Math.abs(index1 - index2) == 1;
+  }
+
   @Override
   public String toString() {
     final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this);

@@ -12,6 +12,7 @@ public enum ConstEffectType {
   DESTROY,
   DRAW,
   EQUIP_WEAPON,
+  FULL_HEAL,
   GENERATE,
   HEAL,
   MAX_HEALTH_BUFF,

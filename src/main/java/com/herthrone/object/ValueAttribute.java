@@ -71,6 +71,7 @@ public class ValueAttribute implements Resettable, Round {
   @Override
   public void endTurn() {
     buff.endTurn();
+    currentValue.setTo(rawValue.value());
   }
 
   @Override
@@ -80,7 +81,9 @@ public class ValueAttribute implements Resettable, Round {
     } else {
       return Integer.toString(value());
     }
-  }  @Override
+  }
+
+  @Override
   public void startTurn() {
     buff.startTurn();
   }
