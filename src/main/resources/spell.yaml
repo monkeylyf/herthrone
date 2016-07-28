@@ -326,15 +326,7 @@
       trigger: on_play
       effect: draw
       type: card
-      value: 1
-      target:
-        scope: own
-        type: deck
-    - name: card_draw
-      trigger: on_play
-      effect: draw
-      type: card
-      value: 1
+      value: 2
       target:
         scope: own
         type: deck
@@ -595,7 +587,6 @@
       type: minion
       value: 1
       condition:
-      condition:
         type: attack_value
         range_end: 3
 
@@ -679,3 +670,150 @@
         scope: opponent
         type: hand
         random: true
+
+- name: assassinate
+  class: rogue
+  crystal: 5
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+
+- name: backstab
+  class: rogue
+  crystal: 0
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      condition:
+        type: health_loss
+        range_start: 0
+        range_end: 0
+
+- name: deadly_poison
+  class: rogue
+  crystal: 1
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      target:
+        scope: own
+        type: weapon
+      condition:
+        type: weapon_equipped
+
+- name: sap
+  class: rogue
+  crystal: 2
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: return_to_hand
+      trigger: on_play
+      effect: return_to_hand
+      type: minion
+      value: 1
+
+- name: sinister_strike
+  class: rogue
+  crystal: 1
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: hero
+
+- name: fan_of_knives
+  class: rogue
+  crystal: 3
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: shiv
+  class: rogue
+  crystal: 2
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: sprint
+  class: rogue
+  crystal: 7
+  mechanics:
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 4
+      target:
+        scope: own
+        type: deck
+
+- name: vanish
+  class: rogue
+  crystal: 6
+  mechanics:
+    - name: return_to_hand
+      trigger: on_play
+      effect: return_to_hand
+      type: minion
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+    - name: return_to_hand
+      trigger: on_play
+      effect: return_to_hand
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: minion

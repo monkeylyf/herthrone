@@ -14,11 +14,14 @@ public class MoveCardEffect implements Effect {
   private final Container<Card> moveTo;
   private final Container<Card> moveFrom;
   private final Side side;
+  private final int numberOfCards;
 
-  public MoveCardEffect(final Container<Card> moveTo, final Container<Card> moveFrom, final Side side) {
+  public MoveCardEffect(final Container<Card> moveTo, final Container<Card> moveFrom,
+                        final Side side, final int numberOfCards) {
     this.moveTo = moveTo;
     this.moveFrom = moveFrom;
     this.side = side;
+    this.numberOfCards = numberOfCards;
   }
 
   @Override
@@ -28,10 +31,12 @@ public class MoveCardEffect implements Effect {
 
   @Override
   public void act() {
-    if (moveFrom.isEmpty()) {
-      side.takeFatigueDamage();
-    } else {
-      moveTo.add(moveFrom.top());
+    for (int i = 0; i < numberOfCards; ++i) {
+      if (moveFrom.isEmpty()) {
+        side.takeFatigueDamage();
+      } else {
+        moveTo.add(moveFrom.top());
+      }
     }
   }
 }

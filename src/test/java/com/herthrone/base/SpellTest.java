@@ -5,10 +5,12 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.GameManager;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -476,5 +478,84 @@ public class SpellTest extends TestCase {
     assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
     assertThat(gm.activeSide.hand.get(gm.activeSide.hand.size() - 1).cardName())
         .isEqualTo(ConstMinion.ACIDIC_SWAMP_OOZE.toString());
+  }
+
+  @Test
+  public void testShadowWord() {
+    final Spell shadowWordPain = createSpellAndBind(ConstSpell.SHADOW_WORD_PAIN);
+    // In reality, shadow word: pain cannot be used to target at yeti but here
+    // it's just testing when it's targeted, no effect happens.
+    gm.playCard(shadowWordPain, yeti);
+    assertThat(gm.activeSide.board.contains(yeti)).isTrue();
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(ooze);
+    // Test that ooze can be targeted by shadow word: pain.
+    assertThat(gm.activeSide.board.contains(ooze)).isTrue();
+    gm.playCard(shadowWordPain, ooze);
+    assertThat(gm.activeSide.board.contains(ooze)).isFalse();
+
+    final Spell shadowWordDeath = createSpellAndBind(ConstSpell.SHADOW_WORD_DEATH);
+    yeti.attack().getPermanentBuff().increase(1);
+    assertThat(yeti.attack().value()).isEqualTo(5);
+    gm.playCard(shadowWordDeath, yeti);
+    assertThat(gm.activeSide.board.contains(yeti)).isFalse();
+  }
+
+  @Test
+  public void testBackStab() {
+    final Spell backStab = createSpellAndBind(ConstSpell.BACKSTAB);
+
+    gm.playCard(backStab, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(2);
+    // Should not be targetable. Just test no effect happens.
+    gm.playCard(backStab, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(2);
+  }
+
+  @Test
+  public void testDeadlyPoison() {
+    final Spell deadlyPoison = createSpellAndBind(ConstSpell.DEADLY_POISON);
+    final Weapon assasinsBlade = WeaponFactory.create(ConstWeapon.ASSASSINS_BLADE);
+    final int attack = assasinsBlade.getAttackAttr().value();
+    hero1.equip(assasinsBlade);
+    gm.playCard(deadlyPoison);
+    assertThat(assasinsBlade.getAttackAttr().value()).isEqualTo(attack + 2);
+  }
+
+  @Test
+  public void testSprint() {
+    final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    for (int i = 0; i < deckSize; ++i) {
+      gm.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+    }
+
+    final int handSize = gm.activeSide.hand.size();
+    final Spell sprint = createSpellAndBind(ConstSpell.SPRINT);
+    gm.playCard(sprint);
+
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 4);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 4);
+  }
+
+  @Test
+  public void testVanish() {
+    gm.playCard(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    gm.switchTurn();
+    gm.playCard(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    gm.playCard(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    gm.switchTurn();
+
+    final int activeSideHandSize = gm.activeSide.hand.size();
+    final int activeSideBoardSize = gm.activeSide.board.size();
+    final int inactiveSideHandSize = gm.inactiveSide.hand.size();
+    final int inactiveSideBoardSize = gm.inactiveSide.board.size();
+
+    final Spell vanish = createSpellAndBind(ConstSpell.VANISH);
+    gm.playCard(vanish);
+
+    assertThat(gm.activeSide.board.size()).isEqualTo(0);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(activeSideHandSize + activeSideBoardSize);
+    assertThat(gm.inactiveSide.board.size()).isEqualTo(0);
+    assertThat(gm.inactiveSide.hand.size()).isEqualTo(inactiveSideHandSize + inactiveSideBoardSize);
   }
 }

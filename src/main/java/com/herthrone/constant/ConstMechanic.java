@@ -1,7 +1,6 @@
 package com.herthrone.constant;
 
 /**
- * Created by yifengliu on 5/15/16.
  * <p>
  * http://hearthstone.gamepedia.com/<mechanicName>
  */

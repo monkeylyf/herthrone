@@ -118,6 +118,8 @@ public class TargetFactory {
       case MINION:
         return side.board.stream().sorted(
             EffectFactory.compareBySequenceId).collect(Collectors.toList());
+      case WEAPON:
+        return Collections.singletonList(side.hero);
       case ALL:
         final List<Creature> targets = side.board.stream().sorted(
             EffectFactory.compareBySequenceId).collect(Collectors.toList());

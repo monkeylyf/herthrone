@@ -104,18 +104,24 @@ public class EffectFactory {
   }
 
   public static boolean isTriggerConditionMet(final Optional<MechanicConfig> mechanicConfigOptional,
-                                              final Side side) {
+                                              final Side activatingSide,
+                                              Optional<Creature> creatureOptional) {
     if (!mechanicConfigOptional.isPresent()) {
       logger.debug("Mechanic configuration is absent");
       return true;
     }
     final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
-    if (!mechanicConfig.targetOptional.isPresent()) {
-      return true;
+    final Side targetSide;
+    if (mechanicConfig.targetOptional.isPresent()) {
+      final List<Side> realSide = TargetFactory.getSide(
+          mechanicConfig.targetOptional.get(), activatingSide);
+      Preconditions.checkArgument(realSide.size() == 1, "Does not support two side check");
+      targetSide = realSide.get(0);
+    } else {
+      targetSide = activatingSide;
     }
-    final List<Side> realSide = TargetFactory.getSide(mechanicConfig.targetOptional.get(), side);
-    Preconditions.checkArgument(realSide.size() == 1, "Does not support two side check");
-    final boolean willBeTriggered = isConditionTriggered(mechanicConfig, realSide.get(0));
+    final boolean willBeTriggered = isConditionTriggered(
+        mechanicConfig, targetSide, creatureOptional);
     final String word = willBeTriggered ? "is" : "is not";
     logger.debug(String.format("Condition %s met and mechanic effect %s triggered", word, word));
     return willBeTriggered;
@@ -124,7 +130,7 @@ public class EffectFactory {
   public static void pipeMechanicEffectConditionally(
       final Optional<MechanicConfig> mechanicConfigOptional,
       final Side triggeringSide, final Creature target) {
-    if (isTriggerConditionMet(mechanicConfigOptional, triggeringSide)) {
+    if (isTriggerConditionMet(mechanicConfigOptional, triggeringSide, Optional.of(target))) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
       final List<Effect> effects = getMechanicEffects(mechanicConfig, target, triggeringSide);
@@ -135,7 +141,7 @@ public class EffectFactory {
   public static void pipeMechanicEffectConditionally(
       final Optional<MechanicConfig> mechanicConfigOptional,
       final Side side) {
-    if (isTriggerConditionMet(mechanicConfigOptional, side)) {
+    if (isTriggerConditionMet(mechanicConfigOptional, side, Optional.absent())) {
       final MechanicConfig mechanicConfig = mechanicConfigOptional.get();
       logger.debug("Triggering " + mechanicConfig.mechanic.toString());
       final List<Effect> effects = getMechanicEffects(mechanicConfig, side);
@@ -163,7 +169,8 @@ public class EffectFactory {
   }
 
   private static boolean isConditionTriggered(final MechanicConfig mechanicConfig,
-                                              final Side side) {
+                                              final Side side,
+                                              final Optional<Creature> creatureOptional) {
     if (!mechanicConfig.conditionConfigOptional.isPresent()) {
       // If no condition configured, return true and the effect should be triggered any way.
       return true;
@@ -171,6 +178,9 @@ public class EffectFactory {
     // Check if there is condition config. If there is, return whether condition is met.
     final ConditionConfig conditionConfig = mechanicConfig.conditionConfigOptional.get();
     switch (conditionConfig.conditionType) {
+      case ATTACK_VALUE:
+        return (creatureOptional.isPresent()) ?
+          conditionConfig.inRange(creatureOptional.get().attack().value()) : false;
       case BEAST_COUNT:
         final int beastCount = side.board.stream()
             .filter(m -> m.type().equals(ConstType.BEAST))
@@ -180,7 +190,10 @@ public class EffectFactory {
         return conditionConfig.inRange(side.board.size());
       case COMBO:
         return side.replay.size() > 1;
-      case WEAPON_EQUIPED:
+      case HEALTH_LOSS:
+        return (creatureOptional.isPresent()) ?
+            conditionConfig.inRange(creatureOptional.get().healthLoss()) : false;
+      case WEAPON_EQUIPPED:
         // Call getDestroyablesBySide instead of getDestroyables because side is already picked
         // given target config.
         final List<Destroyable> destroyables = TargetFactory.getDestroyablesBySide(
@@ -232,6 +245,8 @@ public class EffectFactory {
 
   public static List<Effect> pipeEffects(final MechanicConfig config, final Side side) {
     switch (config.effectType) {
+      case BUFF:
+        return getBuffEffect(config, null);
       case COPY_CARD:
         return getCopyCardEffect(config, side);
       case SUMMON:
@@ -262,10 +277,6 @@ public class EffectFactory {
     }
   }
 
-  public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target) {
-    return pipeEffects(config, target, target.binder().getSide());
-  }
-
   public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target,
                                          final Side triggeringSide) {
     switch (config.effectType) {
@@ -278,6 +289,8 @@ public class EffectFactory {
         return getBuffEffect(config, target);
       case CRYSTAL:
         return getCrystalEffect(config, target);
+      case DESTROY:
+        return Collections.singletonList(new DestroyEffect(creatureToDestroyable(target)));
       case DRAW:
         return getDrawCardEffect(config, triggeringSide);
       case HEAL:
@@ -323,7 +336,15 @@ public class EffectFactory {
     final String type = effect.type;
     switch (type) {
       case (Constant.ATTACK):
-        return Collections.singletonList(getGeneralBuffEffect(side, creature.attack(), effect));
+        if (effect.targetOptional.isPresent() &&
+            effect.targetOptional.get().type.equals(ConstType.WEAPON)) {
+          final Hero hero = creatureToHero(creature);
+          final Weapon weapon = hero.getWeapon().get();
+          return Collections.singletonList(getGeneralBuffEffect(
+              side, weapon.getAttackAttr(), effect));
+        } else {
+          return Collections.singletonList(getGeneralBuffEffect(side, creature.attack(), effect));
+        }
       case (Constant.CRYSTAL):
         return Collections.singletonList(getGeneralBuffEffect(side, creature.manaCost(), effect));
       case (Constant.MAX_HEALTH):
@@ -395,6 +416,16 @@ public class EffectFactory {
     return (Minion) creature;
   }
 
+  private static Destroyable creatureToDestroyable(final Creature creature) {
+    if (creature instanceof Hero) {
+      final Hero hero = (Hero) creature;
+      Preconditions.checkArgument(hero.getWeapon().isPresent(), "Hero has no weapon equipped");
+      return hero.getWeapon().get();
+    } else {
+      return (Minion) creature;
+    }
+  }
+
   private static List<Effect> getAttributeEffect(final MechanicConfig effect,
                                                  final Creature creature) {
     final Side side = creature.binder().getSide();
@@ -455,7 +486,7 @@ public class EffectFactory {
     switch (target.type) {
 
     }
-    return Collections.singletonList(new MoveCardEffect(side.hand, side.deck, side));
+    return Collections.singletonList(new MoveCardEffect(side.hand, side.deck, side, effect.value));
   }
 
   private static List<Effect> getCrystalEffect(final MechanicConfig config, final Creature creature) {
@@ -516,11 +547,6 @@ public class EffectFactory {
     spell.binder().getSide().getEffectQueue().enqueue(effects);
   }
 
-  public static void pipeEffects(final Spell spell) {
-    TriggerFactory.triggerWithoutTarget(
-        spell.getTriggeringMechanics().get(ConstTrigger.ON_PLAY), spell.binder().getSide());
-  }
-
   public static class AttackFactory {
 
     public static void pipePhysicalDamageEffect(final Creature attacker, final Creature attackee) {
@@ -536,7 +562,8 @@ public class EffectFactory {
       final Effect attackEffect;
       if (isForgetfulToPickNewTarget) {
         logger.debug("Forgetful triggered");
-        final Creature substituteAttackee = RandomMinionGenerator.randomExcept(attackee.binder().getSide().allCreatures(), attackee);
+        final Creature substituteAttackee = RandomMinionGenerator.randomExcept(
+            attackee.binder().getSide().allCreatures(), attackee);
         logger.debug(String.format("Change attackee from %s to %s", attackee, substituteAttackee));
         Preconditions.checkArgument(substituteAttackee != attackee);
         attackEffect = new PhysicalDamageEffect(attacker, substituteAttackee);

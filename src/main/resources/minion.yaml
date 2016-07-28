@@ -492,7 +492,7 @@
         scope: opponent
         type: weapon
       condition:
-        type: weapon_equiped
+        type: weapon_equipped
 
 - name: archmage
   class: neutral

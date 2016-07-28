@@ -8,6 +8,6 @@ public enum ConstCondition {
   BEAST_COUNT,
   BOARD_SIZE,
   COMBO,
-  HERO_HEALTH,
-  WEAPON_EQUIPED;
+  HEALTH_LOSS,
+  WEAPON_EQUIPPED;
 }

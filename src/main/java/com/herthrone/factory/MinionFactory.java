@@ -85,8 +85,10 @@ public class MinionFactory {
 
       @Override
       public void destroy() {
+        // Immediate death that will not trigger take damage effects.
         final int health = healthAttr.value();
         healthAttr.decrease(health);
+        death();
       }
 
       @Override

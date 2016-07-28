@@ -121,8 +121,14 @@ public class WeaponFactory {
         return attackMovePoints;
       }
 
+      @Override
       public TriggeringMechanics getTriggeringMechanics() {
         return triggeringMechanics;
+      }
+
+      @Override
+      public String toString() {
+        return view().toString();
       }
     };
   }
