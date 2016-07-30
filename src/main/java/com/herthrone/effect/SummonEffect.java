@@ -3,7 +3,7 @@ package com.herthrone.effect;
 import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstEffectType;
-import com.herthrone.game.Container;
+import com.herthrone.game.Side;
 
 
 /**
@@ -11,11 +11,11 @@ import com.herthrone.game.Container;
  */
 public class SummonEffect implements Effect {
 
-  private final Container<Minion> board;
+  private final Side side;
   private final Minion minion;
 
-  public SummonEffect(final Container<Minion> board, final Minion minion) {
-    this.board = board;
+  public SummonEffect(final Side side, final Minion minion) {
+    this.side = side;
     this.minion = minion;
   }
 
@@ -26,6 +26,7 @@ public class SummonEffect implements Effect {
 
   @Override
   public void act() {
-    board.add(minion);
+    side.setSequenceId(minion);
+    side.board.add(minion);
   }
 }

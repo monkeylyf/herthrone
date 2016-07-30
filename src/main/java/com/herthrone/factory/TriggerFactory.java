@@ -7,7 +7,10 @@ import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.MechanicConfig;
+import com.herthrone.configuration.TargetConfig;
+import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
+import com.herthrone.constant.ConstType;
 import com.herthrone.game.Side;
 import org.apache.log4j.Logger;
 
@@ -27,15 +30,31 @@ public class TriggerFactory {
   public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
                                    final ConstTrigger triggerType, final Creature target,
                                    final Side triggeringSide) {
-    triggerrer.getTriggeringMechanics().get(triggerType).stream()
-        .forEach(mechanicConfig ->
+    triggerrer.getTriggeringMechanics().get(triggerType)
+        .forEach(mechanicConfig -> {
+          if (mechanicConfig.targetOptional.isPresent()) {
+            final TargetConfig targetConfig = mechanicConfig.targetOptional.get();
+            logger.debug("Trigger with configured targets: " + targetConfig);
+            TargetFactory.getProperTargets(targetConfig, triggeringSide)
+                .forEach(realTarget -> {
+                  if (targetConfig.type.equals(ConstType.OTHER) && realTarget == target) {
+                    logger.debug("Skip target " + target + " for " + targetConfig.type + " type");
+                  } else {
+                    EffectFactory.pipeMechanicEffectConditionally(
+                        Optional.of(mechanicConfig), triggeringSide, realTarget);
+                  }
+                });
+          } else {
+            logger.debug("No target config found. Trigger with default target");
             EffectFactory.pipeMechanicEffectConditionally(
-                Optional.of(mechanicConfig), triggeringSide, target)
+                Optional.of(mechanicConfig), triggeringSide, target);
+          }
+        }
       );
   }
 
   static void passiveTrigger(final Side side, final ConstTrigger triggerType) {
-    List<Effect> effects = side.board.stream()
+    final List<Effect> effects = side.board.stream()
         .sorted(EffectFactory.compareBySequenceId)
         .flatMap(minion -> minion.getTriggeringMechanics().get(triggerType).stream())
         .flatMap(mechanic -> EffectFactory.getMechanicEffects(mechanic, side).stream())
@@ -44,22 +63,30 @@ public class TriggerFactory {
   }
 
   public static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
-                             final ConstTrigger triggerType) {
-    final Side side = triggerrer.binder().getSide();
-    List<MechanicConfig> mechanicConfigs = triggerrer.getTriggeringMechanics().get(triggerType);
-    triggerWithoutTarget(mechanicConfigs, side);
+                                    final ConstTrigger triggerType) {
+    // TODO: fix this.
+    if (triggerrer instanceof Minion &&
+        ((Minion) triggerrer).minionConstName().equals(ConstMinion.FROSTWOLF_WARLORD)) {
+      final Minion minion = (Minion) triggerrer;
+      triggerrer.getTriggeringMechanics().get(triggerType)
+          .forEach(
+              mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
+                  Optional.of(mechanicConfig), minion.binder().getSide(), minion));
+    } else {
+      final Side side = triggerrer.binder().getSide();
+      triggerWithoutTarget(triggerrer.getTriggeringMechanics().get(triggerType), side);
+    }
   }
 
-  static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side
-      side) {
+  static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side side) {
     final List<MechanicConfig> validMechanicConfigs = mechanicConfigs.stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .collect(Collectors.toList());
     logger.debug(String.format("Total %d valid mechanic configs", validMechanicConfigs.size()));
-    validMechanicConfigs.stream()
+    validMechanicConfigs
         .forEach(effectConfig -> {
           try {
-            TargetFactory.getProperTargets(effectConfig.targetOptional.get(), side).stream()
+            TargetFactory.getProperTargets(effectConfig.targetOptional.get(), side)
                 .forEach(
                     target -> EffectFactory.pipeMechanicEffectConditionally(
                         Optional.of(effectConfig), side, target)
@@ -77,7 +104,7 @@ public class TriggerFactory {
         .filter(minion -> minion != excludedMinion)
         .sorted(EffectFactory.compareBySequenceId)
         .forEach(minion ->
-            minion.getTriggeringMechanics().get(triggerType).stream()
+            minion.getTriggeringMechanics().get(triggerType)
               .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
                   Optional.of(mechanicConfig), side, minion))
         );
@@ -88,7 +115,7 @@ public class TriggerFactory {
     minionStream
         .sorted(EffectFactory.compareBySequenceId)
         .forEach(minion ->
-            minion.getTriggeringMechanics().get(triggerType).stream()
+            minion.getTriggeringMechanics().get(triggerType)
                 .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
                     Optional.of(mechanicConfig), triggeringSide, minion))
         );

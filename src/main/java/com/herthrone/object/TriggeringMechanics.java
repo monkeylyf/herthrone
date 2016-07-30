@@ -3,6 +3,8 @@ package com.herthrone.object;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstTrigger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,13 @@ public class TriggeringMechanics {
     return mechanics.containsKey(trigger);
   }
 
+  public void update(final ConstTrigger trigger, final MechanicConfig mechanicConfig) {
+    if (mechanics.containsKey(trigger)) {
+      mechanics.get(trigger).add(mechanicConfig);
+    } else {
+      mechanics.put(trigger, new ArrayList<>(Arrays.asList(mechanicConfig)));
+    }
+  }
   public static TriggeringMechanics create(final ConstTrigger trigger,
                                            final List<MechanicConfig> mechanicConfigs) {
     return new TriggeringMechanics(Collections.singletonMap(trigger, mechanicConfigs));

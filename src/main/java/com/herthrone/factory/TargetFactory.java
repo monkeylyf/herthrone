@@ -113,12 +113,16 @@ public class TargetFactory {
   private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
                                                        final Side side) {
     switch (targetConfig.type) {
+      case HAND:
+        return Collections.singletonList(side.hero);
       case HERO:
         return Collections.singletonList(side.hero);
       case MINION:
         return side.board.stream().sorted(
             EffectFactory.compareBySequenceId).collect(Collectors.toList());
       case WEAPON:
+        return Collections.singletonList(side.hero);
+      case DECK:
         return Collections.singletonList(side.hero);
       case ALL:
         final List<Creature> targets = side.board.stream().sorted(
@@ -128,6 +132,11 @@ public class TargetFactory {
       case TOTEM:
         return side.board.stream()
             .filter(minion -> minion.type().equals(ConstType.TOTEM)).collect(Collectors.toList());
+      case OTHER:
+        final List<Creature> allTargets = side.board.stream().sorted(
+            EffectFactory.compareBySequenceId).collect(Collectors.toList());
+        allTargets.add(side.hero);
+        return allTargets;
       default:
         throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
     }

@@ -920,3 +920,138 @@
       target:
         scope: own
         type: totem
+
+- name: drain_life
+  class: warlock
+  crystal: 3
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: hellfire
+  class: warlock
+  crystal: 4
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: all
+        type: all
+
+- name: shadow_bolt
+  class: warlock
+  crystal: 3
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 4
+
+- name: corruption
+  class: warlock
+  crystal: 1
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: add_mechanic_trigger
+      type: minion
+      mechanic_to_add:
+        - name: destroy
+          trigger: on_opponent_start_turn
+          effect: destroy
+          type: minion
+      value: 1
+
+- name: mortal_coil
+  class: warlock
+  cyrstal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+      condition:
+        type: health_value
+        range_start: 1
+        range_end: 1
+
+- name: sacrificial_pact
+  class: warlock
+  crystal: 0
+  single_target:
+    scope: all
+    type: demon
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 5
+      target:
+        scope: own
+        type: hero
+
+- name: soulfire
+  class: warlock
+  crystal: 1
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 4
+    - name: discard
+      trigger: on_play
+      effect: discard
+      type: hand
+      value: 1
+      target:
+        scope: own
+        type: hand
+      condition:
+        type: hand_size
+        start_range: 1

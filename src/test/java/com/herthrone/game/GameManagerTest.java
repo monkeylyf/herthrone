@@ -217,17 +217,18 @@ public class GameManagerTest {
 
   private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfOpponentMinions) {
     // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
+    gm.startTurn();
     for (int i = 0; i < numOfOwnMinions; ++i) {
       final Minion minion = (Minion) gm.activeSide.deck.top();
-      minion.endTurn();
-      gm.activeSide.board.add(minion);
+      gm.playCard(minion);
     }
 
+    gm.switchTurn();
     for (int i = 0; i < numOfOpponentMinions; ++i) {
       final Minion minion = (Minion) gm.inactiveSide.deck.top();
-      minion.endTurn();
-      gm.inactiveSide.board.add(minion);
+      gm.playCard(minion);
     }
+    gm.switchTurn();
   }
 
   private void checkCommands(CommandLine.CommandNode root, final int numOfMinions) {

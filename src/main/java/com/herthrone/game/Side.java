@@ -7,11 +7,14 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.constant.ConstTrigger;
+import com.herthrone.factory.TriggerFactory;
 import com.herthrone.object.Replay;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntSupplier;
 
 public class Side implements Round {
 
@@ -22,16 +25,19 @@ public class Side implements Round {
   public final Container<Minion> board;
   public final Container<Secret> secrets;
   public final Replay replay;
-  private EffectQueue effectQueue;
+  private final EffectQueue effectQueue;
+  private final IntSupplier idGenerator;
   private int fatigue;
   private Side opponentSide;
 
-  public Side(final Hero hero, final EffectQueue effectQueue) {
+  private Side(final Hero hero, final EffectQueue effectQueue, final IntSupplier idGenerator) {
     final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
     final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
     final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
 
     this.hero = hero;
+    bind(hero);
+    bind(hero.getHeroPower());
     hero.binder().bind(this);
     this.hand = new Container<>(handCapacity);
     this.board = new Container<>(boardCapacity);
@@ -42,28 +48,32 @@ public class Side implements Round {
 
     this.fatigue = 0;
     this.effectQueue = effectQueue;
+
+    this.idGenerator = idGenerator;
   }
 
-  static Side createSide(final Hero hero1, final Hero hero2, final EffectQueue effectQueue) {
-    final Side thisSide = new Side(hero1, effectQueue);
-    thisSide.bind(hero1);
-    thisSide.bind(hero1.getHeroPower());
-    final Side thatSide = new Side(hero2, effectQueue);
-    thatSide.bind(hero2);
-    thatSide.bind(hero2.getHeroPower());
+  static Side createSidePair(final Hero hero1, final Hero hero2, final EffectQueue effectQueue) {
+    final IntSupplier sequenceIdGenerator = new IntSupplier() {
+      private int id = 0;
 
+      @Override
+      public int getAsInt() {
+        ++id;
+        return id;
+      }
+    };
+    final Side thisSide = new Side(hero1, effectQueue, sequenceIdGenerator);
+    final Side thatSide = new Side(hero2, effectQueue, sequenceIdGenerator);
     thisSide.opponentSide = thatSide;
     thatSide.opponentSide = thisSide;
     return thisSide;
   }
 
   void populateDeck(final List<Enum> cards) {
-    cards.stream().forEach(cardName -> {
+    cards.forEach(cardName -> {
       final Card card = GameManager.createCardInstance(cardName);
       deck.add(card);
-      if (card instanceof Minion) {
-        card.binder().bind(this);
-      }
+      bind(card);
     });
   }
 
@@ -94,11 +104,25 @@ public class Side implements Round {
   @Override
   public void endTurn() {
     replay.endTurn();
+    hero.endTurn();
+    board.stream().forEach(Round::startTurn);
+    TriggerFactory.triggerByBoard(
+        getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_END_TURN);
   }
 
   @Override
   public void startTurn() {
     replay.startTurn();
+    hero.startTurn();
+    board.stream().forEach(Round::endTurn);
+    TriggerFactory.triggerByBoard(
+        getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_START_TURN);
+  }
+
+  public void setSequenceId(final Minion minion) {
+    final int sequenceId = idGenerator.getAsInt();
+    logger.debug("Set ID " + sequenceId + " to minion " + minion);
+    minion.setSequenceId(sequenceId);
   }
 
   public Side getOpponentSide() {

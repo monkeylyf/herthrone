@@ -2,6 +2,7 @@ package com.herthrone.constant;
 
 public enum ConstEffectType {
   ADD_MECHANIC,
+  ADD_MECHANIC_TRIGGER,
   ATTACK,
   ATTRIBUTE,
   BUFF,
@@ -10,6 +11,7 @@ public enum ConstEffectType {
   COPY_CARD,
   CRYSTAL,
   DESTROY,
+  DISCARD,
   DRAW,
   EQUIP_WEAPON,
   FULL_HEAL,

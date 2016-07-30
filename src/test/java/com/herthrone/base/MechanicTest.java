@@ -329,14 +329,12 @@ public class MechanicTest extends TestCase {
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
     final Minion defiasRingleader2 = createAndBindMinion(ConstMinion.DEFIAS_RINGLEADER);
-    activeSide.bind(defiasRingleader2);
     gm.playCard(defiasRingleader2);
 
     // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 3);
-    assertThat(activeSide.board.get(activeSide.board.size() - 1).cardName()).isEqualTo(ConstMinion.DEFIAS_BANDIT.toString());
-    // TODO: how to handle the sequence ID of a summoned minion...?
-    //activeSide.board.get(activeSide.board.size() - 1).getSequenceId();
+    assertThat(activeSide.board.get(activeSide.board.size() - 1).cardName())
+        .isEqualTo(ConstMinion.DEFIAS_BANDIT.toString());
   }
 
   @Test
@@ -619,12 +617,11 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testEffectDependingOnBoardSize() {
-    final Minion frostwolfWarlord = createAndBindMinion(ConstMinion.FROSTWOLF_WARLORD);
+    final Minion frostWolfWarlord = createAndBindMinion(ConstMinion.FROSTWOLF_WARLORD);
+    gm.playCard(frostWolfWarlord);
 
-    gm.playCard(frostwolfWarlord);
-
-    assertThat(frostwolfWarlord.attack().value()).isEqualTo(4 + initialBoardSize);
-    assertThat(frostwolfWarlord.health().value()).isEqualTo(4 + initialBoardSize);
+    assertThat(frostWolfWarlord.attack().value()).isEqualTo(4 + initialBoardSize);
+    assertThat(frostWolfWarlord.health().value()).isEqualTo(4 + initialBoardSize);
   }
 
   @Test
@@ -690,17 +687,19 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testTundraRhino() {
+    final Minion warGolem = createAndBindMinion(ConstMinion.WAR_GOLEM);
     final Minion rhino = createAndBindMinion(ConstMinion.TUNDRA_RHINO);
     final Minion boar = createAndBindMinion(ConstMinion.BOAR);
     final Minion timberWolf = createAndBindMinion(ConstMinion.TIMBER_WOLF);
     final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(warGolem);
     gm.playCard(boar);
 
-    assertThat(yeti.canMove()).isFalse();
+    assertThat(warGolem.canMove()).isFalse();
     assertThat(boar.canMove()).isFalse();
     // Test after putting rhino on board, yeti still cannot move but board can.
     gm.playCard(rhino);
-    assertThat(yeti.canMove()).isFalse();
+    assertThat(warGolem.canMove()).isFalse();
     assertThat(boar.canMove()).isTrue();
     // Test adding a beast on board with rhino present, the beast has charge.
     gm.playCard(timberWolf);
@@ -796,5 +795,23 @@ public class MechanicTest extends TestCase {
     assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack + 2);
     assertThat(flametongueTotem.attack().value()).isEqualTo(flametongueTotemAttack);
     assertThat(ooze.attack().value()).isEqualTo(oozeAttack + 2);
+  }
+
+  @Test
+  public void testSuccubus() {
+    final Minion succubus = createAndBindMinion(ConstMinion.SUCCUBUS);
+    gm.activeSide.hand.add(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    final int handSize = gm.activeSide.hand.size();
+
+    gm.playCard(succubus);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize - 1);
+  }
+
+  @Test
+  public void testDreadInfernal() {
+    final Minion dreadInfernal = createAndBindMinion(ConstMinion.DREAD_INFERNAL);
+    gm.playCard(dreadInfernal);
+    assertThat(dreadInfernal.healthLoss()).isEqualTo(0);
+    assertThat(yeti.healthLoss()).isEqualTo(1);
   }
 }

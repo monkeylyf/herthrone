@@ -92,21 +92,22 @@ public class MinionFactory {
 
       @Override
       public void playOnBoard(final Container<Minion> board) {
-        summonOnBoard(board);
+        final int indexToAdd = board.size();
         TriggerFactory.passiveTrigger(this, ConstTrigger.ON_PLAY);
+        summonOnBoard(board, indexToAdd);
       }
 
       @Override
       public void playOnBoard(final Container<Minion> board, final Creature target) {
-        // TODO: on-play mechanics happen before summon triggered events.
-        summonOnBoard(board);
+        final int indexToAdd = board.size();
         TriggerFactory.activeTrigger(this, ConstTrigger.ON_PLAY, target);
+        summonOnBoard(board, indexToAdd);
       }
 
       @Override
-      public void summonOnBoard(final Container<Minion> board) {
-        // Put minion onto board.
-        board.add(this);
+      public void summonOnBoard(final Container<Minion> board, final int index) {
+        // Put minion onto board at given index.
+        board.add(index, this);
 
         final Side side = binder().getSide();
         TriggerFactory.refreshAura(side);

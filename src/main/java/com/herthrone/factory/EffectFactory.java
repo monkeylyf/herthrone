@@ -21,10 +21,12 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.effect.AddMechanicEffect;
+import com.herthrone.effect.AddTriggeringMechanicEffect;
 import com.herthrone.effect.AttributeEffect;
 import com.herthrone.effect.BuffEffect;
 import com.herthrone.effect.CopyCardEffect;
 import com.herthrone.effect.DestroyEffect;
+import com.herthrone.effect.DiscardEffect;
 import com.herthrone.effect.EquipWeaponEffect;
 import com.herthrone.effect.GenerateEffect;
 import com.herthrone.effect.HealEffect;
@@ -39,6 +41,7 @@ import com.herthrone.effect.SetAttributeEffect;
 import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
 import com.herthrone.effect.TransformEffect;
+import com.herthrone.game.Container;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 import com.herthrone.object.ManaCrystal;
@@ -198,9 +201,14 @@ public class EffectFactory {
         return conditionConfig.inRange(side.board.size());
       case COMBO:
         return side.replay.size() > 1;
+      case HAND_SIZE:
+        return conditionConfig.inRange(side.hand.size());
       case HEALTH_LOSS:
-        return (creatureOptional.isPresent()) ?
-            conditionConfig.inRange(creatureOptional.get().healthLoss()) : false;
+        return creatureOptional.isPresent() &&
+               conditionConfig.inRange(creatureOptional.get().healthLoss());
+      case HEALTH_VALUE:
+        Preconditions.checkArgument(creatureOptional.isPresent());
+        return conditionConfig.inRange(creatureOptional.get().health().value());
       case WEAPON_EQUIPPED:
         // Call getDestroyablesBySide instead of getDestroyables because side is already picked
         // given target config.
@@ -233,19 +241,12 @@ public class EffectFactory {
                                                 final Creature target, final Side triggeringSide) {
     if (mechanic.targetOptional.isPresent()) {
       final TargetConfig targetConfig = mechanic.targetOptional.get();
-      if (targetConfig.type.equals(ConstType.OTHER)) {
-        // For swipe.
-        return TargetFactory.getOtherTargets(target).stream()
-            .flatMap(realTarget -> pipeEffects(mechanic, realTarget, triggeringSide).stream())
-            .collect(Collectors.toList());
-      } else {
-        final Creature realTarget = targetConfig.isRandom ?
-            RandomMinionGenerator.randomCreature(targetConfig, target.binder().getSide()) : target;
-        //RandomMinionGenerator.randomOne(
-        //    TargetFactory.getProperTargetsBySide(targetConfig, target.binder().getSide())) :
-        //    target;
-        return pipeEffects(mechanic, realTarget, triggeringSide);
-      }
+      final Creature realTarget = targetConfig.isRandom ?
+          RandomMinionGenerator.randomCreature(targetConfig, target.binder().getSide()) : target;
+      //RandomMinionGenerator.randomOne(
+      //    TargetFactory.getProperTargetsBySide(targetConfig, target.binder().getSide())) :
+      //    target;
+      return pipeEffects(mechanic, realTarget, triggeringSide);
     } else {
       return pipeEffects(mechanic, target, triggeringSide);
     }
@@ -255,12 +256,8 @@ public class EffectFactory {
     switch (config.effectType) {
       case BUFF:
         return getBuffEffect(config, null);
-      case COPY_CARD:
-        return getCopyCardEffect(config, side);
       case SUMMON:
         return getSummonEffect(config, side);
-      case GENERATE:
-        return getGenerateEffect(config, side);
       case DRAW:
         return getDrawCardEffect(config, side);
       case DESTROY:
@@ -288,6 +285,13 @@ public class EffectFactory {
   public static List<Effect> pipeEffects(final MechanicConfig config, final Creature target,
                                          final Side triggeringSide) {
     switch (config.effectType) {
+      case ADD_MECHANIC_TRIGGER:
+        // TODO: Need a way to add complicated triggering mechanics on-the-fly.
+        Preconditions.checkArgument(config.mechanicToAddOptional.isPresent());
+        final Minion minion = creatureToMinion(target);
+        final Effect effect = new AddTriggeringMechanicEffect(
+                minion.getTriggeringMechanics(), config.mechanicToAddOptional.get());
+        return Collections.singletonList(effect);
       case ADD_MECHANIC:
         final ConstMechanic mechanic = ConstMechanic.valueOf(config.type.toUpperCase());
         return Collections.singletonList(new AddMechanicEffect(mechanic, target));
@@ -295,8 +299,12 @@ public class EffectFactory {
         return getAttributeEffect(config, target);
       case BUFF:
         return getBuffEffect(config, target);
+      case COPY_CARD:
+        return getCopyCardEffect(config, triggeringSide);
       case CRYSTAL:
         return getCrystalEffect(config, target);
+      case DISCARD:
+        return getDiscardEffect(config, target);
       case DESTROY:
         return Collections.singletonList(new DestroyEffect(creatureToDestroyable(target)));
       case DRAW:
@@ -313,6 +321,8 @@ public class EffectFactory {
         } else {
           return Collections.emptyList();
         }
+      case GENERATE:
+        return getGenerateEffect(config, triggeringSide);
       case RETURN_TO_HAND:
         return getReturnToHandEffect(creatureToMinion(target));
       case SET:
@@ -329,6 +339,30 @@ public class EffectFactory {
       default:
         throw new IllegalArgumentException("Unknown effect type: " + config.effectType);
     }
+  }
+
+  private static List<Effect> getDiscardEffect(final MechanicConfig config, final Creature target) {
+    Preconditions.checkArgument(config.targetOptional.isPresent());
+    final TargetConfig targetConfig = config.targetOptional.get();
+    final Container<Card> container;
+    switch (targetConfig.type) {
+      case DECK:
+        container = target.binder().getSide().deck;
+        break;
+      case HAND:
+        container = target.binder().getSide().hand;
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported target type: " + targetConfig.type);
+    }
+    List<Effect> effects = new ArrayList<>();
+    final boolean discardRandomly = targetConfig.type.equals(ConstType.HAND);
+    // Discard as many as configured.
+    final int numberOfCardToDiscard = Math.min(config.value, container.size());
+    for (int i = 0; i < numberOfCardToDiscard; ++i) {
+      effects.add(new DiscardEffect(container, discardRandomly));
+    }
+    return effects;
   }
 
   private static List<Effect> getSetAttributeEffect(final MechanicConfig config,
@@ -489,7 +523,9 @@ public class EffectFactory {
           RandomMinionGenerator.randomOne(summonChoices);
       final ConstMinion summonTarget = ConstMinion.valueOf(summonTargetName);
       final Minion minion = MinionFactory.create(summonTarget);
-      summonEffects.add(new SummonEffect(side.board, minion));
+      // TODO: set sequence id as well, somewhere.
+      side.bind(minion);
+      summonEffects.add(new SummonEffect(side, minion));
     }
     return summonEffects;
   }
@@ -525,8 +561,8 @@ public class EffectFactory {
   private static int getValueByDependency(final ConstDependency constDependency, final Side side) {
     switch (constDependency) {
       case BOARD_SIZE:
-        // Minus one because at this moment the minion is put on board already.
-        return side.board.size() - 1;
+        // At this moment, the minion frostwolf warlord has not been played on board yet.
+        return side.board.size();
       case HEALTH_LOSS:
         return side.hero.healthLoss();
       case MINIONS_PLAYED:
@@ -539,15 +575,8 @@ public class EffectFactory {
 
   private static Effect getGeneralAttributeEffect(final Side side, final ValueAttribute attr,
                                                   final MechanicConfig effect) {
-    final int value;
-    if (effect.valueDependency.isPresent()) {
-      value = getValueByDependency(effect.valueDependency.get(), side);
-    } else {
-      value = effect.value;
-      Preconditions.checkArgument(value != 0, "Health change must be non-zero");
-    }
-    Preconditions.checkArgument(value != 0, "Attribute change must be non-zero");
-    return new AttributeEffect(attr, value, effect.isPermanent);
+    Preconditions.checkArgument(effect.value != 0, "Attribute change must be non-zero");
+    return new AttributeEffect(attr, effect.value, effect.isPermanent);
   }
 
   public static void pipeEffects(final Spell spell, final Creature target) {

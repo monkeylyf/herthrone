@@ -237,7 +237,7 @@ public class GameManager implements Round {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.
-      setIncrementalSequenceId(minion);
+      activeSide.setSequenceId(minion);
       minion.playOnBoard(activeSide.board);
     } else if (card instanceof Secret) {
       activeSide.secrets.add((Secret) card);
@@ -255,16 +255,11 @@ public class GameManager implements Round {
       final Minion minion = (Minion) card;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.
-      setIncrementalSequenceId(minion);
+      activeSide.setSequenceId(minion);
       minion.playOnBoard(activeSide.board, target);
     } else if (card instanceof Spell) {
       TriggerFactory.activeTrigger((Spell) card, ConstTrigger.ON_PLAY, target, activeSide);
     }
-  }
-
-  public void setIncrementalSequenceId(final Minion minion) {
-    minion.setSequenceId(seqId);
-    seqId += 1;
   }
 
   void playCard(final int index, final Minion target) {

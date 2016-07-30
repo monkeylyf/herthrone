@@ -253,18 +253,17 @@ public class SpellTest extends TestCase {
     final Spell swipe = createSpellAndBind(ConstSpell.SWIPE);
 
     gm.switchTurn();
-    final Minion yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.activeSide.bind(yeti1);
-    gm.playCard(yeti1);
-    final Minion yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.activeSide.bind(yeti2);
-    gm.playCard(yeti2);
+    final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti);
+    gm.playCard(yeti);
+    final Minion ooze = MinionFactory.create(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.activeSide.bind(ooze);
+    gm.playCard(ooze);
     gm.switchTurn();
 
-    gm.playCard(swipe, yeti1);
-
-    assertThat(yeti1.healthLoss()).isEqualTo(4);
-    assertThat(yeti2.healthLoss()).isEqualTo(1);
+    gm.playCard(swipe, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(4);
+    assertThat(ooze.healthLoss()).isEqualTo(1);
     assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(1);
   }
 
@@ -634,5 +633,49 @@ public class SpellTest extends TestCase {
     assertThat(healingTotem.health().value()).isEqualTo(healingTotemHealth + 2);
     assertThat(searingTotem.health().value()).isEqualTo(searingTotemHealth + 2);
     assertThat(yeti.health().value()).isEqualTo(yetiHealth);
+  }
+
+  @Test
+  public void testDrainLife() {
+    final Spell drainLife = createSpellAndBind(ConstSpell.DRAIN_LIFE);
+    gm.activeSide.hero.takeDamage(2);
+
+    gm.playCard(drainLife, yeti);
+    assertThat(yeti.healthLoss()).isEqualTo(2);
+  }
+
+  @Test
+  public void testCorruption() {
+    gm.switchTurn();
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    gm.playCard(ooze);
+    gm.switchTurn();
+
+    final Spell corruption = createSpellAndBind(ConstSpell.CORRUPTION);
+    gm.playCard(corruption, ooze);
+
+    gm.switchTurn();
+    assertThat(gm.activeSide.board.contains(ooze)).isTrue();
+    gm.switchTurn();
+    assertThat(gm.inactiveSide.board.contains(ooze)).isFalse();
+  }
+
+  @Test
+  public void testMortalCoil() {
+    final Spell mortalCoil = createSpellAndBind(ConstSpell.MORTAL_COIL);
+    yeti.takeDamage(3);
+    assertThat(yeti.health().value()).isEqualTo(2);
+    final int deckSize = gm.activeSide.deck.size();
+    final int handSize = gm.activeSide.hand.size();
+    gm.playCard(mortalCoil, yeti);
+    assertThat(yeti.health().value()).isEqualTo(1);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize);
+    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize);
+
+    gm.playCard(mortalCoil, yeti);
+    assertThat(yeti.isDead()).isTrue();
+    // TODO: doesn't work with current effect/trigger factory.
+    //assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    //assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
   }
 }

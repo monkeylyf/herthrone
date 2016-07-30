@@ -73,6 +73,9 @@ public class RandomMinionGenerator {
   private static List<Creature> getCandidatePoolOnOneSide(final TargetConfig config, final Side side) {
     List<Creature> creaturePool = new ArrayList<>();
     switch (config.type) {
+      case HAND:
+        creaturePool.add(side.hero);
+        break;
       case HERO:
         creaturePool.add(side.hero);
         break;

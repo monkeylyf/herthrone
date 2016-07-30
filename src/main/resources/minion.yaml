@@ -315,6 +315,9 @@
   health: 2
   crystal: 2
   collectible: true
+  single_target:
+    scope: own
+    type: minion
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -322,9 +325,6 @@
       effect: return_to_hand
       type: minion
       value: 1
-      target:
-        scope: own
-        type: minion
 
 - name: stormwind_champion
   class: neutral
@@ -607,6 +607,9 @@
   health: 1
   crystal: 1
   collectible: true
+  single_target:
+    scope: opponent
+    type: all
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -614,9 +617,6 @@
       effect: attribute
       type: health
       value: 1
-      target:
-        scope: opponent
-        type: all
 
 - name: frostwolf_grunt
   class: neutral
@@ -1118,3 +1118,57 @@
       target:
         scope: own
         type: minion
+
+- name: succubus
+  class: warlock
+  type: demon
+  attack: 4
+  health: 3
+  crystal: 2
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: discard
+      type: hand
+      value: 1
+      target:
+        scope: own
+        type: hand
+      condition:
+        type: hand_size
+        start_range: 1
+
+- name: voidwalker
+  class: warlock
+  type: demon
+  attack: 1
+  health: 3
+  crystal: 1
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: dread_infernal
+  class: warlock
+  type: demon
+  attack: 6
+  health: 6
+  crystal: 6
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: all
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: own
+        type: all
+        self_excluded: true

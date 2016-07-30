@@ -40,8 +40,9 @@ public interface Minion extends Creature, Destroyable, Refreshable, Mechanic.Tri
    * A minion passively to be put onto a board.
    *
    * @param board
+   * @param index
    */
-  void summonOnBoard(final Container<Minion> board);
+  void summonOnBoard(final Container<Minion> board, final int index);
 
   ConstMinion minionConstName();
 }

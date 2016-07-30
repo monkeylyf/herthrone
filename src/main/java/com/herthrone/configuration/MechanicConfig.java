@@ -34,6 +34,7 @@ public class MechanicConfig {
   private static final String VALUE_DEPENDENCY = "value_dependency";
   private static final String CONDITION = "condition";
   private static final String TRIGGER_ONLY_WITH_TARGET = "trigger_only_with_target";
+  private static final String MECHANIC_TO_ADD = "mechanic_to_add";
   public final ConstMechanic mechanic;
   public final ConstTrigger trigger;
   public final boolean triggerOnlyWithTarget;
@@ -43,6 +44,7 @@ public class MechanicConfig {
   public final boolean isPermanent;
   public final boolean isFolded;
   public final List<String> choices;
+  public final Optional<Map<ConstTrigger, List<MechanicConfig>>> mechanicToAddOptional;
   public final Optional<TargetConfig> targetOptional;
   public final Optional<ConstDependency> valueDependency;
   public final Optional<ConditionConfig> conditionConfigOptional;
@@ -61,6 +63,9 @@ public class MechanicConfig {
     this.isUnique = ConfigLoader.getByDefault(map, UNIQUE, false);
     this.isFolded = ConfigLoader.getByDefault(map, FOLD, false);
     this.choices = ConfigLoader.getByDefault(map, CHOICES, Collections.EMPTY_LIST);
+    this.mechanicToAddOptional = (map.containsKey(MECHANIC_TO_ADD)) ?
+        Optional.of(MechanicConfig.getTriggerToMechanicMap(map.get(MECHANIC_TO_ADD))) :
+        Optional.absent();
     this.targetOptional = (map.containsKey(TARGET)) ?
         Optional.of(new TargetConfig((Map) map.get(TARGET))) :
         Optional.absent();
@@ -82,6 +87,7 @@ public class MechanicConfig {
     this.isFolded = mechanicConfig.isFolded;
     this.isUnique = mechanicConfig.isUnique;
     this.choices = mechanicConfig.choices;
+    this.mechanicToAddOptional = mechanicConfig.mechanicToAddOptional;
     this.targetOptional = mechanicConfig.targetOptional;
     this.valueDependency = mechanicConfig.valueDependency;
     this.conditionConfigOptional = mechanicConfig.conditionConfigOptional;

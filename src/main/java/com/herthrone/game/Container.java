@@ -64,7 +64,10 @@ public class Container<T extends Card> {
   }
 
   public void add(final int index, final T card) {
-    container.add(index, card);
+    // index can be out of boundary, e.g., when you play a minion to index 1 but this minion also
+    // returns minion at index 0 to hand.
+
+    container.add(Math.min(index, size()), card);
   }
 
   public void shuffle() {
@@ -85,23 +88,8 @@ public class Container<T extends Card> {
     return container.remove(index);
   }
 
-  public Iterator<T> iterator() {
-    return container.iterator();
-  }
-
   public Stream<T> stream() {
     return container.stream();
-  }
-
-  public int count(final T card) {
-    int count = 0;
-    final String cardName = card.cardName();
-    for (T existingCard : container) {
-      if (existingCard.cardName().equals(cardName)) {
-        count += 1;
-      }
-    }
-    return count;
   }
 
   public List<T> asList() {
