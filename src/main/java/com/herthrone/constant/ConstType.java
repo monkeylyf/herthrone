@@ -18,6 +18,7 @@ public enum ConstType {
   BOARD,
   DECK,
   HAND,
+  HAS_MECHANIC,
   HERO,
   HERO_POWER,
   MINION,

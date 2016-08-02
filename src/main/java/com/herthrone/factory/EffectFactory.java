@@ -190,8 +190,8 @@ public class EffectFactory {
     final ConditionConfig conditionConfig = mechanicConfig.conditionConfigOptional.get();
     switch (conditionConfig.conditionType) {
       case ATTACK_VALUE:
-        return (creatureOptional.isPresent()) ?
-          conditionConfig.inRange(creatureOptional.get().attack().value()) : false;
+        return creatureOptional.isPresent() &&
+            conditionConfig.inRange(creatureOptional.get().attack().value());
       case BEAST_COUNT:
         final int beastCount = side.board.stream()
             .filter(m -> m.type().equals(ConstType.BEAST))
@@ -243,6 +243,9 @@ public class EffectFactory {
       final TargetConfig targetConfig = mechanic.targetOptional.get();
       final Creature realTarget = targetConfig.isRandom ?
           RandomMinionGenerator.randomCreature(targetConfig, target.binder().getSide()) : target;
+      //System.out.println(TargetFactory.getProperTargets(targetConfig, triggeringSide));
+
+      //System.out.println("shit " + realTarget);
       //RandomMinionGenerator.randomOne(
       //    TargetFactory.getProperTargetsBySide(targetConfig, target.binder().getSide())) :
       //    target;
@@ -274,8 +277,13 @@ public class EffectFactory {
         if (opponentSide.hand.isEmpty()) {
           return Collections.emptyList();
         } else {
-          final Card cardToCopy = RandomMinionGenerator.randomOne(opponentSide.hand.asList());
-          return Collections.singletonList(new CopyCardEffect(cardToCopy, side.hand));
+          Preconditions.checkArgument(config.targetOptional.isPresent());
+          final TargetConfig targetConfig = config.targetOptional.get();
+          Preconditions.checkArgument(targetConfig.randomTarget.isPresent());
+          final int n = targetConfig.randomTarget.getAsInt();
+          return RandomMinionGenerator.randomN(opponentSide.hand.asList(), n).stream()
+              .map(card -> new CopyCardEffect(card, side.hand))
+              .collect(Collectors.toList());
         }
       default:
         throw new IllegalArgumentException("unknown copy card type: " + config.type);
@@ -425,11 +433,10 @@ public class EffectFactory {
   }
 
   private static List<Effect> getDestroyEffect(final MechanicConfig config, final Side side) {
-    List<Effect> effects = TargetFactory.getDestroyables(config.targetOptional.get(), side)
+    return TargetFactory.getDestroyables(config.targetOptional.get(), side)
         .stream()
         .map(DestroyEffect::new)
         .collect(Collectors.toList());
-    return effects;
   }
 
   private static List<Effect> getReturnToHandEffect(final Minion target) {

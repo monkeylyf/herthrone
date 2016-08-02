@@ -279,13 +279,14 @@ public class SpellTest extends TestCase {
     final Minion yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     gm.activeSide.bind(yeti2);
     gm.playCard(yeti2);
+    final Minion yeti3 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
+    gm.activeSide.bind(yeti3);
+    gm.playCard(yeti3);
     gm.switchTurn();
 
-    //gm.playCard(multiShot);
-    //System.out.println(yeti1);
-    //System.out.println(yeti2);
-    //assertThat(yeti1.healthLoss()).isEqualTo(damage);
-    //assertThat(yeti2.healthLoss()).isEqualTo(damage);
+    gm.playCard(multiShot);
+    assertThat(gm.inactiveSide.board.stream().filter(m -> m.healthLoss() == damage).count())
+        .isEqualTo(2);
   }
 
   @Test
@@ -469,6 +470,7 @@ public class SpellTest extends TestCase {
     final Spell mindVision = createSpellAndBind(ConstSpell.MIND_VISION);
 
     gm.switchTurn();
+    gm.activeSide.hand.add(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
     gm.activeSide.hand.add(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
     gm.switchTurn();
 
@@ -677,5 +679,34 @@ public class SpellTest extends TestCase {
     // TODO: doesn't work with current effect/trigger factory.
     //assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
     //assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+  }
+
+  @Test
+  public void testExecute() {
+    final Spell execute = createSpellAndBind(ConstSpell.EXECUTE);
+    gm.playCard(execute, yeti);
+    assertThat(gm.activeSide.board.contains(yeti)).isTrue();
+
+    yeti.takeDamage(1);
+    gm.playCard(execute, yeti);
+    assertThat(gm.activeSide.board.contains(yeti)).isFalse();
+  }
+
+  @Test
+  public void testCleave() {
+    gm.switchTurn();
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    final Minion grizzly = createAndBindMinion(ConstMinion.IRONFUR_GRIZZLY);
+    final Minion dalaranMage = createAndBindMinion(ConstMinion.DALARAN_MAGE);
+    gm.playCard(ooze);
+    gm.playCard(grizzly);
+    gm.playCard(dalaranMage);
+    assertThat(gm.activeSide.board.size()).isEqualTo(3);
+    gm.switchTurn();
+
+    final Spell cleave = createSpellAndBind(ConstSpell.CLEAVE);
+    gm.playCard(cleave);
+    assertThat(gm.inactiveSide.board.stream().filter(minion -> minion.healthLoss() > 0).count())
+        .isEqualTo(2);
   }
 }

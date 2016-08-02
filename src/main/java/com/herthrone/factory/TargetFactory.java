@@ -118,8 +118,20 @@ public class TargetFactory {
       case HERO:
         return Collections.singletonList(side.hero);
       case MINION:
-        return side.board.stream().sorted(
-            EffectFactory.compareBySequenceId).collect(Collectors.toList());
+        final List<Creature> sortedMinions = side.board.stream()
+            .sorted(EffectFactory.compareBySequenceId)
+            .collect(Collectors.toList());
+        if (targetConfig.randomTarget.isPresent()) {
+          // If value is set in config, select randomly.
+          final int n = targetConfig.randomTarget.getAsInt();
+          if (n > side.board.size()) {
+            throw new NoTargetFoundException("Requires " + n + " but there is " + side.board);
+          }
+          logger.debug("Randomly select " + n + " minions on board");
+          return RandomMinionGenerator.randomN(sortedMinions, n);
+        } else {
+          return sortedMinions;
+        }
       case WEAPON:
         return Collections.singletonList(side.hero);
       case DECK:

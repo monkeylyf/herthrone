@@ -1172,3 +1172,29 @@
         scope: own
         type: all
         self_excluded: true
+
+- name: warsong_commander
+  class: warrior
+  attack: 2
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: has_mechanic
+        mechanic: charge
+
+- name: korkron_elite
+  class: warrior
+  display: Kor'kron Elite
+  attack: 4
+  health: 3
+  crystal: 3
+  mechancis:
+    - name: charge
+      effect: status

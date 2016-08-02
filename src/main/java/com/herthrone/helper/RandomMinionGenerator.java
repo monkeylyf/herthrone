@@ -6,6 +6,7 @@ import com.herthrone.configuration.TargetConfig;
 import com.herthrone.game.Side;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -49,6 +50,15 @@ public class RandomMinionGenerator {
     return elements.get(index);
   }
 
+  public static <T> List<T> randomN(final List<T> elements, final int n) {
+    if (elements.size() == n) {
+      return elements;
+    }
+    Preconditions.checkArgument(n < elements.size());
+    final List<T> copied = new ArrayList<T>(elements);
+    Collections.shuffle(copied);
+    return copied.subList(0, n);
+  }
 
   public static Creature randomCreature(final TargetConfig config, final Side side) {
     List<Creature> creatureCandidatePool = new ArrayList<>();

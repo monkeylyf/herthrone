@@ -7,6 +7,7 @@ import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.configuration.MinionConfig;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
@@ -244,14 +245,16 @@ public class MinionFactory {
         side.board.remove(this);
 
         // Remove aura effects if the dead one has it.
-        getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
+        getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE)
             .forEach(config -> {
+              Preconditions.checkArgument(config.targetOptional.isPresent());
+              final TargetConfig target = config.targetOptional.get();
               side.board.stream()
-                  .filter(minion -> {
-                    Preconditions.checkArgument(config.targetOptional.isPresent());
-                    final ConstType type = config.targetOptional.get().type;
-                    return type.equals(ConstType.MINION) || type.equals(minion.type());
-                  })
+                  .filter(minion ->
+                      target.type.equals(ConstType.MINION) ||
+                      (target.type.equals(ConstType.HAS_MECHANIC) &&
+                       minion.booleanMechanics().isOn(target.mechanic.get())) ||
+                      target.type.equals(minion.type()))
                   .forEach(minion -> EffectFactory.AuraEffectFactory.removeAuraEffect(
                       config, this, minion));
             });
@@ -289,8 +292,14 @@ public class MinionFactory {
             .filter(minion -> minion != this)
             .forEach(m ->
               m.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
-                  .filter(config -> config.targetOptional.get().type.equals(ConstType.MINION) ||
-                                    type().equals(config.targetOptional.get().type))
+                  .filter(config -> {
+                    Preconditions.checkArgument(config.targetOptional.isPresent());
+                    final TargetConfig target = config.targetOptional.get();
+                    return target.type.equals(ConstType.MINION) ||
+                           (target.type.equals(ConstType.HAS_MECHANIC) &&
+                            booleanMechanics().isOn(target.mechanic.get())) ||
+                           type().equals(target.type);
+                  })
                   .forEach(config -> EffectFactory.AuraEffectFactory.addAuraEffect(config, m, this)
                 )
             );

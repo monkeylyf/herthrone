@@ -814,4 +814,29 @@ public class MechanicTest extends TestCase {
     assertThat(dreadInfernal.healthLoss()).isEqualTo(0);
     assertThat(yeti.healthLoss()).isEqualTo(1);
   }
+
+  @Test
+  public void testWarsongCommander() {
+    final Minion commander = createAndBindMinion(ConstMinion.WARSONG_COMMANDER);
+    final Minion rider = createAndBindMinion(ConstMinion.WOLFRIDER);
+    assertThat(rider.booleanMechanics().isOff(ConstMechanic.CHARGE));
+
+    final int riderAttack = rider.attack().value();
+    final int yetiAttack = yeti.attack().value();
+    final int waterElementalAttack = waterElemental.attack().value();
+    final int scarletCrusaderAttack = scarletCrusader.attack().value();
+
+    gm.playCard(rider);
+    gm.playCard(commander);
+    // Test that warsong commander only effects minion with charge.
+    assertThat(yeti.attack().value()).isEqualTo(yetiAttack);
+    assertThat(waterElemental.attack().value()).isEqualTo(waterElementalAttack);
+    assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack);
+    assertThat(rider.attack().value()).isEqualTo(riderAttack + 1);
+
+    // Test that when commander is removed from the board, buff is gone as well.
+    commander.takeDamage(10);
+    assertThat(gm.activeSide.board.contains(commander)).isFalse();
+    assertThat(rider.attack().value()).isEqualTo(riderAttack);
+  }
 }

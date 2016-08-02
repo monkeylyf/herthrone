@@ -59,3 +59,10 @@
   durability: 4
   crystal: 5
   collectible: true
+
+- name: arcanite_reaper
+  class: warrior
+  attack: 5
+  durability: 2
+  crystal: 5
+  collectible: false

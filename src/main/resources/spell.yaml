@@ -202,21 +202,7 @@
       target:
         scope: opponent
         type: minion
-        random: true
-      condition:
-        type: board_size
-        range_start: 2
-        range_end: 999
-    - name: deal_damage
-      trigger: on_play
-      effect: attribute
-      type: health
-      value: 3
-      random: true
-      target:
-        scope: opponent
-        type: minion
-        random: true
+        random_target: 2
       condition:
         type: board_size
         range_start: 2
@@ -669,7 +655,7 @@
       target:
         scope: opponent
         type: hand
-        random: true
+        random_target: 1
 
 - name: assassinate
   class: rogue
@@ -1055,3 +1041,104 @@
       condition:
         type: hand_size
         start_range: 1
+
+- name: charge
+  class: warrior
+  crystal: 3
+  single_target:
+    scope: own
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      permanent: true
+    - name: charge
+      trigger: on_play
+      effect: add_mechanic
+      type: charge
+      value: 1
+
+- name: execute
+  class: warrior
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+      condition:
+        type: health_loss
+        range_start: 1
+
+- name: heroic_strike
+  class: warrior
+  crystal: 2
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 4
+      permanent: false
+      target:
+        scope: own
+        type: hero
+
+- name: cleave
+  class: warrior
+  crystal: 2
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: minion
+        random_target: 2
+      condition:
+        type: board_size
+        range_start: 2
+        range_end: 999
+
+- name: shield_block
+  class: warrior
+  crystal: 3
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: attribute
+      type: armor
+      value: 2
+      target:
+        scope: own
+        type: hero
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: whirlwind
+  class: warrior
+  crystal: 1
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: all
+        type: minion
