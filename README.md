@@ -9,39 +9,7 @@ TODO
 ----
 - Improve CLI and dummy view
 - Add serialize/deserialize for all models for deepcopy/communicate between frontend and backend
-
------------
-In Progress
------------
-Design and implement effect card mechanics
-
-- Battlecry
-- Card draw effect
-- Choose One
-- Combo
-- Copy effect
-- Deal damage
-- Deathrattle
-- Destroy effect
-- Discard effect
-- Enrage
-- Equip
-- Generate effect
-- Inspire
-- Joust
-- Mind control effect
-- Overload
-- Restore Health
-- Return effect
-- Secret
-- Shuffle into deck
-- Silence
-- Spell damage
-- Summon
-- Take control
-- Transform
-- Triggered effect
-
+- refactor trigger/effect/target factory
 
 
 ----
@@ -62,6 +30,15 @@ Which will be considered as two actions.
 06/01/2016 Everybody should has its own view for both CLI and UI(json). The proper board/game should be rendered with combinations of views.
 06/10/2016 Add logger object
 06/20/2016 Implement boolean type of card mechanics like: Charge/Divine shield/Elusive/Forgetful/Freeze/Frozen/Immune/Poison/Taunt/Windfury
+06/30/2016 Implement most of the mechanics except
+- Choose One
+- Discard effect
+- Enrage
+- Joust
+- Secret
+- Shuffle into deck
+- Silence
+08/02/2016 implemented most of the basic cards in 8 classes.
 
 
 ---------------
