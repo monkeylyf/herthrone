@@ -3,7 +3,6 @@
   attack: 4
   health: 5
   crystal: 4
-  collectible: true
 
 - name: senjin_shieldmasta
   display: Sen'jin Shieldmasta
@@ -11,7 +10,6 @@
   attack: 3
   health: 5
   crystal: 4
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -72,7 +70,6 @@
   attack: 3
   health: 1
   crystal: 3
-  collectible: true
   mechanics:
     - name: charge
       effect: status
@@ -82,7 +79,6 @@
   attack: 2
   health: 4
   crystal: 4
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -98,7 +94,6 @@
   attack: 2
   health: 1
   crystal: 2
-  collectible: true
   mechanics:
     - name: deathrattle
       trigger: on_death
@@ -115,7 +110,6 @@
   attack: 3
   health: 2
   crystal: 2
-  collectible: true
   mechanics:
     - name: elusive
       effect: status
@@ -126,7 +120,6 @@
   attack: 3
   health: 3
   crystal: 3
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -136,7 +129,6 @@
   attack: 3
   health: 6
   crystal: 4
-  collectible: true
   mechanics:
     - name: freeze
       effect: status
@@ -146,7 +138,6 @@
   attack: 3
   health: 1
   crystal: 3
-  collectible: true
   mechanics:
     - name: divine_shield
       effect: status
@@ -156,7 +147,6 @@
   attack: 2
   health: 1
   crystal: 1
-  collectible: true
   mechanics:
     - name: stealth
       effect: status
@@ -166,7 +156,6 @@
   attack: 2
   health: 3
   crystal: 3
-  collectible: true
   mechanics:
     - name: poison
       effect: status
@@ -176,7 +165,6 @@
   attack: 4
   health: 4
   crystal: 3
-  collectible: true
   mechanics:
     - name: forgetful
       effect: status
@@ -186,7 +174,6 @@
   attack: 4
   health: 6
   crystal: 6
-  collectible: true
   mechanics:
     - name: windfury
       effect: status
@@ -196,7 +183,6 @@
   attack: 4
   health: 2
   crystal: 3
-  collectible: true
   mechanics:
     - name: stealth
       effect: status
@@ -206,7 +192,6 @@
   attack: 2
   health: 2
   crystal: 2
-  collectible: true
   mechanics:
     - name: combo
       trigger: on_play
@@ -234,7 +219,6 @@
   attack: 2
   health: 2
   crystal: 2
-  collectible: true
   mechanics:
     - name: summoning
       trigger: on_summon
@@ -251,7 +235,6 @@
   attack: 3
   health: 3
   crystal: 3
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -273,7 +256,6 @@
   attack: 5
   health: 4
   crystal: 5
-  collectible: true
   mechanics:
     - name: inspire
       trigger: on_use_hero_power
@@ -290,7 +272,6 @@
   attack: 4
   health: 4
   crystal: 5
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -314,7 +295,6 @@
   attack: 3
   health: 2
   crystal: 2
-  collectible: true
   single_target:
     scope: own
     type: minion
@@ -331,7 +311,6 @@
   attack: 6
   health: 6
   crystal: 7
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_presence
@@ -356,21 +335,18 @@
   attack: 3
   health: 2
   crystal: 2
-  collectible: true
 
 - name: boulderfist_ogre
   class: neutral
   attack: 6
   health: 7
   crystal: 6
-  collectible: true
 
 - name: magma_rager
   class: neutral
   attack: 5
   health: 1
   crystal: 3
-  collectible: true
 
 - name: murloc_raider
   class: neutral
@@ -378,14 +354,12 @@
   attack: 2
   health: 1
   crystal: 1
-  collectible: true
 
 - name: nightblade
   class: neutral
   attack: 4
   health: 4
   crystal: 5
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -401,7 +375,6 @@
   attack: 1
   health: 1
   crystal: 2
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -418,14 +391,12 @@
   attack: 2
   health: 7
   crystal: 4
-  collectible: true
 
 - name: raid_leader
   class: neutral
   attack: 2
   health: 2
   crystal: 3
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_presence
@@ -441,7 +412,6 @@
   attack: 5
   health: 2
   crystal: 6
-  collectible: true
   mechanics:
     - name: charge
       effect: status
@@ -451,7 +421,6 @@
   attack: 2
   health: 3
   crystal: 2
-  collectible: true
 
 - name: stonetusk_boar
   class: neutral
@@ -459,7 +428,6 @@
   attack: 1
   health: 1
   crystal: 1
-  collectible: true
   mechanics:
     - name: charge
       effect: status
@@ -469,7 +437,6 @@
   attack: 2
   health: 1
   crystal: 1
-  collectible: true
   mechanics:
     - name: restore_health
       trigger: on_play
@@ -485,7 +452,6 @@
   attack: 3
   health: 2
   crystal: 2
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -503,7 +469,6 @@
   attack: 4
   health: 7
   crystal: 6
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_spell_damage
@@ -520,7 +485,6 @@
   attack: 2
   health: 1
   crystal: 2
-  collectible: true
   mechanics:
     - name: charge
       effect: status
@@ -530,7 +494,6 @@
   attack: 5
   health: 4
   crystal: 5
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -541,14 +504,12 @@
   attack: 9
   health: 5
   crystal: 7
-  collectible: true
 
 - name: dalaran_mage
   class: neutral
   attack: 1
   health: 4
   crystal: 3
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_spell_damage
@@ -564,7 +525,6 @@
   attack: 4
   health: 5
   crystal: 5
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -580,7 +540,6 @@
   attack: 2
   health: 4
   crystal: 4
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -606,7 +565,6 @@
   attack: 1
   health: 1
   crystal: 1
-  collectible: true
   single_target:
     scope: opponent
     type: all
@@ -623,7 +581,6 @@
   attack: 2
   health: 2
   crystal: 2
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -633,7 +590,6 @@
   attack: 4
   health: 4
   crystal: 5
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -659,7 +615,6 @@
   attack: 1
   health: 2
   crystal: 1
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -670,7 +625,6 @@
   health: 1
   crystal: 1
   type: murloc
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_presence
@@ -686,7 +640,6 @@
   attack: 2
   health: 7
   crystal: 5
-  collectible: true
   mechanics:
     - name: take_damage
       trigger: on_take_damage
@@ -702,7 +655,6 @@
   attack: 2
   health: 2
   crystal: 3
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -719,7 +671,6 @@
   attack: 2
   health: 2
   crystal: 2
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_spell_damage
@@ -735,7 +686,6 @@
   attack: 6
   health: 5
   crystal: 6
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -771,7 +721,6 @@
   attack: 4
   health: 4
   crystal: 4
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_spell_damage
@@ -787,7 +736,6 @@
   attack: 2
   health: 3
   crystal: 3
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -813,7 +761,6 @@
   attack: 3
   health: 2
   crystal: 3
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -840,7 +787,6 @@
   health: 4
   crystal: 3
   type: beast
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -850,7 +796,6 @@
   attack: 4
   health: 2
   crystal: 5
-  collectible: true
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -867,7 +812,6 @@
   attack: 2
   health: 5
   crystal: 4
-  collectible: true
   mechanics:
     - name: charge
       effect: status
@@ -877,14 +821,12 @@
   attack: 7
   health: 7
   crystal: 7
-  collectible: true
 
 - name: ironbark_protector
   class: druid
   attack: 8
   health: 8
   crystal: 8
-  collectible: true
   mechanics:
     - name: taunt
       effect: status
@@ -894,7 +836,6 @@
   attack: 4
   health: 3
   crystal: 4
-  collectible: true
   single_target:
     scope: own
     type: beast
@@ -924,7 +865,6 @@
   attack: 1
   health: 1
   crystal: 1
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_presence
@@ -980,7 +920,6 @@
   attack: 3
   health: 2
   crystal: 5
-  collectible: true
   mechanics:
     - name: summoning
       trigger: on_summon
@@ -1002,7 +941,6 @@
   attack: 2
   health: 5
   crystal: 5
-  collectible: true
   mechanics:
     - name: aura
       trigger: on_presence

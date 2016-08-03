@@ -1,7 +1,6 @@
 - name: fire_ball
   class: mage
   crystal: 4
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -15,7 +14,6 @@
 - name: claw
   class: druid
   crystal: 1
-  collectible: true
   mechanics:
     - name: gain
       trigger: on_play
@@ -38,7 +36,6 @@
 - name: healing_touch
   class: druid
   crystal: 3
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -52,7 +49,6 @@
 - name: innervate
   class: druid
   crystal: 0
-  collectible: true
   mechanics:
     - name: mana
       trigger: on_play
@@ -66,7 +62,6 @@
 - name: mark_of_the_wild
   class: druid
   crystal: 2
-  collectible: true
   single_target:
     scope: all
     type: minion
@@ -90,7 +85,6 @@
 - name: wild_growth
   class: druid
   crystal: 2
-  collectible: true
   mechanics:
     - name: mana
       trigger: on_play
@@ -104,7 +98,6 @@
 - name: moonfire
   class: druid
   crystal: 0
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -118,7 +111,6 @@
 - name: savage_roar
   class: druid
   crystal: 3
-  collectible: true
   mechanics:
     - name: gain
       trigger: on_play
@@ -133,7 +125,6 @@
 - name: starfire
   class: druid
   crystal: 6
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -155,7 +146,6 @@
 - name: swipe
   class: druid
   crystal: 4
-  collectible: true
   single_target:
     scope: opponent
     type: all
@@ -177,7 +167,6 @@
 - name: arcane_shot
   class: hunter
   crystal: 1
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -192,7 +181,6 @@
   display_name: Multi-Shot
   class: hunter
   crystal: 4
-  collectible: true
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -211,7 +199,6 @@
 - name: tracking
   class: hunter
   crystal: 1
-  collectible: true
   mechanics:
     - name: discard
       trigger: on_play
@@ -225,7 +212,6 @@
 - name: animal_companion
   class: hunter
   crystal: 3
-  collectible: true
   mechanics:
     - name: summon
       trigger: on_play
@@ -244,7 +230,6 @@
   display: Hunter's Mark
   class: hunter
   crystal: 1
-  collectible: true
   single_target:
     scope: all
     type: minion
@@ -258,7 +243,6 @@
 - name: kill_command
   class: hunter
   crystal: 3
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -292,7 +276,6 @@
 - name: arcane_explosion
   class: mage
   crystal: 2
-  collectible: true
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -306,7 +289,6 @@
 - name: arcane_intellect
   class: mage
   crystal: 3
-  collectible: true
   mechanics:
     - name: card_draw
       trigger: on_play
@@ -320,7 +302,6 @@
 - name: polymorph
   class: mage
   crystal: 4
-  collectible: true
   single_target:
     scope: opponent
     type: minion
@@ -336,7 +317,6 @@
 - name: flamestrike
   class: mage
   crystal: 7
-  collectible: true
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -350,7 +330,6 @@
 - name: frost_nova
   class: mage
   crystal: 3
-  collectible: true
   mechanics:
     - name: frozen
       trigger: on_play
@@ -364,7 +343,6 @@
 - name: frostbolt
   class: mage
   crystal: 2
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -383,7 +361,6 @@
 - name: mirror_image
   class: mage
   crystal: 1
-  collectible: true
   mechanics:
     - name: summon
       trigger: on_play
@@ -399,7 +376,6 @@
 - name: blessing_of_might
   class: paladin
   crystal: 1
-  collectible: true
   single_target:
     scope: all
     type: minion
@@ -414,7 +390,6 @@
 - name: hammer_of_wrath
   class: paladin
   crystal: 4
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -436,7 +411,6 @@
 - name: hand_of_protection
   class: paladin
   crystal: 1
-  collectible: true
   single_target:
     scope: all
     type: minion
@@ -450,7 +424,6 @@
 - name: holy_light
   class: paladin
   crystal: 2
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -464,7 +437,6 @@
 - name: blessing_of_kings
   class: paladin
   crystal: 4
-  collectible: true
   single_target:
     scope: all
     type: minion
@@ -484,7 +456,6 @@
 - name: consecration
   class: paladin
   crystal: 4
-  collectible: true
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -498,7 +469,6 @@
 - name: humility
   class: paladin
   crystal: 1
-  collectible: true
   mechanics:
     - name: set_attribute
       trigger: on_play
@@ -509,7 +479,6 @@
 - name: holy_smite
   class: priest
   crystal: 1
-  collectible: true
   single_target:
     scope: all
     type: all
@@ -523,7 +492,6 @@
 - name: mind_blast
   class: priest
   crystal: 2
-  collectible: true
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -539,7 +507,6 @@
     Power Word: Shield  # pipe sign used to escape colon
   class: priest
   crystal: 1
-  collectible: true
   single_target:
     scope: all
     type: minion

@@ -9,9 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/12/16.
- */
 public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
 
   private static final String ATTACK = "attack";

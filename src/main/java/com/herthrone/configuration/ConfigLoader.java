@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-/**
- * Created by yifeng on 4/9/16.
- */
 public class ConfigLoader {
 
   private static final String pathTemplate = "src/main/resources/%s.yaml";
@@ -67,12 +64,6 @@ public class ConfigLoader {
     @SuppressWarnings("unchecked") final T value =  (map.containsKey(key)) ?
         (T) map.get(key) : defaultValue;
     return value;
-  }
-
-  static String lowerUnderscoreToUpperWhitespace(final Enum name) {
-    return CaseFormat.UPPER_CAMEL
-        .to(CaseFormat.UPPER_UNDERSCORE, name.toString())
-        .replaceAll(" ", "_");
   }
 
   static String getUpperCaseStringValue(final Map map, final String key) {
@@ -194,9 +185,15 @@ public class ConfigLoader {
       this.className = ConstClass.valueOf(getUpperCaseStringValue(map, CLASS));
       this.description = (String) map.get(DESCRIPTION);
       this.crystal = getByDefault(map, CRYSTAL, 0);
-      this.isCollectible = getByDefault(map, COLLECTIBLE, false);
+      this.isCollectible = getByDefault(map, COLLECTIBLE, true);
     }
 
     protected abstract E loadName(final String name);
+
+    private String lowerUnderscoreToUpperWhitespace(final Enum name) {
+      return CaseFormat.UPPER_CAMEL
+          .to(CaseFormat.UPPER_UNDERSCORE, name.toString())
+          .replaceAll(" ", "_");
+    }
   }
 }

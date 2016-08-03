@@ -9,9 +9,6 @@ import com.herthrone.object.TriggeringMechanics;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yifengliu on 7/29/16.
- */
 public class AddTriggeringMechanicEffect implements Effect {
 
   private final TriggeringMechanics triggeringMechanics;
@@ -36,7 +33,7 @@ public class AddTriggeringMechanicEffect implements Effect {
       if (triggeringMechanics.has(trigger)) {
         triggeringMechanics.get(trigger).addAll(mechanicConfigs);
       } else {
-        mechanicConfigs.stream().forEach(config -> triggeringMechanics.update(trigger, config));
+        mechanicConfigs.forEach(config -> triggeringMechanics.update(trigger, config));
       }
     }
   }

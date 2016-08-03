@@ -7,9 +7,6 @@ import com.herthrone.constant.ConstType;
 import java.util.Map;
 
 
-/**
- * Created by yifeng on 4/12/16.
- */
 public class HeroConfig extends ConfigLoader.AbstractConfig<ConstHero> {
 
   private static final String HERO_POWER = "hero_power";

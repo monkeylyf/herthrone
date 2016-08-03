@@ -12,9 +12,6 @@ import com.herthrone.helper.RandomMinionGenerator;
 
 import java.util.List;
 
-/**
- * Created by yifengliu on 6/30/16.
- */
 public class GenerateEffect implements Effect {
 
   private final List<String> cardNames;
@@ -39,7 +36,7 @@ public class GenerateEffect implements Effect {
   public void act() {
     final List<Side> sideToTakeEffect = TargetFactory.getSide(target, side);
 
-    sideToTakeEffect.stream().forEach(side -> {
+    sideToTakeEffect.forEach(side -> {
       final String randomCardName = RandomMinionGenerator.randomOne(cardNames);
       final Card card = GameManager.createCardInstance(randomCardName, cardType);
       side.bind(card);

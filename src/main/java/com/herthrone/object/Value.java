@@ -2,18 +2,15 @@ package com.herthrone.object;
 
 import com.herthrone.base.Resettable;
 
-/**
- * Created by yifengliu on 5/5/16.
- */
 public class Value implements Resettable {
 
   private int value;
 
-  public Value() {
+  Value() {
     this(0);
   }
 
-  public Value(final int value) {
+  Value(final int value) {
     this.value = value;
   }
 

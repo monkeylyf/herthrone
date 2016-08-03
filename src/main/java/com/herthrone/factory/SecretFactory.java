@@ -12,9 +12,6 @@ import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/16/16.
- */
 public class SecretFactory {
 
   public static Secret create(final ConstSecret secret) {

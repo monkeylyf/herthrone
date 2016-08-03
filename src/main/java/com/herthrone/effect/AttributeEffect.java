@@ -4,9 +4,6 @@ import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.object.ValueAttribute;
 
-/**
- * Created by yifeng on 4/14/16.
- */
 public class AttributeEffect implements Effect {
 
   private final ValueAttribute attr;

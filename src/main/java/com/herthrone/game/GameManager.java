@@ -122,7 +122,7 @@ public class GameManager implements Round {
     }
   }
 
-  boolean isGameFinished() {
+  private boolean isGameFinished() {
     return activeSide.hero.isDead() || inactiveSide.hero.isDead();
   }
 
@@ -136,7 +136,7 @@ public class GameManager implements Round {
     increaseCrystalUpperBound();
     activeSide.startTurn();
     drawCard();
-    activeSide.board.stream().forEach(minion -> minion.endTurn());
+    activeSide.board.stream().forEach(Minion::endTurn);
     activeSide.hero.endTurn();
   }
 
@@ -205,7 +205,7 @@ public class GameManager implements Round {
       // Cost one move point.
       attacker.attackMovePoints().getTemporaryBuff().increase(-1);
     } else {
-      throw new RuntimeException("Unknown option: " + leafNode.option.toString());
+      throw new RuntimeException("Unknown option: " + leafNode.option);
     }
   }
 

@@ -12,12 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-/**
- * Created by yifengliu on 6/5/16.
- */
 public class EffectQueue {
 
-  static Logger logger = Logger.getLogger(EffectQueue.class.getName());
+  private static Logger logger = Logger.getLogger(EffectQueue.class.getName());
 
   private final Queue<Effect> queue;
 
@@ -39,7 +36,7 @@ public class EffectQueue {
   public void enqueue(final List<Effect> effects) {
     if (effects.size() > 0) {
       logger.debug(String.format("Enqueuing %d effects", effects.size()));
-      effects.stream().forEach(effect -> {
+      effects.forEach(effect -> {
         logger.debug("Enqueuing effect: " + effect.effectType());
         queue.add(effect);
       });

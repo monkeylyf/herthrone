@@ -6,9 +6,6 @@ import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Side;
 
 
-/**
- * Created by yifeng on 4/13/16.
- */
 public class SummonEffect implements Effect {
 
   private final Side side;

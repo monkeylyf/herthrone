@@ -4,9 +4,6 @@ import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Round;
 
-/**
- * Created by yifeng on 4/27/16.
- */
 public class ManaCrystal implements Round {
 
   private static final int MAX_CRYSTALS = 10;

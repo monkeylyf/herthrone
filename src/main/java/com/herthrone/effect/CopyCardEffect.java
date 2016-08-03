@@ -6,9 +6,6 @@ import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Container;
 import com.herthrone.game.GameManager;
 
-/**
- * Created by yifeng on 4/16/16.
- */
 public class CopyCardEffect implements Effect {
 
   private final Container<Card> container;

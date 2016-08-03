@@ -5,9 +5,6 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.constant.ConstSpell;
 
-/**
- * Created by yifengliu on 6/30/16.
- */
 public class HeroPowerFactory {
 
   public static Spell create(final ConstSpell heroPower) {

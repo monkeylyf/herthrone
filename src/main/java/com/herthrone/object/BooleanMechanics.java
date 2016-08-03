@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yifengliu on 6/13/16.
- */
 public class BooleanMechanics {
 
   private static final Logger logger = Logger.getLogger(BooleanMechanics.class.getName());
@@ -28,7 +25,7 @@ public class BooleanMechanics {
 
     if (mechanics.containsKey(ConstTrigger.NO_TRIGGER)) {
       final List<MechanicConfig> noTriggerMechanics = mechanics.get(ConstTrigger.NO_TRIGGER);
-      noTriggerMechanics.stream().forEach(mechanic -> booleanAttributeMap.put(
+      noTriggerMechanics.forEach(mechanic -> booleanAttributeMap.put(
           mechanic.mechanic, new BooleanAttribute()));
     }
   }
@@ -45,8 +42,7 @@ public class BooleanMechanics {
   }
 
   public boolean isOn(final ConstMechanic mechanic) {
-    return booleanAttributeMap.containsKey(mechanic) ?
-        booleanAttributeMap.get(mechanic).isOn() : false;
+    return booleanAttributeMap.containsKey(mechanic) && booleanAttributeMap.get(mechanic).isOn();
   }
 
   public void initialize(final ConstMechanic mechanic) {

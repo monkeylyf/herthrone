@@ -16,9 +16,6 @@ import java.util.Map;
 import static com.herthrone.configuration.ConfigLoader.addIfConditionIsTrue;
 import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
 
-/**
- * Created by yifeng on 4/18/16.
- */
 public class MechanicConfig {
 
   private static final String NAME = "name";
@@ -97,7 +94,7 @@ public class MechanicConfig {
     return new MechanicConfig(mechanicConfigToClone);
   }
 
-  public static Map<ConstTrigger, List<MechanicConfig>> getTriggerToMechanicMap(final Object configList) {
+  static Map<ConstTrigger, List<MechanicConfig>> getTriggerToMechanicMap(final Object configList) {
     final Map<ConstTrigger, List<MechanicConfig>> configs = new HashMap<>();
     if (configList != null) {
       @SuppressWarnings("unchecked") final List<Map> configMaps = (List<Map>) configList;

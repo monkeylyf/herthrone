@@ -9,9 +9,6 @@ import java.util.Map;
 
 import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
 
-/**
- * Created by yifeng on 4/12/16.
- */
 public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
 
   private static final String ATTACK = "attack";

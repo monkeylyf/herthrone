@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Created by yifeng on 4/12/16.
- */
 public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
 
   private static final String MECHANICS = "mechanics";

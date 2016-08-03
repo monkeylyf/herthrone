@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Created by yifengliu on 5/15/16.
- */
 public class CommandLine {
 
   private static boolean stdoutOn = true;
@@ -86,19 +83,20 @@ public class CommandLine {
     return root;
   }
 
-  private static void scanTargets(final CommandNode root, final Optional<TargetConfig> heroConfig, final Battlefield battlefield) {
+  private static void scanTargets(final CommandNode root, final Optional<TargetConfig> heroConfig,
+                                  final Battlefield battlefield) {
     if (heroConfig.isPresent()) {
       TargetConfig config = heroConfig.get();
       switch (config.scope) {
         case OWN:
-          scanTargets(config, battlefield.mySide, ConstTarget.OWN).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.mySide, ConstTarget.OWN).forEach(root::addChildNode);
           break;
         case OPPONENT:
-          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).forEach (root::addChildNode);
           break;
         case ALL:
-          scanTargets(config, battlefield.mySide, ConstTarget.OWN).stream().forEach(node -> root.addChildNode(node));
-          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).stream().forEach(node -> root.addChildNode(node));
+          scanTargets(config, battlefield.mySide, ConstTarget.OWN).forEach(root::addChildNode);
+          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).forEach(root::addChildNode);
           break;
         default:
           throw new RuntimeException("Unknown scope: " + config.scope.toString());

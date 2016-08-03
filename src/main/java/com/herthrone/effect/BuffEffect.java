@@ -5,9 +5,6 @@ import com.herthrone.constant.ConstEffectType;
 import com.herthrone.object.Value;
 import com.herthrone.object.ValueAttribute;
 
-/**
- * Created by yifeng on 4/28/16.
- */
 public class BuffEffect implements Effect {
 
   private final ValueAttribute attr;

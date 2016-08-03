@@ -8,9 +8,6 @@ import com.herthrone.constant.Constant;
 
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/2/16.
- */
 public class Battlefield implements View {
 
   public final Side mySide;

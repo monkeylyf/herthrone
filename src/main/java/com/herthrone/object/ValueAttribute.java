@@ -7,9 +7,6 @@ import com.herthrone.base.Round;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/5/16.
- */
 public class ValueAttribute implements Resettable, Round {
 
   private final Buff buff;

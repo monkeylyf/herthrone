@@ -4,9 +4,6 @@ import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstEffectType;
 
-/**
- * Created by yifengliu on 7/9/16.
- */
 public class MaxHealthBuffEffect implements Effect {
 
   private final Minion minion;

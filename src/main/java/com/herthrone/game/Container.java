@@ -11,12 +11,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-/**
- * Created by yifeng on 4/9/16.
- */
 public class Container<T extends Card> {
 
-  static Logger logger = Logger.getLogger(Container.class.getName());
+  private static Logger logger = Logger.getLogger(Container.class.getName());
 
   private final int maxCapacity;
   private final List<T> container;

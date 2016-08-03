@@ -8,9 +8,6 @@ import com.herthrone.constant.ConstAction;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by yifengliu on 6/25/16.
- */
 public class Replay implements Round {
 
   private final List<List<ReplayRecord>> records;

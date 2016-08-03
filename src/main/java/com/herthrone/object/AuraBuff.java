@@ -7,9 +7,6 @@ import com.herthrone.base.Resettable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by yifengliu on 7/7/16.
- */
 public class AuraBuff implements Resettable {
 
   private Map<Minion, Integer> minionToBuffMapping;

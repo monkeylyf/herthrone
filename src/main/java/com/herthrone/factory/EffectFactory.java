@@ -589,6 +589,7 @@ public class EffectFactory {
   public static void pipeEffects(final Spell spell, final Creature target) {
     pipeEffects(spell, target, target.binder().getSide());
   }
+
   public static void pipeEffects(final Spell spell, final Creature target,
                                  final Side triggeringSide) {
     final List<Effect> effects = spell.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()

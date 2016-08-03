@@ -5,9 +5,6 @@ import com.herthrone.base.Creature;
 import com.herthrone.base.Effect;
 import com.herthrone.constant.ConstEffectType;
 
-/**
- * Created by yifengliu on 7/25/16.
- */
 public class HealEffect implements Effect {
 
   private final Creature healTarget;

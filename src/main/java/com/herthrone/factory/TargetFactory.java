@@ -219,7 +219,7 @@ public class TargetFactory {
     }
     side.board.stream()
         .filter(m -> m != target)
-        .forEach(m -> targets.add(m));
+        .forEach(targets::add);
     return targets;
   }
 }

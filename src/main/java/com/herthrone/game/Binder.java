@@ -3,9 +3,6 @@ package com.herthrone.game;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-/**
- * Created by yifengliu on 6/22/16.
- */
 public class Binder {
 
   private Optional<Side> sideOptional;

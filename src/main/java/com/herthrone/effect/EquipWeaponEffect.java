@@ -5,9 +5,6 @@ import com.herthrone.base.Hero;
 import com.herthrone.base.Weapon;
 import com.herthrone.constant.ConstEffectType;
 
-/**
- * Created by yifeng on 4/14/16.
- */
 public class EquipWeaponEffect implements Effect {
 
   private final Hero hero;

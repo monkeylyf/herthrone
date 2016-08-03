@@ -12,9 +12,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Created by yifengliu on 6/20/16.
- */
 public class RandomMinionGenerator {
 
   private static Random random = new Random();
@@ -37,9 +34,9 @@ public class RandomMinionGenerator {
 
   public static String randomUnique(final List<String> pool, final List<Creature> exceptionCreatures) {
     final Set<String> exceptionCreatureNames = exceptionCreatures.stream()
-        .map(creature -> creature.cardName())
+        .map(Creature::cardName)
         .collect(Collectors.toSet());
-    List<String> candidates = pool.stream()
+    final List<String> candidates = pool.stream()
         .filter(c -> !exceptionCreatureNames.contains(c))
         .collect(Collectors.toList());
     return randomOne(candidates);

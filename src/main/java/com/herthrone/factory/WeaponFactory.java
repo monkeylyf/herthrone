@@ -19,9 +19,6 @@ import com.herthrone.object.ValueAttribute;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yifeng on 4/8/16.
- */
 public class WeaponFactory {
 
   public static Weapon create(final ConstWeapon weapon) {

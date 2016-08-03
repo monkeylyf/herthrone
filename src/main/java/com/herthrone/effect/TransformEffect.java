@@ -5,14 +5,11 @@ import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.game.Container;
+import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 
 import java.util.List;
 
-/**
- * Created by yifengliu on 7/24/16.
- */
 public class TransformEffect implements Effect {
 
   private final Minion target;
@@ -30,12 +27,14 @@ public class TransformEffect implements Effect {
 
   @Override
   public void act() {
-    final Container<Minion> board = target.binder().getSide().board;
-    final int position = board.indexOf(target);
+    final Side side = target.binder().getSide();
+    final int position = side.board.indexOf(target);
+    side.board.remove(position);
+
     final String minion = RandomMinionGenerator.randomOne(choices);
     final ConstMinion minionType = ConstMinion.valueOf(minion.toUpperCase());
     final Minion transformedMinion = MinionFactory.create(minionType);
-    board.remove(position);
-    board.add(position, transformedMinion);
+    side.setSequenceId(transformedMinion);
+    side.board.add(position, transformedMinion);
   }
 }

@@ -1,9 +1,6 @@
 package com.herthrone.constant;
 
 
-/**
- * Created by yifengliu on 5/13/16.
- */
 public class Constant {
   // TODO: There are used in switch/case so cannot be enum type.
   // However, due to the silly modeling on the effect config yaml, cannot

@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Created by yifeng on 4/14/16.
- */
 public class SpellFactory {
 
   private static final Logger logger = Logger.getLogger(SpellFactory.class.getName());
@@ -110,14 +107,14 @@ public class SpellFactory {
         auraBuff.reset();
         side.board.stream()
             .forEach(minion ->
-              minion.getTriggeringMechanics().get(ConstTrigger.ON_SPELL_DAMAGE).stream()
+              minion.getTriggeringMechanics().get(ConstTrigger.ON_SPELL_DAMAGE)
                   .forEach(config -> auraBuff.add(minion, config.value)
             ));
         final int spellDamageBuffDelta = auraBuff.accumulatedBuffValue - accumulatedSpellDamage;
 
         if (spellDamageBuffDelta != 0) {
           logger.debug("Updating spell damage buff: " + spellDamageBuffDelta);
-          getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()
+          getTriggeringMechanics().get(ConstTrigger.ON_PLAY)
               .forEach(effect -> effect.value += spellDamageBuffDelta);
         }
       }

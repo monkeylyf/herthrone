@@ -5,9 +5,6 @@ import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.game.Side;
 
-/**
- * Created by yifengliu on 6/29/16.
- */
 public class TakeControlEffect implements Effect {
 
   private final Minion minion;

@@ -6,9 +6,6 @@ import com.herthrone.constant.ConstEffectType;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Side;
 
-/**
- * Created by yifengliu on 7/1/16.
- */
 public class ReturnToHandEffect implements Effect {
 
   private final Minion minion;

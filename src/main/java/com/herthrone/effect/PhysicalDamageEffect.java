@@ -5,9 +5,6 @@ import com.herthrone.base.Effect;
 import com.herthrone.base.Minion;
 import com.herthrone.constant.ConstEffectType;
 
-/**
- * Created by yifeng on 4/4/16.
- */
 public class PhysicalDamageEffect implements Effect {
 
   private final Creature attacker;
