@@ -1,7 +1,5 @@
 package com.herthrone.game;
 
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -17,7 +15,6 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
-import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -42,9 +39,9 @@ public class GameManager implements Round {
   public Battlefield activeBattlefield;
   public Side activeSide;
   public Side inactiveSide;
-  private int seqId = 0;
 
-  public GameManager(final ConstHero hero1, final ConstHero hero2, final List<Enum> cardNames1, final List<Enum> cardNames2) {
+  public GameManager(final ConstHero hero1, final ConstHero hero2,
+                     final List<Enum> cardNames1, final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.battlefield1 = new Battlefield(HeroFactory.create(hero1), HeroFactory.create(hero2));
     this.battlefield2 = battlefield1.getMirrorBattlefield();
@@ -69,32 +66,6 @@ public class GameManager implements Round {
       default:
         throw new RuntimeException(String.format("Unknown card %s", cardName));
     }
-  }
-
-  public static Card createCardInstance(final Enum cardName) {
-    final String name = cardName.toString();
-
-    Optional<ConstMinion> constMinion = Enums.getIfPresent(ConstMinion.class, name);
-    if (constMinion.isPresent()) {
-      return MinionFactory.create(constMinion.get());
-    }
-
-    Optional<ConstWeapon> constWeapon = Enums.getIfPresent(ConstWeapon.class, name);
-    if (constWeapon.isPresent()) {
-      return WeaponFactory.create(constWeapon.get());
-    }
-
-    Optional<ConstSpell> constSpell = Enums.getIfPresent(ConstSpell.class, name);
-    if (constSpell.isPresent()) {
-      return SpellFactory.create(constSpell.get());
-    }
-
-    Optional<ConstSecret> constSecret = Enums.getIfPresent(ConstSecret.class, name);
-    if (constSecret.isPresent()) {
-      return SecretFactory.create(constSecret.get());
-    }
-
-    throw new RuntimeException(String.format("Unknown card %s", name));
   }
 
   public static void main(String[] args) {
@@ -244,7 +215,7 @@ public class GameManager implements Round {
     } else if (card instanceof Weapon) {
       activeSide.hero.equip((Weapon) card);
     } else if (card instanceof Spell) {
-      TriggerFactory.passiveTrigger((Spell) card, ConstTrigger.ON_PLAY);
+      TriggerFactory.activeTrigger((Spell) card);
     } else {
 
     }
@@ -258,7 +229,7 @@ public class GameManager implements Round {
       activeSide.setSequenceId(minion);
       minion.playOnBoard(activeSide.board, target);
     } else if (card instanceof Spell) {
-      TriggerFactory.activeTrigger((Spell) card, ConstTrigger.ON_PLAY, target, activeSide);
+      TriggerFactory.activeTrigger((Spell) card, target);
     }
   }
 

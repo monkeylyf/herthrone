@@ -47,7 +47,7 @@ public class EffectQueue {
   private void triggerOnHealMinion(final Effect effect) {
     if (effect instanceof HealEffect && ((HealEffect) effect).getTarget() instanceof Minion) {
       final Side side = ((HealEffect) effect).getTarget().binder().getSide();
-      TriggerFactory.triggerByBoard(side, side.getOpponentSide(), ConstTrigger.ON_HEAL_MINION);
+      TriggerFactory.triggerByBoard(side, ConstTrigger.ON_HEAL_MINION);
     }
   }
 

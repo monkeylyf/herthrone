@@ -85,7 +85,7 @@ public class MinionFactory {
 
       @Override
       public void destroy() {
-        // Immediate death that will not trigger take damage effects.
+        // Immediate death does not trigger take damage effects.
         final int health = healthAttr.value();
         healthAttr.decrease(health);
         death();
@@ -94,14 +94,14 @@ public class MinionFactory {
       @Override
       public void playOnBoard(final Container<Minion> board) {
         final int indexToAdd = board.size();
-        TriggerFactory.passiveTrigger(this, ConstTrigger.ON_PLAY);
+        TriggerFactory.activeTrigger(this);
         summonOnBoard(board, indexToAdd);
       }
 
       @Override
       public void playOnBoard(final Container<Minion> board, final Creature target) {
         final int indexToAdd = board.size();
-        TriggerFactory.activeTrigger(this, ConstTrigger.ON_PLAY, target);
+        TriggerFactory.activeTrigger(this, target);
         summonOnBoard(board, indexToAdd);
       }
 
@@ -113,7 +113,7 @@ public class MinionFactory {
         final Side side = binder().getSide();
         TriggerFactory.refreshAura(side);
         TriggerFactory.refreshSpellDamage(side);
-        TriggerFactory.triggerByBoard(this, ConstTrigger.ON_SUMMON);
+        TriggerFactory.triggerByBoard(board.stream().filter(m -> m != this), side, ConstTrigger.ON_SUMMON);
       }
 
       @Override

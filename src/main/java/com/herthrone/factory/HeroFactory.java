@@ -231,14 +231,13 @@ public class HeroFactory {
 
       @Override
       public void playToEquip(final Weapon weapon) {
-        TriggerFactory.passiveTrigger(weapon, ConstTrigger.ON_PLAY);
+        TriggerFactory.activeTrigger(weapon);
         equip(weapon);
       }
 
       @Override
       public void playToEquip(final Weapon weapon, final Creature target) {
-        TriggerFactory.activeTrigger(
-            weapon, ConstTrigger.ON_PLAY, target);
+        TriggerFactory.activeTrigger(weapon, target);
         equip(weapon);
       }
 
@@ -249,7 +248,8 @@ public class HeroFactory {
         heroPowerMovePoints.decrease(1);
 
         final Side side = binder().getSide();
-        TriggerFactory.passiveTrigger(side, ConstTrigger.ON_USE_HERO_POWER);
+        side.board.stream().forEach(
+            minion -> TriggerFactory.passiveTrigger(minion, ConstTrigger.ON_USE_HERO_POWER));
       }
 
       @Override

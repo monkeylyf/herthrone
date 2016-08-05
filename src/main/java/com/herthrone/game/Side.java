@@ -1,5 +1,7 @@
 package com.herthrone.game;
 
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Hero;
@@ -7,8 +9,16 @@ import com.herthrone.base.Minion;
 import com.herthrone.base.Round;
 import com.herthrone.base.Secret;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSecret;
+import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstTrigger;
+import com.herthrone.constant.ConstWeapon;
+import com.herthrone.factory.MinionFactory;
+import com.herthrone.factory.SecretFactory;
+import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.TriggerFactory;
+import com.herthrone.factory.WeaponFactory;
 import com.herthrone.object.Replay;
 import org.apache.log4j.Logger;
 
@@ -52,6 +62,10 @@ public class Side implements Round {
     this.idGenerator = idGenerator;
   }
 
+  public void bind(final Card card) {
+    card.binder().bind(this);
+  }
+
   static Side createSidePair(final Hero hero1, final Hero hero2, final EffectQueue effectQueue) {
     final IntSupplier sequenceIdGenerator = new IntSupplier() {
       private int id = 0;
@@ -71,10 +85,36 @@ public class Side implements Round {
 
   void populateDeck(final List<Enum> cards) {
     cards.forEach(cardName -> {
-      final Card card = GameManager.createCardInstance(cardName);
+      final Card card = createCardInstance(cardName);
       deck.add(card);
       bind(card);
     });
+  }
+
+  private static Card createCardInstance(final Enum cardName) {
+    final String name = cardName.toString();
+
+    Optional<ConstMinion> constMinion = Enums.getIfPresent(ConstMinion.class, name);
+    if (constMinion.isPresent()) {
+      return MinionFactory.create(constMinion.get());
+    }
+
+    Optional<ConstWeapon> constWeapon = Enums.getIfPresent(ConstWeapon.class, name);
+    if (constWeapon.isPresent()) {
+      return WeaponFactory.create(constWeapon.get());
+    }
+
+    Optional<ConstSpell> constSpell = Enums.getIfPresent(ConstSpell.class, name);
+    if (constSpell.isPresent()) {
+      return SpellFactory.create(constSpell.get());
+    }
+
+    Optional<ConstSecret> constSecret = Enums.getIfPresent(ConstSecret.class, name);
+    if (constSecret.isPresent()) {
+      return SecretFactory.create(constSecret.get());
+    }
+
+    throw new RuntimeException(String.format("Unknown card %s", name));
   }
 
   public void takeFatigueDamage() {
@@ -93,10 +133,6 @@ public class Side implements Round {
     return allCreatures;
   }
 
-  public void bind(final Card card) {
-    card.binder().bind(this);
-  }
-
   public EffectQueue getEffectQueue() {
     return effectQueue;
   }
@@ -106,8 +142,7 @@ public class Side implements Round {
     replay.endTurn();
     hero.endTurn();
     board.stream().forEach(Round::startTurn);
-    TriggerFactory.triggerByBoard(
-        getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_END_TURN);
+    TriggerFactory.triggerByBoard(getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_END_TURN);
   }
 
   @Override
@@ -115,18 +150,17 @@ public class Side implements Round {
     replay.startTurn();
     hero.startTurn();
     board.stream().forEach(Round::endTurn);
-    TriggerFactory.triggerByBoard(
-        getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_START_TURN);
+    TriggerFactory.triggerByBoard(getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_START_TURN);
+  }
+
+  public Side getOpponentSide() {
+    return opponentSide;
   }
 
   public void setSequenceId(final Minion minion) {
     final int sequenceId = idGenerator.getAsInt();
     logger.debug("Set ID " + sequenceId + " to minion " + minion);
     minion.setSequenceId(sequenceId);
-  }
-
-  public Side getOpponentSide() {
-    return opponentSide;
   }
 
   @Override

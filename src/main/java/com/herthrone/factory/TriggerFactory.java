@@ -1,13 +1,14 @@
 package com.herthrone.factory;
 
-import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
-import com.herthrone.base.Effect;
+import com.herthrone.base.Destroyable;
 import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
+import com.herthrone.base.Weapon;
+import com.herthrone.configuration.ConditionConfig;
 import com.herthrone.configuration.MechanicConfig;
-import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
@@ -22,92 +23,56 @@ public class TriggerFactory {
 
   private final static Logger logger = Logger.getLogger(TriggerFactory.class.getName());
 
-  public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
-                                   final ConstTrigger triggerType, final Creature target) {
-    activeTrigger(triggerrer, triggerType, target, target.binder().getSide());
-
-  }
-  public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
-                                   final ConstTrigger triggerType, final Creature target,
-                                   final Side triggeringSide) {
-    triggerrer.getTriggeringMechanics().get(triggerType)
-        .forEach(mechanicConfig -> {
-          if (mechanicConfig.targetOptional.isPresent()) {
-            final TargetConfig targetConfig = mechanicConfig.targetOptional.get();
-            logger.debug("Trigger with configured targets: " + targetConfig);
-            TargetFactory.getProperTargets(targetConfig, triggeringSide)
-                .forEach(realTarget -> {
-                  if (targetConfig.type.equals(ConstType.OTHER) && realTarget == target) {
-                    logger.debug("Skip target " + target + " for " + targetConfig.type + " type");
-                  } else {
-                    EffectFactory.pipeMechanicEffectConditionally(
-                        Optional.of(mechanicConfig), triggeringSide, realTarget);
-                  }
-                });
-          } else {
-            logger.debug("No target config found. Trigger with default target");
-            EffectFactory.pipeMechanicEffectConditionally(
-                Optional.of(mechanicConfig), triggeringSide, target);
-          }
-        }
-      );
-  }
-
-  static void passiveTrigger(final Side side, final ConstTrigger triggerType) {
-    final List<Effect> effects = side.board.stream()
-        .sorted(EffectFactory.compareBySequenceId)
-        .flatMap(minion -> minion.getTriggeringMechanics().get(triggerType).stream())
-        .flatMap(mechanic -> EffectFactory.getMechanicEffects(mechanic, side).stream())
-        .collect(Collectors.toList());
-    side.getEffectQueue().enqueue(effects);
-  }
-
-  public static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
-                                    final ConstTrigger triggerType) {
+  public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer) {
     // TODO: fix this.
     if (triggerrer instanceof Minion &&
         ((Minion) triggerrer).minionConstName().equals(ConstMinion.FROSTWOLF_WARLORD)) {
       final Minion minion = (Minion) triggerrer;
-      triggerrer.getTriggeringMechanics().get(triggerType)
-          .forEach(
-              mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
-                  Optional.of(mechanicConfig), minion.binder().getSide(), minion));
+      triggerrer.getTriggeringMechanics().get(ConstTrigger.ON_PLAY)
+          .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
+              mechanicConfig, minion.binder().getSide(), minion));
     } else {
-      final Side side = triggerrer.binder().getSide();
-      triggerWithoutTarget(triggerrer.getTriggeringMechanics().get(triggerType), side);
+      triggerWithoutTarget(
+          triggerrer.getTriggeringMechanics().get(ConstTrigger.ON_PLAY),
+          triggerrer.binder().getSide());
     }
   }
 
-  static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs, final Side side) {
-    final List<MechanicConfig> validMechanicConfigs = mechanicConfigs.stream()
-        .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
-        .collect(Collectors.toList());
-    logger.debug(String.format("Total %d valid mechanic configs", validMechanicConfigs.size()));
-    validMechanicConfigs
-        .forEach(effectConfig -> {
-          try {
-            TargetFactory.getProperTargets(effectConfig.targetOptional.get(), side)
-                .forEach(
-                    target -> EffectFactory.pipeMechanicEffectConditionally(
-                        Optional.of(effectConfig), side, target)
-                );
-          } catch (TargetFactory.NoTargetFoundException error) {
-            EffectFactory.pipeMechanicEffectConditionally(Optional.of(effectConfig), side);
-          }
-        });
+  public static void activeTrigger(final Mechanic.TriggeringMechanic triggerrer,
+                                   final Creature selectedTarget) {
+    triggerWithTarget(
+        triggerrer.getTriggeringMechanics().get(ConstTrigger.ON_PLAY),
+        selectedTarget, triggerrer.binder().getSide());
   }
 
-  public static void triggerByBoard(final Minion excludedMinion,
-                                    final ConstTrigger triggerType) {
-    final Side side = excludedMinion.binder().getSide();
-    side.board.stream()
-        .filter(minion -> minion != excludedMinion)
-        .sorted(EffectFactory.compareBySequenceId)
-        .forEach(minion ->
-            minion.getTriggeringMechanics().get(triggerType)
-              .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
-                  Optional.of(mechanicConfig), side, minion))
-        );
+
+  static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer,
+                             final ConstTrigger triggerType) {
+    Preconditions.checkArgument(!triggerType.equals(ConstTrigger.ON_PLAY));
+    triggerWithoutTarget(
+        triggerrer.getTriggeringMechanics().get(triggerType), triggerrer.binder().getSide());
+  }
+
+  private static void triggerWithTarget(final List<MechanicConfig> mechanicConfigs,
+                                        final Creature selectedTarget, final Side triggeringSide) {
+    mechanicConfigs.forEach(mechanicConfig -> TargetFactory.getTarget(
+        selectedTarget, triggeringSide, mechanicConfig.targetOptional).forEach(
+            t -> EffectFactory.pipeMechanicEffectConditionally(
+                mechanicConfig, triggeringSide, t))
+    );
+  }
+
+  private static void triggerWithoutTarget(final List<MechanicConfig> mechanicConfigs,
+                                           final Side triggeringSide) {
+    mechanicConfigs.stream()
+        .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
+        .forEach(mechanicConfig -> {
+            TargetFactory.getProperTargets(mechanicConfig.targetOptional.get(), triggeringSide)
+                .forEach(
+                    target -> EffectFactory.pipeMechanicEffectConditionally(
+                        mechanicConfig, triggeringSide, target)
+                );
+        });
   }
 
   public static void triggerByBoard(final Stream<Minion> minionStream, final Side triggeringSide,
@@ -116,15 +81,19 @@ public class TriggerFactory {
         .sorted(EffectFactory.compareBySequenceId)
         .forEach(minion ->
             minion.getTriggeringMechanics().get(triggerType)
-                .forEach(mechanicConfig -> EffectFactory.pipeMechanicEffectConditionally(
-                    Optional.of(mechanicConfig), triggeringSide, minion))
+                .forEach(mechanicConfig -> {
+                  TargetFactory.getTarget(minion, triggeringSide, mechanicConfig.targetOptional)
+                      .forEach(target -> EffectFactory.pipeMechanicEffectConditionally(
+                          mechanicConfig, triggeringSide, target));
+                })
         );
   }
 
-  public static void triggerByBoard(final Side side, final Side opponentSide,
-                                    final ConstTrigger triggerType) {
+  public static void triggerByBoard(final Side side, final ConstTrigger triggerType) {
+    logger.debug("Triggering " + triggerType + " on own side board");
     triggerByBoard(side.board.stream(), side, triggerType);
-    triggerByBoard(opponentSide.board.stream(), side, triggerType);
+    logger.debug("Triggering " + triggerType + " on opponent side board");
+    triggerByBoard(side.getOpponentSide().board.stream(), side, triggerType);
   }
 
   static void refreshAura(final Side side) {
@@ -140,4 +109,65 @@ public class TriggerFactory {
         .forEach(Spell::refresh);
   }
 
+  public static boolean isTriggerConditionMet(final MechanicConfig mechanicConfig,
+                                              final Side activatingSide,
+                                              final Creature target) {
+    final Side targetSide;
+    if (mechanicConfig.targetOptional.isPresent()) {
+      final List<Side> realSide = TargetFactory.getSide(
+          mechanicConfig.targetOptional.get(), activatingSide);
+      Preconditions.checkArgument(realSide.size() == 1, "Does not support two side check");
+      targetSide = realSide.get(0);
+    } else {
+      targetSide = activatingSide;
+    }
+    final boolean willBeTriggered = isConditionTriggered(
+        mechanicConfig, targetSide, target);
+    final String word = willBeTriggered ? "is" : "is not";
+    logger.debug(String.format("Condition %s met and mechanic effect %s triggered", word, word));
+    return willBeTriggered;
+  }
+
+  private static boolean isConditionTriggered(final MechanicConfig mechanicConfig, final Side side,
+                                              final Creature target) {
+    if (!mechanicConfig.conditionConfigOptional.isPresent()) {
+      // If no condition configured, return true and the effect should be triggered any way.
+      return true;
+    }
+    // Check if there is condition config. If there is, return whether condition is met.
+    final ConditionConfig conditionConfig = mechanicConfig.conditionConfigOptional.get();
+    switch (conditionConfig.conditionType) {
+      case ATTACK_VALUE:
+        return conditionConfig.inRange(target.attack().value());
+      case BEAST_COUNT:
+        final int beastCount = side.board.stream()
+            .filter(m -> m.type().equals(ConstType.BEAST))
+            .collect(Collectors.toList()).size();
+        return conditionConfig.inRange(beastCount);
+      case BOARD_SIZE:
+        return conditionConfig.inRange(side.board.size());
+      case COMBO:
+        return side.replay.size() > 1;
+      case HAND_SIZE:
+        return conditionConfig.inRange(side.hand.size());
+      case HEALTH_LOSS:
+        return conditionConfig.inRange(target.healthLoss());
+      case HEALTH_VALUE:
+        return conditionConfig.inRange(target.health().value());
+      case WEAPON_EQUIPPED:
+        // Call getDestroyablesBySide instead of getDestroyables because side is already picked
+        // given target config.
+        final List<Destroyable> destroyables = TargetFactory.getDestroyablesBySide(
+            mechanicConfig.targetOptional.get(), side);
+        if (destroyables.size() == 0) {
+          return false;
+        } else {
+          Preconditions.checkArgument(destroyables.size() == 1, "More than one destroyable object");
+          Preconditions.checkArgument(destroyables.get(0) instanceof Weapon, "Only support weapon");
+          return true;
+        }
+      default:
+        throw new RuntimeException("Unknown condition: " + conditionConfig.conditionType);
+    }
+  }
 }

@@ -14,14 +14,16 @@ public class ConditionConfig {
   private static final String RANGE = "range";
   private static final String RANGE_START = "range_start";
   private static final String RANGE_END = "range_end";
+  private static int DEFAULT_RANGE_START = 0;
+  private static int DEFAULT_RANGE_END = Integer.MAX_VALUE;
   public final ConstCondition conditionType;
   private final Range<Integer> range;
 
   ConditionConfig(final Map map) {
     this.conditionType = ConstCondition.valueOf(getUpperCaseStringValue(map, TYPE));
     this.range = Range.closed(
-        map.containsKey(RANGE_START) ? (int) map.get(RANGE_START) : 0,
-        map.containsKey(RANGE_END) ? (int) map.get(RANGE_END) : 999);
+        map.containsKey(RANGE_START) ? (int) map.get(RANGE_START) : DEFAULT_RANGE_START,
+        map.containsKey(RANGE_END) ? (int) map.get(RANGE_END) : DEFAULT_RANGE_END);
   }
 
   public boolean inRange(final int value) {

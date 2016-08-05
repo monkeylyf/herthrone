@@ -1,5 +1,6 @@
 package com.herthrone.factory;
 
+import com.google.common.base.Optional;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TargetFactory {
 
@@ -82,13 +84,6 @@ public class TargetFactory {
     return true;
   }
 
-  public static class NoTargetFoundException extends RuntimeException {
-
-    private NoTargetFoundException(final String message) {
-      super(message);
-    }
-  }
-
   static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side) {
     final List<Creature> candidates = new ArrayList<>();
     switch (targetConfig.scope) {
@@ -125,7 +120,7 @@ public class TargetFactory {
           // If value is set in config, select randomly.
           final int n = targetConfig.randomTarget.getAsInt();
           if (n > side.board.size()) {
-            throw new NoTargetFoundException("Requires " + n + " but there is " + side.board);
+            throw new RuntimeException("Requires " + n + " but there is " + side.board);
           }
           logger.debug("Randomly select " + n + " minions on board");
           return RandomMinionGenerator.randomN(sortedMinions, n);
@@ -150,7 +145,8 @@ public class TargetFactory {
         allTargets.add(side.hero);
         return allTargets;
       default:
-        throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
+        return Collections.singletonList(side.hero);
+        //throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
     }
   }
 
@@ -211,15 +207,16 @@ public class TargetFactory {
     }
   }
 
-  public static List<Creature> getOtherTargets(final Creature target) {
-    List<Creature> targets = new ArrayList<>();
-    final Side side = target.binder().getSide();
-    if (side.hero != target) {
-      targets.add(side.hero);
+  static Stream<Creature> getTarget(final Creature selectedTarget, final Side triggeringSide,
+                                    final Optional<TargetConfig> targetConfigOptional) {
+    if (targetConfigOptional.isPresent()) {
+      final TargetConfig targetConfig = targetConfigOptional.get();
+      logger.debug("Trigger with configured targets: " + targetConfig);
+      return TargetFactory.getProperTargets(targetConfig, triggeringSide).stream()
+          .filter(t -> !targetConfig.type.equals(ConstType.OTHER) || t != selectedTarget);
+    } else {
+      logger.debug("No target config found. Trigger with selected target");
+      return Collections.singleton(selectedTarget).stream();
     }
-    side.board.stream()
-        .filter(m -> m != target)
-        .forEach(targets::add);
-    return targets;
   }
 }
