@@ -1,0 +1,151 @@
+- name: armor_up
+  class: warrior
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: attribute
+      type: armor
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: dagger_mastery
+  class: rogue
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: equip
+      trigger: on_play
+      effect: weapon
+      type: wicked_blade
+      value: 1
+      target:
+        scope: own
+        type: hero
+
+- name: fire_blast
+  class: mage
+  crystal: 2
+  type: hero_power
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+
+- name: lesser_heal
+  class: priest
+  crystal: 2
+  type: hero_power
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+
+- name: life_tap
+  class: warlock
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: hero
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: reinforce
+  class: paladin
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: summon
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices:
+        - silver_hand_recruit
+      unique: false
+
+- name: shapeshift
+  class: druid
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      permanent: false  # true by default
+      value: 1
+      target:
+        scope: own
+        type: hero
+    - name: gain
+      trigger: on_play
+      effect: attribute
+      type: armor
+      value: 1
+      target:
+        scope: own
+        type: hero
+
+- name: steady_shot
+  class: hunter
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+         scope: opponent
+         type: hero
+
+- name: totemic_call
+  class: shaman
+  crystal: 2
+  type: hero_power
+  mechanics:
+    - name: summon
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+         scope: own
+         type: board
+      choices:
+        - healing_totem
+        - searing_totem
+        - wrath_of_air_totem
+        - stoneclaw_totem
+      unique: true

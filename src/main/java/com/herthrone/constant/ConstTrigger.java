@@ -1,0 +1,21 @@
+package com.herthrone.constant;
+
+public enum ConstTrigger {
+  NO_TRIGGER,
+  ON_ATTACK,
+  ON_DAMAGE,
+  ON_DEATH,
+  ON_DRAW,
+  ON_END_TURN,
+  ON_HEAL_MINION,
+  ON_OPPONENT_END_TURN,
+  ON_OPPONENT_START_TURN,
+  ON_PLAY,
+  ON_PRESENCE,
+  ON_SPELL_DAMAGE,
+  ON_SUMMON,
+  ON_START_TURN,
+  ON_TAKE_DAMAGE,
+  ON_USE_HERO_POWER,
+  ON_USE_WEAPON;
+}

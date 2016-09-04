@@ -1,0 +1,1134 @@
+- name: chillwind_yeti
+  class: neutral
+  attack: 4
+  health: 5
+  crystal: 4
+
+- name: senjin_shieldmasta
+  display: Sen'jin Shieldmasta
+  class: neutral
+  attack: 3
+  health: 5
+  crystal: 4
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: silver_hand_recruit
+  class: paladin
+  attack: 1
+  health: 1
+  crystal: 1
+  collectible: false
+
+- name: healing_totem
+  class: shaman
+  type: totem
+  attack: 0
+  health: 2
+  crystal: 1
+  collectible: false
+  mechanics:
+    - name: restore_health
+      trigger: on_end_turn
+      effect: heal
+      type: health
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: searing_totem
+  class: shaman
+  type: totem
+  attack: 1
+  health: 1
+  crystal: 1
+  collectible: false
+
+- name: wrath_of_air_totem
+  class: shaman
+  type: totem
+  attack: 0
+  health: 2
+  crystal: 1
+  collectible: false
+
+- name: stoneclaw_totem
+  class: shaman
+  type: totem
+  attack: 0
+  health: 2
+  crystal: 1
+  collectible: false
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: wolfrider
+  class: neutral
+  attack: 3
+  health: 1
+  crystal: 3
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: gnomish_inventor
+  class: neutral
+  attack: 2
+  health: 4
+  crystal: 4
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: loot_hoarder
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 2
+  mechanics:
+    - name: deathrattle
+      trigger: on_death
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: faerie_dragon
+  class: neutral
+  type: dragon
+  attack: 3
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: elusive
+      effect: status
+
+- name: ironfur_grizzly
+  class: neutral
+  type: beast
+  attack: 3
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: water_elemental
+  class: mage
+  attack: 3
+  health: 6
+  crystal: 4
+  mechanics:
+    - name: freeze
+      effect: status
+
+- name: scarlet_crusader
+  class: neutral
+  attack: 3
+  health: 1
+  crystal: 3
+  mechanics:
+    - name: divine_shield
+      effect: status
+
+- name: worgen_infiltrator
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  mechanics:
+    - name: stealth
+      effect: status
+
+- name: emperor_cobra
+  class: neutral
+  attack: 2
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: poison
+      effect: status
+
+- name: ogre_brute
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 3
+  mechanics:
+    - name: forgetful
+      effect: status
+
+- name: windfury_harpy
+  class: neutral
+  attack: 4
+  health: 6
+  crystal: 6
+  mechanics:
+    - name: windfury
+      effect: status
+
+- name: jungle_panther
+  class: neutral
+  attack: 4
+  health: 2
+  crystal: 3
+  mechanics:
+    - name: stealth
+      effect: status
+
+- name: defias_ringleader
+  class: rogue
+  attack: 2
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: combo
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices: [defias_bandit]
+      condition:
+        type: combo
+        range_start: 1
+        range_end: 999
+
+- name: defias_bandit
+  class: rogue
+  attack: 2
+  health: 1
+  crystal: 1
+  collectible: false
+
+- name: knife_juggler
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: summoning
+      trigger: on_summon
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: all
+        random: true
+
+- name: mind_control_tech
+  class: neutral
+  attack: 3
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: take_control
+      type: minion
+      permanent: true
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+        random: true
+      condition:
+        type: board_size
+        range_start: 4  # Inclusive
+        range_end: 7  # Inclusive
+
+- name: recruiter
+  class: neutral
+  attack: 5
+  health: 4
+  crystal: 5
+  mechanics:
+    - name: inspire
+      trigger: on_use_hero_power
+      effect: generate
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: hand
+      choices: [squire]
+
+- name: silver_hand_knight
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 5
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: board
+      value: 1
+      target:
+        scope: own
+        type: minion
+      choices: [squire]
+
+- name: squire
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 1
+  collectible: false
+
+- name: youthful_brewmaster
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 2
+  single_target:
+    scope: own
+    type: minion
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: return_to_hand
+      type: minion
+      value: 1
+
+- name: stormwind_champion
+  class: neutral
+  attack: 6
+  health: 6
+  crystal: 7
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: max_health
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: bloodfen_raptor
+  class: neutral
+  type: beast
+  attack: 3
+  health: 2
+  crystal: 2
+
+- name: boulderfist_ogre
+  class: neutral
+  attack: 6
+  health: 7
+  crystal: 6
+
+- name: magma_rager
+  class: neutral
+  attack: 5
+  health: 1
+  crystal: 3
+
+- name: murloc_raider
+  class: neutral
+  type: murloc
+  attack: 2
+  health: 1
+  crystal: 1
+
+- name: nightblade
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 5
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: opponent
+        type: hero
+
+- name: novice_engineer
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 2
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: oasis_snapjaw
+  class: neutral
+  type: beast
+  attack: 2
+  health: 7
+  crystal: 4
+
+- name: raid_leader
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 3
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: reckless_rocketeer
+  class: neutral
+  attack: 5
+  health: 2
+  crystal: 6
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: river_crocolisk
+  class: neutral
+  attack: 2
+  health: 3
+  crystal: 2
+
+- name: stonetusk_boar
+  class: neutral
+  type: beast
+  attack: 1
+  health: 1
+  crystal: 1
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: voodoo_doctor
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: all
+        type: all
+
+- name: acidic_swamp_ooze
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: destroy
+      type: weapon
+      value: 1
+      target:
+        scope: opponent
+        type: weapon
+      condition:
+        type: weapon_equipped
+
+- name: archmage
+  class: neutral
+  attack: 4
+  health: 7
+  crystal: 6
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: bluegill_warrior
+  class: neutral
+  type: murloc
+  attack: 2
+  health: 1
+  crystal: 2
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: booty_bay_bodyguard
+  class: neutral
+  attack: 5
+  health: 4
+  crystal: 5
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: core_hound
+  class: neutral
+  type: beast
+  attack: 9
+  health: 5
+  crystal: 7
+
+- name: dalaran_mage
+  class: neutral
+  attack: 1
+  health: 4
+  crystal: 3
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: darkscale_healer
+  class: neutral
+  attack: 4
+  health: 5
+  crystal: 5
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: minion
+
+- name: dragonling_mechanic
+  class: neutral
+  attack: 2
+  health: 4
+  crystal: 4
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: board
+      value: 1
+      target:
+        scope: own
+        type: minion
+      choices:
+        - mechanical_dragonling
+
+- name: mechanical_dragonling
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 1
+  type: mech
+  collectible: false
+
+- name: elven_archer
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  single_target:
+    scope: opponent
+    type: all
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: 1
+
+- name: frostwolf_grunt
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: frostwolf_warlord
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 5
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value_dependency: board_size
+      value: 0
+      target:
+        scope: own
+        type: minion
+    - name: battlecry
+      trigger: on_play
+      effect: buff
+      type: attack
+      value_dependency: board_size
+      value: 0
+      target:
+        scope: own
+        type: minion
+
+- name: goldshire_footman
+  class: neutral
+  attack: 1
+  health: 2
+  crystal: 1
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: grimscale_oracle
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  type: murloc
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: murloc
+
+- name: gurubashi_berserker
+  class: neutral
+  attack: 2
+  health: 7
+  crystal: 5
+  mechanics:
+    - name: take_damage
+      trigger: on_take_damage
+      effect: attribute
+      type: attack
+      value: 3
+      target:
+        scope: own
+        type: minion
+
+- name: ironforge_rifleman
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 3
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: all
+
+- name: kobold_geomancer
+  class: neutral
+  attack: 2
+  health: 2
+  crystal: 2
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: lord_of_the_arena
+  class: neutral
+  attack: 6
+  health: 5
+  crystal: 6
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: murloc_tidehunter
+  class: neutral
+  attack: 2
+  health: 1
+  crystal: 2
+  type: murloc
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: opponent
+        type: board
+      choices:
+        - murloc_scout
+
+- name: murloc_scout
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 0
+  type: murloc
+  collectible: false
+
+- name: ogre_magi
+  class: neutral
+  attack: 4
+  health: 4
+  crystal: 4
+  mechanics:
+    - name: aura
+      trigger: on_spell_damage
+      effect: spell_damage
+      type: spell
+      value: 1
+      target:
+        scope: own
+        type: spell
+
+- name: razorfen_hunter
+  class: neutral
+  attack: 2
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices:
+        - boar
+
+- name: boar
+  class: neutral
+  attack: 1
+  health: 1
+  crystal: 1
+  type: beast
+  collectible: false
+
+- name: shattered_sun_cleric
+  class: neutral
+  attack: 3
+  health: 2
+  crystal: 3
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: max_health
+      value: 1
+      target:
+        scope: own
+        type: minion
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: silverback_patriarch
+  class: neutral
+  attack: 1
+  health: 4
+  crystal: 3
+  type: beast
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: stormpike_commando
+  class: neutral
+  attack: 4
+  health: 2
+  crystal: 5
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: all
+
+- name: stormwind_knight
+  class: neutral
+  attack: 2
+  health: 5
+  crystal: 4
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: war_golem
+  class: neutral
+  attack: 7
+  health: 7
+  crystal: 7
+
+- name: ironbark_protector
+  class: druid
+  attack: 8
+  health: 8
+  crystal: 8
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: houndmaster
+  class: hunter
+  attack: 4
+  health: 3
+  crystal: 4
+  single_target:
+    scope: own
+    type: beast
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: max_health
+      value: 2
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: buff
+      type: attack
+      value: 2
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: add_mechanic
+      type: taunt
+      value: 1
+
+- name: timber_wolf
+  class: hunter
+  type: beast
+  attack: 1
+  health: 1
+  crystal: 1
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: beast
+
+- name: huffer
+  class: hunter
+  type: beast
+  attack: 4
+  health: 2
+  crystal: 3
+  collectible: false
+  mechanics:
+    - name: charge
+      effect: status
+
+- name: leokk
+  class: hunter
+  type: beast
+  attack: 2
+  health: 4
+  crystal: 3
+  collectible: false
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: misha
+  class: hunter
+  type: beast
+  attack: 4
+  health: 4
+  crystal: 3
+  collectible: false
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: starving_buzzard
+  class: hunter
+  type: beast
+  attack: 3
+  health: 2
+  crystal: 5
+  mechanics:
+    - name: summoning
+      trigger: on_summon
+      effect: draw
+      type: card
+      value: 1
+      condition:
+        # this minion itself is a beast so after play a beast on board there
+        # should at least two beasts on board to trigger the effect.
+        type: target_type_beast
+
+- name: tundra_rhino
+  class: hunter
+  type: beast
+  attack: 2
+  health: 5
+  crystal: 5
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: add_mechanic
+      type: charge
+      value: 1
+      target:
+        scope: own
+        type: beast
+
+- name: sheep
+  class: mage
+  type: beast
+  attack: 1
+  health: 1
+  crysatl: 0
+  collectible: false
+
+- name: mirror_image_minion
+  display: Mirror Image
+  class: mage
+  attack: 0
+  health: 2
+  crystal: 0
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: guardian_of_kings
+  class: paladin
+  attack: 5
+  health: 6
+  crystal: 7
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 6
+      target:
+        scope: own
+        type: hero
+
+- name: northshire_cleric
+  class: priest
+  attack: 1
+  health: 3
+  crystal: 1
+  mechanics:
+    - name: card_draw
+      trigger: on_heal_minion
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: frog
+  class: shaman
+  attack: 0
+  health: 1
+  crystal: 0
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: fire_elemental
+  class: shaman
+  attack: 6
+  health: 5
+  crystal: 6
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: all
+        type: all
+
+- name: flametongue_totem
+  class: shaman
+  type: totem
+  attack: 0
+  health: 3
+  crystal: 2
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 2
+      target:
+        scope: own
+        type: minion
+        adjacent: true
+
+- name: windspeaker
+  class: shaman
+  attack: 3
+  health: 3
+  crystal: 4
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      trigger_only_with_target: true
+      effect: add_mechanic
+      type: windfury
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: succubus
+  class: warlock
+  type: demon
+  attack: 4
+  health: 3
+  crystal: 2
+  mechanics:
+    - name: battlecry
+      trigger: on_play
+      effect: discard
+      type: hand
+      value: 1
+      target:
+        scope: own
+        type: hand
+      condition:
+        type: hand_size
+        start_range: 1
+
+- name: voidwalker
+  class: warlock
+  type: demon
+  attack: 1
+  health: 3
+  crystal: 1
+  mechanics:
+    - name: taunt
+      effect: status
+
+- name: dread_infernal
+  class: warlock
+  type: demon
+  attack: 6
+  health: 6
+  crystal: 6
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: all
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: own
+        type: all
+        self_excluded: true
+
+- name: warsong_commander
+  class: warrior
+  attack: 2
+  health: 3
+  crystal: 3
+  mechanics:
+    - name: aura
+      trigger: on_presence
+      effect: buff
+      type: attack
+      value: 1
+      target:
+        scope: own
+        type: has_mechanic
+        mechanic: charge
+
+- name: korkron_elite
+  class: warrior
+  display: Kor'kron Elite
+  attack: 4
+  health: 3
+  crystal: 3
+  mechancis:
+    - name: charge
+      effect: status

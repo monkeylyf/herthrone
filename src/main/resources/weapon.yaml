@@ -1,0 +1,68 @@
+- name: wicked_blade
+  class: rogue
+  attack: 1
+  durability: 2
+  crystal: 1
+  collectible: false
+
+- name: fiery_war_axe
+  class: warrior
+  attack: 3
+  durability: 2
+  crystal: 2
+  collectible: true
+
+- name: truesilver_champion
+  class: paladin
+  attack: 4
+  durability: 2
+  crystal: 4
+  collectible: true
+  mechanics:
+    - trigger: on_use_weapon
+      name: restore_health
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: stormforged_axe
+  class: shaman
+  attack: 2
+  durability: 3
+  crystal: 2
+  collectible: true
+  mechanics:
+    - trigger: on_play
+      name: overload
+      effect: crystal
+      type: crystal_lock
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: lights_justice
+  display: Light's Justice
+  class: paladin
+  attack: 1
+  durability: 4
+  crystal: 1
+  collectible: true
+
+- name: assassins_blade
+  display: Assassin's Blade
+  class: rogue
+  attack: 3
+  durability: 4
+  crystal: 5
+  collectible: true
+
+- name: arcanite_reaper
+  class: warrior
+  attack: 5
+  durability: 2
+  crystal: 5
+  collectible: false

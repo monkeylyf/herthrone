@@ -1,0 +1,1111 @@
+- name: fire_ball
+  class: mage
+  crystal: 4
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 6
+
+- name: claw
+  class: druid
+  crystal: 1
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      permanent: false
+      target:
+        scope: own
+        type: hero
+    - name: gain
+      trigger: on_play
+      effect: attribute
+      type: armor
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: healing_touch
+  class: druid
+  crystal: 3
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 8
+
+- name: innervate
+  class: druid
+  crystal: 0
+  mechanics:
+    - name: mana
+      trigger: on_play
+      effect: attribute
+      type: mana_crystal
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: mark_of_the_wild
+  class: druid
+  crystal: 2
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: taunt
+      trigger: on_play
+      effect: add_mechanic
+      type: taunt
+      value: 1
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+
+- name: wild_growth
+  class: druid
+  crystal: 2
+  mechanics:
+    - name: mana
+      trigger: on_play
+      effect: attribute
+      type: max_mana_crystal
+      value: 1
+      target:
+        scope: own
+        type: hero
+
+- name: moonfire
+  class: druid
+  crystal: 0
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+
+- name: savage_roar
+  class: druid
+  crystal: 3
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      permanent: false
+      value: 2
+      target:
+        scope: own
+        type: all
+
+- name: starfire
+  class: druid
+  crystal: 6
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 5
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: swipe
+  class: druid
+  crystal: 4
+  single_target:
+    scope: opponent
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 4
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: other
+
+- name: arcane_shot
+  class: hunter
+  crystal: 1
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+
+- name: multi_shot
+  display_name: Multi-Shot
+  class: hunter
+  crystal: 4
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: opponent
+        type: minion
+        random_target: 2
+      condition:
+        type: board_size
+        range_start: 2
+        range_end: 999
+
+- name: tracking
+  class: hunter
+  crystal: 1
+  mechanics:
+    - name: discard
+      trigger: on_play
+      effect: choose_card
+      type: discard
+      value: 3
+      target:
+        scope: own
+        type: deck
+
+- name: animal_companion
+  class: hunter
+  crystal: 3
+  mechanics:
+    - name: summon
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: board
+      choices:
+        - huffer
+        - leokk
+        - misha
+
+- name: hunters_mark
+  display: Hunter's Mark
+  class: hunter
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: set_attribute
+      trigger: on_play
+      effect: set
+      type: max_health
+      value: 1
+
+- name: kill_command
+  class: hunter
+  crystal: 3
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    # Mutually exclusive.
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 5
+      target:
+        scope: own
+        type: minion
+      condition:
+        type: beast_count
+        range_start: 1
+        range_end: 999
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: own
+        type: minion
+      condition:
+        type: beast_count
+        range_start: 0
+        range_end: 0
+
+- name: arcane_explosion
+  class: mage
+  crystal: 2
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+
+- name: arcane_intellect
+  class: mage
+  crystal: 3
+  mechanics:
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 2
+      target:
+        scope: own
+        type: deck
+
+- name: polymorph
+  class: mage
+  crystal: 4
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: transform
+      trigger: on_play
+      effect: transform
+      type: minion
+      value: 1
+      choices:
+        - sheep
+
+- name: flamestrike
+  class: mage
+  crystal: 7
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 4
+      target:
+        scope: opponent
+        type: minion
+
+- name: frost_nova
+  class: mage
+  crystal: 3
+  mechanics:
+    - name: frozen
+      trigger: on_play
+      effect: add_mechanic
+      type: frozen
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+
+- name: frostbolt
+  class: mage
+  crystal: 2
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+    - name: frozen
+      trigger: on_play
+      effect: add_mechanic
+      type: frozen
+      value: 1
+
+- name: mirror_image
+  class: mage
+  crystal: 1
+  mechanics:
+    - name: summon
+      trigger: on_play
+      effect: summon
+      type: minion
+      value: 2
+      target:
+        scope: own
+        type: board
+      choices:
+        - mirror_image_minion
+
+- name: blessing_of_might
+  class: paladin
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 3
+      permanent: false
+
+- name: hammer_of_wrath
+  class: paladin
+  crystal: 4
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: hand_of_protection
+  class: paladin
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: divine_shield
+      trigger: on_play
+      effect: add_mechanic
+      type: divine_shield
+      value: 1
+
+- name: holy_light
+  class: paladin
+  crystal: 2
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 6
+
+- name: blessing_of_kings
+  class: paladin
+  crystal: 4
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 4
+      permanent: true
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 4
+
+- name: consecration
+  class: paladin
+  crystal: 4
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: all
+
+- name: humility
+  class: paladin
+  crystal: 1
+  mechanics:
+    - name: set_attribute
+      trigger: on_play
+      effect: set
+      type: attack
+      value: 1
+
+- name: holy_smite
+  class: priest
+  crystal: 1
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+
+- name: mind_blast
+  class: priest
+  crystal: 2
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 5
+      targets:
+        scope: opponent
+        type: hero
+
+- name: power_word_shield
+  display: >
+    Power Word: Shield  # pipe sign used to escape colon
+  class: priest
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: shadow_word_pain
+  display: >
+    Shadow Word: Pain
+  class: priest
+  crystal: 2
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+      condition:
+        type: attack_value
+        range_end: 3
+
+- name: divine_spirit
+  class: priest
+  crystal: 2
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+      fold: true
+
+- name: shadow_word_death
+  display: >
+    Shadow Word: Death
+  class: priest
+  crystal: 3
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+      condition:
+        type: attack_value
+        range_start: 5
+
+- name: holy_nova
+  class: priest
+  crystal: 5
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: all
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: all
+
+- name: mind_control
+  class: priest
+  crystal: 10
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: take_control
+      trigger: on_play
+      effect: take_control
+      type: minion
+      permanent: true
+      value: 1
+
+- name: mind_vision
+  class: priest
+  crystal: 1
+  mechanics:
+    - name: copy
+      trigger: on_play
+      effect: copy_card
+      type: hand
+      value: 1
+      target:
+        scope: opponent
+        type: hand
+        random_target: 1
+
+- name: assassinate
+  class: rogue
+  crystal: 5
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+
+- name: backstab
+  class: rogue
+  crystal: 0
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      condition:
+        type: health_loss
+        range_start: 0
+        range_end: 0
+
+- name: deadly_poison
+  class: rogue
+  crystal: 1
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      target:
+        scope: own
+        type: weapon
+      condition:
+        type: weapon_equipped
+
+- name: sap
+  class: rogue
+  crystal: 2
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: return_to_hand
+      trigger: on_play
+      effect: return_to_hand
+      type: minion
+      value: 1
+
+- name: sinister_strike
+  class: rogue
+  crystal: 1
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: hero
+
+- name: fan_of_knives
+  class: rogue
+  crystal: 3
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: shiv
+  class: rogue
+  crystal: 2
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: sprint
+  class: rogue
+  crystal: 7
+  mechanics:
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 4
+      target:
+        scope: own
+        type: deck
+
+- name: vanish
+  class: rogue
+  crystal: 6
+  mechanics:
+    - name: return_to_hand
+      trigger: on_play
+      effect: return_to_hand
+      type: minion
+      value: 1
+      target:
+        scope: opponent
+        type: minion
+    - name: return_to_hand
+      trigger: on_play
+      effect: return_to_hand
+      type: minion
+      value: 1
+      target:
+        scope: own
+        type: minion
+
+- name: ancestral_healing
+  class: shaman
+  crystal: 0
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: restore_health
+      trigger: on_play
+      effect: full_heal
+      type: health
+      value: 1
+    - name: taunt
+      trigger: on_play
+      effect: add_mechanic
+      type: taunt
+      value: 1
+
+- name: frost_shock
+  class: shaman
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+    - name: frozen
+      trigger: on_play
+      effect: add_mechanic
+      type: frozen
+      value: 1
+
+- name: hex
+  class: shaman
+  crystal: 3
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: transform
+      trigger: on_play
+      effect: transform
+      type: minion
+      value: 1
+      choices:
+        - frog
+
+- name: rockbiter_weapon
+  class: shaman
+  crystal: 1
+  single_target:
+    scope: own
+    type: all
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 3
+
+- name: windfury
+  class: shaman
+  crystal: 2
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: windfury
+      trigger: on_play
+      effect: add_mechanic
+      type: windfury
+      value: 1
+
+- name: bloodlust
+  class: shaman
+  crystal: 5
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 3
+      target:
+        scope: own
+        type: minion
+
+- name: totemic_might
+  class: shaman
+  crystal: 0
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: max_health
+      value: 2
+      target:
+        scope: own
+        type: totem
+
+- name: drain_life
+  class: warlock
+  crystal: 3
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 2
+      target:
+        scope: own
+        type: hero
+
+- name: hellfire
+  class: warlock
+  crystal: 4
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 3
+      target:
+        scope: all
+        type: all
+
+- name: shadow_bolt
+  class: warlock
+  crystal: 3
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 4
+
+- name: corruption
+  class: warlock
+  crystal: 1
+  single_target:
+    scope: opponent
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: add_mechanic_trigger
+      type: minion
+      mechanic_to_add:
+        - name: destroy
+          trigger: on_opponent_start_turn
+          effect: destroy
+          type: minion
+      value: 1
+
+- name: mortal_coil
+  class: warlock
+  cyrstal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+      condition:
+        type: health_value
+        range_start: 1
+        range_end: 1
+
+- name: sacrificial_pact
+  class: warlock
+  crystal: 0
+  single_target:
+    scope: all
+    type: demon
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+    - name: restore_health
+      trigger: on_play
+      effect: heal
+      type: health
+      value: 5
+      target:
+        scope: own
+        type: hero
+
+- name: soulfire
+  class: warlock
+  crystal: 1
+  single_target:
+    scope: all
+    type: all
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 4
+    - name: discard
+      trigger: on_play
+      effect: discard
+      type: hand
+      value: 1
+      target:
+        scope: own
+        type: hand
+      condition:
+        type: hand_size
+        start_range: 1
+
+- name: charge
+  class: warrior
+  crystal: 3
+  single_target:
+    scope: own
+    type: minion
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 2
+      permanent: true
+    - name: charge
+      trigger: on_play
+      effect: add_mechanic
+      type: charge
+      value: 1
+
+- name: execute
+  class: warrior
+  crystal: 1
+  single_target:
+    scope: all
+    type: minion
+  mechanics:
+    - name: destroy
+      trigger: on_play
+      effect: destroy
+      type: minion
+      value: 1
+      condition:
+        type: health_loss
+        range_start: 1
+
+- name: heroic_strike
+  class: warrior
+  crystal: 2
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: buff
+      type: attack
+      value: 4
+      permanent: false
+      target:
+        scope: own
+        type: hero
+
+- name: cleave
+  class: warrior
+  crystal: 2
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 2
+      target:
+        scope: opponent
+        type: minion
+        random_target: 2
+      condition:
+        type: board_size
+        range_start: 2
+        range_end: 999
+
+- name: shield_block
+  class: warrior
+  crystal: 3
+  mechanics:
+    - name: gain
+      trigger: on_play
+      effect: attribute
+      type: armor
+      value: 2
+      target:
+        scope: own
+        type: hero
+    - name: card_draw
+      trigger: on_play
+      effect: draw
+      type: card
+      value: 1
+      target:
+        scope: own
+        type: deck
+
+- name: whirlwind
+  class: warrior
+  crystal: 1
+  mechanics:
+    - name: deal_damage
+      trigger: on_play
+      effect: attribute
+      type: health
+      value: 1
+      target:
+        scope: all
+        type: minion

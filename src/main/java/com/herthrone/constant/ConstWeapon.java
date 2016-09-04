@@ -1,0 +1,12 @@
+package com.herthrone.constant;
+
+public enum ConstWeapon {
+  ARCANITE_REAPER,
+  ASSASSINS_BLADE,
+  FIERY_WAR_AXE,
+  LIGHTS_JUSTICE,
+  STORMFORGED_AXE,
+  TRUESILVER_CHAMPION,
+  WICKED_BLADE,
+  WICKED_KNIFE;
+}
