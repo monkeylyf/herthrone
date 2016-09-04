@@ -120,26 +120,7 @@ public class EffectFactory {
       final List<Effect> effects = pipeEffects(mechanicConfig, target, triggeringSide);
       triggeringSide.getEffectQueue().enqueue(effects);
     } else {
-      logger.debug(mechanicConfig.mechanic + " passed because triggering condition not med");
-    }
-  }
-
-  public static void triggerEndTurnMechanics(final Side side) {
-    final ConstTrigger endTurnTrigger = ConstTrigger.ON_END_TURN;
-    final List<Minion> minions = side.board.stream()
-        .sorted(compareBySequenceId)
-        .filter(minion -> minion.getTriggeringMechanics().has(endTurnTrigger))
-        .collect(Collectors.toList());
-
-    for (final Minion minion : minions) {
-      for (MechanicConfig mechanic : minion.getTriggeringMechanics().get(endTurnTrigger)) {
-        final List<Creature> targets = TargetFactory.getProperTargets(
-            mechanic.targetOptional.get(), side);
-        final List<Effect> effects = targets.stream()
-            .flatMap(target -> pipeEffects(mechanic, target, side).stream())
-            .collect(Collectors.toList());
-        side.getEffectQueue().enqueue(effects);
-      }
+      logger.debug(mechanicConfig.mechanic + " passed because triggering condition not met");
     }
   }
 
@@ -189,7 +170,8 @@ public class EffectFactory {
       case DESTROY:
         return Collections.singletonList(new DestroyEffect(creatureToDestroyable(target)));
       case DRAW:
-        return getDrawCardEffect(config, triggeringSide);
+        return Collections.singletonList(new MoveCardEffect(
+            triggeringSide.hand, triggeringSide.deck, triggeringSide, config.value));
       case FULL_HEAL:
         return (target.healthLoss() > 0) ?
           Collections.singletonList(new HealEffect(target, target.healthLoss())) :
@@ -383,15 +365,6 @@ public class EffectFactory {
       summonEffects.add(new SummonEffect(side, minion));
     }
     return summonEffects;
-  }
-
-  private static List<Effect> getDrawCardEffect(final MechanicConfig effect, final Side side) {
-    // TODO: draw from own deck/opponent deck/opponent hand
-    final TargetConfig target = effect.targetOptional.get();
-    switch (target.type) {
-
-    }
-    return Collections.singletonList(new MoveCardEffect(side.hand, side.deck, side, effect.value));
   }
 
   private static List<Effect> getCrystalEffect(final MechanicConfig config, final Creature creature) {

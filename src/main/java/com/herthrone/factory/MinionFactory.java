@@ -107,13 +107,19 @@ public class MinionFactory {
 
       @Override
       public void summonOnBoard(final Container<Minion> board, final int index) {
+        board.stream()
+            .forEach(minion -> {
+                TriggerFactory.passiveTrigger(minion, this, ConstTrigger.ON_SUMMON);
+            });
         // Put minion onto board at given index.
         board.add(index, this);
 
         final Side side = binder().getSide();
         TriggerFactory.refreshAura(side);
         TriggerFactory.refreshSpellDamage(side);
-        TriggerFactory.triggerByBoard(board.stream().filter(m -> m != this), side, ConstTrigger.ON_SUMMON);
+        //TriggerFactory.triggerByBoard(board.stream().filter(m -> m != this), side, ConstTrigger
+        //    .ON_SUMMON);
+
       }
 
       @Override

@@ -676,12 +676,12 @@ public class MechanicTest extends TestCase {
 
     // Test that putting a non-beast minion on board does not trigger draw card effect.
     gm.playCard(createAndBindMinion(ConstMinion.WOLFRIDER));
-    //assertThat(gm.activeSide.deck.size()).isEqualTo(initDeckSize);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize);
     assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize);
 
     // Test that putting a beast minion on board triggers draw card effect.
     gm.playCard(createAndBindMinion(ConstMinion.TIMBER_WOLF));
-    //assertThat(gm.activeSide.deck.size()).isEqualTo(initDeckSize - 1);
+    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
     assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize + 1);
   }
 

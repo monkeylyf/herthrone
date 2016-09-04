@@ -99,7 +99,7 @@ public class GameManager implements Round {
 
   @Override
   public void endTurn() {
-    EffectFactory.triggerEndTurnMechanics(activeSide);
+    activeSide.endTurn();
   }
 
   @Override
@@ -107,12 +107,10 @@ public class GameManager implements Round {
     increaseCrystalUpperBound();
     activeSide.startTurn();
     drawCard();
-    activeSide.board.stream().forEach(Minion::endTurn);
-    activeSide.hero.endTurn();
   }
 
   void playUtilEndTurn() {
-    CommandLine.CommandNode leafNode = null;
+    CommandLine.CommandNode leafNode;
     do {
       final CommandLine.CommandNode root = CommandLine.yieldCommands(activeBattlefield);
       for (Map.Entry entry : activeBattlefield.view().entrySet()) {

@@ -3,6 +3,7 @@ package com.herthrone.factory;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
+import com.herthrone.base.Effect;
 import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
@@ -12,9 +13,11 @@ import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
+import com.herthrone.effect.HealEffect;
 import com.herthrone.game.Side;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,6 +56,20 @@ public class TriggerFactory {
         triggerrer.getTriggeringMechanics().get(triggerType), triggerrer.binder().getSide());
   }
 
+  static void passiveTrigger(final Mechanic.TriggeringMechanic triggerrer, final Creature target,
+                             final ConstTrigger triggerType) {
+    final Side side = triggerrer.binder().getSide();
+    Preconditions.checkArgument(!triggerType.equals(ConstTrigger.ON_PLAY));
+    triggerrer.getTriggeringMechanics().get(triggerType)
+        .forEach(mechanicConfig -> {
+          final List<Creature> targets = (mechanicConfig.targetOptional.isPresent()) ?
+              TargetFactory.getProperTargets(mechanicConfig.targetOptional.get(), side) :
+              Collections.singletonList(target);
+          targets.forEach(t ->
+              EffectFactory.pipeMechanicEffectConditionally(mechanicConfig, side, t));
+        });
+  }
+
   private static void triggerWithTarget(final List<MechanicConfig> mechanicConfigs,
                                         final Creature selectedTarget, final Side triggeringSide) {
     mechanicConfigs.forEach(mechanicConfig -> TargetFactory.getTarget(
@@ -73,6 +90,13 @@ public class TriggerFactory {
                         mechanicConfig, triggeringSide, target)
                 );
         });
+  }
+
+  public static void triggerOnHealMinion(final Effect effect) {
+    if (effect instanceof HealEffect && ((HealEffect) effect).getTarget() instanceof Minion) {
+      final Side side = ((HealEffect) effect).getTarget().binder().getSide();
+      TriggerFactory.triggerByBoard(side, ConstTrigger.ON_HEAL_MINION);
+    }
   }
 
   public static void triggerByBoard(final Stream<Minion> minionStream, final Side triggeringSide,
@@ -121,8 +145,7 @@ public class TriggerFactory {
     } else {
       targetSide = activatingSide;
     }
-    final boolean willBeTriggered = isConditionTriggered(
-        mechanicConfig, targetSide, target);
+    final boolean willBeTriggered = isConditionTriggered(mechanicConfig, targetSide, target);
     final String word = willBeTriggered ? "is" : "is not";
     logger.debug(String.format("Condition %s met and mechanic effect %s triggered", word, word));
     return willBeTriggered;
@@ -139,6 +162,8 @@ public class TriggerFactory {
     switch (conditionConfig.conditionType) {
       case ATTACK_VALUE:
         return conditionConfig.inRange(target.attack().value());
+      case TARGET_TYPE_BEAST:
+        return target.type().equals(ConstType.BEAST);
       case BEAST_COUNT:
         final int beastCount = side.board.stream()
             .filter(m -> m.type().equals(ConstType.BEAST))

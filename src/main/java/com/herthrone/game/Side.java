@@ -1,6 +1,7 @@
 package com.herthrone.game;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -14,6 +15,7 @@ import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.constant.Constant;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
@@ -48,7 +50,6 @@ public class Side implements Round {
     this.hero = hero;
     bind(hero);
     bind(hero.getHeroPower());
-    hero.binder().bind(this);
     this.hand = new Container<>(handCapacity);
     this.board = new Container<>(boardCapacity);
     this.secrets = new Container<>();
@@ -141,16 +142,20 @@ public class Side implements Round {
   public void endTurn() {
     replay.endTurn();
     hero.endTurn();
-    board.stream().forEach(Round::startTurn);
-    TriggerFactory.triggerByBoard(getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_END_TURN);
+    board.stream().forEach(Round::endTurn);
+    TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_END_TURN);
+    TriggerFactory.triggerByBoard(
+        getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_END_TURN);
   }
 
   @Override
   public void startTurn() {
     replay.startTurn();
     hero.startTurn();
-    board.stream().forEach(Round::endTurn);
-    TriggerFactory.triggerByBoard(getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_START_TURN);
+    board.stream().forEach(Round::startTurn);
+    TriggerFactory.triggerByBoard(
+        getOpponentSide().board.stream(), this, ConstTrigger.ON_OPPONENT_START_TURN);
+    TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_START_TURN);
   }
 
   public Side getOpponentSide() {
@@ -165,6 +170,10 @@ public class Side implements Round {
 
   @Override
   public String toString() {
-    return board.toString();
+    return Objects.toStringHelper(this)
+        .add(Constant.HERO, hero)
+        .add(Constant.BOARD, board)
+        .add(Constant.SECRET, secrets)
+        .toString();
   }
 }

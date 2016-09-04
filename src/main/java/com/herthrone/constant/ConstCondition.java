@@ -8,5 +8,6 @@ public enum ConstCondition {
   HAND_SIZE,
   HEALTH_LOSS,
   HEALTH_VALUE,
-  WEAPON_EQUIPPED;
+  WEAPON_EQUIPPED,
+  TARGET_TYPE_BEAST;
 }

@@ -926,14 +926,10 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
       condition:
         # this minion itself is a beast so after play a beast on board there
         # should at least two beasts on board to trigger the effect.
-        type: beast_count
-        range_start: 2
+        type: target_type_beast
 
 - name: tundra_rhino
   class: hunter

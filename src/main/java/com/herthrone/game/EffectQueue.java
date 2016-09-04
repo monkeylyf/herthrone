@@ -1,10 +1,6 @@
 package com.herthrone.game;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.herthrone.base.Effect;
-import com.herthrone.base.Minion;
-import com.herthrone.constant.ConstTrigger;
-import com.herthrone.effect.HealEffect;
 import com.herthrone.factory.TriggerFactory;
 import org.apache.log4j.Logger;
 
@@ -16,20 +12,19 @@ public class EffectQueue {
 
   private static Logger logger = Logger.getLogger(EffectQueue.class.getName());
 
-  private final Queue<Effect> queue;
+  private final Queue<Effect> primaryQueue;
 
-  @VisibleForTesting
   EffectQueue() {
-    this.queue = new LinkedList<>();
+    this.primaryQueue = new LinkedList<>();
   }
 
   private void executeUntilEmpty() {
-    while (!queue.isEmpty()) {
-      final Effect effect = queue.remove();
+    while (!primaryQueue.isEmpty()) {
+      final Effect effect = primaryQueue.remove();
       logger.debug("Acting effect " + effect.effectType());
       effect.act();
 
-      triggerOnHealMinion(effect);
+      TriggerFactory.triggerOnHealMinion(effect);
     }
   }
 
@@ -38,17 +33,9 @@ public class EffectQueue {
       logger.debug(String.format("Enqueuing %d effects", effects.size()));
       effects.forEach(effect -> {
         logger.debug("Enqueuing effect: " + effect.effectType());
-        queue.add(effect);
+        primaryQueue.add(effect);
       });
       executeUntilEmpty();
     }
   }
-
-  private void triggerOnHealMinion(final Effect effect) {
-    if (effect instanceof HealEffect && ((HealEffect) effect).getTarget() instanceof Minion) {
-      final Side side = ((HealEffect) effect).getTarget().binder().getSide();
-      TriggerFactory.triggerByBoard(side, ConstTrigger.ON_HEAL_MINION);
-    }
-  }
-
 }
