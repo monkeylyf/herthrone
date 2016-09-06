@@ -99,11 +99,19 @@ public class ConfigLoader {
   }
 
   public static MinionConfig getMinionConfigByName(final ConstMinion minion) {
-    return minionConfigLoader.getConfigurations().get(minion);
+    return getMinionConfigs().get(minion);
+  }
+
+  public static ImmutableMap<Enum, MinionConfig> getMinionConfigs() {
+    return minionConfigLoader.getConfigurations();
   }
 
   public static HeroConfig getHeroConfigByName(final ConstHero hero) {
-    return heroConfigLoader.getConfigurations().get(hero);
+    return getHeroConfigs().get(hero);
+  }
+
+  public static ImmutableMap<Enum, HeroConfig> getHeroConfigs() {
+    return heroConfigLoader.getConfigurations();
   }
 
   public static SpellConfig getSpellConfigByName(final ConstSpell spell) {

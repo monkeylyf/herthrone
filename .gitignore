@@ -1,6 +1,9 @@
 # Intellij related files/directories.
-.idea
 *.iml
+*.iml
+*.ipr
+*.iws
+.idea/
 
 # Gradle related files/directories.
 .gradle
