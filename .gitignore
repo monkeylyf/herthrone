@@ -1,4 +1,11 @@
+# Intellij related files/directories.
 .idea
 *.iml
-*.log
+
+# Gradle related files/directories.
+.gradle
+/build
 target
+
+# Project log files/directories.
+*.log
