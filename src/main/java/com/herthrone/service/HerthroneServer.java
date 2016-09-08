@@ -1,10 +1,11 @@
 package com.herthrone.service;
 
 import com.google.common.collect.ImmutableMap;
-import com.herthrone.base.Minion;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
 import com.herthrone.configuration.MinionConfig;
+import com.herthrone.configuration.SpellConfig;
+import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -13,8 +14,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class HerthroneServer {
@@ -63,18 +63,12 @@ public class HerthroneServer {
 
   private class HerthroneImpl extends HerthroneGrpc.HerthroneImplBase {
 
+    @Override
     public void listHeroes(final ListHeroesRequest request,
                            final StreamObserver<ListHeroesResponse> responseObserver) {
       final ImmutableMap<Enum, HeroConfig> heroConfigs = ConfigLoader.getHeroConfigs();
       final Collection<Hero> heroes = heroConfigs.values().stream()
-          .map(heroConfig ->
-              Hero.newBuilder()
-                .setName(heroConfig.name.toString())
-                .setDisplayName(heroConfig.displayName.toString())
-                .setClassType(heroConfig.className.toString())
-                .setHeroPower(heroConfig.heroPower.toString())
-                .setDescription(heroConfig.description)
-                .build())
+          .map(HeroConfig::toHeroProto)
           .collect(Collectors.toList());
       final ListHeroesResponse response = ListHeroesResponse.newBuilder()
           .addAllHeroes(heroes)
@@ -83,24 +77,61 @@ public class HerthroneServer {
       responseObserver.onCompleted();
     }
 
-    public void listCards(final ListCardsRequest request,
+    @Override
+    public void listCards(final ListRequest request,
                           final StreamObserver<ListCardsResponse> responseObserver) {
-      final ConstClass requestClassType = ConstClass.valueOf(request.getClassType());
-      final ImmutableMap<Enum, MinionConfig> minionConfigs = ConfigLoader.getMinionConfigs();
-      final Collection<String> cardNames = minionConfigs.entrySet().stream()
-          .filter(entry -> {
-            final MinionConfig minionConfig = entry.getValue();
-            return minionConfig.isCollectible &&
-                (minionConfig.className.equals(requestClassType) ||
-                 minionConfig.className.equals(ConstClass.NEUTRAL));
-          })
-          .map(entry -> entry.getKey().toString())
-          .collect(Collectors.toList());
+      final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
       final ListCardsResponse response = ListCardsResponse.newBuilder()
-          .addAllCards(cardNames)
+          .addAllMinions(ConfigLoader.getMinionConfigsByClass(requestClass).stream()
+              .map(MinionConfig::toMinionProto)
+              .collect(Collectors.toList()))
+          .addAllSpells(ConfigLoader.getSpellConfigsByClass(requestClass).stream()
+              .map(SpellConfig::toSpellProto)
+              .collect(Collectors.toList()))
+          .addAllWeapons(ConfigLoader.getWeaponConfigsByClass(requestClass).stream()
+              .map(WeaponConfig::toWeaponProto)
+              .collect(Collectors.toList()))
           .build();
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     }
+  }
+
+  public void listMinions(final ListRequest request,
+                          final StreamObserver<ListMinionsResponse> responseObserver) {
+    final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
+    final List<Minion> minionProtos = ConfigLoader.getMinionConfigsByClass(requestClass).stream()
+        .map(MinionConfig::toMinionProto)
+        .collect(Collectors.toList());
+    final ListMinionsResponse response = ListMinionsResponse.newBuilder()
+        .addAllMinions(minionProtos)
+        .build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+  public void listSpells(final ListRequest request,
+                         final StreamObserver<ListSpellsResponse> responseObserver) {
+    final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
+    final Collection<Spell> spellProtos = ConfigLoader.getSpellConfigsByClass(requestClass).stream()
+        .map(SpellConfig::toSpellProto)
+        .collect(Collectors.toList());
+    final ListSpellsResponse response = ListSpellsResponse.newBuilder()
+        .build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+  public void listWeapons(final ListRequest request,
+                          final StreamObserver<ListWeaponsResponse> responseObserver) {
+    final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
+    final Collection<Weapon> weaponProtos = ConfigLoader.getWeaponConfigsByClass(requestClass).stream()
+        .map(WeaponConfig::toWeaponProto)
+        .collect(Collectors.toList());
+    final ListWeaponsResponse response = ListWeaponsResponse.newBuilder()
+        .addAllWeapons(weaponProtos)
+        .build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 }

@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
+import com.herthrone.service.Hero;
 
 import java.util.Map;
 
@@ -21,5 +22,15 @@ public class HeroConfig extends ConfigLoader.AbstractConfig<ConstHero> {
   @Override
   protected ConstHero loadName(final String name) {
     return ConstHero.valueOf(name.toUpperCase());
+  }
+
+  public Hero toHeroProto() {
+    return Hero.newBuilder()
+        .setName(name.toString())
+        .setDisplayName(displayName.toString())
+        .setClassType(className.toString())
+        .setHeroPower(heroPower.toString())
+        .setDescription(description)
+        .build();
   }
 }

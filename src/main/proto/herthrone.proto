@@ -3,6 +3,9 @@ syntax = "proto3";
 package service;
 
 import "hero.proto";
+import "minion.proto";
+import "spell.proto";
+import "weapon.proto";
 
 option java_multiple_files = true;
 option java_package = "com.herthrone.service";
@@ -12,7 +15,10 @@ option objc_class_prefix = "HLW";
 
 service Herthrone {
     rpc ListHeroes (ListHeroesRequest) returns (ListHeroesResponse) {}
-    rpc ListCards (ListCardsRequest) returns (ListCardsResponse) {}
+    rpc ListMinions (ListRequest) returns (ListMinionsResponse) {}
+    rpc ListSpells (ListRequest) returns (ListSpellsResponse) {}
+    rpc ListWeapons (ListRequest) returns (ListWeaponsResponse) {}
+    rpc ListCards (ListRequest) returns (ListCardsResponse) {}
 }
 
 message ListHeroesRequest {
@@ -23,10 +29,24 @@ message ListHeroesResponse {
     repeated Hero heroes = 1;
 }
 
-message ListCardsRequest {
+message ListRequest {
     string class_type = 1;
 }
 
+message ListMinionsResponse {
+    repeated Minion minions = 1;
+}
+
+message ListSpellsResponse {
+    repeated Spell spells = 1;
+}
+
+message ListWeaponsResponse {
+    repeated Weapon weapons = 1;
+}
+
 message ListCardsResponse {
-    repeated string cards = 1;
+    repeated Minion minions = 1;
+    repeated Spell spells = 2;
+    repeated Weapon weapons = 3;
 }

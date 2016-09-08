@@ -4,10 +4,12 @@ package com.herthrone.configuration;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
+import com.herthrone.service.Weapon;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
 
@@ -33,4 +35,16 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
     return ConstWeapon.valueOf(name.toUpperCase());
   }
 
+  public Weapon toWeaponProto() {
+    return Weapon.newBuilder()
+        .setName(name.toString())
+        .setDisplayName(displayName)
+        .setAttack(attack)
+        .setDurability(durability)
+        .addAllMechanics(mechanics.values().stream()
+            .flatMap(mechanicConfigs -> mechanicConfigs.stream())
+            .map(MechanicConfig::toMechanicProto)
+            .collect(Collectors.toList()))
+        .build();
+  }
 }

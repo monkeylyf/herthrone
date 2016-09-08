@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
+import com.herthrone.service.Spell;
 
 import java.util.List;
 import java.util.Map;
@@ -30,5 +31,19 @@ public class SpellConfig extends ConfigLoader.AbstractConfig<ConstSpell> {
   @Override
   protected ConstSpell loadName(final String name) {
     return ConstSpell.valueOf(name.toUpperCase());
+  }
+
+  public Spell toSpellProto() {
+    return Spell.newBuilder()
+        .setName(name.toString())
+        .setDisplayName(displayName)
+        .setClassType(className.toString())
+        .setCrystal(crystal)
+        .setDescription(description)
+        .addAllMechanics(
+            effects.stream()
+                .map(MechanicConfig::toMechanicProto)
+                .collect(Collectors.toList()))
+        .build();
   }
 }

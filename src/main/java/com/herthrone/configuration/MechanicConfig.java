@@ -6,6 +6,7 @@ import com.herthrone.constant.ConstDependency;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTrigger;
+import com.herthrone.service.Mechanic;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,5 +126,12 @@ public class MechanicConfig {
     addIfConditionIsTrue(isUnique, stringHelper, UNIQUE, isUnique);
     addIfConditionIsTrue(choices.size() > 0, stringHelper, CHOICES, choices);
     return stringHelper.toString();
+  }
+
+  public Mechanic toMechanicProto() {
+    return Mechanic.newBuilder()
+        .setType(mechanic.toString())
+        .setDescription("foo") // TODO
+        .build();
   }
 }

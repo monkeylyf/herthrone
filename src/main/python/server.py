@@ -41,9 +41,16 @@ def cards():
     """"""
     payload = request.get_json(force=True)
     response = client.list_cards(class_type=payload.get('class_type'))
-    cards = ast.literal_eval(str(response.cards))
-    from pprint import pprint as p
-    p(cards)
+    cards = []
+    for minion in response.minions:
+        cards.append(minion.name)
+    for spell in response.spells:
+        cards.append(spell.name)
+    for weapon in response.weapons:
+        cards.append(weapon.name)
+    #cards = ast.literal_eval(str(response.cards))
+    #from pprint import pprint as p
+    #p(cards)
     return Response(
         json.dumps(cards),
         mimetype='application/json',

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package service;
+
+import "mechanic.proto";
+
+option java_multiple_files = true;
+option java_package = "com.herthrone.service";
+option java_outer_classname = "MinionProto";
+option objc_class_prefix = "HLW";
+
+
+message Minion {
+    string name = 1;
+    string display_name = 2;
+    string class_type = 3;
+    sint32 attack = 4;
+    sint32 health = 5;
+    sint32 crystal = 6;
+    repeated Mechanic mechanics = 7;
+}

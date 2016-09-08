@@ -3,9 +3,11 @@ package com.herthrone.configuration;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
+import com.herthrone.service.Minion;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
 
@@ -32,5 +34,21 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   @Override
   protected ConstMinion loadName(final String name) {
     return ConstMinion.valueOf(name.toUpperCase());
+  }
+
+  public Minion toMinionProto() {
+    return Minion.newBuilder()
+        .setName(name.toString())
+        .setDisplayName(displayName)
+        .setClassType(className.toString())
+        .setAttack(attack)
+        .setHealth(health)
+        .setCrystal(crystal)
+        .addAllMechanics(
+            mechanics.values().stream()
+                .flatMap(mechanicConfigs -> mechanicConfigs.stream())
+                .map(MechanicConfig::toMechanicProto)
+                .collect(Collectors.toList()))
+        .build();
   }
 }

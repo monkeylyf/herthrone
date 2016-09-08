@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class ConfigLoader {
 
@@ -99,12 +100,14 @@ public class ConfigLoader {
     return ResourceBundle.getBundle("configuration");
   }
 
-  public static MinionConfig getMinionConfigByName(final ConstMinion minion) {
-    return getMinionConfigs().get(minion);
+  public static List<MinionConfig> getMinionConfigsByClass(final ConstClass classType) {
+    return minionConfigLoader.getConfigurations().values().stream()
+        .filter(minionConfig -> minionConfig.isVisibleByClass(classType))
+        .collect(Collectors.toList());
   }
 
-  public static ImmutableMap<Enum, MinionConfig> getMinionConfigs() {
-    return minionConfigLoader.getConfigurations();
+  public static MinionConfig getMinionConfigByName(final ConstMinion minion) {
+    return minionConfigLoader.getConfigurations().get(minion);
   }
 
   public static HeroConfig getHeroConfigByName(final ConstHero hero) {
@@ -115,12 +118,24 @@ public class ConfigLoader {
     return heroConfigLoader.getConfigurations();
   }
 
+  public static List<SpellConfig> getSpellConfigsByClass(final ConstClass classType) {
+    return spellConfigLoader.getConfigurations().values().stream()
+        .filter(spellConfig -> spellConfig.isVisibleByClass(classType))
+        .collect(Collectors.toList());
+  }
+
   public static SpellConfig getSpellConfigByName(final ConstSpell spell) {
     return spellConfigLoader.getConfigurations().get(spell);
   }
 
   public static SpellConfig getHeroPowerConfigByName(final ConstSpell heroPower) {
     return heroPowerConfigLoader.getConfigurations().get(heroPower);
+  }
+
+  public static List<WeaponConfig> getWeaponConfigsByClass(final ConstClass classType) {
+    return weaponConfigLoader.getConfigurations().values().stream()
+        .filter(weaponConfig -> weaponConfig.isVisibleByClass(classType))
+        .collect(Collectors.toList());
   }
 
   public static WeaponConfig getWeaponConfigByName(final ConstWeapon weapon) {
@@ -192,7 +207,7 @@ public class ConfigLoader {
       this.name = loadName((String) map.get(NAME));
       this.displayName = getByDefault(map, DISPLAY, lowerUnderscoreToUpperWhitespace(name));
       this.className = ConstClass.valueOf(getUpperCaseStringValue(map, CLASS));
-      this.description = (String) map.get(DESCRIPTION);
+      this.description = (map.containsKey(DESCRIPTION)) ? (String) map.get(DESCRIPTION) : "";
       this.crystal = getByDefault(map, CRYSTAL, 0);
       this.isCollectible = getByDefault(map, COLLECTIBLE, true);
     }
@@ -210,6 +225,10 @@ public class ConfigLoader {
         }
       }
       return stringBuilder.toString();
+    }
+
+    protected boolean isVisibleByClass(final ConstClass classType) {
+      return isCollectible && (className.equals(ConstClass.NEUTRAL) || className.equals(classType));
     }
   }
 }

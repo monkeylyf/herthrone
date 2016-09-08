@@ -16,7 +16,7 @@ proper protobuf class.
 ###For Python
 Use pip to install package grpcio-tools.
 Python protobuf files will be generated from .proto files with following command:
-```python -m grpc.tools.protoc --proto_path ../proto --python_out=. --grpc_python_out=. ../proto/herthrone.proto```
+```python -m grpc.tools.protoc --proto_path ../proto --python_out=. --grpc_python_out=. ../proto/*.proto```
 Be aware of the relative paths and make sure you are at ```../src/main/python```
 directory.
 
