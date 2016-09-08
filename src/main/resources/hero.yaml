@@ -1,45 +1,45 @@
 - name: anduin_wrynn
   class: priest
   hero_power: lesser_heal
-  description: null
+  description: The future King of Stormwind is a kind, gentle soul. Except when he’s in Shadowform.
 
 - name: guldan
   display: Gul'dan
   class: warlock
   hero_power: life_tap
-  description: null
+  description: Talented, persuasive and hard-working. Too bad he wants to feed your soul to demons.
 
 - name: jaina_proudmoore
   class: mage
   hero_power: fire_blast
-  description: null
+  description: The Kirin Tor’s leader is a powerful sorceress. She used to be a lot nicer before the Theramore thing.
 
 - name: malfurion_stormrage
   class: druid
   hero_power: shapeshift
-  description: null
+  description: The lord of the night elves is a wise and noble leader. Yes, those antlers are real.
 
 - name: rexxar
   class: hunter
   hero_power: steady_shot
-  description: null
+  description: He only feels at home in the wilderness with his beasts. Super secret':' Misha is his favorite.
 
 - name: thrall
   class: shaman
   hero_power: totemic_call
-  description: null
+  description: Thrall quit his former job as Warchief to save the world and spend more time with his family.
 
 - name: uther_lightbringer
   class: paladin
   hero_power: reinforce
-  description: null
+  description: Leader of the Knights of the Silver Hand. Best-selling author of The Light and How to Swing It.
 
 - name: valeera_sanguinar
   class: rogue
   hero_power: dagger_mastery
-  description: null
+  description: Expert assassin. Deadly gladiator. Best knife skills in her cooking class, according to survivors.
 
 - name: garrosh_hellscream
   class: warrior
   hero_power: armor_up
-  description: null
+  description: This former Warchief of the Horde isn’t bitter about being deposed. Not at all.

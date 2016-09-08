@@ -12,3 +12,9 @@ target
 
 # Project log files/directories.
 *.log
+
+# Ignore Python bytecode file.
+*.pyc
+
+# Ignore generated Python protobuf file.
+*_pb2.py

@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
@@ -199,9 +200,16 @@ public class ConfigLoader {
     protected abstract E loadName(final String name);
 
     private String lowerUnderscoreToUpperWhitespace(final Enum name) {
-      return CaseFormat.UPPER_CAMEL
-          .to(CaseFormat.UPPER_UNDERSCORE, name.toString())
-          .replaceAll(" ", "_");
+      final StringBuilder stringBuilder = new StringBuilder();
+      final String[] words = name.toString().split("_");
+      for (int i = 0; i < words.length; ++i) {
+        final String word = words[i].toLowerCase();
+        stringBuilder.append(word.substring(0, 1).toUpperCase() + word.substring(1));
+        if (i != words.length - 1) {
+          stringBuilder.append(" ");
+        }
+      }
+      return stringBuilder.toString();
     }
   }
 }

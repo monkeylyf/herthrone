@@ -1003,6 +1003,7 @@
   mechanics:
     - name: taunt
       effect: status
+  collectible: false
 
 - name: fire_elemental
   class: shaman

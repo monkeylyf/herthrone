@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package service;
+
+option java_multiple_files = true;
+option java_package = "com.herthrone.service";
+option java_outer_classname = "HeroProto";
+option objc_class_prefix = "HLW";
+
+
+message Hero {
+    string name = 1;
+    string display_name = 2;
+    string class_type = 3;
+    string hero_power = 4;
+    string description = 5;
+}

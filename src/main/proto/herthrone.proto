@@ -2,24 +2,31 @@ syntax = "proto3";
 
 package service;
 
+import "hero.proto";
+
 option java_multiple_files = true;
 option java_package = "com.herthrone.service";
 option java_outer_classname = "HerthroneProto";
 option objc_class_prefix = "HLW";
 
 
-// The greeting service definition.
 service Herthrone {
-    // Sends a greeting
     rpc ListHeroes (ListHeroesRequest) returns (ListHeroesResponse) {}
+    rpc ListCards (ListCardsRequest) returns (ListCardsResponse) {}
 }
 
-// The request message containing the user's name.
 message ListHeroesRequest {
     string name = 1;
 }
 
-// The response message containing the greetings
 message ListHeroesResponse {
-    repeated string heroes = 1;
+    repeated Hero heroes = 1;
+}
+
+message ListCardsRequest {
+    string class_type = 1;
+}
+
+message ListCardsResponse {
+    repeated string cards = 1;
 }
