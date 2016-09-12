@@ -1,12 +1,17 @@
+#!/usr/bin/env python3.5
+
 """Flask server for UI."""
+
 import ast
 import json
 import os
 import time
+
 from flask import Flask, Response, request
 
 import client
 
+#TODO: fixit.
 DEV_INDEX_FILE_PATH = '/Users/yifengliu/google/ui_herthrone/src'
 
 app = Flask(__name__, static_url_path='', static_folder=DEV_INDEX_FILE_PATH)
@@ -40,17 +45,16 @@ def heroes():
 def cards():
     """"""
     payload = request.get_json(force=True)
-    response = client.list_cards(class_type=payload.get('class_type'))
-    cards = []
-    for minion in response.minions:
-        cards.append(minion.name)
-    for spell in response.spells:
-        cards.append(spell.name)
-    for weapon in response.weapons:
-        cards.append(weapon.name)
-    #cards = ast.literal_eval(str(response.cards))
-    #from pprint import pprint as p
-    #p(cards)
+    class_type = payload.get('class_type')
+    cards = {}
+    if class_type:
+        response = client.list_cards(class_type=class_type)
+        for minion in response.minions:
+            cards[minion.name] = client.proto_to_json(minion)
+        for spell in response.spells:
+            cards[spell.name] = client.proto_to_json(spell)
+        for weapon in response.weapons:
+            cards[weapon.name] = client.proto_to_json(weapon)
     return Response(
         json.dumps(cards),
         mimetype='application/json',

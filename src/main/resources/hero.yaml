@@ -22,7 +22,8 @@
 - name: rexxar
   class: hunter
   hero_power: steady_shot
-  description: He only feels at home in the wilderness with his beasts. Super secret':' Misha is his favorite.
+  description: >
+    He only feels at home in the wilderness with his beasts. Super secret: Misha is his favorite.
 
 - name: thrall
   class: shaman

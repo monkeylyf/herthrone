@@ -504,7 +504,7 @@
 
 - name: power_word_shield
   display: >
-    Power Word: Shield  # pipe sign used to escape colon
+    Power Word: Shield
   class: priest
   crystal: 1
   single_target:
