@@ -90,6 +90,11 @@ public class Side implements Round {
       deck.add(card);
       bind(card);
     });
+
+    // Shuffle the deck.
+    for (int i = 0; i < 5; ++i) {
+      deck.shuffle();
+    }
   }
 
   private static Card createCardInstance(final Enum cardName) {

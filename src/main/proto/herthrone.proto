@@ -19,6 +19,7 @@ service Herthrone {
     rpc ListSpells (ListRequest) returns (ListSpellsResponse) {}
     rpc ListWeapons (ListRequest) returns (ListWeaponsResponse) {}
     rpc ListCards (ListRequest) returns (ListCardsResponse) {}
+    rpc StartGame (StartGameRequest) returns (StartGameResponse) {}
 }
 
 message ListHeroesRequest {
@@ -49,4 +50,19 @@ message ListCardsResponse {
     repeated Minion minions = 1;
     repeated Spell spells = 2;
     repeated Weapon weapons = 3;
+}
+
+message StartGameRequest {
+    repeated StartGameSetting game_settings = 1;
+}
+
+message StartGameResponse {
+    string game_id = 1;
+}
+
+message StartGameSetting {
+    string hero = 1;
+    repeated string cards = 2;
+    // Potentially support multiple players game instead of duel.
+    uint32 player_number = 3;
 }

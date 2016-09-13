@@ -64,6 +64,37 @@ def cards():
         }
     )
 
+@app.route('/api/game/start', methods=['POST'])
+def start_game():
+    """"""
+    payload = request.get_json(force=True)
+    hero = payload['hero']
+    deck = payload['deck']
+    assert(sum(deck.values()) == 30)
+
+    deck_list = []
+    for card_name, count in deck.items():
+        deck_list += [card_name] * count
+
+    game_settings = {
+        'hero': hero,
+        'cards': deck_list,
+        'player_number': 2  # TODO: Hard code for now.
+    }
+
+    # TODO: Should be getting another player's info from queue.
+    game_settings = [game_settings] * 2
+
+    response = client.start_game(game_settings)
+    return Response(
+        json.dumps({'game_id': response.game_id}),
+        mimetype='application/json',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Origin': '*'
+        }
+    )
+
 
 if __name__ == '__main__':
     app.run(port=3000)

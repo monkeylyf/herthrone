@@ -44,6 +44,13 @@ def list_weapons(class_type):
     return stub.ListWeapons(request)
 
 
+def start_game(game_settings):
+    """Requests server to start a game and returns game ID."""
+    stub = _get_stub()
+    request = herthrone_pb2.StartGameRequest(game_settings=game_settings)
+    return stub.StartGame(request)
+
+
 @functools.lru_cache()
 def _get_channel():
     """Gets default grpc channel."""

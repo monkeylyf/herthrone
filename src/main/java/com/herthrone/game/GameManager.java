@@ -24,25 +24,71 @@ import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
+import com.herthrone.service.StartGameSetting;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GameManager implements Round {
 
   private static final Logger logger = Logger.getLogger(GameManager.class.getName());
+  private static Map<String, GameManager> gamePool = new HashMap<>();
 
+  private final String gameId;
   private final Battlefield battlefield1;
   private final Battlefield battlefield2;
   public Battlefield activeBattlefield;
   public Side activeSide;
   public Side inactiveSide;
 
-  public GameManager(final ConstHero hero1, final ConstHero hero2,
+  public static String StartGame(final List<StartGameSetting> settings) {
+    final String gameId = "fake_game_id";
+    // TODO:
+    Preconditions.checkArgument(settings.size() == 2);
+    final GameManager game = new GameManager(
+        gameId,
+        ConstHero.valueOf(settings.get(0).getHero()),
+        ConstHero.valueOf(settings.get(1).getHero()),
+        settings.get(0).getCardsList().stream().map(GameManager::toEnum).collect(Collectors.toList()),
+        settings.get(1).getCardsList().stream().map(GameManager::toEnum).collect(Collectors.toList())
+    );
+
+    gamePool.put(gameId, game);
+    logger.info(String.format("Creating game with ID: %s", gameId));
+    return gameId;
+  }
+
+  private static Enum toEnum(final String cardName) {
+    final String upperCardName = cardName.toUpperCase();
+    IllegalArgumentException finalError;
+    try {
+      return ConstMinion.valueOf(upperCardName);
+    } catch (IllegalArgumentException error) {
+      finalError = error;
+    }
+    try {
+      return ConstSpell.valueOf(upperCardName);
+    } catch (IllegalArgumentException error) {
+      finalError = error;
+    }
+    try {
+      return ConstWeapon.valueOf(upperCardName);
+    } catch (IllegalArgumentException error) {
+      finalError = error;
+    }
+
+    throw new IllegalArgumentException(finalError.toString());
+  }
+
+  public GameManager(final String gameId, final ConstHero hero1, final ConstHero hero2,
                      final List<Enum> cardNames1, final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
+    this.gameId = gameId;
     this.battlefield1 = new Battlefield(HeroFactory.create(hero1), HeroFactory.create(hero2));
     this.battlefield2 = battlefield1.getMirrorBattlefield();
     this.activeBattlefield = battlefield1;
@@ -76,7 +122,8 @@ public class GameManager implements Round {
     List<Enum> cards1 = Collections.nCopies(deck_size, MINION);
     List<Enum> cards2 = Collections.nCopies(deck_size, MINION);
 
-    final GameManager gameManager = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
+    final GameManager gameManager = new GameManager(
+        "testing_id", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
     gameManager.play();
   }
 

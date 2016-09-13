@@ -7,6 +7,7 @@ import com.herthrone.configuration.MinionConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
+import com.herthrone.game.GameManager;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -95,43 +96,58 @@ public class HerthroneServer {
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     }
+
+    @Override
+    public void listMinions(final ListRequest request,
+                            final StreamObserver<ListMinionsResponse> responseObserver) {
+      final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
+      final List<Minion> minionProtos = ConfigLoader.getMinionConfigsByClass(requestClass).stream()
+          .map(MinionConfig::toMinionProto)
+          .collect(Collectors.toList());
+      final ListMinionsResponse response = ListMinionsResponse.newBuilder()
+          .addAllMinions(minionProtos)
+          .build();
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    }
+
+    @Override
+    public void listSpells(final ListRequest request,
+                           final StreamObserver<ListSpellsResponse> responseObserver) {
+      final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
+      final Collection<Spell> spellProtos = ConfigLoader.getSpellConfigsByClass(requestClass).stream()
+          .map(SpellConfig::toSpellProto)
+          .collect(Collectors.toList());
+      final ListSpellsResponse response = ListSpellsResponse.newBuilder()
+          .build();
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    }
+
+    @Override
+    public void listWeapons(final ListRequest request,
+                            final StreamObserver<ListWeaponsResponse> responseObserver) {
+      final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
+      final Collection<Weapon> weaponProtos = ConfigLoader.getWeaponConfigsByClass(requestClass).stream()
+          .map(WeaponConfig::toWeaponProto)
+          .collect(Collectors.toList());
+      final ListWeaponsResponse response = ListWeaponsResponse.newBuilder()
+          .addAllWeapons(weaponProtos)
+          .build();
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    }
+
+    @Override
+    public void startGame(final StartGameRequest request,
+                          final StreamObserver<StartGameResponse> responseObserver) {
+      final String gameId = GameManager.StartGame(request.getGameSettingsList());
+      final StartGameResponse startGameResponse = StartGameResponse.newBuilder()
+          .setGameId(gameId)
+          .build();
+      responseObserver.onNext(startGameResponse);
+      responseObserver.onCompleted();
+    }
   }
 
-  public void listMinions(final ListRequest request,
-                          final StreamObserver<ListMinionsResponse> responseObserver) {
-    final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
-    final List<Minion> minionProtos = ConfigLoader.getMinionConfigsByClass(requestClass).stream()
-        .map(MinionConfig::toMinionProto)
-        .collect(Collectors.toList());
-    final ListMinionsResponse response = ListMinionsResponse.newBuilder()
-        .addAllMinions(minionProtos)
-        .build();
-    responseObserver.onNext(response);
-    responseObserver.onCompleted();
-  }
-
-  public void listSpells(final ListRequest request,
-                         final StreamObserver<ListSpellsResponse> responseObserver) {
-    final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
-    final Collection<Spell> spellProtos = ConfigLoader.getSpellConfigsByClass(requestClass).stream()
-        .map(SpellConfig::toSpellProto)
-        .collect(Collectors.toList());
-    final ListSpellsResponse response = ListSpellsResponse.newBuilder()
-        .build();
-    responseObserver.onNext(response);
-    responseObserver.onCompleted();
-  }
-
-  public void listWeapons(final ListRequest request,
-                          final StreamObserver<ListWeaponsResponse> responseObserver) {
-    final ConstClass requestClass = ConstClass.valueOf(request.getClassType());
-    final Collection<Weapon> weaponProtos = ConfigLoader.getWeaponConfigsByClass(requestClass).stream()
-        .map(WeaponConfig::toWeaponProto)
-        .collect(Collectors.toList());
-    final ListWeaponsResponse response = ListWeaponsResponse.newBuilder()
-        .addAllWeapons(weaponProtos)
-        .build();
-    responseObserver.onNext(response);
-    responseObserver.onCompleted();
-  }
 }
