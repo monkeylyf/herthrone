@@ -64,7 +64,9 @@ def _get_stub(channel=None):
     return herthrone_pb2.HerthroneStub(channel)
 
 
-def proto_to_json(proto):
+def proto_to_json(proto, **kwargs):
     """Converts a protobuf object into json."""
     json_str = json_format.MessageToJson(proto)
-    return json.loads(json_str)
+    json_data = json.loads(json_str)
+    json_data.update(kwargs)
+    return json_data

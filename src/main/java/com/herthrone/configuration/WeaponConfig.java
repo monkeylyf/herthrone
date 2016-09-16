@@ -38,6 +38,7 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
   public Weapon toWeaponProto() {
     return Weapon.newBuilder()
         .setName(name.toString())
+        .setCrystal(crystal)
         .setDisplayName(displayName)
         .setAttack(attack)
         .setDurability(durability)

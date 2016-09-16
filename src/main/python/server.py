@@ -10,6 +10,7 @@ import time
 from flask import Flask, Response, request
 
 import client
+from wait_queue import WaitQueue
 
 #TODO: fixit.
 DEV_INDEX_FILE_PATH = '/Users/yifengliu/google/ui_herthrone/src'
@@ -50,11 +51,11 @@ def cards():
     if class_type:
         response = client.list_cards(class_type=class_type)
         for minion in response.minions:
-            cards[minion.name] = client.proto_to_json(minion)
+            cards[minion.name] = client.proto_to_json(minion, type='minion')
         for spell in response.spells:
-            cards[spell.name] = client.proto_to_json(spell)
+            cards[spell.name] = client.proto_to_json(spell, type='spell')
         for weapon in response.weapons:
-            cards[weapon.name] = client.proto_to_json(weapon)
+            cards[weapon.name] = client.proto_to_json(weapon, type='weapon')
     return Response(
         json.dumps(cards),
         mimetype='application/json',
@@ -83,6 +84,7 @@ def start_game():
     }
 
     # TODO: Should be getting another player's info from queue.
+    WaitQueue.search_foe('fake_user_id', game_settings)
     game_settings = [game_settings] * 2
 
     response = client.start_game(game_settings)
