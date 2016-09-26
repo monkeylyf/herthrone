@@ -11,7 +11,7 @@ import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.WeaponFactory;
-import com.herthrone.game.GameManager;
+import com.herthrone.game.Game;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,13 +31,13 @@ public class SpellTest extends TestCase {
   private Hero hero2;
   private Minion yeti;
   private int initBoardSize;
-  private GameManager gm;
+  private Game gm;
   private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
 
   @Before
   public void setUp() {
     final List<Enum> cards = Collections.nCopies(DECK_SIZE, ConstMinion.CHILLWIND_YETI);
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
+    this.gm = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
     this.hero1 = gm.activeSide.hero;
     this.hero2 = gm.inactiveSide.hero;
 

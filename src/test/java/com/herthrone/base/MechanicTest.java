@@ -14,7 +14,7 @@ import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Container;
-import com.herthrone.game.GameManager;
+import com.herthrone.game.Game;
 import com.herthrone.game.Side;
 import com.herthrone.object.ManaCrystal;
 import junit.framework.TestCase;
@@ -36,7 +36,7 @@ public class MechanicTest extends TestCase {
   private Minion yeti;
   private Minion waterElemental;
   private Minion scarletCrusader;
-  private GameManager gm;
+  private Game gm;
   private Side activeSide;
   private Side inactiveSide;
   private int initialBoardSize;
@@ -45,7 +45,7 @@ public class MechanicTest extends TestCase {
   public void setUp() {
     //final List<Enum> cards = Collections.nCopies(30, ConstMinion.CHILLWIND_YETI);
     final List<Enum> cards = Collections.emptyList();
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
+    this.gm = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
     this.hero = gm.activeSide.hero;
     this.activeSide = gm.activeSide;
     this.inactiveSide = gm.inactiveSide;

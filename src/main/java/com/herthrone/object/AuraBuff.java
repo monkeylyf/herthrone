@@ -1,6 +1,6 @@
 package com.herthrone.object;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Resettable;
 
@@ -38,7 +38,7 @@ public class AuraBuff implements Resettable {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this)
         .add("accumulated", accumulatedBuffValue)
         .add("mapping", minionToBuffMapping)
         .toString();

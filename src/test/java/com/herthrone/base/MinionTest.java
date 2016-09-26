@@ -6,7 +6,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.game.GameManager;
+import com.herthrone.game.Game;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +23,11 @@ public class MinionTest extends TestCase {
   private Minion yeti1;
   private Minion yeti2;
   private MinionConfig yetiConfig;
-  private GameManager gm;
+  private Game gm;
 
   @Before
   public void setUp() {
-    this.gm = new GameManager(ConstHero.GULDAN, ConstHero.GULDAN,
+    this.gm = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN,
         Collections.emptyList(), Collections.emptyList());
     this.yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
     gm.activeSide.bind(yeti1);

@@ -1,7 +1,7 @@
 package com.herthrone.game;
 
 import com.google.common.base.Enums;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -175,7 +175,7 @@ public class Side implements Round {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this)
         .add(Constant.HERO, hero)
         .add(Constant.BOARD, board)
         .add(Constant.SECRET, secrets)

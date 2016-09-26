@@ -1,6 +1,6 @@
 package com.herthrone.configuration;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Range;
 import com.herthrone.constant.ConstCondition;
 
@@ -32,7 +32,7 @@ public class ConditionConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this)
         .add(TYPE, conditionType)
         .add(RANGE, range)
         .toString();

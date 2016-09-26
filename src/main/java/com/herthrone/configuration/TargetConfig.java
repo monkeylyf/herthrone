@@ -1,6 +1,6 @@
 package com.herthrone.configuration;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTarget;
@@ -43,7 +43,7 @@ public class TargetConfig {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this)
         .add(SCOPE, scope)
         .add(TYPE, type)
         .add(RANDOM, isRandom)

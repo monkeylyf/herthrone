@@ -2,15 +2,10 @@
 
 """Flask server for UI."""
 
-import ast
 import json
-import os
-import time
-
 from flask import Flask, Response, request
 
 import client
-from wait_queue import WaitQueue
 
 #TODO: fixit.
 DEV_INDEX_FILE_PATH = '/Users/yifengliu/google/ui_herthrone/src'
@@ -46,7 +41,7 @@ def heroes():
 def cards():
     """"""
     payload = request.get_json(force=True)
-    class_type = payload.get('class_type')
+    class_type = payload.get('classType')
     cards = {}
     if class_type:
         response = client.list_cards(class_type=class_type)
@@ -84,12 +79,80 @@ def start_game():
     }
 
     # TODO: Should be getting another player's info from queue.
-    WaitQueue.search_foe('fake_user_id', game_settings)
-    game_settings = [game_settings] * 2
+    #foe_game_setting = WaitQueue.search_foe('fake_user_id', game_settings)
+    #game_settings = [game_settings] * 2
 
-    response = client.start_game(game_settings)
+    #response = client.start_game(game_settings)
+    response = {
+        'game_id': 111111,
+        'feo': {
+            'hero': hero
+        },
+        'own': {
+            'hero': hero,
+            'cards': deck_list
+        }
+    }
     return Response(
-        json.dumps({'game_id': response.game_id}),
+        json.dumps(response),
+        mimetype='application/json',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Origin': '*'
+        }
+    )
+
+
+@app.route('/api/game/view', methods=['POST'])
+def get_game_view():
+    """"""
+    payload = request.get_json(force=True)
+    game_id = payload['gameId']
+    user_id = payload['userId']
+    #response = client.get_game_view(game_id, user_id)
+    #response = client.proto_to_json(response)
+    yeti = {
+        'name': 'CHILLWIND_YETI',
+        'display_name': 'Chillwind Yeti',
+        'health': 5,
+        'max_health': 5,
+        'attack': 4,
+        'crystal': 4
+    }
+    response = {
+        'own': {
+          'hero': {
+            'name': 'Malfurion Stormrage',
+            'health': '30',
+            'attack': 0,
+            'armor': '0'
+           },
+          'hero_power': 'hero_power1',
+          'board': [yeti] * 2,
+          'hand': [yeti] * 4,
+          'secret': [],
+          'crystal': 2,
+          'max_crystal': 2,
+          'deck': 30
+        },
+        'foe': {
+          'hero': {
+            'name': 'Jaina Proudmoore',
+            'health': '30',
+            'attack': 1,
+            'armor': '0'
+           },
+          'hero_power': 'hero_power2',
+          'board': [yeti] * 3,
+          'hand': [{}] * 5,
+          'secret': 0,
+          'crystal': 2,
+          'max_crystal': 2,
+          'deck': 30
+        }
+    }
+    return Response(
+        json.dumps(response),
         mimetype='application/json',
         headers={
             'Cache-Control': 'no-cache',

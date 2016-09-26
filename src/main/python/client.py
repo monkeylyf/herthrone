@@ -1,12 +1,11 @@
 """Herthrone grpc Python client."""
 
 import functools
+import grpc
 import json
+from google.protobuf import json_format
 
 import herthrone_pb2
-
-import grpc
-from google.protobuf import json_format
 
 
 def list_heroes():
@@ -49,6 +48,13 @@ def start_game(game_settings):
     stub = _get_stub()
     request = herthrone_pb2.StartGameRequest(game_settings=game_settings)
     return stub.StartGame(request)
+
+
+def get_game_view(game_id, user_id):
+    """Gets the metadata of an existing game."""
+    stub = _get_stub()
+    request = herthrone_pb2.GetGameViewRequest(game_id=game_id, user_id=user_id)
+    return stub.GetGameView(request)
 
 
 @functools.lru_cache()

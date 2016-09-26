@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package service;
+
+option java_multiple_files = true;
+option java_package = "com.herthrone.service";
+option java_outer_classname = "CommandProto";
+option objc_class_prefix = "HLW";
+
+enum CommandType {
+    END_TURN = 0;
+    USE_HERO_POWER = 1;
+    PLAY_CARD = 2;
+    ATTACK = 3;
+}
+
+message Command {
+    CommandType type = 1;
+    string doerId = 2;
+    string targetId = 3;
+    int32 boardPosition = 4;
+}

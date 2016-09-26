@@ -1,6 +1,6 @@
 package com.herthrone.game;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import org.apache.log4j.Logger;
@@ -121,7 +121,7 @@ public class Container<T extends Card> {
 
   @Override
   public String toString() {
-    final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this);
+    final MoreObjects.ToStringHelper stringHelper = MoreObjects.toStringHelper(this);
     for (int i = 0; i < container.size(); ++i) {
       stringHelper.add(Integer.toString(i), container.get(i).cardName());
     }

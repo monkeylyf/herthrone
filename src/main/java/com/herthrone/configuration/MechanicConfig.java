@@ -1,6 +1,6 @@
 package com.herthrone.configuration;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstDependency;
 import com.herthrone.constant.ConstEffectType;
@@ -113,7 +113,7 @@ public class MechanicConfig {
 
   @Override
   public String toString() {
-    final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this)
+    final MoreObjects.ToStringHelper stringHelper = MoreObjects.toStringHelper(this)
         .add(EFFECT, effectType)
         .add(TYPE, type)
         .add(TARGET, targetOptional)

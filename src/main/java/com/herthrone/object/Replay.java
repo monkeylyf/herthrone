@@ -1,7 +1,8 @@
 package com.herthrone.object;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.herthrone.base.Round;
 import com.herthrone.constant.ConstAction;
 
@@ -19,11 +20,16 @@ public class Replay implements Round {
   }
 
   public void add(final String who, final int whoIndex, final ConstAction action, final String what) {
-    records.get(turnCount - 1).add(new ReplayRecord(who, whoIndex, action, Optional.of(what)));
+    getCurrentRoundRecords().add(new ReplayRecord(who, whoIndex, action, Optional.of(what)));
   }
 
   public void add(final String who, final int whoIndex, final ConstAction action) {
-    records.get(turnCount - 1).add(new ReplayRecord(who, whoIndex, action, Optional.absent()));
+    getCurrentRoundRecords().add(new ReplayRecord(who, whoIndex, action, Optional.absent()));
+  }
+
+  public List<ReplayRecord> getCurrentRoundRecords() {
+    Preconditions.checkArgument(turnCount > 0, "Game has not started yet");
+    return records.get(turnCount - 1);
   }
 
   public int size() {
@@ -46,7 +52,8 @@ public class Replay implements Round {
 
   @Override
   public String toString() {
-    final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this).add("turn", getTurn());
+    final MoreObjects.ToStringHelper stringHelper = MoreObjects.toStringHelper(this)
+        .add("turn", getTurn());
     for (int i = 0; i < records.size(); ++i) {
       stringHelper.add("turn#" + (i + 1), records.get(i));
     }
@@ -74,7 +81,7 @@ public class Replay implements Round {
 
     @Override
     public String toString() {
-      final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this)
+      final MoreObjects.ToStringHelper stringHelper = MoreObjects.toStringHelper(this)
           .add("who", who)
           .add("action", action.toString());
       if (what.isPresent()) {

@@ -20,6 +20,7 @@ service Herthrone {
     rpc ListWeapons (ListRequest) returns (ListWeaponsResponse) {}
     rpc ListCards (ListRequest) returns (ListCardsResponse) {}
     rpc StartGame (StartGameRequest) returns (StartGameResponse) {}
+    rpc GetGameView (GetGameViewRequest) returns (GetGameViewResponse) {}
 }
 
 message ListHeroesRequest {
@@ -61,8 +62,23 @@ message StartGameResponse {
 }
 
 message StartGameSetting {
-    string hero = 1;
-    repeated string cards = 2;
+    string user_id = 1;
+    string hero = 2;
+    repeated string cards = 3;
     // Potentially support multiple players game instead of duel.
-    uint32 player_number = 3;
+    uint32 player_number = 4;
+}
+
+message GetGameViewRequest {
+   string game_id = 1;
+   string user_id = 2;
+}
+
+message GetGameViewResponse {
+    GameView own_view = 1;
+    GameView opponent_view = 2;
+}
+
+message GameView {
+
 }

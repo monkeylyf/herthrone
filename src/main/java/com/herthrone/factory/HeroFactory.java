@@ -1,6 +1,6 @@
 package com.herthrone.factory;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -266,7 +266,7 @@ public class HeroFactory {
 
       @Override
       public String toString() {
-        final Objects.ToStringHelper stringHelper = Objects.toStringHelper(this)
+        final MoreObjects.ToStringHelper stringHelper = MoreObjects.toStringHelper(this)
             .add("hero", cardName())
             .add("health", health().value())
             .add("health_upper", maxHealth().value())

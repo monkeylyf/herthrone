@@ -6,8 +6,8 @@ pair-up is successful, the API should return your opponent/foe's ID and game
 settings. If pair-up fails due to completely idle server, raise exception.
 """
 
-import time
 import threading
+import time
 import unittest
 
 _NOT_MATCHED_YET = None

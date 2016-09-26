@@ -1,5 +1,6 @@
 package com.herthrone.game;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -15,6 +16,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -24,20 +26,20 @@ import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
+import com.herthrone.service.Command;
 import com.herthrone.service.StartGameSetting;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GameManager implements Round {
+public class Game implements Round {
 
-  private static final Logger logger = Logger.getLogger(GameManager.class.getName());
-  private static Map<String, GameManager> gamePool = new HashMap<>();
+  private static final Logger logger = Logger.getLogger(Game.class.getName());
+  private static Map<String, Game> gamePool = new HashMap<>();
 
   private final String gameId;
   private final Battlefield battlefield1;
@@ -47,19 +49,30 @@ public class GameManager implements Round {
   public Side inactiveSide;
 
   public static String StartGame(final List<StartGameSetting> settings) {
-    final String gameId = "fake_game_id";
     // TODO:
     Preconditions.checkArgument(settings.size() == 2);
-    final GameManager game = new GameManager(
-        gameId,
-        ConstHero.valueOf(settings.get(0).getHero()),
-        ConstHero.valueOf(settings.get(1).getHero()),
-        settings.get(0).getCardsList().stream().map(GameManager::toEnum).collect(Collectors.toList()),
-        settings.get(1).getCardsList().stream().map(GameManager::toEnum).collect(Collectors.toList())
-    );
 
-    gamePool.put(gameId, game);
-    logger.info(String.format("Creating game with ID: %s", gameId));
+    // Concatenate user IDs to form a game ID in alphabetical order.
+    final List<String> IdSequence = settings.stream()
+        .map(setting -> setting.getUserId())
+        .sorted()
+        .collect(Collectors.toList());
+    final String gameId = Joiner.on(':').join(IdSequence);
+
+    if (!gamePool.containsKey(gameId)) {
+      synchronized (gamePool) {
+        final Game game = new Game(gameId,
+            ConstHero.valueOf(settings.get(0).getHero()),
+            ConstHero.valueOf(settings.get(1).getHero()),
+            settings.get(0).getCardsList().stream().map(Game::toEnum).collect(Collectors.toList()),
+            settings.get(1).getCardsList().stream().map(Game::toEnum).collect(Collectors.toList())
+        );
+        gamePool.put(gameId, game);
+        logger.info(String.format("Creating game with ID: %s", gameId));
+      }
+    } else {
+      logger.info(String.format("Game already exists for Id: %s", gameId));
+    }
     return gameId;
   }
 
@@ -85,8 +98,8 @@ public class GameManager implements Round {
     throw new IllegalArgumentException(finalError.toString());
   }
 
-  public GameManager(final String gameId, final ConstHero hero1, final ConstHero hero2,
-                     final List<Enum> cardNames1, final List<Enum> cardNames2) {
+  public Game(final String gameId, final ConstHero hero1, final ConstHero hero2,
+              final List<Enum> cardNames1, final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.gameId = gameId;
     this.battlefield1 = new Battlefield(HeroFactory.create(hero1), HeroFactory.create(hero2));
@@ -122,7 +135,7 @@ public class GameManager implements Round {
     List<Enum> cards1 = Collections.nCopies(deck_size, MINION);
     List<Enum> cards2 = Collections.nCopies(deck_size, MINION);
 
-    final GameManager gameManager = new GameManager(
+    final Game gameManager = new Game(
         "testing_id", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
     gameManager.play();
   }
@@ -254,7 +267,8 @@ public class GameManager implements Round {
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.
       activeSide.setSequenceId(minion);
-      minion.playOnBoard(activeSide.board);
+      final int position = activeSide.board.size();
+      minion.playOnBoard(activeSide.board, position);
     } else if (card instanceof Secret) {
       activeSide.secrets.add((Secret) card);
     } else if (card instanceof Weapon) {
@@ -272,7 +286,8 @@ public class GameManager implements Round {
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.
       activeSide.setSequenceId(minion);
-      minion.playOnBoard(activeSide.board, target);
+      final int index = activeSide.board.size();
+      minion.playOnBoard(activeSide.board, index, target);
     } else if (card instanceof Spell) {
       TriggerFactory.activeTrigger((Spell) card, target);
     }
@@ -294,8 +309,141 @@ public class GameManager implements Round {
     }
   }
 
+  public void command(final Command commandProto) {
+    Preconditions.checkNotNull(commandProto.getType(), "Command type cannot be empty");
+    switch (commandProto.getType()) {
+      case END_TURN:
+        switchTurn();
+        break;
+      case PLAY_CARD:
+        playCard(
+            commandProto.getDoerId(), commandProto.getTargetId(), commandProto .getBoardPosition());
+        break;
+      case USE_HERO_POWER:
+        useHeroPower(commandProto.getTargetId());
+        break;
+      case ATTACK:
+        attack(commandProto.getDoerId(), commandProto.getTargetId());
+        break;
+    }
+  }
+
+  private void playCard(final String cardId, final String targetId, final int boardPosition) {
+    final TargetParser cardToPlayParser = new TargetParser(cardId);
+    final Card cardToPlay = cardToPlayParser.toCard(activeSide);
+    if (cardToPlay instanceof Minion) {
+      final Minion minion = (Minion) cardToPlay;
+      activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
+      // Assign game board sequence id to minion.
+      activeSide.setSequenceId(minion);
+      // TODO:
+      final int index = activeSide.board.size();
+      minion.playOnBoard(activeSide.board, index);
+    } else if (cardToPlay instanceof Secret) {
+      activeSide.secrets.add((Secret) cardToPlay);
+    } else if (cardToPlay instanceof Weapon) {
+      activeSide.hero.equip((Weapon) cardToPlay);
+    } else if (cardToPlay instanceof Spell) {
+      TriggerFactory.activeTrigger((Spell) cardToPlay);
+    } else {
+
+    }
+  }
+
+  private void useHeroPower(final String targetId) {
+
+  }
+
+  private void attack(final String attackerId, final String attackeeId) {
+    final TargetParser attackerParser = new TargetParser(attackerId);
+    final Creature attacker = attackerParser.toCreature(activeSide);
+    final TargetParser attackeeParser = new TargetParser(attackeeId);
+    final Creature attackee = attackeeParser.toCreature(activeSide);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(attacker, attackee);
+  }
+
+
   public void useHeroPower(final Creature creature) {
     activeSide.hero.useHeroPower(creature);
   }
 
+  private static class TargetParser {
+
+    final ConstTarget targetSide;
+    final ConstType targetType;
+    final int index;
+    private static final String OWN = "o";
+    private static final String FOE = "f";
+    private static final String HERO = "r";
+    private static final String BOARD = "b";
+    private static final String HAND = "h";
+
+    TargetParser(final String targetId) {
+      final String[] segment = targetId.split(":");
+      Preconditions.checkArgument(segment.length == 3);
+      this.targetSide = firstCharToTarget(segment[0]);
+      this.targetType = firstCharToType(segment[1]);
+      this.index = Integer.parseInt(segment[2]);
+    }
+
+    private static ConstTarget firstCharToTarget(final String firstChar) {
+      Preconditions.checkArgument(firstChar.length() == 1);
+      switch (firstChar) {
+        case OWN:
+          return ConstTarget.OWN;
+        case FOE:
+          return ConstTarget.FOE;
+        default:
+          throw new RuntimeException("Unknown target: " + firstChar);
+      }
+    }
+
+    private static ConstType firstCharToType(final String firstChar) {
+      Preconditions.checkArgument(firstChar.length() == 1);
+      switch (firstChar) {
+        case HAND:
+          return ConstType.HAND;
+        case BOARD:
+          return ConstType.BOARD;
+        case HERO:
+          return ConstType.HERO;
+        default:
+          throw new RuntimeException("Unknown type: " + firstChar);
+      }
+    }
+
+    private Side toSide(final Side side) {
+      switch (targetSide) {
+        case OWN:
+          return side;
+        case FOE:
+          return side.getOpponentSide();
+        default:
+          throw new RuntimeException("Unknown type: " + targetSide);
+      }
+    }
+
+    Creature toCreature(final Side side) {
+      final Card card = toCard(side);
+      Preconditions.checkArgument(card instanceof Creature);
+      return (Creature) card;
+    }
+
+    Card toCard(final Side side) {
+      switch (targetType) {
+        case HERO:
+          return toSide(side).hero;
+        case BOARD:
+          final Container<Minion> board = toSide(side).board;
+          Preconditions.checkArgument(board.size() > index);
+          return board.get(index);
+        case HAND:
+          final Container<Card> hand = toSide(side).hand;
+          Preconditions.checkArgument(hand.size() > index);
+          return hand.get(index);
+        default:
+          throw new RuntimeException("Unknown type: " + targetType);
+      }
+    }
+  }
 }

@@ -1,9 +1,7 @@
 package com.herthrone.configuration;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
@@ -74,8 +72,8 @@ public class ConfigLoader {
     return value.toUpperCase();
   }
 
-  static Objects.ToStringHelper addIfConditionIsTrue(final boolean condition,
-                                                     final Objects.ToStringHelper toStringHelper,
+  static MoreObjects.ToStringHelper addIfConditionIsTrue(final boolean condition,
+                                                     final MoreObjects.ToStringHelper toStringHelper,
                                                      final String key, final Object object) {
     if (condition) {
       toStringHelper.add(key, object.toString());

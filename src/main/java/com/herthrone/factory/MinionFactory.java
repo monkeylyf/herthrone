@@ -92,17 +92,16 @@ public class MinionFactory {
       }
 
       @Override
-      public void playOnBoard(final Container<Minion> board) {
-        final int indexToAdd = board.size();
+      public void playOnBoard(final Container<Minion> board, final int position) {
         TriggerFactory.activeTrigger(this);
-        summonOnBoard(board, indexToAdd);
+        summonOnBoard(board, position);
       }
 
       @Override
-      public void playOnBoard(final Container<Minion> board, final Creature target) {
-        final int indexToAdd = board.size();
+      public void playOnBoard(final Container<Minion> board, final int position,
+                              final Creature target) {
         TriggerFactory.activeTrigger(this, target);
-        summonOnBoard(board, indexToAdd);
+        summonOnBoard(board, position);
       }
 
       @Override

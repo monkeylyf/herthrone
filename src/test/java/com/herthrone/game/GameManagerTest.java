@@ -28,14 +28,14 @@ public class GameManagerTest {
   private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
   private static final int HAND_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
   private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-  private GameManager gm;
+  private Game gm;
   private ConstHero hero1 = ConstHero.ANDUIN_WRYNN;
   private ConstHero hero2 = ConstHero.JAINA_PROUDMOORE;
 
   @Before
   public void setUp() {
     final List<Enum> cards = Collections.nCopies(DECK_SIZE, MINION);
-    gm = new GameManager(ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards, cards);
+    gm = new Game("id", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards, cards);
     CommandLine.turnOffStdout();
   }
 

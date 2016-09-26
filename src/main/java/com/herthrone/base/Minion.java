@@ -24,17 +24,19 @@ public interface Minion extends Creature, Destroyable, Refreshable, Mechanic.Tri
    * Effects like battlecry or combo will be triggered by the action of play.
    *
    * @param board
+   * @param position
    */
-  void playOnBoard(final Container<Minion> board);
+  void playOnBoard(final Container<Minion> board, final int position);
 
   /**
    * A minion actively to be played by a player onto the board.
    * Effects like battlecry or combo will be triggered by the action of play.
    *
    * @param board
+   * @param position
    * @param target
    */
-  void playOnBoard(final Container<Minion> board, final Creature target);
+  void playOnBoard(final Container<Minion> board, final int position, final Creature target);
 
   /**
    * A minion passively to be put onto a board.

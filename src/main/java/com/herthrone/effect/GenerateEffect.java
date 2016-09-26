@@ -6,7 +6,7 @@ import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstType;
 import com.herthrone.factory.TargetFactory;
-import com.herthrone.game.GameManager;
+import com.herthrone.game.Game;
 import com.herthrone.game.Side;
 import com.herthrone.helper.RandomMinionGenerator;
 
@@ -38,7 +38,7 @@ public class GenerateEffect implements Effect {
 
     sideToTakeEffect.forEach(side -> {
       final String randomCardName = RandomMinionGenerator.randomOne(cardNames);
-      final Card card = GameManager.createCardInstance(randomCardName, cardType);
+      final Card card = Game.createCardInstance(randomCardName, cardType);
       side.bind(card);
       TargetFactory.getContainer(target, side).add(card);
     });

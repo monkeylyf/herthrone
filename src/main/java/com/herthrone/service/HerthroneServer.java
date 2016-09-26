@@ -7,7 +7,7 @@ import com.herthrone.configuration.MinionConfig;
 import com.herthrone.configuration.SpellConfig;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
-import com.herthrone.game.GameManager;
+import com.herthrone.game.Game;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -141,7 +141,7 @@ public class HerthroneServer {
     @Override
     public void startGame(final StartGameRequest request,
                           final StreamObserver<StartGameResponse> responseObserver) {
-      final String gameId = GameManager.StartGame(request.getGameSettingsList());
+      final String gameId = Game.StartGame(request.getGameSettingsList());
       final StartGameResponse startGameResponse = StartGameResponse.newBuilder()
           .setGameId(gameId)
           .build();
