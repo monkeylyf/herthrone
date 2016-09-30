@@ -7,6 +7,11 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.game.Game;
+import com.herthrone.service.BoardSide;
+import com.herthrone.service.Command;
+import com.herthrone.service.CommandType;
+import com.herthrone.service.ContainerType;
+import com.herthrone.service.Entity;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,21 +28,37 @@ public class MinionTest extends TestCase {
   private Minion yeti1;
   private Minion yeti2;
   private MinionConfig yetiConfig;
-  private Game gm;
+  private Game game;
+
+  private void addCardToHandAndPlayItOnOwnBoard(final Card card) {
+    game.activeSide.hand.add(0, card);
+    final Command playCardCommand = Command.newBuilder()
+        .setType(CommandType.PLAY_CARD)
+        .setDoer(Entity.newBuilder()
+            .setSide(BoardSide.OWN)
+            .setContainerType(ContainerType.HAND)
+            .setPosition(0))
+        .build();
+    game.command(playCardCommand);
+  }
+
+  private Minion createAndBindMinion(final ConstMinion minionName) {
+    final Minion minion = MinionFactory.create(minionName);
+    game.activeSide.bind(minion);
+    return minion;
+  }
 
   @Before
   public void setUp() {
-    this.gm = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN,
+    this.game = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN,
         Collections.emptyList(), Collections.emptyList());
-    this.yeti1 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.activeSide.bind(yeti1);
-    gm.startTurn();
-    gm.playCard(yeti1);
-    gm.switchTurn();
-    this.yeti2 = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
-    gm.activeSide.bind(yeti2);
-    gm.playCard(yeti2);
-    gm.switchTurn();
+    this.yeti1 = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
+    game.startTurn();
+    addCardToHandAndPlayItOnOwnBoard(yeti1);
+    game.switchTurn();
+    this.yeti2 = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
+    addCardToHandAndPlayItOnOwnBoard(yeti2);
+    game.switchTurn();
 
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
   }
@@ -70,19 +91,19 @@ public class MinionTest extends TestCase {
   @Test
   public void testMinionDeath() {
     // Before attack starts, both side has one minion on its board.
-    assertThat(gm.activeSide.board.size()).isEqualTo(1);
-    assertThat(gm.inactiveSide.board.size()).isEqualTo(1);
+    assertThat(game.activeSide.board.size()).isEqualTo(1);
+    assertThat(game.inactiveSide.board.size()).isEqualTo(1);
     attackEachOther();
     // After one attack, both side still has one minion on its board because Yeti should have one
     // health left.
-    assertThat(gm.activeSide.board.size()).isEqualTo(1);
-    assertThat(gm.inactiveSide.board.size()).isEqualTo(1);
+    assertThat(game.activeSide.board.size()).isEqualTo(1);
+    assertThat(game.inactiveSide.board.size()).isEqualTo(1);
     attackEachOther();
     // Both Yeti should be death and removed from its board.
     assertThat(yeti1.isDead()).isTrue();
     assertThat(yeti2.isDead()).isTrue();
-    assertThat(gm.activeSide.board.size()).isEqualTo(0);
-    assertThat(gm.inactiveSide.board.size()).isEqualTo(0);
+    assertThat(game.activeSide.board.size()).isEqualTo(0);
+    assertThat(game.inactiveSide.board.size()).isEqualTo(0);
   }
 }
 

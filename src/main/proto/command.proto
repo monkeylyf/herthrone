@@ -8,15 +8,35 @@ option java_outer_classname = "CommandProto";
 option objc_class_prefix = "HLW";
 
 enum CommandType {
-    END_TURN = 0;
-    USE_HERO_POWER = 1;
-    PLAY_CARD = 2;
-    ATTACK = 3;
+    UNKNOW_COMMAND = 0;
+    END_TURN = 1;
+    USE_HERO_POWER = 2;
+    PLAY_CARD = 3;
+    ATTACK = 4;
+}
+
+enum BoardSide {
+    UNKNOWN_SIDE = 0;
+    OWN = 1;
+    FOE = 2;
+}
+
+enum ContainerType {
+    UNKNOWN_CONTAINER = 0;
+    HERO = 1;
+    HAND = 2;
+    BOARD = 3;
+}
+
+message Entity {
+    BoardSide side = 1;
+    ContainerType container_type = 2;
+    int32 position = 3;
 }
 
 message Command {
     CommandType type = 1;
-    string doerId = 2;
-    string targetId = 3;
+    Entity doer = 2;
+    Entity target = 3;
     int32 boardPosition = 4;
 }

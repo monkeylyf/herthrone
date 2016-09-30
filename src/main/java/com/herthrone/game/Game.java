@@ -10,13 +10,13 @@ import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstAction;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSpell;
-import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -24,9 +24,11 @@ import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.service.Command;
+import com.herthrone.service.Entity;
 import com.herthrone.service.StartGameSetting;
 import org.apache.log4j.Logger;
 
@@ -225,7 +227,7 @@ public class Game implements Round {
       activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.PLAY_CARD.toString())) {
       final Card card = activeSide.hand.get(leafNode.index);
-      playCard(leafNode.index);
+      //playCard(leafNode.index);
       consumeCrystal(card);
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MINION_ATTACK.toString())) {
       final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
@@ -247,66 +249,12 @@ public class Game implements Round {
     activeSide.hero.manaCrystal().consume(cost);
   }
 
-  void playCard(final int index) {
-    checkManaCost(index);
-    final Card card = activeSide.hand.remove(index);
-    playCard(card);
-  }
-
   private void checkManaCost(final int index) {
     final Card card = activeSide.hand.get(index);
     final int manaCost = card.manaCost().value();
     Preconditions.checkArgument(
         manaCost <= activeSide.hero.manaCrystal().getCrystal(),
         "Not enough mana for: " + card.cardName());
-  }
-
-  public void playCard(final Card card) {
-    if (card instanceof Minion) {
-      final Minion minion = (Minion) card;
-      activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
-      // Assign game board sequence id to minion.
-      activeSide.setSequenceId(minion);
-      final int position = activeSide.board.size();
-      minion.playOnBoard(activeSide.board, position);
-    } else if (card instanceof Secret) {
-      activeSide.secrets.add((Secret) card);
-    } else if (card instanceof Weapon) {
-      activeSide.hero.equip((Weapon) card);
-    } else if (card instanceof Spell) {
-      TriggerFactory.activeTrigger((Spell) card);
-    } else {
-
-    }
-  }
-
-  public void playCard(final Card card, final Creature target) {
-    if (card instanceof Minion) {
-      final Minion minion = (Minion) card;
-      activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
-      // Assign game board sequence id to minion.
-      activeSide.setSequenceId(minion);
-      final int index = activeSide.board.size();
-      minion.playOnBoard(activeSide.board, index, target);
-    } else if (card instanceof Spell) {
-      TriggerFactory.activeTrigger((Spell) card, target);
-    }
-  }
-
-  void playCard(final int index, final Minion target) {
-    checkManaCost(index);
-    final Card card = activeSide.hand.remove(index);
-
-    if (card instanceof Minion) {
-      Minion minion = (Minion) card;
-      activeSide.board.add(minion);
-    } else if (card instanceof Weapon) {
-      Weapon weapon = (Weapon) card;
-      activeSide.hero.equip(weapon);
-    } else if (card instanceof Spell) {
-    } else {
-
-    }
   }
 
   public void command(final Command commandProto) {
@@ -317,48 +265,66 @@ public class Game implements Round {
         break;
       case PLAY_CARD:
         playCard(
-            commandProto.getDoerId(), commandProto.getTargetId(), commandProto .getBoardPosition());
+            commandProto.getDoer(), commandProto.getTarget(), commandProto .getBoardPosition());
         break;
       case USE_HERO_POWER:
-        useHeroPower(commandProto.getTargetId());
+        useHeroPower(commandProto.getTarget());
         break;
       case ATTACK:
-        attack(commandProto.getDoerId(), commandProto.getTargetId());
+        attack(commandProto.getDoer(), commandProto.getTarget());
         break;
+      default:
+        throw new RuntimeException("Unknown command type: " + commandProto.getType());
     }
   }
 
-  private void playCard(final String cardId, final String targetId, final int boardPosition) {
-    final TargetParser cardToPlayParser = new TargetParser(cardId);
-    final Card cardToPlay = cardToPlayParser.toCard(activeSide);
+  private void playCard(final Entity doer, final Entity target, final int boardPosition) {
+    final Card cardToPlay = TargetParser.toCard(activeSide, doer);
+    activeSide.hand.remove(cardToPlay);
     if (cardToPlay instanceof Minion) {
       final Minion minion = (Minion) cardToPlay;
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.
       activeSide.setSequenceId(minion);
       // TODO:
-      final int index = activeSide.board.size();
-      minion.playOnBoard(activeSide.board, index);
+      if (target.toString().length() == 0) {
+        minion.playOnBoard(activeSide.board, boardPosition);
+      } else {
+        final Creature targetCreature = TargetParser.toCreature(activeSide, target);
+        minion.playOnBoard(activeSide.board, boardPosition, targetCreature);
+      }
     } else if (cardToPlay instanceof Secret) {
       activeSide.secrets.add((Secret) cardToPlay);
     } else if (cardToPlay instanceof Weapon) {
       activeSide.hero.equip((Weapon) cardToPlay);
     } else if (cardToPlay instanceof Spell) {
-      TriggerFactory.activeTrigger((Spell) cardToPlay);
+      final Spell spell = (Spell) cardToPlay;
+      if (target.toString().length() == 0) {
+        TriggerFactory.activeTrigger(spell);
+      } else {
+        final Creature targetCreature = TargetParser.toCreature(activeSide, target);
+        TriggerFactory.activeTrigger(spell, targetCreature);
+      }
     } else {
 
     }
   }
 
-  private void useHeroPower(final String targetId) {
+  private void useHeroPower(final Entity target) {
+    final Spell heroPower = activeSide.hero.getHeroPower();
 
+    final Creature targetCreature;
+    if (target.toString().length() != 0) {
+      targetCreature = TargetParser.toCreature(activeSide, target);
+      EffectFactory.pipeEffects(heroPower, targetCreature);
+    } else {
+      EffectFactory.pipeEffects(heroPower, activeSide.hero);
+    }
   }
 
-  private void attack(final String attackerId, final String attackeeId) {
-    final TargetParser attackerParser = new TargetParser(attackerId);
-    final Creature attacker = attackerParser.toCreature(activeSide);
-    final TargetParser attackeeParser = new TargetParser(attackeeId);
-    final Creature attackee = attackeeParser.toCreature(activeSide);
+  private void attack(final Entity doer, final Entity target) {
+    final Creature attacker = TargetParser.toCreature(activeSide, doer);
+    final Creature attackee = TargetParser.toCreature(activeSide, target);
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(attacker, attackee);
   }
 
@@ -369,80 +335,37 @@ public class Game implements Round {
 
   private static class TargetParser {
 
-    final ConstTarget targetSide;
-    final ConstType targetType;
-    final int index;
-    private static final String OWN = "o";
-    private static final String FOE = "f";
-    private static final String HERO = "r";
-    private static final String BOARD = "b";
-    private static final String HAND = "h";
-
-    TargetParser(final String targetId) {
-      final String[] segment = targetId.split(":");
-      Preconditions.checkArgument(segment.length == 3);
-      this.targetSide = firstCharToTarget(segment[0]);
-      this.targetType = firstCharToType(segment[1]);
-      this.index = Integer.parseInt(segment[2]);
+    static Creature toCreature(final Side side, final Entity entity) {
+      final Card card = toCard(side, entity);
+      Preconditions.checkArgument(card instanceof Creature);
+      return (Creature) card;
     }
 
-    private static ConstTarget firstCharToTarget(final String firstChar) {
-      Preconditions.checkArgument(firstChar.length() == 1);
-      switch (firstChar) {
-        case OWN:
-          return ConstTarget.OWN;
-        case FOE:
-          return ConstTarget.FOE;
-        default:
-          throw new RuntimeException("Unknown target: " + firstChar);
-      }
-    }
-
-    private static ConstType firstCharToType(final String firstChar) {
-      Preconditions.checkArgument(firstChar.length() == 1);
-      switch (firstChar) {
-        case HAND:
-          return ConstType.HAND;
-        case BOARD:
-          return ConstType.BOARD;
+    static Card toCard(final Side side, final Entity entity) {
+      switch (entity.getContainerType()) {
         case HERO:
-          return ConstType.HERO;
+          return toSide(side, entity).hero;
+        case BOARD:
+          final Container<Minion> board = toSide(side, entity).board;
+          Preconditions.checkArgument(board.size() > entity.getPosition());
+          return board.get(entity.getPosition());
+        case HAND:
+          final Container<Card> hand = toSide(side, entity).hand;
+          Preconditions.checkArgument(hand.size() > entity.getPosition());
+          return hand.get(entity.getPosition());
         default:
-          throw new RuntimeException("Unknown type: " + firstChar);
+          throw new RuntimeException("Unknown container type: " + entity.getContainerType());
       }
     }
 
-    private Side toSide(final Side side) {
-      switch (targetSide) {
+    private static  Side toSide(final Side side, final Entity entity) {
+      switch (entity.getSide()) {
         case OWN:
           return side;
         case FOE:
           return side.getOpponentSide();
         default:
-          throw new RuntimeException("Unknown type: " + targetSide);
-      }
-    }
-
-    Creature toCreature(final Side side) {
-      final Card card = toCard(side);
-      Preconditions.checkArgument(card instanceof Creature);
-      return (Creature) card;
-    }
-
-    Card toCard(final Side side) {
-      switch (targetType) {
-        case HERO:
-          return toSide(side).hero;
-        case BOARD:
-          final Container<Minion> board = toSide(side).board;
-          Preconditions.checkArgument(board.size() > index);
-          return board.get(index);
-        case HAND:
-          final Container<Card> hand = toSide(side).hand;
-          Preconditions.checkArgument(hand.size() > index);
-          return hand.get(index);
-        default:
-          throw new RuntimeException("Unknown type: " + targetType);
+          throw new RuntimeException("Unknown type: " + entity.getSide());
       }
     }
   }

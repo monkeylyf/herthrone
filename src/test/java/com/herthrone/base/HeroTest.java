@@ -7,8 +7,11 @@ import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Game;
+import com.herthrone.service.BoardSide;
 import com.herthrone.service.Command;
 import com.herthrone.service.CommandType;
+import com.herthrone.service.ContainerType;
+import com.herthrone.service.Entity;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +57,10 @@ public class HeroTest extends TestCase {
     final Command playYetiCommand = Command.newBuilder()
         .setBoardPosition(0)
         .setType(CommandType.PLAY_CARD)
-        .setDoerId("o:h:0")
+        .setDoer(Entity.newBuilder()
+            .setSide(BoardSide.OWN.OWN)
+            .setContainerType(ContainerType.HAND)
+            .setPosition(0))
         .build();
     game.command(playYetiCommand);
     this.yeti = game.activeSide.board.get(0);
@@ -136,24 +142,20 @@ public class HeroTest extends TestCase {
   @Test
   public void testArmorUp() {
     assertEquals(0, garrosh1.armor().value());
-    hero1ArmorUp();
+    ArmorUp(garrosh1);
     assertEquals(armorGain, garrosh1.armor().value());
-    hero1ArmorUp();
+    ArmorUp(garrosh1);
     assertEquals(armorGain * 2, garrosh1.armor().value());
 
     assertEquals(0, garrosh2.armor().value());
-    hero2ArmorUp();
+    ArmorUp(garrosh2);
     assertEquals(armorGain, garrosh2.armor().value());
-    hero2ArmorUp();
+    ArmorUp(garrosh2);
     assertEquals(armorGain * 2, garrosh2.armor().value());
   }
 
-  private void hero1ArmorUp() {
-    EffectFactory.pipeEffects(garrosh1.getHeroPower(), garrosh1);
-  }
-
-  private void hero2ArmorUp() {
-    EffectFactory.pipeEffects(garrosh2.getHeroPower(), garrosh2);
+  private void ArmorUp(final Hero hero) {
+    EffectFactory.pipeEffects(hero.getHeroPower(), hero);
   }
 
   @Test
@@ -163,7 +165,7 @@ public class HeroTest extends TestCase {
     garrosh1.equip(weapon1);
     garrosh2.equip(weapon2);
 
-    hero1ArmorUp();
+    ArmorUp(garrosh1);
     assertEquals(armorGain, garrosh1.armor().value());
     hero2AttackHero1();
     assertEquals(0, garrosh1.armor().value());
@@ -184,8 +186,13 @@ public class HeroTest extends TestCase {
     garrosh2.equip(weapon1);
     final Command attackCommand = Command.newBuilder()
         .setType(CommandType.ATTACK)
-        .setDoerId("f:r:0")
-        .setTargetId("o:b:0")
+        .setDoer(Entity.newBuilder()
+            .setSide(BoardSide.FOE)
+            .setContainerType(ContainerType.HERO))
+        .setTarget(Entity.newBuilder()
+            .setSide(BoardSide.OWN)
+            .setContainerType(ContainerType.BOARD)
+            .setPosition(0))
         .build();
 
     game.command(attackCommand);

@@ -6,6 +6,7 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -17,6 +18,11 @@ import com.herthrone.game.Container;
 import com.herthrone.game.Game;
 import com.herthrone.game.Side;
 import com.herthrone.object.ManaCrystal;
+import com.herthrone.service.BoardSide;
+import com.herthrone.service.Command;
+import com.herthrone.service.CommandType;
+import com.herthrone.service.ContainerType;
+import com.herthrone.service.Entity;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,37 +42,72 @@ public class MechanicTest extends TestCase {
   private Minion yeti;
   private Minion waterElemental;
   private Minion scarletCrusader;
-  private Game gm;
+  private Game game;
   private Side activeSide;
   private Side inactiveSide;
   private int initialBoardSize;
+  private int initialDeckSize;
 
   @Before
   public void setUp() {
-    //final List<Enum> cards = Collections.nCopies(30, ConstMinion.CHILLWIND_YETI);
-    final List<Enum> cards = Collections.emptyList();
-    this.gm = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
-    this.hero = gm.activeSide.hero;
-    this.activeSide = gm.activeSide;
-    this.inactiveSide = gm.inactiveSide;
+    final List<Enum> cards = Collections.nCopies(30, ConstMinion.CHILLWIND_YETI);
+    this.game = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN, cards, cards);
+    this.hero = game.activeSide.hero;
+    this.activeSide = game.activeSide;
+    this.inactiveSide = game.inactiveSide;
 
     activeSide.startTurn();
-    this.yeti = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
-    gm.playCard(yeti);
-    this.waterElemental = createAndBindMinion(ConstMinion.WATER_ELEMENTAL);
-    gm.playCard(waterElemental);
     this.scarletCrusader = createAndBindMinion(ConstMinion.SCARLET_CRUSADER);
-    gm.playCard(scarletCrusader);
+    addCardToHandAndPlayItOnOwnBoard(scarletCrusader);
+    this.waterElemental = createAndBindMinion(ConstMinion.WATER_ELEMENTAL);
+    addCardToHandAndPlayItOnOwnBoard(waterElemental);
+    this.yeti = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
+    addCardToHandAndPlayItOnOwnBoard(yeti);
 
     this.initialBoardSize = activeSide.board.size();
+    this.initialDeckSize = activeSide.deck.size();
     activeSide.endTurn();
     activeSide.startTurn();
   }
 
   private Minion createAndBindMinion(final ConstMinion minionName) {
     final Minion minion = MinionFactory.create(minionName);
-    gm.activeSide.bind(minion);
+    game.activeSide.bind(minion);
     return minion;
+  }
+
+  private void addCardToHandAndPlayItOnOwnBoard(final ConstMinion minionName) {
+    final Minion minion = createAndBindMinion(minionName);
+    addCardToHandAndPlayItOnOwnBoard(minion);
+  }
+
+  private void addCardToHandAndPlayItOnOwnBoard(final Card card) {
+    game.activeSide.hand.add(0, card);
+    final Command playCardCommand = Command.newBuilder()
+        .setType(CommandType.PLAY_CARD)
+        .setDoer(Entity.newBuilder()
+            .setSide(BoardSide.OWN)
+            .setContainerType(ContainerType.HAND)
+            .setPosition(0))
+        .build();
+    game.command(playCardCommand);
+  }
+
+  private void addCardToHandAndPlayItOnOwnBoard(final Card card, final BoardSide side,
+                                                final ContainerType containerType, final int index) {
+    game.activeSide.hand.add(0, card);
+    final Command playCardCommand = Command.newBuilder()
+        .setType(CommandType.PLAY_CARD)
+        .setDoer(Entity.newBuilder()
+            .setSide(BoardSide.OWN)
+            .setContainerType(ContainerType.HAND)
+            .setPosition(0))
+        .setTarget(Entity.newBuilder()
+            .setSide(side)
+            .setContainerType(containerType)
+            .setPosition(index))
+        .build();
+    game.command(playCardCommand);
   }
 
   @Test
@@ -75,23 +116,22 @@ public class MechanicTest extends TestCase {
         .isEqualTo(0);
     final ConstMinion minionName = ConstMinion.WOLFRIDER;
     final Minion wolfrider = createAndBindMinion(minionName);
-    gm.playCard(wolfrider);
+    addCardToHandAndPlayItOnOwnBoard(wolfrider);
     assertThat(wolfrider.attackMovePoints().value()).isGreaterThan(0);
   }
 
   @Test
   public void testBattlecryDrawCardWithFatigue() {
-    assertThat(activeSide.deck.size()).isEqualTo(0);
-    assertThat(activeSide.hand.size()).isEqualTo(0);
-    assertThat(activeSide.hero.healthLoss()).isEqualTo(0);
-
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
-    final Minion minion = createAndBindMinion(minionName);
-
-    gm.playCard(minion);
-
+    final Minion gnomishInventor = createAndBindMinion(minionName);
+    // Empty deck so next draw triggers fatigue.
+    while (!game.activeSide.deck.isEmpty()) {
+      game.activeSide.deck.remove(0);
+    }
+    assertThat(activeSide.deck.size()).isEqualTo(0);
+    addCardToHandAndPlayItOnOwnBoard(gnomishInventor);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
-    assertThat(activeSide.board.get(initialBoardSize).cardName()).isEqualTo(minionName.toString());
+    assertThat(activeSide.board.get(0).cardName()).isEqualTo(minionName.toString());
     assertThat(activeSide.deck.size()).isEqualTo(0);
     assertThat(activeSide.hand.size()).isEqualTo(0);
     // Battlecry draw card causing fatigue damage.
@@ -102,7 +142,6 @@ public class MechanicTest extends TestCase {
   public void testElusive() {
     final Minion faerieDragon = createAndBindMinion(ConstMinion.FAERIE_DRAGON);
     assertThat(TargetFactory.isMinionTargetable(faerieDragon, activeSide.board, ConstType.SPELL)).isFalse();
-
     assertThat(TargetFactory.isMinionTargetable(yeti, activeSide.board, ConstType.SPELL)).isTrue();
   }
 
@@ -156,9 +195,9 @@ public class MechanicTest extends TestCase {
   @Test
   public void testStealth() {
     final Minion stoneclawTotem = createAndBindMinion(ConstMinion.STONECLAW_TOTEM);
-    gm.playCard(stoneclawTotem);
+    addCardToHandAndPlayItOnOwnBoard(stoneclawTotem);
     final Minion worgenInfiltrator = createAndBindMinion(ConstMinion.WORGEN_INFILTRATOR);
-    gm.playCard(worgenInfiltrator);
+    addCardToHandAndPlayItOnOwnBoard(worgenInfiltrator);
 
     assertThat(worgenInfiltrator.booleanMechanics().isOn(ConstMechanic.STEALTH)).isTrue();
 
@@ -200,7 +239,7 @@ public class MechanicTest extends TestCase {
   @Test
   public void testPoison() {
     Minion emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
-    gm.playCard(emperorCobra);
+    addCardToHandAndPlayItOnOwnBoard(emperorCobra);
 
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(emperorCobra, hero);
 
@@ -215,7 +254,7 @@ public class MechanicTest extends TestCase {
     assertThat(yeti.isDead()).isTrue();
 
     emperorCobra = createAndBindMinion(ConstMinion.EMPEROR_COBRA);
-    gm.playCard(emperorCobra);
+    addCardToHandAndPlayItOnOwnBoard(emperorCobra);
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(emperorCobra, scarletCrusader);
     assertThat(emperorCobra.isDead()).isTrue();
     assertThat(scarletCrusader.healthLoss()).isEqualTo(0);
@@ -239,8 +278,7 @@ public class MechanicTest extends TestCase {
   @Test
   public void testForgetful() {
     final Minion ogreBrute = createAndBindMinion(ConstMinion.OGRE_BRUTE);
-    activeSide.bind(ogreBrute);
-    gm.playCard(ogreBrute);
+    addCardToHandAndPlayItOnOwnBoard(ogreBrute);
     final int attackVal = ogreBrute.attack().value();
     final int minionNum = 5;
     final int total = 10000;
@@ -284,53 +322,40 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testBattlecry() {
-    final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
-    activeSide.deck.add(createAndBindMinion(minionInDeck));
-
-    assertThat(activeSide.deck.size()).isEqualTo(1);
-    assertThat(activeSide.hand.size()).isEqualTo(0);
-
     final ConstMinion minionName = ConstMinion.GNOMISH_INVENTOR;
     final Minion minion = createAndBindMinion(minionName);
-
-    gm.playCard(minion);
+    addCardToHandAndPlayItOnOwnBoard(minion);
 
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
-    assertThat(activeSide.board.get(initialBoardSize).cardName()).isEqualTo(minionName.toString());
-    assertThat(activeSide.deck.size()).isEqualTo(0);
+    assertThat(activeSide.board.get(0).cardName()).isEqualTo(minionName.toString());
+    assertThat(activeSide.deck.size()).isEqualTo(this.initialDeckSize - 1);
     assertThat(activeSide.hand.size()).isEqualTo(1);
-    assertThat(activeSide.hand.get(0).cardName()).isEqualTo(minionInDeck.toString());
+    assertThat(activeSide.hand.get(0).cardName()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
   }
 
   @Test
   public void testDeathrattle() {
-    final ConstMinion minionInDeck = ConstMinion.FAERIE_DRAGON;
-    activeSide.deck.add(createAndBindMinion(minionInDeck));
-
     final Minion lootHoarder = createAndBindMinion(ConstMinion.LOOT_HOARDER);
-    gm.playCard(lootHoarder);
+    addCardToHandAndPlayItOnOwnBoard(lootHoarder);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
-    assertThat(activeSide.deck.size()).isEqualTo(1);
+    assertThat(activeSide.deck.size()).isEqualTo(initialDeckSize);
     assertThat(activeSide.hand.size()).isEqualTo(0);
 
     lootHoarder.takeDamage(1);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
+    assertThat(activeSide.deck.size()).isEqualTo(initialDeckSize - 1);
     assertThat(activeSide.hand.size()).isEqualTo(1);
-    assertThat(activeSide.hand.get(0).cardName()).isEqualTo(minionInDeck.toString());
+    assertThat(activeSide.hand.get(0).cardName()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
   }
 
   @Test
   public void testCombo() {
-    final Minion defiasRingleader1 = createAndBindMinion(ConstMinion.DEFIAS_RINGLEADER);
-    activeSide.bind(defiasRingleader1);
-    gm.playCard(defiasRingleader1);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.DEFIAS_RINGLEADER);
     // First play should not trigger combo effect hence add onl one minion to the board.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
 
-    final Minion defiasRingleader2 = createAndBindMinion(ConstMinion.DEFIAS_RINGLEADER);
-    gm.playCard(defiasRingleader2);
-
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.DEFIAS_RINGLEADER);
     // Second play should trigger combo effect hence summoning DEFIAS_BANDIT.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 3);
     assertThat(activeSide.board.get(activeSide.board.size() - 1).cardName())
@@ -348,7 +373,7 @@ public class MechanicTest extends TestCase {
     assertThat(manaCrystal.getCrystal()).isEqualTo(2);
 
     final Weapon stormforgedAxe = WeaponFactory.create(ConstWeapon.STORMFORGED_AXE);
-    gm.activeSide.bind(stormforgedAxe);
+    game.activeSide.bind(stormforgedAxe);
 
     assertThat(hero.canDamage()).isFalse();
     hero.playToEquip(stormforgedAxe);
@@ -362,36 +387,35 @@ public class MechanicTest extends TestCase {
   @Test
   public void testDealDamage() {
     final Minion knifeJuggler = createAndBindMinion(ConstMinion.KNIFE_JUGGLER);
-
-    gm.playCard(knifeJuggler);
+    addCardToHandAndPlayItOnOwnBoard(knifeJuggler);
 
     final int numOfYetiToSummon = 5;
     for (int i = 0; i < numOfYetiToSummon; ++i) {
-      gm.playCard(createAndBindMinion(ConstMinion.CHILLWIND_YETI));
+      addCardToHandAndPlayItOnOwnBoard(ConstMinion.CHILLWIND_YETI);
       assertThat(inactiveSide.hero.healthLoss()).isEqualTo(i + 1);
     }
   }
 
   @Test
   public void testTakeControl() {
-    gm.switchTurn();
+    game.switchTurn();
     final int threshold = 4;
     for (int i = 0; i < threshold; ++i) {
       final Minion yeti = MinionFactory.create(ConstMinion.CHILLWIND_YETI);
       inactiveSide.bind(yeti);
-      gm.playCard(yeti);
+      addCardToHandAndPlayItOnOwnBoard(yeti);
     }
     final List<Minion> opponentMinionsBackup = new ArrayList<>(inactiveSide.board.asList());
     // Test take control effect triggered because it satisfies the condition.
-    gm.switchTurn();
-    gm.playCard(createAndBindMinion(ConstMinion.MIND_CONTROL_TECH));
+    game.switchTurn();
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.MIND_CONTROL_TECH);
 
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
     // Test the right-most minion is stolen from opponent board.
     assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinionsBackup);
 
-    gm.playCard(createAndBindMinion(ConstMinion.MIND_CONTROL_TECH));
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.MIND_CONTROL_TECH);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
     // Test control effect not triggered because of opponent has less than 4 minions.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2 + 1);
@@ -399,13 +423,13 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testInspire() {
-    final Minion recruiter = createAndBindMinion(ConstMinion.RECRUITER);
-    gm.playCard(recruiter);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.RECRUITER);
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
     hero.useHeroPower(hero);
 
-    assertThat(activeSide.hand.size()).isEqualTo(1);
+    // Guldan hero power draw + inspire draw.
+    assertThat(activeSide.hand.size()).isEqualTo(2);
   }
 
   @Test
@@ -414,7 +438,7 @@ public class MechanicTest extends TestCase {
 
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
-    gm.playCard(youthfulBrewmaster, yeti);
+    addCardToHandAndPlayItOnOwnBoard(youthfulBrewmaster, BoardSide.OWN, ContainerType.BOARD, 0);
     // Play one minion and yeti got returned to hand.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1 - 1);
     assertThat(activeSide.hand.size()).isEqualTo(1);
@@ -424,10 +448,9 @@ public class MechanicTest extends TestCase {
   @Test
   public void testReturnToHandWithNoTarget() {
     final Minion youthfulBrewmaster = createAndBindMinion(ConstMinion.YOUTHFUL_BREWMASTER);
-    activeSide.bind(youthfulBrewmaster);
     assertThat(activeSide.hand.size()).isEqualTo(0);
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize);
-    gm.playCard(youthfulBrewmaster);
+    addCardToHandAndPlayItOnOwnBoard(youthfulBrewmaster);
 
     // Play one minion without specifying return target. Mechanic should not be triggered.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 1);
@@ -451,7 +474,7 @@ public class MechanicTest extends TestCase {
     final int waterElementalHealth = waterElemental.health().value();
     final int waterElementalMaxHealth = waterElemental.maxHealth().value();
 
-    gm.playCard(stormwindChampion);
+    addCardToHandAndPlayItOnOwnBoard(stormwindChampion);
 
     checkHealthAttackMaxHealth(yeti, yetiHealth + gain, yetiMaxHealth + gain, yetiAttack + gain);
 
@@ -466,7 +489,7 @@ public class MechanicTest extends TestCase {
     final int worgenInfiltratorAttack = worgenInfiltrator.attack().value();
     final int worgenInfiltratorHealth = worgenInfiltrator.health().value();
     final int worgenInfiltratorMaxHealth = worgenInfiltrator.maxHealth().value();
-    gm.playCard(worgenInfiltrator);
+    addCardToHandAndPlayItOnOwnBoard(worgenInfiltrator);
     checkHealthAttackMaxHealth(worgenInfiltrator, worgenInfiltratorHealth + gain,
         worgenInfiltratorMaxHealth + gain, worgenInfiltratorAttack + gain);
 
@@ -498,27 +521,24 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testDealDamageAsBattlecryWithoutTarget() {
-    final Minion nightblade = createAndBindMinion(ConstMinion.NIGHTBLADE);
-    gm.playCard(nightblade);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.NIGHTBLADE);
     assertThat(inactiveSide.hero.healthLoss()).isAtLeast(1);
   }
 
   @Test
   public void testEndingTurnMechanics() {
-    final Minion healingTotem = createAndBindMinion(ConstMinion.HEALING_TOTEM);
-    activeSide.bind(healingTotem);
-    gm.playCard(healingTotem);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.HEALING_TOTEM);
 
     final int damage = 2;
     final int healing = 1;
     yeti.takeDamage(damage);
     waterElemental.takeDamage(damage);
-    gm.endTurn();
+    game.endTurn();
 
     assertThat(yeti.healthLoss()).isEqualTo(damage - healing);
     assertThat(waterElemental.healthLoss()).isEqualTo(damage - healing);
 
-    gm.endTurn();
+    game.endTurn();
 
     assertThat(yeti.healthLoss()).isEqualTo(0);
     assertThat(waterElemental.healthLoss()).isEqualTo(0);
@@ -528,45 +548,48 @@ public class MechanicTest extends TestCase {
   public void testDestroyWeapon() {
     final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
 
-    gm.switchTurn();
+    game.switchTurn();
     final Weapon fieryWinAxe = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE);
-    gm.activeSide.bind(fieryWinAxe);
-    gm.playCard(fieryWinAxe);
+    game.activeSide.bind(fieryWinAxe);
+    addCardToHandAndPlayItOnOwnBoard(fieryWinAxe);
 
-    gm.switchTurn();
+    game.switchTurn();
     assertThat(inactiveSide.hero.getWeapon().isPresent()).isTrue();
-    gm.playCard(ooze);
+    addCardToHandAndPlayItOnOwnBoard(ooze);
     assertThat(inactiveSide.hero.getWeapon().isPresent()).isFalse();
 
     // Play another ooze and no weapon to destroy.
-    gm.playCard(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.ACIDIC_SWAMP_OOZE);
     assertThat(inactiveSide.hero.getWeapon().isPresent()).isFalse();
   }
 
   @Test
   public void testSpellDamage() {
     Spell fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
-    final int damage = 6;
     activeSide.bind(fireball);
+    final int damage = fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value;
     activeSide.hand.add(fireball);
 
     final Minion archmage = createAndBindMinion(ConstMinion.ARCHMAGE);
-    gm.playCard(archmage);
-    gm.playCard(fireball, yeti);
-
-    // Test that spell is held in hand then add spell damage minion onto board, it should be
-    // reflected on that spell in the hand by adding the buff.
+    addCardToHandAndPlayItOnOwnBoard(archmage);
+    // Test that spell is added to hand when spell damage minion already present on board, it
+    // should be reflected on that spell in the hand by adding the buff.
+    assertThat(fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
+        .isEqualTo(damage + 1);
+    addCardToHandAndPlayItOnOwnBoard(fireball, BoardSide.OWN, ContainerType.BOARD, 1);
     assertThat(yeti.healthLoss()).isEqualTo(damage + 1);
 
     fireball = SpellFactory.create(ConstSpell.FIRE_BALL);
     activeSide.bind(fireball);
     activeSide.hand.add(fireball);
     fireball.refresh();
+    assertThat(fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
+        .isEqualTo(damage + 1);
 
-    gm.playCard(fireball, yeti);
+    addCardToHandAndPlayItOnOwnBoard(fireball, BoardSide.OWN, ContainerType.BOARD, 1);
     // Test that spell is added to hand after playing spell damage minion onto board, it should be
     // reflected on that spell in the hand by adding the buff.
-    assertThat(yeti.healthLoss()).isEqualTo(2 * damage + 2);
+    assertThat(waterElemental.healthLoss()).isEqualTo(damage + 1);
 
     // Test that spell is held in hand then remove the spell damage minion, it should be
     // reflected on that spell in the hand by removing the buff.
@@ -576,16 +599,14 @@ public class MechanicTest extends TestCase {
     fireball.refresh();
     archmage.death();
 
-    gm.playCard(fireball, waterElemental);
-    assertThat(waterElemental.healthLoss()).isEqualTo(damage);
+    assertThat(fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
+        .isEqualTo(damage);
   }
 
   @Test
   public void testAuraWithSelectiveBeneficiary() {
-    final Minion grimscaleOracle = createAndBindMinion(ConstMinion.GRIMSCALE_ORACLE);
-    final Minion blueGillWarrior = createAndBindMinion(ConstMinion.BLUEGILL_WARRIOR);
-    gm.playCard(blueGillWarrior);
-    gm.playCard(grimscaleOracle);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.GRIMSCALE_ORACLE);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.BLUEGILL_WARRIOR);
     assertThat(yeti.attack().value()).isEqualTo(4);
     assertThat(scarletCrusader.attack().value()).isEqualTo(3);
     assertThat(waterElemental.attack().value()).isEqualTo(3);
@@ -593,14 +614,13 @@ public class MechanicTest extends TestCase {
 
   @Test
   public void testAoeHeal() {
-    final Minion darkscaleHealer = createAndBindMinion(ConstMinion.DARKSCALE_HEALER);
-
     final int damage = 3;
     yeti.takeDamage(3);
     waterElemental.takeDamage(3);
     scarletCrusader.takeDamage(3);
 
-    gm.playCard(darkscaleHealer);
+    final Minion darkscaleHealer = createAndBindMinion(ConstMinion.DARKSCALE_HEALER);
+    addCardToHandAndPlayItOnOwnBoard(darkscaleHealer);
 
     assertThat(yeti.healthLoss()).isEqualTo(damage - 2);
     assertThat(waterElemental.healthLoss()).isEqualTo(damage - 2);
@@ -610,15 +630,15 @@ public class MechanicTest extends TestCase {
   @Test
   public void testDealDamageAsBattlecryWithTarget() {
     final Minion elvenArcher = createAndBindMinion(ConstMinion.ELVEN_ARCHER);
-    gm.playCard(elvenArcher, gm.inactiveSide.hero);
+    addCardToHandAndPlayItOnOwnBoard(elvenArcher, BoardSide.FOE, ContainerType.HERO, 0);
 
-    assertThat(gm.inactiveSide.hero.healthLoss()).isEqualTo(1);
+    assertThat(game.inactiveSide.hero.healthLoss()).isEqualTo(1);
   }
 
   @Test
   public void testEffectDependingOnBoardSize() {
     final Minion frostWolfWarlord = createAndBindMinion(ConstMinion.FROSTWOLF_WARLORD);
-    gm.playCard(frostWolfWarlord);
+    addCardToHandAndPlayItOnOwnBoard(frostWolfWarlord);
 
     assertThat(frostWolfWarlord.attack().value()).isEqualTo(4 + initialBoardSize);
     assertThat(frostWolfWarlord.health().value()).isEqualTo(4 + initialBoardSize);
@@ -628,7 +648,7 @@ public class MechanicTest extends TestCase {
   public void testTakeDamage() {
     final Minion gurubashiBerserker = createAndBindMinion(ConstMinion.GURUBASHI_BERSERKER);
     final int attack = gurubashiBerserker.attack().value();
-    gm.playCard(gurubashiBerserker);
+    addCardToHandAndPlayItOnOwnBoard(gurubashiBerserker);
 
     for (int i = 1; i <= gurubashiBerserker.health().value(); ++i) {
       gurubashiBerserker.takeDamage(1);
@@ -639,10 +659,10 @@ public class MechanicTest extends TestCase {
   @Test
   public void testBuffAsBattlecry() {
     final Minion sunCleric = createAndBindMinion(ConstMinion.SHATTERED_SUN_CLERIC);
-
     final int attack = yeti.attack().value();
     final int health = yeti.health().value();
-    gm.playCard(sunCleric, yeti);
+
+    addCardToHandAndPlayItOnOwnBoard(sunCleric, BoardSide.OWN, ContainerType.BOARD, 0);
 
     assertThat(yeti.attack().value()).isEqualTo(attack + 1);
     assertThat(yeti.health().value()).isEqualTo(health + 1);
@@ -652,12 +672,13 @@ public class MechanicTest extends TestCase {
   public void testSelectiveBuff() {
     final Minion houndmaster = createAndBindMinion(ConstMinion.HOUNDMASTER);
     final Minion boar = createAndBindMinion(ConstMinion.BOAR);
+    addCardToHandAndPlayItOnOwnBoard(boar);
     final int attack  = boar.attack().value();
     final int health = boar.health().value();
     final int maxHealth = boar.maxHealth().value();
     assertThat(boar.booleanMechanics().isOff(ConstMechanic.TAUNT));
 
-    gm.playCard(houndmaster, boar);
+    addCardToHandAndPlayItOnOwnBoard(houndmaster, BoardSide.OWN, ContainerType.BOARD, 0);
     assertThat(boar.attack().value()).isEqualTo(attack + 2);
     assertThat(boar.health().value()).isEqualTo(health + 2);
     assertThat(boar.maxHealth().value()).isEqualTo(maxHealth + 2);
@@ -668,71 +689,68 @@ public class MechanicTest extends TestCase {
   public void testStarvingBuzzard() {
     final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
     for (int i = 0; i < deckSize; ++i) {
-      gm.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+      game.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
     }
-    final int initHandSize = gm.activeSide.hand.size();
+    final int initHandSize = game.activeSide.hand.size();
     final Minion starvingBuzzard = createAndBindMinion(ConstMinion.STARVING_BUZZARD);
-    gm.playCard(starvingBuzzard);
+    addCardToHandAndPlayItOnOwnBoard(starvingBuzzard);
 
     // Test that putting a non-beast minion on board does not trigger draw card effect.
-    gm.playCard(createAndBindMinion(ConstMinion.WOLFRIDER));
-    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize);
-    assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.WOLFRIDER);
+    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize);
+    assertThat(game.activeSide.hand.size()).isEqualTo(initHandSize);
 
     // Test that putting a beast minion on board triggers draw card effect.
-    gm.playCard(createAndBindMinion(ConstMinion.TIMBER_WOLF));
-    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
-    assertThat(gm.activeSide.hand.size()).isEqualTo(initHandSize + 1);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.TIMBER_WOLF);
+    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    assertThat(game.activeSide.hand.size()).isEqualTo(initHandSize + 1);
   }
 
   @Test
   public void testTundraRhino() {
     final Minion warGolem = createAndBindMinion(ConstMinion.WAR_GOLEM);
-    final Minion rhino = createAndBindMinion(ConstMinion.TUNDRA_RHINO);
-    final Minion boar = createAndBindMinion(ConstMinion.BOAR);
-    final Minion timberWolf = createAndBindMinion(ConstMinion.TIMBER_WOLF);
-    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
-    gm.playCard(warGolem);
-    gm.playCard(boar);
-
+    addCardToHandAndPlayItOnOwnBoard(warGolem);
     assertThat(warGolem.canMove()).isFalse();
+    final Minion boar = createAndBindMinion(ConstMinion.BOAR);
+    addCardToHandAndPlayItOnOwnBoard(boar);
     assertThat(boar.canMove()).isFalse();
     // Test after putting rhino on board, yeti still cannot move but board can.
-    gm.playCard(rhino);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.TUNDRA_RHINO);
     assertThat(warGolem.canMove()).isFalse();
     assertThat(boar.canMove()).isTrue();
     // Test adding a beast on board with rhino present, the beast has charge.
-    gm.playCard(timberWolf);
+    final Minion timberWolf = createAndBindMinion(ConstMinion.TIMBER_WOLF);
+    addCardToHandAndPlayItOnOwnBoard(timberWolf);
     assertThat(timberWolf.canMove()).isTrue();
     // Test adding a non-beast on board with rhino present, it cannot move.
-    gm.playCard(ooze);
+    final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
+    addCardToHandAndPlayItOnOwnBoard(ooze);
     assertThat(ooze.canMove()).isFalse();
   }
 
   @Test
   public void testGuardianOfKings() {
-    final Minion guardianOfKings = createAndBindMinion(ConstMinion.GUARDIAN_OF_KINGS);
-    gm.activeSide.hero.takeDamage(6);
-    gm.playCard(guardianOfKings);
-    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(0);
+    game.activeSide.hero.takeDamage(6);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.GUARDIAN_OF_KINGS);
+    assertThat(game.activeSide.hero.healthLoss()).isEqualTo(0);
   }
 
   @Test
   public void testTruesilverChampion() {
     // TODO: create weapon test suite.
     final Weapon truesilverChampion = WeaponFactory.create(ConstWeapon.TRUESILVER_CHAMPION);
-    gm.activeSide.hero.takeDamage(2);
-    gm.activeSide.hero.equip(truesilverChampion);
-    EffectFactory.AttackFactory.pipePhysicalDamageEffect(gm.activeSide.hero, yeti);
+    game.activeSide.hero.takeDamage(2);
+    game.activeSide.hero.equip(truesilverChampion);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(game.activeSide.hero, yeti);
     assertThat(yeti.healthLoss()).isEqualTo(4);
     // Heal for 2 first, which has no effect because hero has full health already then take 4 damage
     // from yeti. Should have 26 health left.
-    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(4);
+    assertThat(game.activeSide.hero.healthLoss()).isEqualTo(4);
 
-    EffectFactory.AttackFactory.pipePhysicalDamageEffect(gm.activeSide.hero, yeti);
+    EffectFactory.AttackFactory.pipePhysicalDamageEffect(game.activeSide.hero, yeti);
     // Heal for 2 first when take 4 from yeti. Should have 24 health left.
-    assertThat(gm.activeSide.hero.healthLoss()).isEqualTo(4 - 2 + 4);
-    assertThat(gm.activeSide.hero.getWeapon().isPresent()).isFalse();
+    assertThat(game.activeSide.hero.healthLoss()).isEqualTo(4 - 2 + 4);
+    assertThat(game.activeSide.hero.getWeapon().isPresent()).isFalse();
   }
 
   @Test
@@ -740,35 +758,35 @@ public class MechanicTest extends TestCase {
     // Fill both deck.
     final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
     for (int i = 0; i < deckSize; ++i) {
-      gm.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
-      gm.inactiveSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+      game.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
+      game.inactiveSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
     }
     final Minion northshireCleric = createAndBindMinion(ConstMinion.NORTHSHIRE_CLERIC);
-    gm.playCard(northshireCleric);
-    final int handSize = gm.activeSide.hand.size();
+    addCardToHandAndPlayItOnOwnBoard(northshireCleric);
+    final int handSize = game.activeSide.hand.size();
 
     // Wound own minion and heal it.
     yeti.takeDamage(2);
-    gm.playCard(createAndBindMinion(ConstMinion.DARKSCALE_HEALER));
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.DARKSCALE_HEALER);
 
     assertThat(yeti.healthLoss()).isEqualTo(0);
-    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1);
-    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1);
+    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1);
 
     // Put northshire on opponent's board.
-    gm.switchTurn();
-    gm.playCard(createAndBindMinion(ConstMinion.NORTHSHIRE_CLERIC));
-    gm.switchTurn();
+    game.switchTurn();
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.NORTHSHIRE_CLERIC);
+    game.switchTurn();
 
     // Wound two minion and heal it.
     yeti.takeDamage(2);
     northshireCleric.takeDamage(2);
-    gm.playCard(createAndBindMinion(ConstMinion.DARKSCALE_HEALER));
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.DARKSCALE_HEALER);
 
     // With two northshire on board, should draw 2 x 2 = 4 cards.
     assertThat(yeti.healthLoss()).isEqualTo(0);
-    assertThat(gm.activeSide.deck.size()).isEqualTo(deckSize - 1 - 2 * 2);
-    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize + 1 + 2 * 2);
+    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 1 - 2 * 2);
+    assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1 + 2 * 2);
   }
 
   @Test
@@ -778,39 +796,39 @@ public class MechanicTest extends TestCase {
     final int yetiAttack = yeti.attack().value();
     final int waterElementalAttack = waterElemental.attack().value();
     final int scarletCrusaderAttack = scarletCrusader.attack().value();
-    assertThat(gm.activeSide.board.get(0)).isEqualTo(yeti);
-    assertThat(gm.activeSide.board.get(1)).isEqualTo(waterElemental);
-    assertThat(gm.activeSide.board.get(2)).isEqualTo(scarletCrusader);
-    gm.playCard(flametongueTotem);
-    assertThat(gm.activeSide.board.get(3)).isEqualTo(flametongueTotem);
+    assertThat(game.activeSide.board.get(0)).isEqualTo(yeti);
+    assertThat(game.activeSide.board.get(1)).isEqualTo(waterElemental);
+    assertThat(game.activeSide.board.get(2)).isEqualTo(scarletCrusader);
+    addCardToHandAndPlayItOnOwnBoard(flametongueTotem);
+    assertThat(game.activeSide.board.get(0)).isEqualTo(flametongueTotem);
+    assertThat(game.activeSide.board.get(1)).isEqualTo(yeti);
+    assertThat(game.activeSide.board.get(1).attack().value()).isEqualTo(yetiAttack + 2);
 
     final Minion ooze = createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE);
     final int oozeAttack = ooze.attack().value();
-    gm.playCard(ooze);
-    assertThat(gm.activeSide.board.get(4)).isEqualTo(ooze);
+    addCardToHandAndPlayItOnOwnBoard(ooze);
+    assertThat(game.activeSide.board.get(0)).isEqualTo(ooze);
+    assertThat(game.activeSide.board.get(0).attack().value()).isEqualTo(oozeAttack + 2);
 
     // Test that only adjacent minion gets affected by aura.
-    assertThat(yeti.attack().value()).isEqualTo(yetiAttack);
     assertThat(waterElemental.attack().value()).isEqualTo(waterElementalAttack);
-    assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack + 2);
+    assertThat(scarletCrusader.attack().value()).isEqualTo(scarletCrusaderAttack);
     assertThat(flametongueTotem.attack().value()).isEqualTo(flametongueTotemAttack);
-    assertThat(ooze.attack().value()).isEqualTo(oozeAttack + 2);
   }
 
   @Test
   public void testSuccubus() {
-    final Minion succubus = createAndBindMinion(ConstMinion.SUCCUBUS);
-    gm.activeSide.hand.add(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
-    final int handSize = gm.activeSide.hand.size();
+    game.activeSide.hand.add(createAndBindMinion(ConstMinion.ACIDIC_SWAMP_OOZE));
+    final int handSize = game.activeSide.hand.size();
 
-    gm.playCard(succubus);
-    assertThat(gm.activeSide.hand.size()).isEqualTo(handSize - 1);
+    addCardToHandAndPlayItOnOwnBoard(ConstMinion.SUCCUBUS);
+    assertThat(game.activeSide.hand.size()).isEqualTo(handSize - 1);
   }
 
   @Test
   public void testDreadInfernal() {
     final Minion dreadInfernal = createAndBindMinion(ConstMinion.DREAD_INFERNAL);
-    gm.playCard(dreadInfernal);
+    addCardToHandAndPlayItOnOwnBoard(dreadInfernal);
     assertThat(dreadInfernal.healthLoss()).isEqualTo(0);
     assertThat(yeti.healthLoss()).isEqualTo(1);
   }
@@ -826,8 +844,8 @@ public class MechanicTest extends TestCase {
     final int waterElementalAttack = waterElemental.attack().value();
     final int scarletCrusaderAttack = scarletCrusader.attack().value();
 
-    gm.playCard(rider);
-    gm.playCard(commander);
+    addCardToHandAndPlayItOnOwnBoard(rider);
+    addCardToHandAndPlayItOnOwnBoard(commander);
     // Test that warsong commander only effects minion with charge.
     assertThat(yeti.attack().value()).isEqualTo(yetiAttack);
     assertThat(waterElemental.attack().value()).isEqualTo(waterElementalAttack);
@@ -836,7 +854,7 @@ public class MechanicTest extends TestCase {
 
     // Test that when commander is removed from the board, buff is gone as well.
     commander.takeDamage(10);
-    assertThat(gm.activeSide.board.contains(commander)).isFalse();
+    assertThat(game.activeSide.board.contains(commander)).isFalse();
     assertThat(rider.attack().value()).isEqualTo(riderAttack);
   }
 }

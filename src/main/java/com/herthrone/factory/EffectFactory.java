@@ -38,6 +38,7 @@ import com.herthrone.effect.ReturnToHandEffect;
 import com.herthrone.effect.SetAttributeEffect;
 import com.herthrone.effect.SummonEffect;
 import com.herthrone.effect.TakeControlEffect;
+import com.herthrone.effect.TakeDamageEffect;
 import com.herthrone.effect.TransformEffect;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
@@ -383,7 +384,7 @@ public class EffectFactory {
       getValueByDependency(effect.valueDependency.get(), creature.binder().getSide()) :
       effect.value;
     Preconditions.checkArgument(value >= 0, "damage must be non-negative");
-    return new AttributeEffect(creature.health(), -value, effect.isPermanent);
+    return new TakeDamageEffect(creature, value);
   }
 
   private static int getValueByDependency(final ConstDependency constDependency, final Side side) {

@@ -1,6 +1,7 @@
 package com.herthrone.factory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
@@ -82,6 +83,12 @@ public class TargetFactory {
 
   private static boolean isHeroTargetableBySpell(final Hero hero, final Container<Minion> board) {
     return true;
+  }
+
+  public static Creature getSingleTarget(final TargetConfig targetConfig, final Side side) {
+    final List<Creature> targets = getProperTargets(targetConfig, side);
+    Preconditions.checkArgument(targets.size() == 1);
+    return targets.get(0);
   }
 
   static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side) {
