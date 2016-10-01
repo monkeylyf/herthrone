@@ -1,30 +1,23 @@
 package com.herthrone.base;
 
+import com.herthrone.BaseGame;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.WeaponFactory;
-import com.herthrone.game.Game;
 import com.herthrone.service.BoardSide;
-import com.herthrone.service.Command;
-import com.herthrone.service.CommandType;
 import com.herthrone.service.ContainerType;
-import com.herthrone.service.Entity;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.Collections;
-import java.util.List;
-
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(JUnit4.class)
-public class HeroTest extends TestCase {
+public class HeroGame extends BaseGame {
 
   private Hero garrosh1;
   private Hero garrosh2;
@@ -33,14 +26,11 @@ public class HeroTest extends TestCase {
   private Weapon weapon2;
   private int weaponAttack;
   private int weaponDurability;
-  private Game game;
   private int armorGain = 2;
 
   @Before
   public void setUp() {
-    final List<Enum> cards = Collections.nCopies(30, ConstMinion.CHILLWIND_YETI);
-    this.game = new Game("gameId", ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM,
-        cards, cards);
+    setUpGame(ConstHero.GARROSH_HELLSCREAM, ConstHero.GARROSH_HELLSCREAM);
     this.garrosh1 = game.activeSide.hero;
     this.garrosh2 = game.inactiveSide.hero;
 
@@ -50,20 +40,8 @@ public class HeroTest extends TestCase {
     this.weaponDurability = weapon1.getDurabilityAttr().value();
 
     game.startTurn();
-    garrosh1PlayYeti();
-  }
+    this.yeti = minion.addToHandAndPlay(ConstMinion.CHILLWIND_YETI);
 
-  private void garrosh1PlayYeti() {
-    final Command playYetiCommand = Command.newBuilder()
-        .setBoardPosition(0)
-        .setType(CommandType.PLAY_CARD)
-        .setDoer(Entity.newBuilder()
-            .setSide(BoardSide.OWN.OWN)
-            .setContainerType(ContainerType.HAND)
-            .setPosition(0))
-        .build();
-    game.command(playYetiCommand);
-    this.yeti = game.activeSide.board.get(0);
   }
 
   @Test
@@ -141,35 +119,23 @@ public class HeroTest extends TestCase {
 
   @Test
   public void testArmorUp() {
-    assertEquals(0, garrosh1.armor().value());
-    ArmorUp(garrosh1);
-    assertEquals(armorGain, garrosh1.armor().value());
-    ArmorUp(garrosh1);
-    assertEquals(armorGain * 2, garrosh1.armor().value());
-
-    assertEquals(0, garrosh2.armor().value());
-    ArmorUp(garrosh2);
-    assertEquals(armorGain, garrosh2.armor().value());
-    ArmorUp(garrosh2);
-    assertEquals(armorGain * 2, garrosh2.armor().value());
-  }
-
-  private void ArmorUp(final Hero hero) {
-    EffectFactory.pipeEffects(hero.getHeroPower(), hero);
+    assertThat(garrosh1.armor().value()).isEqualTo(0);
+    heroPower.use();
+    assertThat(garrosh1.armor().value()).isEqualTo(armorGain);
+    heroPower.use();
+    assertThat(garrosh1.armor().value()).isEqualTo(armorGain * 2);
   }
 
   @Test
   public void testArmorUpAttackMixture() {
-    assertEquals(0, garrosh1.armor().value());
-
+    assertThat(garrosh1.armor().value()).isEqualTo(0);
     garrosh1.equip(weapon1);
     garrosh2.equip(weapon2);
 
-    ArmorUp(garrosh1);
-    assertEquals(armorGain, garrosh1.armor().value());
+    heroPower.use();
     hero2AttackHero1();
-    assertEquals(0, garrosh1.armor().value());
-    assertEquals(HeroFactory.HEALTH + armorGain - weaponAttack, garrosh1.health().value());
+    assertThat(garrosh1.armor().value()).isEqualTo(0);
+    assertThat(garrosh1.health().value()).isEqualTo(HeroFactory.HEALTH + armorGain - weaponAttack);
   }
 
   @Test
@@ -177,27 +143,16 @@ public class HeroTest extends TestCase {
     garrosh1.equip(weapon1);
 
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(yeti, garrosh1);
-    assertEquals(0, yeti.healthLoss());
-    assertEquals(yeti.attack().value(), garrosh1.healthLoss());
+    assertThat(yeti.healthLoss()).isEqualTo(0);
+    assertThat(garrosh1.healthLoss()).isEqualTo(yeti.attack().value());
   }
 
   @Test
   public void testHeroAttackMinion() {
     garrosh2.equip(weapon1);
-    final Command attackCommand = Command.newBuilder()
-        .setType(CommandType.ATTACK)
-        .setDoer(Entity.newBuilder()
-            .setSide(BoardSide.FOE)
-            .setContainerType(ContainerType.HERO))
-        .setTarget(Entity.newBuilder()
-            .setSide(BoardSide.OWN)
-            .setContainerType(ContainerType.BOARD)
-            .setPosition(0))
-        .build();
-
-    game.command(attackCommand);
-    assertEquals(weapon1.getAttackAttr().value(), yeti.healthLoss());
-    assertEquals(yeti.attack().value(), garrosh2.healthLoss());
+    action.attack(BoardSide.FOE, ContainerType.HERO, 0, BoardSide.OWN, ContainerType.BOARD, 0);
+    assertThat(yeti.healthLoss()).isEqualTo(weapon1.getAttackAttr().value());
+    assertThat(garrosh2.healthLoss()).isEqualTo(yeti.attack().value());
   }
 
 }

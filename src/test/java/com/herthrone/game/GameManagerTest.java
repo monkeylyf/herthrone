@@ -1,18 +1,13 @@
 package com.herthrone.game;
 
+import com.herthrone.BaseGame;
 import com.herthrone.base.Card;
 import com.herthrone.base.Minion;
-import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.object.ManaCrystal;
-import com.herthrone.service.BoardSide;
-import com.herthrone.service.Command;
-import com.herthrone.service.CommandType;
-import com.herthrone.service.ContainerType;
-import com.herthrone.service.Entity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,49 +16,20 @@ import org.junit.runners.JUnit4;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(JUnit4.class)
-public class GameManagerTest {
+public class GameManagerTest extends BaseGame {
 
-  private static final int DECK_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-  private static final int HAND_SIZE = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
-  private static ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-  private Game game;
   private ConstHero anduin = ConstHero.ANDUIN_WRYNN;
   private ConstHero jaina = ConstHero.JAINA_PROUDMOORE;
 
-  private void addCardToHandAndPlayItOnOwnBoard(final Card card) {
-    game.activeSide.hand.add(0, card);
-    final Command playCardCommand = Command.newBuilder()
-        .setType(CommandType.PLAY_CARD)
-        .setDoer(Entity.newBuilder()
-            .setSide(BoardSide.OWN)
-            .setContainerType(ContainerType.HAND)
-            .setPosition(0))
-        .build();
-    game.command(playCardCommand);
-  }
-
-  private void playFirstCardInHandOnOwnBoard() {
-    final Command playCardCommand = Command.newBuilder()
-        .setType(CommandType.PLAY_CARD)
-        .setDoer(Entity.newBuilder()
-            .setSide(BoardSide.OWN)
-            .setContainerType(ContainerType.HAND)
-            .setPosition(0))
-        .build();
-    game.command(playCardCommand);
-  }
-
   @Before
   public void setUp() {
-    final List<Enum> cards = Collections.nCopies(DECK_SIZE, MINION);
-    game = new Game("id", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards, cards);
+    setUpGame(anduin, jaina);
     CommandLine.turnOffStdout();
   }
 
@@ -162,10 +128,11 @@ public class GameManagerTest {
 
   @Test
   public void testPlayMinionCardWithProperCrystal() {
+    // TODO: check crystal cost is disabled for now so this test voids.
     game.drawCard();
 
     assertThat(game.activeSide.hand.get(0) instanceof Minion).isTrue();
-    assertThat(game.activeSide.hand.get(0).cardName()).isEqualTo(MINION.toString());
+    assertThat(game.activeSide.hand.get(0).cardName()).isEqualTo(YETI.toString());
     assertThat(game.activeSide.board.size()).isEqualTo(0);
 
     final Card card = game.activeSide.hand.get(0);
@@ -177,9 +144,9 @@ public class GameManagerTest {
     }
 
     game.activeSide.replay.startTurn();
-    playFirstCardInHandOnOwnBoard();
+    minion.addToHandAndPlay(ConstMinion.CHILLWIND_YETI);
     assertThat(game.activeSide.board.size()).isEqualTo(1);
-    assertThat(game.activeSide.board.get(0).cardName()).isEqualTo(MINION.toString());
+    assertThat(game.activeSide.board.get(0).cardName()).isEqualTo(YETI.toString());
   }
 
   @Test
@@ -241,14 +208,12 @@ public class GameManagerTest {
     // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
     game.startTurn();
     for (int i = 0; i < numOfOwnMinions; ++i) {
-      final Minion minion = (Minion) game.activeSide.deck.top();
-      addCardToHandAndPlayItOnOwnBoard(minion);
+      minion.addToHandAndPlay((Minion) game.activeSide.deck.top());
     }
 
     game.switchTurn();
     for (int i = 0; i < numOfOpponentMinions; ++i) {
-      final Minion minion = (Minion) game.inactiveSide.deck.top();
-      addCardToHandAndPlayItOnOwnBoard(minion);
+      minion.addToHandAndPlay((Minion) game.activeSide.deck.top());
     }
     game.switchTurn();
   }
@@ -259,7 +224,8 @@ public class GameManagerTest {
         .map(option -> option.option)
         .collect(Collectors.toList());
     assertThat(childOptions).containsExactly(
-        ConstCommand.END_TURN.toString(), ConstCommand.MINION_ATTACK.toString(), ConstCommand.PLAY_CARD.toString(), ConstCommand.USE_HERO_POWER.toString());
+        ConstCommand.END_TURN.toString(), ConstCommand.MINION_ATTACK.toString(),
+        ConstCommand.PLAY_CARD.toString(), ConstCommand.USE_HERO_POWER.toString());
 
     for (CommandLine.CommandNode node : root.childOptions) {
       final String optionName = node.option;

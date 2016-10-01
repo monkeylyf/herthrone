@@ -10,9 +10,6 @@ import org.junit.runners.JUnit4;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * Created by yifengliu on 6/27/16.
- */
 @RunWith(JUnit4.class)
 public class ManaCrystalTest {
 

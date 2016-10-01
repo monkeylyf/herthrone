@@ -12,7 +12,6 @@ import com.herthrone.service.Command;
 import com.herthrone.service.CommandType;
 import com.herthrone.service.ContainerType;
 import com.herthrone.service.Entity;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +22,7 @@ import java.util.Collections;
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(JUnit4.class)
-public class MinionTest extends TestCase {
+public class MinionTest {
 
   private Minion yeti1;
   private Minion yeti2;
@@ -65,10 +64,10 @@ public class MinionTest extends TestCase {
 
   @Test
   public void testMinionStats() {
-    assertEquals(yetiConfig.health, yeti1.health().value());
-    assertEquals(yetiConfig.health, yeti2.health().value());
-    assertFalse(yeti1.isDead());
-    assertFalse(yeti2.isDead());
+    assertThat(yetiConfig.health).isEqualTo(yeti1.health().value());
+    assertThat(yetiConfig.health).isEqualTo(yeti2.health().value());
+    assertThat(yeti1.isDead()).isFalse();
+    assertThat(yeti2.isDead()).isFalse();
   }
 
   @Test
