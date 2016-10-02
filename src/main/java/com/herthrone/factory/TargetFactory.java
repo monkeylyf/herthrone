@@ -98,11 +98,11 @@ public class TargetFactory {
         candidates.addAll(getProperTargetsBySide(targetConfig, side));
         break;
       case FOE:
-        candidates.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
+        candidates.addAll(getProperTargetsBySide(targetConfig, side.getFoeSide()));
         break;
       case ALL:
         candidates.addAll(getProperTargetsBySide(targetConfig, side));
-        candidates.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
+        candidates.addAll(getProperTargetsBySide(targetConfig, side.getFoeSide()));
         break;
       default:
         throw new RuntimeException("Unknown scope: " + targetConfig.scope);
@@ -180,10 +180,10 @@ public class TargetFactory {
       case OWN:
         return getDestroyablesBySide(target, side);
       case FOE:
-        return getDestroyablesBySide(target, side.getOpponentSide());
+        return getDestroyablesBySide(target, side.getFoeSide());
       case ALL:
         final List<Destroyable> targets = getDestroyablesBySide(target, side);
-        targets.addAll(getDestroyablesBySide(target, side.getOpponentSide()));
+        targets.addAll(getDestroyablesBySide(target, side.getFoeSide()));
         return targets;
       default:
         throw new RuntimeException("Unknown scope: " + target.scope);
@@ -195,9 +195,9 @@ public class TargetFactory {
       case OWN:
         return Collections.singletonList(side);
       case FOE:
-        return Collections.singletonList(side.getOpponentSide());
+        return Collections.singletonList(side.getFoeSide());
       case ALL:
-        return Arrays.asList(side, side.getOpponentSide());
+        return Arrays.asList(side, side.getFoeSide());
       default:
         throw new RuntimeException("Unknown target scope: " + target.scope);
     }

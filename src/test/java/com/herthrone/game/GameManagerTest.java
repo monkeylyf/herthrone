@@ -185,13 +185,13 @@ public class GameManagerTest extends BaseGame {
     assertThat(game.activeSide.board.size()).isEqualTo(numOfMyMinions);
     assertThat(game.inactiveSide.board.size()).isEqualTo(numOfOpponentMinions);
 
-    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeBattlefield);
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeSide);
     checkCommands(myRoot, numOfMyMinions);
 
     // Switch side.
     game.switchTurn();
 
-    final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(game.activeBattlefield);
+    final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(game.activeSide);
     checkCommands(opponentRoot, numOfOpponentMinions);
   }
 
@@ -250,7 +250,7 @@ public class GameManagerTest extends BaseGame {
 
     jumpIntoRoundFour();
 
-    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeBattlefield);
+    final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeSide);
     // Choose option 1 which is play card.
     final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
     final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);

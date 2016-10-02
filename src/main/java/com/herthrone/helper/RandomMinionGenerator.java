@@ -64,11 +64,11 @@ public class RandomMinionGenerator {
         creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side));
         break;
       case FOE:
-        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getOpponentSide()));
+        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getFoeSide()));
         break;
       case ALL:
         creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side));
-        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getOpponentSide()));
+        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getFoeSide()));
         break;
       default:
         throw new RuntimeException("Unknown target scope: " + config.type);

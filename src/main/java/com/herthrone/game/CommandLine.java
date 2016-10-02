@@ -1,5 +1,6 @@
 package com.herthrone.game;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -21,16 +22,13 @@ public class CommandLine {
 
   private static boolean stdoutOn = true;
 
-  public static CommandNode yieldCommands(final Battlefield battlefield) {
-    final Side mySide = battlefield.mySide;
-    final Side opponentSide = battlefield.opponentSide;
-
+  public static CommandNode yieldCommands(final Side side) {
     final CommandNode root = new CommandNode("root");
     // Populate play card option.
     final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
-    for (int i = 0; i < mySide.hand.size(); ++i) {
-      final Card card = mySide.hand.get(i);
-      if (mySide.hero.manaCrystal().getCrystal() >= card.manaCost().value()) {
+    for (int i = 0; i < side.hand.size(); ++i) {
+      final Card card = side.hand.get(i);
+      if (side.hero.manaCrystal().getCrystal() >= card.manaCost().value()) {
         playCardNode.addChildNode(new CommandNode(card.view().toString(), i));
       }
     }
@@ -39,18 +37,18 @@ public class CommandLine {
     }
     // Populate minions attack option.
     final CommandNode moveMinions = new CommandNode(ConstCommand.MINION_ATTACK.toString());
-    for (int i = 0; i < mySide.board.size(); ++i) {
-      final Minion minion = mySide.board.get(i);
+    for (int i = 0; i < side.board.size(); ++i) {
+      final Minion minion = side.board.get(i);
       if (minion.canMove()) {
         final CommandNode minionAttackCommand = new CommandNode(minion.cardName(), i, ConstTarget.OWN);
-        for (int j = 0; j < opponentSide.board.size(); ++j) {
-          final Minion opponentMinion = opponentSide.board.get(j);
-          if (TargetFactory.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
+        for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
+          final Minion opponentMinion = side.getFoeSide().board.get(j);
+          if (TargetFactory.isMinionTargetable(opponentMinion, side.getFoeSide().board, ConstType.ATTACK)) {
             minionAttackCommand.addChildNode(new CommandNode(opponentMinion.cardName(), j,
                 ConstTarget.FOE));
           }
         }
-        final CommandNode heroNode = new CommandNode(opponentSide.hero.cardName(), -1);
+        final CommandNode heroNode = new CommandNode(side.getFoeSide().hero.cardName(), -1);
         heroNode.setSide(ConstTarget.FOE);
         minionAttackCommand.addChildNode(heroNode);
         moveMinions.addChildNode(minionAttackCommand);
@@ -58,11 +56,11 @@ public class CommandLine {
     }
 
     // Populate hero attack option if hero can attack.
-    if (mySide.hero.canMove()) {
+    if (side.hero.canMove()) {
       final CommandNode heroAttack = new CommandNode(ConstCommand.HERO_ATTACK.toString());
-      for (int j = 0; j < opponentSide.board.size(); ++j) {
-        final Minion opponentMinion = opponentSide.board.get(j);
-        if (TargetFactory.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
+      for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
+        final Minion opponentMinion = side.getFoeSide().board.get(j);
+        if (TargetFactory.isMinionTargetable(opponentMinion, side.getFoeSide().board, ConstType.ATTACK)) {
           heroAttack.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.FOE));
         }
       }
@@ -71,11 +69,11 @@ public class CommandLine {
       root.addChildNode(moveMinions);
     }
     // Populate use hero power option if can use hero power.
-    if (mySide.hero.heroPowerMovePoints().isPositive() &&
-        !mySide.hero.getHeroPower().manaCost().isGreaterThan(mySide.hero.manaCrystal().getCrystal())) {
+    if (side.hero.heroPowerMovePoints().isPositive() &&
+        !side.hero.getHeroPower().manaCost().isGreaterThan(side.hero.manaCrystal().getCrystal())) {
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
-      scanTargets(useHeroPower, mySide.hero.getHeroPower().getTargetConfig(), battlefield);
+      scanTargets(useHeroPower, side.hero.getHeroPower().getTargetConfig(), side);
       root.addChildNode(useHeroPower);
     }
     // Populate end turn option.
@@ -85,19 +83,19 @@ public class CommandLine {
   }
 
   private static void scanTargets(final CommandNode root, final Optional<TargetConfig> heroConfig,
-                                  final Battlefield battlefield) {
+                                  final Side side) {
     if (heroConfig.isPresent()) {
       TargetConfig config = heroConfig.get();
       switch (config.scope) {
         case OWN:
-          scanTargets(config, battlefield.mySide, ConstTarget.OWN).forEach(root::addChildNode);
+          scanTargets(config, side, ConstTarget.OWN).forEach(root::addChildNode);
           break;
         case FOE:
-          scanTargets(config, battlefield.opponentSide, ConstTarget.FOE).forEach (root::addChildNode);
+          scanTargets(config, side.getFoeSide(), ConstTarget.FOE).forEach (root::addChildNode);
           break;
         case ALL:
-          scanTargets(config, battlefield.mySide, ConstTarget.OWN).forEach(root::addChildNode);
-          scanTargets(config, battlefield.opponentSide, ConstTarget.FOE).forEach(root::addChildNode);
+          scanTargets(config, side, ConstTarget.OWN).forEach(root::addChildNode);
+          scanTargets(config, side.getFoeSide(), ConstTarget.FOE).forEach(root::addChildNode);
           break;
         default:
           throw new RuntimeException("Unknown scope: " + config.scope.toString());
@@ -127,19 +125,19 @@ public class CommandLine {
     return nodes;
   }
 
-  public static Creature toTargetCreature(final Battlefield battlefield, final CommandNode node) {
+  public static Creature toTargetCreature(final Side side, final CommandNode node) {
     Preconditions.checkNotNull(node.getSide(), "Unknown side");
-    final Side side = targetToSide(battlefield, node);
-    return (node.index == -1) ? side.hero : side.board.get(node.index);
+    final Side targetSide = targetToSide(side, node);
+    return (node.index == -1) ? targetSide.hero : targetSide.board.get(node.index);
   }
 
-  private static Side targetToSide(final Battlefield battlefield, final CommandNode node) {
+  private static Side targetToSide(final Side side, final CommandNode node) {
     Preconditions.checkNotNull(node.getSide(), "Unknown side");
     switch (node.getSide()) {
       case OWN:
-        return battlefield.mySide;
+        return side;
       case FOE:
-        return battlefield.opponentSide;
+        return side.getFoeSide();
       default:
         throw new RuntimeException("Unknown side: " + node.getSide().toString());
     }
@@ -253,7 +251,7 @@ public class CommandLine {
     }
 
     private CommandNode previous() {
-      return Objects.firstNonNull(parent, this);
+      return MoreObjects.firstNonNull(parent, this);
     }
 
     private CommandNode next(final int index) {

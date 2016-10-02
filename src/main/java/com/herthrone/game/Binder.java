@@ -22,10 +22,10 @@ public class Binder {
 
   public Side getOpponentSide() {
     Preconditions.checkArgument(sideOptional.isPresent(), "Side not bound yet");
-    return sideOptional.get().getOpponentSide();
+    return sideOptional.get().getFoeSide();
   }
 
   public void switchSide() {
-    sideOptional = Optional.of(sideOptional.get().getOpponentSide());
+    sideOptional = Optional.of(sideOptional.get().getFoeSide());
   }
 }

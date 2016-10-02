@@ -117,7 +117,7 @@ public class TriggerFactory {
     logger.debug("Triggering " + triggerType + " on own side board");
     triggerByBoard(side.board.stream(), side, triggerType);
     logger.debug("Triggering " + triggerType + " on opponent side board");
-    triggerByBoard(side.getOpponentSide().board.stream(), side, triggerType);
+    triggerByBoard(side.getFoeSide().board.stream(), side, triggerType);
   }
 
   static void refreshAura(final Side side) {

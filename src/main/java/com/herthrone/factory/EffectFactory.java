@@ -126,7 +126,7 @@ public class EffectFactory {
   }
 
   private static List<Effect> getCopyCardEffect(MechanicConfig config, Side side) {
-    final Side opponentSide = side.getOpponentSide();
+    final Side opponentSide = side.getFoeSide();
     switch (config.type) {
       case Constant.HAND:
         if (opponentSide.hand.isEmpty()) {

@@ -10,7 +10,6 @@ import com.herthrone.base.Secret;
 import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
-import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstAction;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
@@ -20,11 +19,9 @@ import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
-import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
-import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.service.Command;
@@ -44,9 +41,6 @@ public class Game implements Round {
   private static Map<String, Game> gamePool = new HashMap<>();
 
   private final String gameId;
-  private final Battlefield battlefield1;
-  private final Battlefield battlefield2;
-  public Battlefield activeBattlefield;
   public Side activeSide;
   public Side inactiveSide;
 
@@ -104,11 +98,8 @@ public class Game implements Round {
               final List<Enum> cardNames1, final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.gameId = gameId;
-    this.battlefield1 = new Battlefield(HeroFactory.create(hero1), HeroFactory.create(hero2));
-    this.battlefield2 = battlefield1.getMirrorBattlefield();
-    this.activeBattlefield = battlefield1;
-    this.activeSide = battlefield1.mySide;
-    this.inactiveSide = battlefield1.opponentSide;
+    this.activeSide = Side.createSidePair(hero1, hero2);
+    this.inactiveSide = activeSide.getFoeSide();
 
     activeSide.populateDeck(cardNames1);
     inactiveSide.populateDeck(cardNames2);
@@ -131,15 +122,12 @@ public class Game implements Round {
 
   public static void main(String[] args) {
     logger.info("Starting game");
-
     final int deck_size = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
     ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
-    List<Enum> cards1 = Collections.nCopies(deck_size, MINION);
-    List<Enum> cards2 = Collections.nCopies(deck_size, MINION);
-
-    final Game gameManager = new Game(
-        "testing_id", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-    gameManager.play();
+    final List<Enum> cards1 = Collections.nCopies(deck_size, MINION);
+    final List<Enum> cards2 = Collections.nCopies(deck_size, MINION);
+    final Game game = new Game("", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
+    game.play();
   }
 
   public void play() {
@@ -174,8 +162,8 @@ public class Game implements Round {
   void playUtilEndTurn() {
     CommandLine.CommandNode leafNode;
     do {
-      final CommandLine.CommandNode root = CommandLine.yieldCommands(activeBattlefield);
-      for (Map.Entry entry : activeBattlefield.view().entrySet()) {
+      final CommandLine.CommandNode root = CommandLine.yieldCommands(activeSide);
+      for (Map.Entry entry : activeSide.view().entrySet()) {
         CommandLine.println(entry.getKey() + " " + entry.getValue());
       }
       leafNode = CommandLine.run(root);
@@ -185,14 +173,9 @@ public class Game implements Round {
 
   public void switchTurn() {
     activeSide.endTurn();
-    if (activeBattlefield == battlefield1) {
-      activeBattlefield = battlefield2;
-    } else {
-      activeBattlefield = battlefield1;
-    }
-
-    activeSide = activeBattlefield.mySide;
-    inactiveSide = activeBattlefield.opponentSide;
+    // Swap active and inactive sides.
+    activeSide = activeSide.getFoeSide();
+    inactiveSide = activeSide.getFoeSide();
     activeSide.startTurn();
   }
 
@@ -221,7 +204,7 @@ public class Game implements Round {
       activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
     } else if (leafNode.getParentType().equals(ConstCommand.USE_HERO_POWER.toString())) {
       // Use hero power with a specific target.
-      final Creature creature = CommandLine.toTargetCreature(activeBattlefield, leafNode);
+      final Creature creature = CommandLine.toTargetCreature(activeSide, leafNode);
       EffectFactory.pipeEffects(activeSide.hero.getHeroPower(), creature);
       consumeCrystal(activeSide.hero.getHeroPower());
       activeSide.hero.heroPowerMovePoints().getTemporaryBuff().increase(-1);
@@ -230,8 +213,8 @@ public class Game implements Round {
       //playCard(leafNode.index);
       consumeCrystal(card);
     } else if (leafNode.getParent().getParentType().equals(ConstCommand.MINION_ATTACK.toString())) {
-      final Creature attacker = CommandLine.toTargetCreature(activeBattlefield, leafNode.getParent());
-      final Creature attackee = CommandLine.toTargetCreature(activeBattlefield, leafNode);
+      final Creature attacker = CommandLine.toTargetCreature(activeSide, leafNode.getParent());
+      final Creature attackee = CommandLine.toTargetCreature(activeSide, leafNode);
       EffectFactory.AttackFactory.pipePhysicalDamageEffect(attacker, attackee);
       // Cost one move point.
       attacker.attackMovePoints().getTemporaryBuff().increase(-1);
@@ -363,7 +346,7 @@ public class Game implements Round {
         case OWN:
           return side;
         case FOE:
-          return side.getOpponentSide();
+          return side.getFoeSide();
         default:
           throw new RuntimeException("Unknown type: " + entity.getSide());
       }
