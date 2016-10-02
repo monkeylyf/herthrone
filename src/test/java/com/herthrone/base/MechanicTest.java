@@ -367,19 +367,19 @@ public class MechanicTest extends BaseGame {
       inactiveSide.bind(yeti);
       minion.addToHandAndPlay(yeti);
     }
-    final List<Minion> opponentMinionsBackup = new ArrayList<>(inactiveSide.board.asList());
+    final List<Minion> foeMinionsBackup = new ArrayList<>(inactiveSide.board.asList());
     // Test take control effect triggered because it satisfies the condition.
     game.switchTurn();
     minion.addToHandAndPlay(ConstMinion.MIND_CONTROL_TECH);
 
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
-    // Test the right-most minion is stolen from opponent board.
-    assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(opponentMinionsBackup);
+    // Test the right-most minion is stolen from foe board.
+    assertThat(activeSide.board.get(activeSide.board.size() - 1)).isIn(foeMinionsBackup);
 
     minion.addToHandAndPlay(ConstMinion.MIND_CONTROL_TECH);
     assertThat(inactiveSide.board.size()).isEqualTo(threshold - 1);
-    // Test control effect not triggered because of opponent has less than 4 minions.
+    // Test control effect not triggered because of foe has less than 4 minions.
     assertThat(activeSide.board.size()).isEqualTo(initialBoardSize + 2 + 1);
   }
 
@@ -702,7 +702,7 @@ public class MechanicTest extends BaseGame {
     assertThat(game.activeSide.deck.size()).isEqualTo(DECK_SIZE - 1);
     assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1);
 
-    // Put northshire on opponent's board.
+    // Put northshire on foe's board.
     game.switchTurn();
     minion.addToHandAndPlay(ConstMinion.NORTHSHIRE_CLERIC);
     game.switchTurn();

@@ -116,7 +116,7 @@ public class TriggerFactory {
   public static void triggerByBoard(final Side side, final ConstTrigger triggerType) {
     logger.debug("Triggering " + triggerType + " on own side board");
     triggerByBoard(side.board.stream(), side, triggerType);
-    logger.debug("Triggering " + triggerType + " on opponent side board");
+    logger.debug("Triggering " + triggerType + " on foe side board");
     triggerByBoard(side.getFoeSide().board.stream(), side, triggerType);
   }
 

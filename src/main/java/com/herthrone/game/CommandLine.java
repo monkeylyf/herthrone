@@ -42,9 +42,9 @@ public class CommandLine {
       if (minion.canMove()) {
         final CommandNode minionAttackCommand = new CommandNode(minion.cardName(), i, ConstTarget.OWN);
         for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
-          final Minion opponentMinion = side.getFoeSide().board.get(j);
-          if (TargetFactory.isMinionTargetable(opponentMinion, side.getFoeSide().board, ConstType.ATTACK)) {
-            minionAttackCommand.addChildNode(new CommandNode(opponentMinion.cardName(), j,
+          final Minion foeMinion = side.getFoeSide().board.get(j);
+          if (TargetFactory.isMinionTargetable(foeMinion, side.getFoeSide().board, ConstType.ATTACK)) {
+            minionAttackCommand.addChildNode(new CommandNode(foeMinion.cardName(), j,
                 ConstTarget.FOE));
           }
         }
@@ -59,9 +59,9 @@ public class CommandLine {
     if (side.hero.canMove()) {
       final CommandNode heroAttack = new CommandNode(ConstCommand.HERO_ATTACK.toString());
       for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
-        final Minion opponentMinion = side.getFoeSide().board.get(j);
-        if (TargetFactory.isMinionTargetable(opponentMinion, side.getFoeSide().board, ConstType.ATTACK)) {
-          heroAttack.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.FOE));
+        final Minion foeMinion = side.getFoeSide().board.get(j);
+        if (TargetFactory.isMinionTargetable(foeMinion, side.getFoeSide().board, ConstType.ATTACK)) {
+          heroAttack.addChildNode(new CommandNode(foeMinion.cardName(), j, ConstTarget.FOE));
         }
       }
     }

@@ -126,17 +126,16 @@ public class EffectFactory {
   }
 
   private static List<Effect> getCopyCardEffect(MechanicConfig config, Side side) {
-    final Side opponentSide = side.getFoeSide();
     switch (config.type) {
       case Constant.HAND:
-        if (opponentSide.hand.isEmpty()) {
+        if (side.getFoeSide().hand.isEmpty()) {
           return Collections.emptyList();
         } else {
           Preconditions.checkArgument(config.targetOptional.isPresent());
           final TargetConfig targetConfig = config.targetOptional.get();
           Preconditions.checkArgument(targetConfig.randomTarget.isPresent());
           final int n = targetConfig.randomTarget.getAsInt();
-          return RandomMinionGenerator.randomN(opponentSide.hand.asList(), n).stream()
+          return RandomMinionGenerator.randomN(side.getFoeSide().hand.asList(), n).stream()
               .map(card -> new CopyCardEffect(card, side.hand))
               .collect(Collectors.toList());
         }

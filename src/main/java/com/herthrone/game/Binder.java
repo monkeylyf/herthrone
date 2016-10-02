@@ -20,11 +20,6 @@ public class Binder {
     return sideOptional.get();
   }
 
-  public Side getOpponentSide() {
-    Preconditions.checkArgument(sideOptional.isPresent(), "Side not bound yet");
-    return sideOptional.get().getFoeSide();
-  }
-
   public void switchSide() {
     sideOptional = Optional.of(sideOptional.get().getFoeSide());
   }

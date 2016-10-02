@@ -30,6 +30,11 @@ public class Constant {
   public static final String MAX_MANA_CRYSTAL = "max_mana_crystal";
   public static final String MOVE_POINTS = "move_points";
 
+  // Configuration cosntant fields.
+  public static final String HAND_MAX_SIZE = "hand_max_capacity";
+  public static final String BOARD_MAX_CAPACITY = "board_max_capacity";
+  public static final String DECK_MAX_CAPACITY = "deck_max_capacity";
+
   public static final int INIT_MOVE_POINTS = 1;
   public static final int WINDFURY_INIT_MOVE_POINTS = 2;
 

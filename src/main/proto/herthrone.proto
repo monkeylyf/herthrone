@@ -76,7 +76,7 @@ message GetGameViewRequest {
 
 message GetGameViewResponse {
     GameView own_view = 1;
-    GameView opponent_view = 2;
+    GameView foe_view = 2;
 }
 
 message GameView {

@@ -7,6 +7,7 @@ import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.Constant;
 import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
@@ -30,9 +31,9 @@ public class BaseGame {
   protected Action action;
 
   protected static final int DECK_SIZE = Integer.parseInt(
-      ConfigLoader.getResource().getString("deck_max_capacity"));
+      ConfigLoader.getResource().getString(Constant.DECK_MAX_CAPACITY));
   protected static final int HAND_SIZE = Integer.parseInt(
-      ConfigLoader.getResource().getString("hand_max_capacity"));
+      ConfigLoader.getResource().getString(Constant.HAND_MAX_SIZE));
   protected static final ConstMinion YETI = ConstMinion.CHILLWIND_YETI;
   private static final String GAME_ID = "gameId";
   private static final int HAND_POSITION = 0;

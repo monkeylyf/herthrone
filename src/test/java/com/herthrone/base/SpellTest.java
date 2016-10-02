@@ -372,7 +372,7 @@ public class SpellTest extends BaseGame {
     // Test own side all healed by 2.
     assertThat(yeti.healthLoss()).isEqualTo(0);
     assertThat(game.activeSide.hero.healthLoss()).isEqualTo(0);
-    // Test opponent side all damage by 2.
+    // Test foe side all damage by 2.
     assertThat(ooze.healthLoss()).isEqualTo(2);
     assertThat(game.inactiveSide.hero.healthLoss()).isEqualTo(2);
   }

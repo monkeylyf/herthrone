@@ -2,8 +2,8 @@
 
 Use case: design a service that pairs up users for a upcoming game.
 As a client, request is sent to server with user ID and game setting. If
-pair-up is successful, the API should return your opponent/foe's ID and game
-settings. If pair-up fails due to completely idle server, raise exception.
+pair-up is successful, the API should return your foe's ID and game settings.
+If pair-up fails due to completely idle server, raise exception.
 """
 
 import threading

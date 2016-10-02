@@ -167,11 +167,11 @@ public class GameManagerTest extends BaseGame {
   @Test
   public void testSwitchTurn() {
     final Side previousMySide = game.activeSide;
-    final Side previousOpponentSide = game.inactiveSide;
+    final Side previousFoeSide = game.inactiveSide;
 
     game.switchTurn();
 
-    assertThat(game.activeSide).isEqualTo(previousOpponentSide);
+    assertThat(game.activeSide).isEqualTo(previousFoeSide);
     assertThat(game.inactiveSide).isEqualTo(previousMySide);
   }
 
@@ -179,11 +179,11 @@ public class GameManagerTest extends BaseGame {
   public void testGenerateCommandNodes() throws IOException {
     jumpIntoRoundFour();
     final int numOfMyMinions = 2;
-    final int numOfOpponentMinions = 1;
-    populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
+    final int numOfFoeMinions = 1;
+    populateBoardWithMinions(numOfMyMinions, numOfFoeMinions);
 
     assertThat(game.activeSide.board.size()).isEqualTo(numOfMyMinions);
-    assertThat(game.inactiveSide.board.size()).isEqualTo(numOfOpponentMinions);
+    assertThat(game.inactiveSide.board.size()).isEqualTo(numOfFoeMinions);
 
     final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeSide);
     checkCommands(myRoot, numOfMyMinions);
@@ -191,8 +191,8 @@ public class GameManagerTest extends BaseGame {
     // Switch side.
     game.switchTurn();
 
-    final CommandLine.CommandNode opponentRoot = CommandLine.yieldCommands(game.activeSide);
-    checkCommands(opponentRoot, numOfOpponentMinions);
+    final CommandLine.CommandNode foeRoot = CommandLine.yieldCommands(game.activeSide);
+    checkCommands(foeRoot, numOfFoeMinions);
   }
 
   private void jumpIntoRoundFour() {
@@ -204,7 +204,7 @@ public class GameManagerTest extends BaseGame {
     }
   }
 
-  private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfOpponentMinions) {
+  private void populateBoardWithMinions(final int numOfOwnMinions, final int numOfFoeMinions) {
     // Directly move minions from deck to board to avoid waiting the crystals growing one by one.
     game.startTurn();
     for (int i = 0; i < numOfOwnMinions; ++i) {
@@ -212,7 +212,7 @@ public class GameManagerTest extends BaseGame {
     }
 
     game.switchTurn();
-    for (int i = 0; i < numOfOpponentMinions; ++i) {
+    for (int i = 0; i < numOfFoeMinions; ++i) {
       minion.addToHandAndPlay((Minion) game.activeSide.deck.top());
     }
     game.switchTurn();
@@ -232,7 +232,7 @@ public class GameManagerTest extends BaseGame {
       if (optionName.equals(ConstCommand.END_TURN.toString())) {
         assertThat(node.childOptions.size()).isEqualTo(0);
       } else if (optionName.equals(ConstCommand.USE_HERO_POWER.toString())) {
-        // 1(own hero) + 2(own minions) + 1(opponent hero) + 1(opponent minion) = 5
+        // 1(own hero) + 2(own minions) + 1(foe hero) + 1(foe minion) = 5
         assertThat(node.childOptions.size()).isEqualTo(5);
       } else if (optionName.equals(ConstCommand.MINION_ATTACK)) {
         assertThat(node.childOptions.size()).isEqualTo(numOfMinions);
@@ -245,8 +245,8 @@ public class GameManagerTest extends BaseGame {
   @Test
   public void testCommandNodes() {
     final int numOfMyMinions = 2;
-    final int numOfOpponentMinions = 1;
-    populateBoardWithMinions(numOfMyMinions, numOfOpponentMinions);
+    final int numOfFoeMinions = 1;
+    populateBoardWithMinions(numOfMyMinions, numOfFoeMinions);
 
     jumpIntoRoundFour();
 

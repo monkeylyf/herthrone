@@ -49,9 +49,9 @@ public class Side implements Round, View {
   private Side foeSide;
 
   private Side(final Hero hero, final EffectQueue effectQueue, final IntSupplier idGenerator) {
-    final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString("hand_max_capacity"));
-    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString("board_max_capacity"));
-    final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
+    final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString(Constant.HAND_MAX_SIZE));
+    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString(Constant.BOARD_MAX_CAPACITY));
+    final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString(Constant.DECK_MAX_CAPACITY));
 
     this.hero = hero;
     bind(hero);
@@ -139,7 +139,7 @@ public class Side implements Round, View {
     board.stream().forEach(Round::endTurn);
     TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_END_TURN);
     TriggerFactory.triggerByBoard(
-        getFoeSide().board.stream(), this, ConstTrigger.ON_OPPONENT_END_TURN);
+        getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_END_TURN);
   }
 
   @Override
@@ -148,7 +148,7 @@ public class Side implements Round, View {
     hero.startTurn();
     board.stream().forEach(Round::startTurn);
     TriggerFactory.triggerByBoard(
-        getFoeSide().board.stream(), this, ConstTrigger.ON_OPPONENT_START_TURN);
+        getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_START_TURN);
     TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_START_TURN);
   }
 
@@ -177,7 +177,7 @@ public class Side implements Round, View {
     return ownSideBuilder.build();
   }
 
-  private Map<String, String> getOpponentSideView() {
+  private Map<String, String> getFoeSideView() {
     return buildNoHiddenSideView(foeSide)
         .put(Constant.HAND_SIZE, Integer.toString(foeSide.hand.size()))
         .put(Constant.SECRET_SIZE, Integer.toString(foeSide.secrets.size()))
@@ -230,10 +230,10 @@ public class Side implements Round, View {
       viewBuilder.put(ownPrefix + entry.getKey(), entry.getValue());
     }
 
-    final String opponentPrefix = ConstTarget.FOE.toString() + ":";
-    final Map<String, String> opponentSideView = getOpponentSideView();
-    for (Map.Entry<String, String> entry : opponentSideView.entrySet()) {
-      viewBuilder.put(opponentPrefix + entry.getKey(), entry.getValue());
+    final String foePrefix = ConstTarget.FOE.toString() + ":";
+    final Map<String, String> foeSideView = getFoeSideView();
+    for (Map.Entry<String, String> entry : foeSideView.entrySet()) {
+      viewBuilder.put(foePrefix + entry.getKey(), entry.getValue());
     }
 
     return viewBuilder.build();

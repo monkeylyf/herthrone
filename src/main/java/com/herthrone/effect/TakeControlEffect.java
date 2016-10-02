@@ -20,10 +20,10 @@ public class TakeControlEffect implements Effect {
 
   @Override
   public void act() {
-    final Side currentSide = minion.binder().getSide();
-    final Side opponentSide = currentSide.getFoeSide();
+    final Side ownSide = minion.binder().getSide();
+    final Side foeSide = ownSide.getFoeSide();
     minion.binder().switchSide();
-    currentSide.board.remove(minion);
-    minion.summonOnBoard(opponentSide.board, opponentSide.board.size());
+    ownSide.board.remove(minion);
+    minion.summonOnBoard(foeSide.board, foeSide.board.size());
   }
 }
