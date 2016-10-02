@@ -97,7 +97,7 @@ public class TargetFactory {
       case OWN:
         candidates.addAll(getProperTargetsBySide(targetConfig, side));
         break;
-      case OPPONENT:
+      case FOE:
         candidates.addAll(getProperTargetsBySide(targetConfig, side.getOpponentSide()));
         break;
       case ALL:
@@ -179,7 +179,7 @@ public class TargetFactory {
     switch (target.scope) {
       case OWN:
         return getDestroyablesBySide(target, side);
-      case OPPONENT:
+      case FOE:
         return getDestroyablesBySide(target, side.getOpponentSide());
       case ALL:
         final List<Destroyable> targets = getDestroyablesBySide(target, side);
@@ -194,7 +194,7 @@ public class TargetFactory {
     switch (target.scope) {
       case OWN:
         return Collections.singletonList(side);
-      case OPPONENT:
+      case FOE:
         return Collections.singletonList(side.getOpponentSide());
       case ALL:
         return Arrays.asList(side, side.getOpponentSide());

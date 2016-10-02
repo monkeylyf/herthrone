@@ -40,7 +40,7 @@ public class Battlefield implements View {
       viewBuilder.put(ownPrefix + entry.getKey(), entry.getValue());
     }
 
-    final String opponentPrefix = ConstTarget.OPPONENT.toString() + ":";
+    final String opponentPrefix = ConstTarget.FOE.toString() + ":";
     final Map<String, String> opponentSideView = getOpponentSideView();
     for (Map.Entry<String, String> entry : opponentSideView.entrySet()) {
       viewBuilder.put(opponentPrefix + entry.getKey(), entry.getValue());

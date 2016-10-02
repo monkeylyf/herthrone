@@ -63,7 +63,7 @@ public class RandomMinionGenerator {
       case OWN:
         creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side));
         break;
-      case OPPONENT:
+      case FOE:
         creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getOpponentSide()));
         break;
       case ALL:

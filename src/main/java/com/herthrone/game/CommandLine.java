@@ -46,11 +46,12 @@ public class CommandLine {
         for (int j = 0; j < opponentSide.board.size(); ++j) {
           final Minion opponentMinion = opponentSide.board.get(j);
           if (TargetFactory.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
-            minionAttackCommand.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.OPPONENT));
+            minionAttackCommand.addChildNode(new CommandNode(opponentMinion.cardName(), j,
+                ConstTarget.FOE));
           }
         }
         final CommandNode heroNode = new CommandNode(opponentSide.hero.cardName(), -1);
-        heroNode.setSide(ConstTarget.OPPONENT);
+        heroNode.setSide(ConstTarget.FOE);
         minionAttackCommand.addChildNode(heroNode);
         moveMinions.addChildNode(minionAttackCommand);
       }
@@ -62,7 +63,7 @@ public class CommandLine {
       for (int j = 0; j < opponentSide.board.size(); ++j) {
         final Minion opponentMinion = opponentSide.board.get(j);
         if (TargetFactory.isMinionTargetable(opponentMinion, opponentSide.board, ConstType.ATTACK)) {
-          heroAttack.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.OPPONENT));
+          heroAttack.addChildNode(new CommandNode(opponentMinion.cardName(), j, ConstTarget.FOE));
         }
       }
     }
@@ -91,12 +92,12 @@ public class CommandLine {
         case OWN:
           scanTargets(config, battlefield.mySide, ConstTarget.OWN).forEach(root::addChildNode);
           break;
-        case OPPONENT:
-          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).forEach (root::addChildNode);
+        case FOE:
+          scanTargets(config, battlefield.opponentSide, ConstTarget.FOE).forEach (root::addChildNode);
           break;
         case ALL:
           scanTargets(config, battlefield.mySide, ConstTarget.OWN).forEach(root::addChildNode);
-          scanTargets(config, battlefield.opponentSide, ConstTarget.OPPONENT).forEach(root::addChildNode);
+          scanTargets(config, battlefield.opponentSide, ConstTarget.FOE).forEach(root::addChildNode);
           break;
         default:
           throw new RuntimeException("Unknown scope: " + config.scope.toString());
@@ -137,7 +138,7 @@ public class CommandLine {
     switch (node.getSide()) {
       case OWN:
         return battlefield.mySide;
-      case OPPONENT:
+      case FOE:
         return battlefield.opponentSide;
       default:
         throw new RuntimeException("Unknown side: " + node.getSide().toString());
@@ -185,7 +186,7 @@ public class CommandLine {
     }
 
     public CommandNode(final String option, final int index) {
-      this(option, index, ConstTarget.OPPONENT);
+      this(option, index, ConstTarget.FOE);
     }
 
     public CommandNode(final String option, final int index, final ConstTarget type) {

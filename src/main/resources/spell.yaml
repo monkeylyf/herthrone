@@ -147,7 +147,7 @@
   class: druid
   crystal: 4
   single_target:
-    scope: opponent
+    scope: foe
     type: all
   mechanics:
     - name: deal_damage
@@ -161,7 +161,7 @@
       type: health
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: other
 
 - name: arcane_shot
@@ -188,7 +188,7 @@
       type: health
       value: 3
       target:
-        scope: opponent
+        scope: foe
         type: minion
         random_target: 2
       condition:
@@ -283,7 +283,7 @@
       type: health
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: minion
 
 - name: arcane_intellect
@@ -303,7 +303,7 @@
   class: mage
   crystal: 4
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: transform
@@ -324,7 +324,7 @@
       type: health
       value: 4
       target:
-        scope: opponent
+        scope: foe
         type: minion
 
 - name: frost_nova
@@ -337,7 +337,7 @@
       type: frozen
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: minion
 
 - name: frostbolt
@@ -463,7 +463,7 @@
       type: health
       value: 2
       target:
-        scope: opponent
+        scope: foe
         type: all
 
 - name: humility
@@ -499,7 +499,7 @@
       type: health
       value: 5
       targets:
-        scope: opponent
+        scope: foe
         type: hero
 
 - name: power_word_shield
@@ -585,7 +585,7 @@
       type: health
       value: 2
       target:
-        scope: opponent
+        scope: foe
         type: all
     - name: restore_health
       trigger: on_play
@@ -600,7 +600,7 @@
   class: priest
   crystal: 10
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: take_control
@@ -620,7 +620,7 @@
       type: hand
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: hand
         random_target: 1
 
@@ -628,7 +628,7 @@
   class: rogue
   crystal: 5
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: destroy
@@ -673,7 +673,7 @@
   class: rogue
   crystal: 2
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: return_to_hand
@@ -692,7 +692,7 @@
       type: health
       value: 2
       target:
-        scope: opponent
+        scope: foe
         type: hero
 
 - name: fan_of_knives
@@ -705,7 +705,7 @@
       type: health
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: minion
     - name: card_draw
       trigger: on_play
@@ -720,7 +720,7 @@
   class: rogue
   crystal: 2
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: deal_damage
@@ -760,7 +760,7 @@
       type: minion
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: minion
     - name: return_to_hand
       trigger: on_play
@@ -839,7 +839,7 @@
   class: shaman
   crystal: 2
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: windfury
@@ -925,7 +925,7 @@
   class: warlock
   crystal: 1
   single_target:
-    scope: opponent
+    scope: foe
     type: minion
   mechanics:
     - name: destroy
@@ -1068,7 +1068,7 @@
       type: health
       value: 2
       target:
-        scope: opponent
+        scope: foe
         type: minion
         random_target: 2
       condition:

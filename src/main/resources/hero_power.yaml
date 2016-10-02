@@ -127,7 +127,7 @@
       type: health
       value: 2
       target:
-         scope: opponent
+         scope: foe
          type: hero
 
 - name: totemic_call

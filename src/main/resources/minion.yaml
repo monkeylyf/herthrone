@@ -226,7 +226,7 @@
       type: health
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: all
         random: true
 
@@ -243,7 +243,7 @@
       permanent: true
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: minion
         random: true
       condition:
@@ -367,7 +367,7 @@
       type: health
       value: 3
       target:
-        scope: opponent
+        scope: foe
         type: hero
 
 - name: novice_engineer
@@ -459,7 +459,7 @@
       type: weapon
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: weapon
       condition:
         type: weapon_equipped
@@ -566,7 +566,7 @@
   health: 1
   crystal: 1
   single_target:
-    scope: opponent
+    scope: foe
     type: all
   mechanics:
     - name: battlecry
@@ -663,7 +663,7 @@
       type: health
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: all
 
 - name: kobold_geomancer
@@ -703,7 +703,7 @@
       type: minion
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: board
       choices:
         - murloc_scout
@@ -804,7 +804,7 @@
       type: health
       value: 2
       target:
-        scope: opponent
+        scope: foe
         type: all
 
 - name: stormwind_knight
@@ -1096,7 +1096,7 @@
       type: health
       value: 1
       target:
-        scope: opponent
+        scope: foe
         type: all
     - name: deal_damage
       trigger: on_play
