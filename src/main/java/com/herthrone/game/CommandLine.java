@@ -43,7 +43,7 @@ public class CommandLine {
         final CommandNode minionAttackCommand = new CommandNode(minion.cardName(), i, ConstTarget.OWN);
         for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
           final Minion foeMinion = side.getFoeSide().board.get(j);
-          if (TargetFactory.isMinionTargetable(foeMinion, side.getFoeSide().board, ConstType.ATTACK)) {
+          if (TargetFactory.isMinionTargetable(foeMinion, ConstType.ATTACK)) {
             minionAttackCommand.addChildNode(new CommandNode(foeMinion.cardName(), j,
                 ConstTarget.FOE));
           }
@@ -60,7 +60,7 @@ public class CommandLine {
       final CommandNode heroAttack = new CommandNode(ConstCommand.HERO_ATTACK.toString());
       for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
         final Minion foeMinion = side.getFoeSide().board.get(j);
-        if (TargetFactory.isMinionTargetable(foeMinion, side.getFoeSide().board, ConstType.ATTACK)) {
+        if (TargetFactory.isMinionTargetable(foeMinion, ConstType.ATTACK)) {
           heroAttack.addChildNode(new CommandNode(foeMinion.cardName(), j, ConstTarget.FOE));
         }
       }

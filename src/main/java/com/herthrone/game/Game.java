@@ -15,6 +15,7 @@ import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
+import com.herthrone.constant.ConstSelect;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
@@ -22,6 +23,7 @@ import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.service.Command;
@@ -295,14 +297,15 @@ public class Game implements Round {
 
   private void useHeroPower(final Entity target) {
     final Spell heroPower = activeSide.hero.getHeroPower();
-
     final Creature targetCreature;
     if (target.toString().length() != 0) {
+      Preconditions.checkArgument(!heroPower.getTargetV2().get().select.equals(ConstSelect
+          .PASSIVE));
       targetCreature = TargetParser.toCreature(activeSide, target);
-      EffectFactory.pipeEffects(heroPower, targetCreature);
     } else {
-      EffectFactory.pipeEffects(heroPower, activeSide.hero);
+      targetCreature = TargetFactory.getSingleTarget(heroPower.getTargetV2().get(), activeSide);
     }
+    EffectFactory.pipeEffects(activeSide.hero.getHeroPower(), targetCreature);
   }
 
   private void attack(final Entity doer, final Entity target) {

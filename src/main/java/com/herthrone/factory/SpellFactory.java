@@ -28,14 +28,15 @@ public class SpellFactory {
   private static final Logger logger = Logger.getLogger(SpellFactory.class.getName());
 
   public static Spell create(final ConstSpell spell) {
-    SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
+    final SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
     return create(config.name, config.displayName, config.className, config.crystal, config.type,
-        config.singleTargetConfigOptional, config.effects);
+        config.singleTargetConfigOptional, config.targetConfigV2, config.effects);
   }
 
   static Spell create(final ConstSpell name, final String displayName, final ConstClass className,
                       final int crystal, final ConstType type,
-                      final Optional<TargetConfig> targetConfig, final List<MechanicConfig> effects) {
+                      final Optional<TargetConfig> targetConfig, final Optional<TargetConfig>
+                          targetConfigV2, final List<MechanicConfig> effects) {
     return new Spell() {
 
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystal);
@@ -44,6 +45,11 @@ public class SpellFactory {
       private final TriggeringMechanics triggeringMechanics = TriggeringMechanics.create(
           ConstTrigger.ON_PLAY,
           effects.stream().map(MechanicConfig::clone).collect(Collectors.toList()));
+
+      @Override
+      public Optional<TargetConfig> getTargetV2() {
+        return targetConfigV2;
+      }
 
       @Override
       public String toString() {

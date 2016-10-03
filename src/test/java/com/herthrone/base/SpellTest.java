@@ -93,10 +93,9 @@ public class SpellTest extends BaseGame {
   public void testSteadyShot() {
     heroPower.update(ConstSpell.STEADY_SHOT);
     final int damage = 2;
-
     assertThat(guldan.healthLoss()).isEqualTo(0);
-    // TODO: should not need to specify the target.
-    heroPower.use(BoardSide.FOE, ContainerType.HERO, 0);
+    //heroPower.use(BoardSide.FOE, ContainerType.HERO, 0);
+    heroPower.use();
     assertThat(guldan.healthLoss()).isEqualTo(damage);
   }
 

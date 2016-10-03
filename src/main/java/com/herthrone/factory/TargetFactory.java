@@ -26,22 +26,22 @@ public class TargetFactory {
 
   private static final Logger logger = Logger.getLogger(TargetFactory.class.getName());
 
-  public static boolean isMinionTargetable(final Minion minion, final Container<Minion> board, final ConstType type) {
+  public static boolean isMinionTargetable(final Minion minion, final ConstType type) {
     if (minion.booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
       return false;
     } else {
       switch (type) {
         case ATTACK:
-          return isMinionTargetableByAttack(minion, board);
+          return isMinionTargetableByAttack(minion);
         case SPELL:
-          return isMinionTargetableBySpell(minion, board);
+          return isMinionTargetableBySpell(minion);
         default:
           throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
       }
     }
   }
 
-  private static boolean isMinionTargetableByAttack(final Minion minion, final Container<Minion> board) {
+  private static boolean isMinionTargetableByAttack(final Minion minion) {
     // A stealth minion can not be targeted, even it is a taunt minion.
     if (minion.booleanMechanics().isOn(ConstMechanic.STEALTH)) {
       return false;
@@ -51,44 +51,44 @@ public class TargetFactory {
     } else {
       // If there is any other minions on the board with taunt but not stealth ability, this minion
       // cannot be targeted.
-      return !board.stream()
+      return !minion.binder().getSide().board.stream()
           .anyMatch(minionOnBoard ->
               minionOnBoard.booleanMechanics().isOn(ConstMechanic.TAUNT) &&
               minionOnBoard.booleanMechanics().isOff(ConstMechanic.STEALTH));
     }
   }
 
-  private static boolean isMinionTargetableBySpell(final Minion minion, final Container<Minion> board) {
+  private static boolean isMinionTargetableBySpell(final Minion minion) {
     return !minion.booleanMechanics().isOn(ConstMechanic.ELUSIVE);
   }
 
-  public static boolean isHeroTargetable(final Hero hero, final Container<Minion> board, final ConstType type) {
+  public static boolean isHeroTargetable(final Hero hero, final ConstType type) {
     if (hero.booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
       return false;
     } else {
       switch (type) {
         case ATTACK:
-          return isHeroTargetableByAttack(hero, board);
+          return isHeroTargetableByAttack(hero);
         case SPELL:
-          return isHeroTargetableBySpell(hero, board);
+          return isHeroTargetableBySpell(hero);
         default:
           throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
       }
     }
   }
 
-  private static boolean isHeroTargetableByAttack(final Hero hero, final Container<Minion> board) {
+  private static boolean isHeroTargetableByAttack(final Hero hero) {
     return hero.booleanMechanics().isOn(ConstMechanic.TAUNT);
   }
 
-  private static boolean isHeroTargetableBySpell(final Hero hero, final Container<Minion> board) {
+  private static boolean isHeroTargetableBySpell(final Hero hero) {
     return true;
   }
 
   public static Creature getSingleTarget(final TargetConfig targetConfig, final Side side) {
-    final List<Creature> targets = getProperTargets(targetConfig, side);
-    Preconditions.checkArgument(targets.size() == 1);
-    return targets.get(0);
+    final List<Creature> candidates = getProperTargets(targetConfig, side);
+    Preconditions.checkArgument(candidates.size() == 1);
+    return candidates.get(0);
   }
 
   static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side) {
@@ -109,7 +109,8 @@ public class TargetFactory {
     }
 
     return targetConfig.isRandom ?
-        Collections.singletonList(RandomMinionGenerator.randomOne(candidates)) : candidates;
+        Collections.singletonList(RandomMinionGenerator.randomOne(candidates)) :
+        candidates;
   }
 
   private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
@@ -172,21 +173,6 @@ public class TargetFactory {
         return destroyables;
       default:
         throw new RuntimeException("Unknown type: " + target.type);
-    }
-  }
-
-  static List<Destroyable> getDestroyables(final TargetConfig target, final Side side) {
-    switch (target.scope) {
-      case OWN:
-        return getDestroyablesBySide(target, side);
-      case FOE:
-        return getDestroyablesBySide(target, side.getFoeSide());
-      case ALL:
-        final List<Destroyable> targets = getDestroyablesBySide(target, side);
-        targets.addAll(getDestroyablesBySide(target, side.getFoeSide()));
-        return targets;
-      default:
-        throw new RuntimeException("Unknown scope: " + target.scope);
     }
   }
 

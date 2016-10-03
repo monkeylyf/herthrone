@@ -3,6 +3,7 @@ package com.herthrone.configuration;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstSelect;
 import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 
@@ -13,6 +14,7 @@ import static com.herthrone.configuration.ConfigLoader.getUpperCaseStringValue;
 
 public class TargetConfig {
 
+  private static final String SELECT = "select";
   private static final String SCOPE = "scope";
   private static final String TYPE = "type";
   private static final String RANDOM = "random";
@@ -22,6 +24,7 @@ public class TargetConfig {
   private static final String RANDOM_TARGET = "random_target";
   public final ConstTarget scope;
   public final ConstType type;
+  public final ConstSelect select;
   public final boolean isRandom;
   public final boolean isAdjacent;
   public final boolean isSelfExcluded;
@@ -39,12 +42,15 @@ public class TargetConfig {
         Optional.absent();
     this.randomTarget = (map.containsKey(RANDOM_TARGET)) ?
         OptionalInt.of((int) map.get(RANDOM_TARGET)) : OptionalInt.empty();
+    this.select = (map.containsKey(SELECT)) ?
+        ConstSelect.valueOf(getUpperCaseStringValue(map, SELECT)) : ConstSelect.NOT_PROVIDED;
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add(SCOPE, scope)
+        .add(SELECT, select)
         .add(TYPE, type)
         .add(RANDOM, isRandom)
         .add(ADJACENT, isAdjacent)

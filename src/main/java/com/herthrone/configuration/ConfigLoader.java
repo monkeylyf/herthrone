@@ -1,6 +1,6 @@
 package com.herthrone.configuration;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.constant.ConstClass;
@@ -72,9 +72,9 @@ public class ConfigLoader {
     return value.toUpperCase();
   }
 
-  static MoreObjects.ToStringHelper addIfConditionIsTrue(final boolean condition,
-                                                     final MoreObjects.ToStringHelper toStringHelper,
-                                                     final String key, final Object object) {
+  static ToStringHelper addIfConditionIsTrue(final boolean condition,
+                                             final ToStringHelper toStringHelper,
+                                             final String key, final Object object) {
     if (condition) {
       toStringHelper.add(key, object.toString());
     }

@@ -49,28 +49,47 @@ public class Side implements Round, View {
   private Side foeSide;
 
   private Side(final Hero hero, final EffectQueue effectQueue, final IntSupplier idGenerator) {
-    final int handCapacity = Integer.parseInt(ConfigLoader.getResource().getString(Constant.HAND_MAX_SIZE));
-    final int boardCapacity = Integer.parseInt(ConfigLoader.getResource().getString(Constant.BOARD_MAX_CAPACITY));
-    final int deckCapacity = Integer.parseInt(ConfigLoader.getResource().getString(Constant.DECK_MAX_CAPACITY));
+    // Init containers.
+    final int handCapacity = Integer.parseInt(
+        ConfigLoader.getResource().getString(Constant.HAND_MAX_SIZE));
+    this.hand = new Container<>(handCapacity);
+    final int boardCapacity = Integer.parseInt(
+        ConfigLoader.getResource().getString(Constant.BOARD_MAX_CAPACITY));
+    this.board = new Container<>(boardCapacity);
+    final int deckCapacity = Integer.parseInt(
+        ConfigLoader.getResource().getString(Constant.DECK_MAX_CAPACITY));
+    this.deck = new Container<>(deckCapacity);
+    this.secrets = new Container<>();
 
     this.hero = hero;
     bind(hero);
     bind(hero.getHeroPower());
-    this.hand = new Container<>(handCapacity);
-    this.board = new Container<>(boardCapacity);
-    this.secrets = new Container<>();
-
-    this.deck = new Container<>(deckCapacity);
     this.replay = new Replay();
-
     this.fatigue = 0;
     this.effectQueue = effectQueue;
-
     this.idGenerator = idGenerator;
   }
 
   public void bind(final Card card) {
     card.binder().bind(this);
+  }
+
+  static Side createSidePair(final ConstHero ownHero, final ConstHero foeHero) {
+    final IntSupplier sequenceIdGenerator = new IntSupplier() {
+      private int id = 0;
+
+      @Override
+      public int getAsInt() {
+        ++id;
+        return id;
+      }
+    };
+    final EffectQueue effectQueue = new EffectQueue();
+    final Side ownSide = new Side(HeroFactory.create(ownHero), effectQueue, sequenceIdGenerator);
+    final Side foeSide = new Side(HeroFactory.create(foeHero), effectQueue, sequenceIdGenerator);
+    ownSide.foeSide = foeSide;
+    foeSide.foeSide = ownSide;
+    return ownSide;
   }
 
   void populateDeck(final List<Enum> cards) {
@@ -138,8 +157,7 @@ public class Side implements Round, View {
     hero.endTurn();
     board.stream().forEach(Round::endTurn);
     TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_END_TURN);
-    TriggerFactory.triggerByBoard(
-        getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_END_TURN);
+    TriggerFactory.triggerByBoard(getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_END_TURN);
   }
 
   @Override
@@ -147,8 +165,7 @@ public class Side implements Round, View {
     replay.startTurn();
     hero.startTurn();
     board.stream().forEach(Round::startTurn);
-    TriggerFactory.triggerByBoard(
-        getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_START_TURN);
+    TriggerFactory.triggerByBoard(getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_START_TURN);
     TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_START_TURN);
   }
 
@@ -160,6 +177,25 @@ public class Side implements Round, View {
     final int sequenceId = idGenerator.getAsInt();
     logger.debug("Set ID " + sequenceId + " to minion " + minion);
     minion.setSequenceId(sequenceId);
+  }
+
+  @Override
+  public Map<String, String> view() {
+    final ImmutableMap.Builder<String, String> viewBuilder = ImmutableMap.builder();
+
+    final String ownPrefix = ConstTarget.OWN.toString() + ":";
+    final Map<String, String> ownSideView = getOwnSideView();
+    for (Map.Entry<String, String> entry : ownSideView.entrySet()) {
+      viewBuilder.put(ownPrefix + entry.getKey(), entry.getValue());
+    }
+
+    final String foePrefix = ConstTarget.FOE.toString() + ":";
+    final Map<String, String> foeSideView = getFoeSideView();
+    for (Map.Entry<String, String> entry : foeSideView.entrySet()) {
+      viewBuilder.put(foePrefix + entry.getKey(), entry.getValue());
+    }
+
+    return viewBuilder.build();
   }
 
   private Map<String, String> getOwnSideView() {
@@ -200,43 +236,6 @@ public class Side implements Round, View {
     sideViewBuilder.put(Constant.HERO_POWER, side.hero.getHeroPower().view().toString());
 
     return sideViewBuilder;
-  }
-
-  static Side createSidePair(final ConstHero ownHero, final ConstHero foeHero) {
-    final IntSupplier sequenceIdGenerator = new IntSupplier() {
-      private int id = 0;
-
-      @Override
-      public int getAsInt() {
-        ++id;
-        return id;
-      }
-    };
-    final EffectQueue effectQueue = new EffectQueue();
-    final Side ownSide =  new Side(HeroFactory.create(ownHero), effectQueue, sequenceIdGenerator);
-    final Side foeSide =  new Side(HeroFactory.create(foeHero), effectQueue, sequenceIdGenerator);
-    ownSide.foeSide = foeSide;
-    foeSide.foeSide = ownSide;
-    return ownSide;
-  }
-
-  @Override
-  public Map<String, String> view() {
-    final ImmutableMap.Builder<String, String> viewBuilder = ImmutableMap.builder();
-
-    final String ownPrefix = ConstTarget.OWN.toString() + ":";
-    final Map<String, String> ownSideView = getOwnSideView();
-    for (Map.Entry<String, String> entry : ownSideView.entrySet()) {
-      viewBuilder.put(ownPrefix + entry.getKey(), entry.getValue());
-    }
-
-    final String foePrefix = ConstTarget.FOE.toString() + ":";
-    final Map<String, String> foeSideView = getFoeSideView();
-    for (Map.Entry<String, String> entry : foeSideView.entrySet()) {
-      viewBuilder.put(foePrefix + entry.getKey(), entry.getValue());
-    }
-
-    return viewBuilder.build();
   }
 
   @Override
