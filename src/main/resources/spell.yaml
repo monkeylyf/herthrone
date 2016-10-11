@@ -1,9 +1,10 @@
 - name: fire_ball
   class: mage
   crystal: 4
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -14,6 +15,10 @@
 - name: claw
   class: druid
   crystal: 1
+  select:
+    scope: own
+    type: hero
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -36,9 +41,10 @@
 - name: healing_touch
   class: druid
   crystal: 3
-  single_target:
+  select:
     scope: all
     type: all
+    select: passive
   mechanics:
     - name: restore_health
       trigger: on_play
@@ -49,6 +55,10 @@
 - name: innervate
   class: druid
   crystal: 0
+  select:
+    scope: own
+    type: hero
+    select: passive
   mechanics:
     - name: mana
       trigger: on_play
@@ -62,9 +72,10 @@
 - name: mark_of_the_wild
   class: druid
   crystal: 2
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: taunt
       trigger: on_play
@@ -85,6 +96,10 @@
 - name: wild_growth
   class: druid
   crystal: 2
+  select:
+    scope: own
+    type: hero
+    select: passive
   mechanics:
     - name: mana
       trigger: on_play
@@ -98,9 +113,10 @@
 - name: moonfire
   class: druid
   crystal: 0
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -111,6 +127,10 @@
 - name: savage_roar
   class: druid
   crystal: 3
+  select:
+    scope: own
+    type: all
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -125,9 +145,10 @@
 - name: starfire
   class: druid
   crystal: 6
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -146,9 +167,10 @@
 - name: swipe
   class: druid
   crystal: 4
-  single_target:
+  select:
     scope: foe
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -167,9 +189,10 @@
 - name: arcane_shot
   class: hunter
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -181,6 +204,14 @@
   display_name: Multi-Shot
   class: hunter
   crystal: 4
+  select:
+    scope: foe
+    type: minion
+    select: passive
+    condition:
+      type: board_size
+      range_start: 2
+      range_end: 999
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -199,6 +230,10 @@
 - name: tracking
   class: hunter
   crystal: 1
+  select:
+    scope: own
+    type: deck
+    select: passive
   mechanics:
     - name: discard
       trigger: on_play
@@ -212,6 +247,10 @@
 - name: animal_companion
   class: hunter
   crystal: 3
+  select:
+    scope: own
+    type: board
+    select: passive
   mechanics:
     - name: summon
       trigger: on_play
@@ -230,9 +269,10 @@
   display: Hunter's Mark
   class: hunter
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: set_attribute
       trigger: on_play
@@ -243,9 +283,10 @@
 - name: kill_command
   class: hunter
   crystal: 3
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     # Mutually exclusive.
     - name: deal_damage
@@ -276,6 +317,10 @@
 - name: arcane_explosion
   class: mage
   crystal: 2
+  select:
+    scope: foe
+    type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -289,6 +334,10 @@
 - name: arcane_intellect
   class: mage
   crystal: 3
+  select:
+    scope: own
+    type: deck
+    select: passive
   mechanics:
     - name: card_draw
       trigger: on_play
@@ -302,9 +351,10 @@
 - name: polymorph
   class: mage
   crystal: 4
-  single_target:
-    scope: foe
+  select:
+    scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: transform
       trigger: on_play
@@ -317,6 +367,10 @@
 - name: flamestrike
   class: mage
   crystal: 7
+  select:
+    scope: foe
+    type: minion
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -330,6 +384,10 @@
 - name: frost_nova
   class: mage
   crystal: 3
+  select:
+    scope: foe
+    type: minion
+    select: passive
   mechanics:
     - name: frozen
       trigger: on_play
@@ -343,9 +401,10 @@
 - name: frostbolt
   class: mage
   crystal: 2
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -361,6 +420,10 @@
 - name: mirror_image
   class: mage
   crystal: 1
+  select:
+    scope: own
+    type: board
+    select: passive
   mechanics:
     - name: summon
       trigger: on_play
@@ -376,9 +439,10 @@
 - name: blessing_of_might
   class: paladin
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: gain
       trigger: on_play
@@ -390,9 +454,10 @@
 - name: hammer_of_wrath
   class: paladin
   crystal: 4
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -411,9 +476,10 @@
 - name: hand_of_protection
   class: paladin
   crystal: 1
-  single_target:
+  select:
     scope: all
-    type: minion
+    type: all
+    select: mandatory
   mechanics:
     - name: divine_shield
       trigger: on_play
@@ -424,9 +490,10 @@
 - name: holy_light
   class: paladin
   crystal: 2
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: restore_health
       trigger: on_play
@@ -437,9 +504,10 @@
 - name: blessing_of_kings
   class: paladin
   crystal: 4
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: gain
       trigger: on_play
@@ -456,6 +524,10 @@
 - name: consecration
   class: paladin
   crystal: 4
+  select:
+    scope: foe
+    type: all
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -469,6 +541,10 @@
 - name: humility
   class: paladin
   crystal: 1
+  select:
+    scope: all
+    type: minion
+    select: mandatory
   mechanics:
     - name: set_attribute
       trigger: on_play
@@ -479,9 +555,10 @@
 - name: holy_smite
   class: priest
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -492,6 +569,10 @@
 - name: mind_blast
   class: priest
   crystal: 2
+  select:
+    scope: foe
+    type: hero
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -507,9 +588,10 @@
     Power Word: Shield
   class: priest
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: gain
       trigger: on_play
@@ -530,9 +612,10 @@
     Shadow Word: Pain
   class: priest
   crystal: 2
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: destroy
       trigger: on_play
@@ -546,9 +629,10 @@
 - name: divine_spirit
   class: priest
   crystal: 2
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: gain
       trigger: on_play
@@ -562,9 +646,10 @@
     Shadow Word: Death
   class: priest
   crystal: 3
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: destroy
       trigger: on_play
@@ -578,6 +663,10 @@
 - name: holy_nova
   class: priest
   crystal: 5
+  select:
+    scope: all
+    type: all
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -599,9 +688,10 @@
 - name: mind_control
   class: priest
   crystal: 10
-  single_target:
+  select:
     scope: foe
     type: minion
+    select: mandatory
   mechanics:
     - name: take_control
       trigger: on_play
@@ -613,6 +703,10 @@
 - name: mind_vision
   class: priest
   crystal: 1
+  select:
+    scope: foe
+    type: hand
+    select: passive
   mechanics:
     - name: copy
       trigger: on_play
@@ -627,9 +721,10 @@
 - name: assassinate
   class: rogue
   crystal: 5
-  single_target:
+  select:
     scope: foe
     type: minion
+    select: mandatory
   mechanics:
     - name: destroy
       trigger: on_play
@@ -640,9 +735,10 @@
 - name: backstab
   class: rogue
   crystal: 0
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -657,6 +753,10 @@
 - name: deadly_poison
   class: rogue
   crystal: 1
+  select:
+    scope: own
+    type: weapon
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -672,9 +772,10 @@
 - name: sap
   class: rogue
   crystal: 2
-  single_target:
+  select:
     scope: foe
     type: minion
+    select: mandatory
   mechanics:
     - name: return_to_hand
       trigger: on_play
@@ -685,6 +786,10 @@
 - name: sinister_strike
   class: rogue
   crystal: 1
+  select:
+    scope: foe
+    type: hero
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -698,6 +803,10 @@
 - name: fan_of_knives
   class: rogue
   crystal: 3
+  select:
+    scope: foe
+    type: minion
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -719,9 +828,10 @@
 - name: shiv
   class: rogue
   crystal: 2
-  single_target:
-    scope: foe
+  select:
+    scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -740,6 +850,10 @@
 - name: sprint
   class: rogue
   crystal: 7
+  select:
+    scope: own
+    type: deck
+    select: passive
   mechanics:
     - name: card_draw
       trigger: on_play
@@ -753,6 +867,10 @@
 - name: vanish
   class: rogue
   crystal: 6
+  select:
+    scope: foe
+    type: minion
+    select: passive
   mechanics:
     - name: return_to_hand
       trigger: on_play
@@ -774,9 +892,10 @@
 - name: ancestral_healing
   class: shaman
   crystal: 0
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: restore_health
       trigger: on_play
@@ -792,9 +911,10 @@
 - name: frost_shock
   class: shaman
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -810,9 +930,10 @@
 - name: hex
   class: shaman
   crystal: 3
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: transform
       trigger: on_play
@@ -825,9 +946,10 @@
 - name: rockbiter_weapon
   class: shaman
   crystal: 1
-  single_target:
+  select:
     scope: own
     type: all
+    select: mandatory
   mechanics:
     - name: gain
       trigger: on_play
@@ -838,9 +960,10 @@
 - name: windfury
   class: shaman
   crystal: 2
-  single_target:
-    scope: foe
+  select:
+    scope: own
     type: minion
+    select: mandatory
   mechanics:
     - name: windfury
       trigger: on_play
@@ -851,6 +974,10 @@
 - name: bloodlust
   class: shaman
   crystal: 5
+  select:
+    scope: own
+    type: all
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -864,6 +991,10 @@
 - name: totemic_might
   class: shaman
   crystal: 0
+  select:
+    scope: own
+    type: totem
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -877,9 +1008,10 @@
 - name: drain_life
   class: warlock
   crystal: 3
-  single_target:
-    scope: all
+  select:
+    scope: foe
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -898,6 +1030,10 @@
 - name: hellfire
   class: warlock
   crystal: 4
+  select:
+    scope: all
+    type: all
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -911,9 +1047,10 @@
 - name: shadow_bolt
   class: warlock
   crystal: 3
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -924,9 +1061,10 @@
 - name: corruption
   class: warlock
   crystal: 1
-  single_target:
+  select:
     scope: foe
     type: minion
+    select: mandatory
   mechanics:
     - name: destroy
       trigger: on_play
@@ -942,9 +1080,10 @@
 - name: mortal_coil
   class: warlock
   cyrstal: 1
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -967,9 +1106,10 @@
 - name: sacrificial_pact
   class: warlock
   crystal: 0
-  single_target:
+  select:
     scope: all
     type: demon
+    select: mandatory
   mechanics:
     - name: destroy
       trigger: on_play
@@ -988,9 +1128,10 @@
 - name: soulfire
   class: warlock
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: all
+    select: mandatory
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -1012,9 +1153,10 @@
 - name: charge
   class: warrior
   crystal: 3
-  single_target:
+  select:
     scope: own
     type: minion
+    select: mandatory
   mechanics:
     - name: gain
       trigger: on_play
@@ -1031,9 +1173,13 @@
 - name: execute
   class: warrior
   crystal: 1
-  single_target:
+  select:
     scope: all
     type: minion
+    select: mandatory
+    condition:
+      type: health_loss
+      range_start: 1
   mechanics:
     - name: destroy
       trigger: on_play
@@ -1047,6 +1193,10 @@
 - name: heroic_strike
   class: warrior
   crystal: 2
+  select:
+    scope: foe
+    type: hero
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -1061,6 +1211,13 @@
 - name: cleave
   class: warrior
   crystal: 2
+  select:
+    scope: foe
+    type: minion
+    select: passive
+    condition:
+      type: board_size
+      range_start: 2
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -1079,6 +1236,10 @@
 - name: shield_block
   class: warrior
   crystal: 3
+  select:
+    scope: own
+    type: hero
+    select: passive
   mechanics:
     - name: gain
       trigger: on_play
@@ -1100,6 +1261,10 @@
 - name: whirlwind
   class: warrior
   crystal: 1
+  select:
+    scope: all
+    type: minion
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play

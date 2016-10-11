@@ -16,9 +16,11 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
   private static final String ATTACK = "attack";
   private static final String DURABILITY = "durability";
   private static final String MECHANICS = "mechanics";
+  private static final String SELECT = "select";
   public final int attack;
   public final int durability;
   public final Map<ConstTrigger, List<MechanicConfig>> mechanics;
+  public final TargetConfig targetConfigV2;
   public final ConstType type = ConstType.WEAPON;
 
   @SuppressWarnings("unchecked")
@@ -26,6 +28,8 @@ public class WeaponConfig extends ConfigLoader.AbstractConfig<ConstWeapon> {
     super(map);
     this.attack = (int) map.get(ATTACK);
     this.durability = (int) map.get(DURABILITY);
+    this.targetConfigV2 = (map.containsKey(SELECT)) ?
+        new TargetConfig((Map) map.get(SELECT)) : TargetConfig.getDefaultTargetConfig();
     this.mechanics = map.containsKey(MECHANICS) ?
         MechanicConfig.getTriggerToMechanicMap(map.get(MECHANICS)) : Collections.EMPTY_MAP;
   }

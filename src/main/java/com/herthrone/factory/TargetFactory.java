@@ -6,6 +6,7 @@ import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
 import com.herthrone.base.Hero;
+import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstMechanic;
@@ -85,24 +86,27 @@ public class TargetFactory {
     return true;
   }
 
-  public static Creature getSingleTarget(final TargetConfig targetConfig, final Side side) {
-    final List<Creature> candidates = getProperTargets(targetConfig, side);
+  public static Creature getSingleTarget(final Mechanic.ActiveMechanic triggerer, final
+                                         TargetConfig targetConfig, final Side
+      side) {
+    final List<Creature> candidates = getProperTargets(triggerer, targetConfig, side);
     Preconditions.checkArgument(candidates.size() == 1);
     return candidates.get(0);
   }
 
-  static List<Creature> getProperTargets(final TargetConfig targetConfig, final Side side) {
+  static List<Creature> getProperTargets(final Mechanic.ActiveMechanic triggerer,
+                                         final TargetConfig targetConfig, final Side side) {
     final List<Creature> candidates = new ArrayList<>();
     switch (targetConfig.scope) {
       case OWN:
-        candidates.addAll(getProperTargetsBySide(targetConfig, side));
+        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side));
         break;
       case FOE:
-        candidates.addAll(getProperTargetsBySide(targetConfig, side.getFoeSide()));
+        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side.getFoeSide()));
         break;
       case ALL:
-        candidates.addAll(getProperTargetsBySide(targetConfig, side));
-        candidates.addAll(getProperTargetsBySide(targetConfig, side.getFoeSide()));
+        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side));
+        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side.getFoeSide()));
         break;
       default:
         throw new RuntimeException("Unknown scope: " + targetConfig.scope);
@@ -113,7 +117,8 @@ public class TargetFactory {
         candidates;
   }
 
-  private static List<Creature> getProperTargetsBySide(final TargetConfig targetConfig,
+  private static List<Creature> getProperTargetsBySide(final Mechanic.ActiveMechanic triggerer,
+                                                       final TargetConfig targetConfig,
                                                        final Side side) {
     switch (targetConfig.type) {
       case HAND:
@@ -152,6 +157,8 @@ public class TargetFactory {
             EffectFactory.compareBySequenceId).collect(Collectors.toList());
         allTargets.add(side.hero);
         return allTargets;
+      case SELF:
+        return Collections.singletonList((Creature) triggerer);
       default:
         return Collections.singletonList(side.hero);
         //throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
@@ -200,12 +207,13 @@ public class TargetFactory {
     }
   }
 
-  static Stream<Creature> getTarget(final Creature selectedTarget, final Side triggeringSide,
+  static Stream<Creature> getTarget(final Mechanic.ActiveMechanic triggerer,
+                                    final Creature selectedTarget, final Side triggeringSide,
                                     final Optional<TargetConfig> targetConfigOptional) {
     if (targetConfigOptional.isPresent()) {
       final TargetConfig targetConfig = targetConfigOptional.get();
       logger.debug("Trigger with configured targets: " + targetConfig);
-      return TargetFactory.getProperTargets(targetConfig, triggeringSide).stream()
+      return TargetFactory.getProperTargets(triggerer, targetConfig, triggeringSide).stream()
           .filter(t -> !targetConfig.type.equals(ConstType.OTHER) || t != selectedTarget);
     } else {
       logger.debug("No target config found. Trigger with selected target");

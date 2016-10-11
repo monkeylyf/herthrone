@@ -1,6 +1,5 @@
 package com.herthrone.factory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Spell;
 import com.herthrone.configuration.ConfigLoader;
@@ -14,8 +13,8 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
+import com.herthrone.object.ActiveMechanics;
 import com.herthrone.object.AuraBuff;
-import com.herthrone.object.TriggeringMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
@@ -30,26 +29,20 @@ public class SpellFactory {
   public static Spell create(final ConstSpell spell) {
     final SpellConfig config = ConfigLoader.getSpellConfigByName(spell);
     return create(config.name, config.displayName, config.className, config.crystal, config.type,
-        config.singleTargetConfigOptional, config.targetConfigV2, config.effects);
+        config.selectTargetConfig, config.effects);
   }
 
   static Spell create(final ConstSpell name, final String displayName, final ConstClass className,
                       final int crystal, final ConstType type,
-                      final Optional<TargetConfig> targetConfig, final Optional<TargetConfig>
-                          targetConfigV2, final List<MechanicConfig> effects) {
+                      final TargetConfig selectTargetConfig, final List<MechanicConfig> effects) {
     return new Spell() {
 
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystal);
       private final Binder binder = new Binder();
       private final AuraBuff auraBuff = new AuraBuff();
-      private final TriggeringMechanics triggeringMechanics = TriggeringMechanics.create(
+      private final ActiveMechanics activeMechanics = ActiveMechanics.create(
           ConstTrigger.ON_PLAY,
           effects.stream().map(MechanicConfig::clone).collect(Collectors.toList()));
-
-      @Override
-      public Optional<TargetConfig> getTargetV2() {
-        return targetConfigV2;
-      }
 
       @Override
       public String toString() {
@@ -102,35 +95,33 @@ public class SpellFactory {
       }
 
       @Override
-      public Optional<TargetConfig> getTargetConfig() {
-        return targetConfig;
-      }
-
-      @Override
       public void refresh() {
         final Side side = binder().getSide();
         final int accumulatedSpellDamage = auraBuff.accumulatedBuffValue;
         auraBuff.reset();
         side.board.stream()
             .forEach(minion ->
-              minion.getTriggeringMechanics().get(ConstTrigger.ON_SPELL_DAMAGE)
+              minion.getActiveMechanics().get(ConstTrigger.ON_SPELL_DAMAGE)
                   .forEach(config -> auraBuff.add(minion, config.value)
             ));
         final int spellDamageBuffDelta = auraBuff.accumulatedBuffValue - accumulatedSpellDamage;
 
         if (spellDamageBuffDelta != 0) {
           logger.debug("Updating spell damage buff: " + spellDamageBuffDelta);
-          getTriggeringMechanics().get(ConstTrigger.ON_PLAY)
+          getActiveMechanics().get(ConstTrigger.ON_PLAY)
               .forEach(effect -> effect.value += spellDamageBuffDelta);
         }
       }
 
+      public ActiveMechanics getActiveMechanics() {
+        return activeMechanics;
+      }
+
       @Override
-      public TriggeringMechanics getTriggeringMechanics() {
-        return triggeringMechanics;
+      public TargetConfig getSelectTargetConfig() {
+        return selectTargetConfig;
       }
 
     };
   }
-
 }

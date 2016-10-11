@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MechanicConfig;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.configuration.WeaponConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
@@ -12,8 +13,8 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.object.BooleanMechanics;
-import com.herthrone.object.TriggeringMechanics;
+import com.herthrone.object.ActiveMechanics;
+import com.herthrone.object.StaticMechanics;
 import com.herthrone.object.ValueAttribute;
 
 import java.util.List;
@@ -25,23 +26,24 @@ public class WeaponFactory {
     final WeaponConfig weaponConfig = ConfigLoader.getWeaponConfigByName(weapon);
     return create(weaponConfig.name, weaponConfig.displayName, weaponConfig.className,
         weaponConfig.attack, weaponConfig.durability,weaponConfig.crystal,
-        weaponConfig.isCollectible, weaponConfig.mechanics);
+        weaponConfig.isCollectible, weaponConfig.targetConfigV2, weaponConfig.mechanics);
   }
 
   public static Weapon create(final ConstWeapon name, final String displayName,
                               final ConstClass className, final int attack, final int durability,
                               final int crystalManaCost, final boolean isCollectible,
+                              final TargetConfig targetConfigV2,
                               final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     return new Weapon() {
 
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);
       private final ValueAttribute durabilityAttr = new ValueAttribute(durability);
-      private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
+      private final StaticMechanics staticMechanics = new StaticMechanics(mechanics);
       private final ValueAttribute attackMovePoints = new ValueAttribute(
-          booleanMechanics.isOn(ConstMechanic.WINDFURY) ?
+          staticMechanics.isOn(ConstMechanic.WINDFURY) ?
               Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS);
-      private final TriggeringMechanics triggeringMechanics = new TriggeringMechanics(mechanics);
+      private final ActiveMechanics activeMechanics = new ActiveMechanics(mechanics);
       private final Binder binder = new Binder();
 
       @Override
@@ -118,9 +120,13 @@ public class WeaponFactory {
         return attackMovePoints;
       }
 
+      public ActiveMechanics getActiveMechanics() {
+        return activeMechanics;
+      }
+
       @Override
-      public TriggeringMechanics getTriggeringMechanics() {
-        return triggeringMechanics;
+      public TargetConfig getSelectTargetConfig() {
+        return targetConfigV2;
       }
 
       @Override

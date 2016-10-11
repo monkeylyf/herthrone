@@ -11,14 +11,15 @@ import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
+import com.herthrone.constant.ConstSelect;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
-import com.herthrone.object.BooleanMechanics;
-import com.herthrone.object.TriggeringMechanics;
+import com.herthrone.object.ActiveMechanics;
+import com.herthrone.object.StaticMechanics;
 import com.herthrone.object.ValueAttribute;
 import org.apache.log4j.Logger;
 
@@ -35,13 +36,14 @@ public class MinionFactory {
     final MinionConfig config = ConfigLoader.getMinionConfigByName(minionName);
     Preconditions.checkNotNull(config, "Minion %s undefined", minionName);
     return create(config.health, config.attack, config.crystal, config.className, config.type,
-        config.name, config.displayName, config.isCollectible, config.mechanics);
+        config.name, config.displayName, config.isCollectible, config.selectTargetConfig,
+        config.mechanics);
   }
 
   private static Minion create(final int health, final int attack, final int crystalManaCost,
                                final ConstClass className, final ConstType type,
                                final ConstMinion name, final String displayName,
-                               final boolean isCollectible,
+                               final boolean isCollectible, final TargetConfig selectTargetConfig,
                                final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     return new Minion() {
 
@@ -49,18 +51,22 @@ public class MinionFactory {
       private final ValueAttribute healthUpperAttr = new ValueAttribute(health);
       private final ValueAttribute attackAttr = new ValueAttribute(attack);
       private final ValueAttribute crystalManaCostAttr = new ValueAttribute(crystalManaCost);
-      private final BooleanMechanics booleanMechanics = new BooleanMechanics(mechanics);
-      private final TriggeringMechanics effectMechanics = new TriggeringMechanics(mechanics);
+      private final StaticMechanics staticMechanics = new StaticMechanics(mechanics);
+      private final ActiveMechanics effectMechanics = new ActiveMechanics(mechanics);
       private final ValueAttribute movePoints = new ValueAttribute(
-          booleanMechanics.isOn(ConstMechanic.WINDFURY) ?
+          staticMechanics.isOn(ConstMechanic.WINDFURY) ?
               Constant.WINDFURY_INIT_MOVE_POINTS : Constant.INIT_MOVE_POINTS,
-          booleanMechanics.isOn(ConstMechanic.CHARGE));
+          staticMechanics.isOn(ConstMechanic.CHARGE));
       private final Binder binder = new Binder();
       private OptionalInt seqId = OptionalInt.empty();
 
-      @Override
-      public TriggeringMechanics getTriggeringMechanics() {
+      public ActiveMechanics getActiveMechanics() {
         return effectMechanics;
+      }
+
+      @Override
+      public TargetConfig getSelectTargetConfig() {
+        return selectTargetConfig;
       }
 
       @Override
@@ -93,7 +99,10 @@ public class MinionFactory {
 
       @Override
       public void playOnBoard(final Container<Minion> board, final int position) {
-        TriggerFactory.activeTrigger(this);
+        if (!getSelectTargetConfig().select.equals(ConstSelect.NOT_PROVIDED) &&
+            !getSelectTargetConfig().select.equals(ConstSelect.OPTIONAL)) {
+          TriggerFactory.activeTrigger(this);
+        }
         summonOnBoard(board, position);
       }
 
@@ -106,19 +115,11 @@ public class MinionFactory {
 
       @Override
       public void summonOnBoard(final Container<Minion> board, final int index) {
-        board.stream()
-            .forEach(minion -> {
-                TriggerFactory.passiveTrigger(minion, this, ConstTrigger.ON_SUMMON);
-            });
-        // Put minion onto board at given index.
+        TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_SUMMON);
         board.add(index, this);
-
         final Side side = binder().getSide();
         TriggerFactory.refreshAura(side);
         TriggerFactory.refreshSpellDamage(side);
-        //TriggerFactory.triggerByBoard(board.stream().filter(m -> m != this), side, ConstTrigger
-        //    .ON_SUMMON);
-
       }
 
       @Override
@@ -195,14 +196,14 @@ public class MinionFactory {
       }
 
       @Override
-      public BooleanMechanics booleanMechanics() {
-        return booleanMechanics;
+      public StaticMechanics booleanMechanics() {
+        return staticMechanics;
       }
 
       @Override
       public void dealDamage(final Creature creature) {
         // http://hearthstone.gamepedia.com/Stealth
-        booleanMechanics.resetIfPresent(ConstMechanic.STEALTH);
+        staticMechanics.resetIfPresent(ConstMechanic.STEALTH);
         boolean isDamaged = creature.takeDamage(attackAttr.value());
         if (isDamaged) {
           if (booleanMechanics().isOn(ConstMechanic.FREEZE)) {
@@ -217,11 +218,11 @@ public class MinionFactory {
 
       @Override
       public boolean takeDamage(final int damage) {
-        final boolean isDamaged = booleanMechanics.isOff(ConstMechanic.DIVINE_SHIELD);
+        final boolean isDamaged = staticMechanics.isOff(ConstMechanic.DIVINE_SHIELD);
         if (isDamaged) {
           healthAttr.decrease(damage);
         } else {
-          booleanMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
+          staticMechanics.resetIfPresent(ConstMechanic.DIVINE_SHIELD);
         }
 
         if (isDamaged) {
@@ -250,7 +251,7 @@ public class MinionFactory {
         side.board.remove(this);
 
         // Remove aura effects if the dead one has it.
-        getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE)
+        getActiveMechanics().get(ConstTrigger.ON_PRESENCE)
             .forEach(config -> {
               Preconditions.checkArgument(config.targetOptional.isPresent());
               final TargetConfig target = config.targetOptional.get();
@@ -296,7 +297,7 @@ public class MinionFactory {
         binder().getSide().board.stream()
             .filter(minion -> minion != this)
             .forEach(m ->
-              m.getTriggeringMechanics().get(ConstTrigger.ON_PRESENCE).stream()
+              m.getActiveMechanics().get(ConstTrigger.ON_PRESENCE).stream()
                   .filter(config -> {
                     Preconditions.checkArgument(config.targetOptional.isPresent());
                     final TargetConfig target = config.targetOptional.get();

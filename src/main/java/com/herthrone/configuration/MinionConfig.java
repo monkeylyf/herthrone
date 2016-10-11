@@ -16,11 +16,13 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
   private static final String ATTACK = "attack";
   private static final String HEALTH = "health";
   private static final String MECHANICS = "mechanics";
+  private static final String SELECT = "select";
   private static final String TYPE = "type";
   public final int attack;
   public final int health;
   public final ConstType type;
   public final Map<ConstTrigger, List<MechanicConfig>> mechanics;
+  public final TargetConfig selectTargetConfig;
 
   MinionConfig(final Map map) {
     super(map);
@@ -29,6 +31,8 @@ public class MinionConfig extends ConfigLoader.AbstractConfig<ConstMinion> {
     this.type = (map.containsKey(TYPE)) ?
         ConstType.valueOf(getUpperCaseStringValue(map, TYPE)) : ConstType.MINION;
     this.mechanics = MechanicConfig.getTriggerToMechanicMap(map.get(MECHANICS));
+    this.selectTargetConfig = (map.containsKey(SELECT)) ?
+      new TargetConfig((Map) map.get(SELECT)) : TargetConfig.getDefaultTargetConfig();
   }
 
   @Override

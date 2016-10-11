@@ -519,12 +519,12 @@ public class MechanicTest extends BaseGame {
   public void testSpellDamage() {
     Spell fireball = spell.create(ConstSpell.FIRE_BALL);
     game.activeSide.hand.add(fireball);
-    final int damage = fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value;
+    final int damage = fireball.getActiveMechanics().get(ConstTrigger.ON_PLAY).get(0).value;
 
     final Minion archmage = minion.addToHandAndPlay(ConstMinion.ARCHMAGE);
     // Test that spell is added to hand when spell damage minion already present on board, it
     // should be reflected on that spell in the hand by adding the buff.
-    assertThat(fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
+    assertThat(fireball.getActiveMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
         .isEqualTo(damage + 1);
     spell.addToHandAndCast(fireball, BoardSide.OWN, ContainerType.BOARD, 1);
     assertThat(yeti.healthLoss()).isEqualTo(damage + 1);
@@ -532,7 +532,7 @@ public class MechanicTest extends BaseGame {
     fireball = spell.create(ConstSpell.FIRE_BALL);
     activeSide.hand.add(fireball);
     fireball.refresh();
-    assertThat(fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
+    assertThat(fireball.getActiveMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
         .isEqualTo(damage + 1);
 
     spell.addToHandAndCast(fireball, BoardSide.OWN, ContainerType.BOARD, 1);
@@ -547,7 +547,7 @@ public class MechanicTest extends BaseGame {
     fireball.refresh();
     archmage.death();
 
-    assertThat(fireball.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
+    assertThat(fireball.getActiveMechanics().get(ConstTrigger.ON_PLAY).get(0).value)
         .isEqualTo(damage);
   }
 
@@ -627,7 +627,7 @@ public class MechanicTest extends BaseGame {
   @Test
   public void testStarvingBuzzard() {
     final int initHandSize = game.activeSide.hand.size();
-    final Minion starvingBuzzard = minion.addToHandAndPlay(ConstMinion.STARVING_BUZZARD);
+    minion.addToHandAndPlay(ConstMinion.STARVING_BUZZARD);
 
     // Test that putting a non-beast minion on board does not trigger draw card effect.
     minion.addToHandAndPlay(ConstMinion.WOLFRIDER);

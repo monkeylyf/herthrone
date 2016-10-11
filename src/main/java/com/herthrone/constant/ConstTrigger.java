@@ -10,6 +10,7 @@ public enum ConstTrigger {
   ON_HEAL_MINION,
   ON_FOE_END_TURN,
   ON_FOE_START_TURN,
+  // TODO: ON_PLAY can be separated into BEFORE_ON_PLAY and AFTER_ON_PLAY
   ON_PLAY,
   ON_PRESENCE,
   ON_SPELL_DAMAGE,

@@ -34,6 +34,10 @@
   durability: 3
   crystal: 2
   collectible: true
+  select:
+    scope: own
+    type: hero
+    select: passive
   mechanics:
     - trigger: on_play
       name: overload

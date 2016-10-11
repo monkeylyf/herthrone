@@ -2,7 +2,6 @@ package com.herthrone.game;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -73,7 +72,7 @@ public class CommandLine {
         !side.hero.getHeroPower().manaCost().isGreaterThan(side.hero.manaCrystal().getCrystal())) {
       final CommandNode useHeroPower = new CommandNode(ConstCommand.USE_HERO_POWER.toString());
 
-      scanTargets(useHeroPower, side.hero.getHeroPower().getTargetConfig(), side);
+      scanTargets(useHeroPower, side.hero.getHeroPower().getSelectTargetConfig(), side);
       root.addChildNode(useHeroPower);
     }
     // Populate end turn option.
@@ -82,28 +81,26 @@ public class CommandLine {
     return root;
   }
 
-  private static void scanTargets(final CommandNode root, final Optional<TargetConfig> heroConfig,
+  private static void scanTargets(final CommandNode root, final TargetConfig config,
                                   final Side side) {
-    if (heroConfig.isPresent()) {
-      TargetConfig config = heroConfig.get();
-      switch (config.scope) {
-        case OWN:
-          scanTargets(config, side, ConstTarget.OWN).forEach(root::addChildNode);
-          break;
-        case FOE:
-          scanTargets(config, side.getFoeSide(), ConstTarget.FOE).forEach (root::addChildNode);
-          break;
-        case ALL:
-          scanTargets(config, side, ConstTarget.OWN).forEach(root::addChildNode);
-          scanTargets(config, side.getFoeSide(), ConstTarget.FOE).forEach(root::addChildNode);
-          break;
-        default:
-          throw new RuntimeException("Unknown scope: " + config.scope.toString());
-      }
+    switch (config.scope) {
+      case OWN:
+        scanTargets(config, side, ConstTarget.OWN).forEach(root::addChildNode);
+        break;
+      case FOE:
+        scanTargets(config, side.getFoeSide(), ConstTarget.FOE).forEach (root::addChildNode);
+        break;
+      case ALL:
+        scanTargets(config, side, ConstTarget.OWN).forEach(root::addChildNode);
+        scanTargets(config, side.getFoeSide(), ConstTarget.FOE).forEach(root::addChildNode);
+        break;
+      default:
+        throw new RuntimeException("Unknown scope: " + config.scope.toString());
     }
   }
 
-  private static List<CommandNode> scanTargets(final TargetConfig config, final Side side, final ConstTarget target) {
+  private static List<CommandNode> scanTargets(final TargetConfig config, final Side side,
+                                               final ConstTarget target) {
     List<CommandNode> nodes = new ArrayList<>();
     switch (config.type) {
       case HERO:

@@ -46,6 +46,17 @@ public class TargetConfig {
         ConstSelect.valueOf(getUpperCaseStringValue(map, SELECT)) : ConstSelect.NOT_PROVIDED;
   }
 
+  private TargetConfig(final ConstTarget target, final ConstType type) {
+    this.scope = target;
+    this.type = type;
+    this.isRandom = false;
+    this.isAdjacent = false;
+    this.isSelfExcluded = false;
+    this.mechanic = Optional.absent();
+    this.randomTarget = OptionalInt.empty();
+    this.select = ConstSelect.NOT_PROVIDED;
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
@@ -55,5 +66,9 @@ public class TargetConfig {
         .add(RANDOM, isRandom)
         .add(ADJACENT, isAdjacent)
         .toString();
+  }
+
+  public static TargetConfig getDefaultTargetConfig() {
+    return new TargetConfig(ConstTarget.ALL.ALL, ConstType.ALL);
   }
 }

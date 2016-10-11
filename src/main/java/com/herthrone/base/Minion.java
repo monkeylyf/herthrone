@@ -2,16 +2,9 @@ package com.herthrone.base;
 
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.game.Container;
-import com.herthrone.object.TriggeringMechanics;
-
-/**
- * Created by yifeng on 4/2/16.
- */
 
 
-public interface Minion extends Creature, Destroyable, Refreshable, Mechanic.TriggeringMechanic {
-
-  TriggeringMechanics getTriggeringMechanics();
+public interface Minion extends Creature, Destroyable, Refreshable, Mechanic.ActiveMechanic {
 
   int getSequenceId();
 

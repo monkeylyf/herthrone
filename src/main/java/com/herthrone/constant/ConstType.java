@@ -22,5 +22,6 @@ public enum ConstType {
   OTHER,
   SECRET,
   SPELL,
+  SELF,
   WEAPON;
 }

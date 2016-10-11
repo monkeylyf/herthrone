@@ -2,12 +2,13 @@ package com.herthrone.factory;
 
 import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Secret;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
-import com.herthrone.object.TriggeringMechanics;
+import com.herthrone.object.ActiveMechanics;
 import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
@@ -63,9 +64,13 @@ public class SecretFactory {
         return binder;
       }
 
-      @Override
-      public TriggeringMechanics getTriggeringMechanics() {
+      public ActiveMechanics getActiveMechanics() {
         return null;
+      }
+
+      @Override
+      public TargetConfig getSelectTargetConfig() {
+        return TargetConfig.getDefaultTargetConfig();
       }
 
     };

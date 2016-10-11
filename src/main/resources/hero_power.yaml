@@ -42,9 +42,6 @@
     scope: all
     type: all
     select: mandatory
-  single_target:
-    scope: all
-    type: all
   mechanics:
     - name: deal_damage
       trigger: on_play
@@ -60,9 +57,6 @@
     scope: all
     type: all
     select: mandatory
-  single_target:
-    scope: all
-    type: all
   mechanics:
     - name: restore_health
       trigger: on_play

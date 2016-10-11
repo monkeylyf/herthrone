@@ -79,6 +79,10 @@
   attack: 2
   health: 4
   crystal: 4
+  select:
+    scope: own
+    type: deck
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -192,6 +196,10 @@
   attack: 2
   health: 2
   crystal: 2
+  select:
+    scope: own
+    type: board
+    select: passive
   mechanics:
     - name: combo
       trigger: on_play
@@ -235,6 +243,10 @@
   attack: 3
   health: 3
   crystal: 3
+  select:
+    scope: foe
+    type: minion
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -295,9 +307,10 @@
   attack: 3
   health: 2
   crystal: 2
-  single_target:
+  select:
     scope: own
     type: minion
+    select: optional
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -360,6 +373,10 @@
   attack: 4
   health: 4
   crystal: 5
+  select:
+    scope: foe
+    type: hero
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -452,6 +469,10 @@
   attack: 3
   health: 2
   crystal: 2
+  select:
+    scope: foe
+    type: hero
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -525,6 +546,10 @@
   attack: 4
   health: 5
   crystal: 5
+  select:
+    scope: own
+    type: minion
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -565,9 +590,10 @@
   attack: 1
   health: 1
   crystal: 1
-  single_target:
-    scope: foe
+  select:
+    scope: all
     type: all
+    select: mandatory  # Heroes are always present.
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -590,6 +616,10 @@
   attack: 4
   health: 4
   crystal: 5
+  select:
+    scope: own
+    type: self
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -599,7 +629,7 @@
       value: 0
       target:
         scope: own
-        type: minion
+        type: self
     - name: battlecry
       trigger: on_play
       effect: buff
@@ -608,7 +638,7 @@
       value: 0
       target:
         scope: own
-        type: minion
+        type: self
 
 - name: goldshire_footman
   class: neutral
@@ -761,6 +791,10 @@
   attack: 3
   health: 2
   crystal: 3
+  select:
+    scope: own
+    type: minion
+    select: optional
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -836,9 +870,10 @@
   attack: 4
   health: 3
   crystal: 4
-  single_target:
+  select:
     scope: own
     type: beast
+    select: optional
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -970,6 +1005,10 @@
   attack: 5
   health: 6
   crystal: 7
+  select:
+    scope: own
+    type: hero
+    select: passive
   mechanics:
     - name: restore_health
       trigger: on_play
@@ -1060,6 +1099,10 @@
   attack: 4
   health: 3
   crystal: 2
+  select:
+    scope: own
+    type: hand
+    select: passive
   mechanics:
     - name: battlecry
       trigger: on_play
@@ -1089,6 +1132,10 @@
   attack: 6
   health: 6
   crystal: 6
+  select:
+    scope: own
+    type: minion
+    select: passive
   mechanics:
     - name: deal_damage
       trigger: on_play

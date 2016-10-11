@@ -152,7 +152,7 @@ public class EffectFactory {
         Preconditions.checkArgument(config.mechanicToAddOptional.isPresent());
         final Minion minion = creatureToMinion(target);
         final Effect effect = new AddTriggeringMechanicEffect(
-                minion.getTriggeringMechanics(), config.mechanicToAddOptional.get());
+                minion.getActiveMechanics(), config.mechanicToAddOptional.get());
         return Collections.singletonList(effect);
       case ADD_MECHANIC:
         final ConstMechanic mechanic = ConstMechanic.valueOf(config.type.toUpperCase());
@@ -413,7 +413,7 @@ public class EffectFactory {
 
   public static void pipeEffects(final Spell spell, final Creature target,
                                  final Side triggeringSide) {
-    final List<Effect> effects = spell.getTriggeringMechanics().get(ConstTrigger.ON_PLAY).stream()
+    final List<Effect> effects = spell.getActiveMechanics().get(ConstTrigger.ON_PLAY).stream()
         .flatMap(effect -> pipeEffects(effect, target, triggeringSide).stream())
         .collect(Collectors.toList());
     spell.binder().getSide().getEffectQueue().enqueue(effects);

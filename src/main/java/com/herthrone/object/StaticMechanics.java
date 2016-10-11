@@ -10,17 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BooleanMechanics {
+public class StaticMechanics {
 
-  private static final Logger logger = Logger.getLogger(BooleanMechanics.class.getName());
+  private static final Logger logger = Logger.getLogger(StaticMechanics.class.getName());
 
   private Map<ConstMechanic, BooleanAttribute> booleanAttributeMap;
 
-  public BooleanMechanics() {
+  public StaticMechanics() {
     this(Collections.emptyMap());
   }
 
-  public BooleanMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
+  public StaticMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     this.booleanAttributeMap = new HashMap<>();
 
     if (mechanics.containsKey(ConstTrigger.NO_TRIGGER)) {

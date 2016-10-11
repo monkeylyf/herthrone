@@ -299,11 +299,13 @@ public class Game implements Round {
     final Spell heroPower = activeSide.hero.getHeroPower();
     final Creature targetCreature;
     if (target.toString().length() != 0) {
-      Preconditions.checkArgument(!heroPower.getTargetV2().get().select.equals(ConstSelect
-          .PASSIVE));
+      Preconditions.checkArgument(!heroPower.getSelectTargetConfig().select.equals(
+          ConstSelect.PASSIVE));
       targetCreature = TargetParser.toCreature(activeSide, target);
     } else {
-      targetCreature = TargetFactory.getSingleTarget(heroPower.getTargetV2().get(), activeSide);
+      targetCreature = TargetFactory.getSingleTarget(activeSide.hero, heroPower
+              .getSelectTargetConfig(),
+          activeSide);
     }
     EffectFactory.pipeEffects(activeSide.hero.getHeroPower(), targetCreature);
   }

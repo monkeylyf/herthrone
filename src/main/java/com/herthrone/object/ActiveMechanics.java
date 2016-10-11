@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class TriggeringMechanics {
+public class ActiveMechanics {
 
   private final Map<ConstTrigger, List<MechanicConfig>> mechanics;
 
-  public TriggeringMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
+  public ActiveMechanics(final Map<ConstTrigger, List<MechanicConfig>> mechanics) {
     this.mechanics = mechanics.entrySet().stream()
         .filter(entry -> !entry.getKey().equals(ConstTrigger.NO_TRIGGER))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -39,8 +39,13 @@ public class TriggeringMechanics {
       mechanics.put(trigger, new ArrayList<>(Collections.singleton(mechanicConfig)));
     }
   }
-  public static TriggeringMechanics create(final ConstTrigger trigger,
-                                           final List<MechanicConfig> mechanicConfigs) {
-    return new TriggeringMechanics(Collections.singletonMap(trigger, mechanicConfigs));
+
+  public boolean isEmpty() {
+    return mechanics.isEmpty();
+  }
+
+  public static ActiveMechanics create(final ConstTrigger trigger,
+                                       final List<MechanicConfig> mechanicConfigs) {
+    return new ActiveMechanics(Collections.singletonMap(trigger, mechanicConfigs));
   }
 }

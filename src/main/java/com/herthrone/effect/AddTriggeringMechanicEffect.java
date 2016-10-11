@@ -4,19 +4,19 @@ import com.herthrone.base.Effect;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstEffectType;
 import com.herthrone.constant.ConstTrigger;
-import com.herthrone.object.TriggeringMechanics;
+import com.herthrone.object.ActiveMechanics;
 
 import java.util.List;
 import java.util.Map;
 
 public class AddTriggeringMechanicEffect implements Effect {
 
-  private final TriggeringMechanics triggeringMechanics;
+  private final ActiveMechanics activeMechanics;
   private final Map<ConstTrigger, List<MechanicConfig>> mechanicsMap;
 
-  public AddTriggeringMechanicEffect(final TriggeringMechanics triggeringMechanics,
+  public AddTriggeringMechanicEffect(final ActiveMechanics activeMechanics,
                                      final Map<ConstTrigger, List<MechanicConfig>> mechanicsMap) {
-    this.triggeringMechanics = triggeringMechanics;
+    this.activeMechanics = activeMechanics;
     this.mechanicsMap = mechanicsMap;
   }
 
@@ -30,10 +30,10 @@ public class AddTriggeringMechanicEffect implements Effect {
     for (Map.Entry<ConstTrigger, List<MechanicConfig>> entry : mechanicsMap.entrySet()) {
       final ConstTrigger trigger = entry.getKey();
       final List<MechanicConfig> mechanicConfigs = entry.getValue();
-      if (triggeringMechanics.has(trigger)) {
-        triggeringMechanics.get(trigger).addAll(mechanicConfigs);
+      if (activeMechanics.has(trigger)) {
+        activeMechanics.get(trigger).addAll(mechanicConfigs);
       } else {
-        mechanicConfigs.forEach(config -> triggeringMechanics.update(trigger, config));
+        mechanicConfigs.forEach(config -> activeMechanics.update(trigger, config));
       }
     }
   }

@@ -4,10 +4,7 @@ import com.google.common.base.Optional;
 import com.herthrone.object.ManaCrystal;
 import com.herthrone.object.ValueAttribute;
 
-/**
- * Created by yifeng on 4/13/16.
- */
-public interface Hero extends Creature {
+public interface Hero extends Creature, Mechanic.ActiveMechanic {
 
   ValueAttribute armor();
 

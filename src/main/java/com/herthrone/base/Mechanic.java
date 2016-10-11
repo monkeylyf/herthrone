@@ -1,17 +1,17 @@
 package com.herthrone.base;
 
-import com.herthrone.object.BooleanMechanics;
-import com.herthrone.object.TriggeringMechanics;
+import com.herthrone.configuration.TargetConfig;
+import com.herthrone.object.ActiveMechanics;
+import com.herthrone.object.StaticMechanics;
 
-/**
- * Created by yifengliu on 7/10/16.
- */
 public interface Mechanic {
-  interface TriggeringMechanic extends Bind {
-    TriggeringMechanics getTriggeringMechanics();
+
+  interface ActiveMechanic extends Bind {
+    ActiveMechanics getActiveMechanics();
+    TargetConfig getSelectTargetConfig();
   }
 
-  interface BooleanMechanic extends Bind {
-    BooleanMechanics booleanMechanics();
+  interface StaticMechanic extends Bind {
+    StaticMechanics booleanMechanics();
   }
 }

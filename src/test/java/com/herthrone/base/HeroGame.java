@@ -41,7 +41,6 @@ public class HeroGame extends BaseGame {
 
     game.startTurn();
     this.yeti = minion.addToHandAndPlay(ConstMinion.CHILLWIND_YETI);
-
   }
 
   @Test

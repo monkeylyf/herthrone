@@ -10,6 +10,7 @@ import com.herthrone.base.Spell;
 import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.HeroConfig;
+import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
@@ -19,8 +20,9 @@ import com.herthrone.constant.ConstType;
 import com.herthrone.constant.Constant;
 import com.herthrone.game.Binder;
 import com.herthrone.game.Side;
-import com.herthrone.object.BooleanMechanics;
+import com.herthrone.object.ActiveMechanics;
 import com.herthrone.object.ManaCrystal;
+import com.herthrone.object.StaticMechanics;
 import com.herthrone.object.ValueAttribute;
 
 import java.util.Map;
@@ -43,6 +45,15 @@ public class HeroFactory {
                             final ConstSpell heroPowerName)  {
     return new Hero() {
 
+      public ActiveMechanics getActiveMechanics() {
+        return null;
+      }
+
+      @Override
+      public TargetConfig getSelectTargetConfig() {
+        return null;
+      }
+
       private final ValueAttribute healthAttr = new ValueAttribute(health);
       private final ValueAttribute healthUpperAttr = new ValueAttribute(health);
       private final ValueAttribute armorAttr = new ValueAttribute(0);
@@ -51,7 +62,7 @@ public class HeroFactory {
       private final ValueAttribute attackMovePoints = new ValueAttribute(HERO_INIT_MOVE_POINTS);
       private final ValueAttribute heroPowerMovePoints = new ValueAttribute(HERO_INIT_MOVE_POINTS);
       private final ManaCrystal manaCrystal = new ManaCrystal();
-      private final BooleanMechanics booleanMechanics = new BooleanMechanics();
+      private final StaticMechanics staticMechanics = new StaticMechanics();
       private final Binder binder = new Binder();
       private Spell heroPower = HeroPowerFactory.create(heroPowerName);
       private Optional<Weapon> weaponOptional = Optional.absent();
@@ -126,8 +137,8 @@ public class HeroFactory {
       }
 
       @Override
-      public BooleanMechanics booleanMechanics() {
-        return booleanMechanics;
+      public StaticMechanics booleanMechanics() {
+        return staticMechanics;
       }
 
       @Override
@@ -261,7 +272,7 @@ public class HeroFactory {
       @Override
       public void startTurn() {
         attackMovePoints().endTurn();
-        booleanMechanics.resetIfPresent(ConstMechanic.FROZEN);
+        staticMechanics.resetIfPresent(ConstMechanic.FROZEN);
       }
 
       @Override

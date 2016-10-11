@@ -2,10 +2,7 @@ package com.herthrone.base;
 
 import com.herthrone.object.ValueAttribute;
 
-/**
- * Created by yifengliu on 6/4/16.
- */
-public interface Creature extends Card, Round, Mechanic.BooleanMechanic {
+public interface Creature extends Card, Round, Mechanic.StaticMechanic {
 
   ValueAttribute health();
 
@@ -28,4 +25,5 @@ public interface Creature extends Card, Round, Mechanic.BooleanMechanic {
   boolean canMove();
 
   int healthLoss();
+
 }
