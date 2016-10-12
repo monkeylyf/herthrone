@@ -11,6 +11,7 @@ import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConditionConfig;
 import com.herthrone.configuration.MechanicConfig;
 import com.herthrone.constant.ConstSelect;
+import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstType;
 import com.herthrone.effect.HealEffect;
@@ -53,11 +54,11 @@ public class TriggerFactory {
         triggerrer.getSelectTargetConfig().select.equals(ConstSelect.MANDATORY) ||
         triggerrer.getSelectTargetConfig().select.equals(ConstSelect.OPTIONAL));
     final Side side = triggerrer.binder().getSide();
-    triggerrer.getActiveMechanics()
-        .get(ConstTrigger.ON_PLAY)
+    triggerrer.getActiveMechanics().get(ConstTrigger.ON_PLAY)
         .forEach(mechanicConfig -> TargetFactory.getTarget(
-            triggerrer, selectedTarget, side, mechanicConfig.targetOptional)
-            .forEach(t -> EffectFactory.pipeMechanicEffectConditionally(mechanicConfig, side, t))
+            triggerrer, selectedTarget, side, mechanicConfig.targetConfig)
+            .forEach(target -> EffectFactory.pipeMechanicEffectConditionally(
+                mechanicConfig, side, target))
         );
   }
 
@@ -78,7 +79,7 @@ public class TriggerFactory {
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .forEach(mechanicConfig -> {
           final List<Creature> targets = TargetFactory.getProperTargets(triggerrer,
-                mechanicConfig.targetOptional.get(), triggerrer.binder().getSide());
+                mechanicConfig.targetConfig, triggerrer.binder().getSide());
           targets.forEach(
               target -> EffectFactory.pipeMechanicEffectConditionally(
                   mechanicConfig, triggerrer.binder().getSide(), target));
@@ -99,9 +100,10 @@ public class TriggerFactory {
     minionStream.forEach(triggerrer ->
     triggerrer.getActiveMechanics().get(triggerType)
         .forEach(mechanicConfig -> {
-          final List<Creature> targets = (mechanicConfig.targetOptional.isPresent()) ?
-              TargetFactory.getProperTargets(triggerrer, mechanicConfig.targetOptional.get(), side) :
-              Collections.singletonList(selectedTarget);
+          final List<Creature> targets =
+              (mechanicConfig.targetConfig.scope.equals(ConstTarget.NOT_PROVIDED) ?
+              Collections.singletonList(selectedTarget) :
+              TargetFactory.getProperTargets(triggerrer, mechanicConfig.targetConfig, side));
           targets.forEach(target ->
               EffectFactory.pipeMechanicEffectConditionally(mechanicConfig, side, target));
         })
@@ -111,12 +113,13 @@ public class TriggerFactory {
   public static void triggerByBoard(final Stream<Minion> minionStream, final Side triggeringSide,
                                     final ConstTrigger triggerType) {
     minionStream
+        .filter(minion -> !minion.getActiveMechanics().get(triggerType).isEmpty())
         .sorted(EffectFactory.compareBySequenceId)
         .forEach(minion ->
             minion.getActiveMechanics().get(triggerType)
                 .forEach(mechanicConfig ->
                   TargetFactory.getTarget(
-                      minion, minion, triggeringSide, mechanicConfig.targetOptional)
+                      minion, minion, triggeringSide, mechanicConfig.targetConfig)
                       .forEach(target -> EffectFactory.pipeMechanicEffectConditionally(
                           mechanicConfig, triggeringSide, target))
                 )
@@ -147,9 +150,9 @@ public class TriggerFactory {
                                               final Side activatingSide,
                                               final Creature target) {
     final Side targetSide;
-    if (mechanicConfig.targetOptional.isPresent()) {
+    if (!mechanicConfig.targetConfig.scope.equals(ConstTarget.NOT_PROVIDED)) {
       final List<Side> realSide = TargetFactory.getSide(
-          mechanicConfig.targetOptional.get(), activatingSide);
+          mechanicConfig.targetConfig, activatingSide);
       Preconditions.checkArgument(realSide.size() == 1, "Does not support two side check");
       targetSide = realSide.get(0);
     } else {
@@ -193,7 +196,7 @@ public class TriggerFactory {
         // Call getDestroyablesBySide instead of getDestroyables because side is already picked
         // given target config.
         final List<Destroyable> destroyables = TargetFactory.getDestroyablesBySide(
-            mechanicConfig.targetOptional.get(), side);
+            mechanicConfig.targetConfig, side);
         if (destroyables.size() == 0) {
           return false;
         } else {

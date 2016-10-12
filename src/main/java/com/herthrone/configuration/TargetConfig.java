@@ -22,6 +22,7 @@ public class TargetConfig {
   private static final String SELF_EXCLUDED = "self_excluded";
   private static final String MECHANIC = "mechanic";
   private static final String RANDOM_TARGET = "random_target";
+  private static final TargetConfig DEFAULT_CONFIG = new TargetConfig();
   public final ConstTarget scope;
   public final ConstType type;
   public final ConstSelect select;
@@ -46,9 +47,9 @@ public class TargetConfig {
         ConstSelect.valueOf(getUpperCaseStringValue(map, SELECT)) : ConstSelect.NOT_PROVIDED;
   }
 
-  private TargetConfig(final ConstTarget target, final ConstType type) {
-    this.scope = target;
-    this.type = type;
+  private TargetConfig() {
+    this.scope = ConstTarget.NOT_PROVIDED;
+    this.type = ConstType.NOT_PROVIDED;
     this.isRandom = false;
     this.isAdjacent = false;
     this.isSelfExcluded = false;
@@ -69,6 +70,6 @@ public class TargetConfig {
   }
 
   public static TargetConfig getDefaultTargetConfig() {
-    return new TargetConfig(ConstTarget.ALL.ALL, ConstType.ALL);
+    return DEFAULT_CONFIG;
   }
 }

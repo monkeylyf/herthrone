@@ -1,6 +1,5 @@
 package com.herthrone.factory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
@@ -10,6 +9,7 @@ import com.herthrone.base.Mechanic;
 import com.herthrone.base.Minion;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstMechanic;
+import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 import com.herthrone.game.Container;
 import com.herthrone.game.Side;
@@ -94,19 +94,19 @@ public class TargetFactory {
     return candidates.get(0);
   }
 
-  static List<Creature> getProperTargets(final Mechanic.ActiveMechanic triggerer,
+  static List<Creature> getProperTargets(final Mechanic.ActiveMechanic triggerrer,
                                          final TargetConfig targetConfig, final Side side) {
     final List<Creature> candidates = new ArrayList<>();
     switch (targetConfig.scope) {
       case OWN:
-        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side));
+        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side));
         break;
       case FOE:
-        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side.getFoeSide()));
+        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side.getFoeSide()));
         break;
       case ALL:
-        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side));
-        candidates.addAll(getProperTargetsBySide(triggerer, targetConfig, side.getFoeSide()));
+        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side));
+        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side.getFoeSide()));
         break;
       default:
         throw new RuntimeException("Unknown scope: " + targetConfig.scope);
@@ -117,7 +117,7 @@ public class TargetFactory {
         candidates;
   }
 
-  private static List<Creature> getProperTargetsBySide(final Mechanic.ActiveMechanic triggerer,
+  private static List<Creature> getProperTargetsBySide(final Mechanic.ActiveMechanic triggerrer,
                                                        final TargetConfig targetConfig,
                                                        final Side side) {
     switch (targetConfig.type) {
@@ -158,7 +158,7 @@ public class TargetFactory {
         allTargets.add(side.hero);
         return allTargets;
       case SELF:
-        return Collections.singletonList((Creature) triggerer);
+        return Collections.singletonList((Creature) triggerrer);
       default:
         return Collections.singletonList(side.hero);
         //throw new NoTargetFoundException("Unsupported target type: " + targetConfig.type);
@@ -191,6 +191,8 @@ public class TargetFactory {
         return Collections.singletonList(side.getFoeSide());
       case ALL:
         return Arrays.asList(side, side.getFoeSide());
+      case NOT_PROVIDED:
+        return Collections.singletonList(side);
       default:
         throw new RuntimeException("Unknown target scope: " + target.scope);
     }
@@ -207,17 +209,14 @@ public class TargetFactory {
     }
   }
 
-  static Stream<Creature> getTarget(final Mechanic.ActiveMechanic triggerer,
+  static Stream<Creature> getTarget(final Mechanic.ActiveMechanic triggerrer,
                                     final Creature selectedTarget, final Side triggeringSide,
-                                    final Optional<TargetConfig> targetConfigOptional) {
-    if (targetConfigOptional.isPresent()) {
-      final TargetConfig targetConfig = targetConfigOptional.get();
-      logger.debug("Trigger with configured targets: " + targetConfig);
-      return TargetFactory.getProperTargets(triggerer, targetConfig, triggeringSide).stream()
-          .filter(t -> !targetConfig.type.equals(ConstType.OTHER) || t != selectedTarget);
-    } else {
-      logger.debug("No target config found. Trigger with selected target");
-      return Collections.singleton(selectedTarget).stream();
+                                    final TargetConfig targetConfig) {
+    if (targetConfig.scope.equals(ConstTarget.NOT_PROVIDED)) {
+      return Collections.singletonList(selectedTarget).stream();
     }
+    logger.debug("Trigger with configured targets: " + targetConfig);
+    return TargetFactory.getProperTargets(triggerrer, targetConfig, triggeringSide).stream()
+        .filter(t -> !targetConfig.type.equals(ConstType.OTHER) || t != selectedTarget);
   }
 }

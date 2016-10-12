@@ -43,7 +43,7 @@ public class MechanicConfig {
   public final boolean isFolded;
   public final List<String> choices;
   public final Optional<Map<ConstTrigger, List<MechanicConfig>>> mechanicToAddOptional;
-  public final Optional<TargetConfig> targetOptional;
+  public final TargetConfig targetConfig;
   public final Optional<ConstDependency> valueDependency;
   public final Optional<ConditionConfig> conditionConfigOptional;
   public int value;
@@ -64,9 +64,8 @@ public class MechanicConfig {
     this.mechanicToAddOptional = (map.containsKey(MECHANIC_TO_ADD)) ?
         Optional.of(MechanicConfig.getTriggerToMechanicMap(map.get(MECHANIC_TO_ADD))) :
         Optional.absent();
-    this.targetOptional = (map.containsKey(TARGET)) ?
-        Optional.of(new TargetConfig((Map) map.get(TARGET))) :
-        Optional.absent();
+    this.targetConfig = (map.containsKey(TARGET)) ?
+        new TargetConfig((Map) map.get(TARGET)) : TargetConfig.getDefaultTargetConfig();
     this.valueDependency = (map.containsKey(VALUE_DEPENDENCY)) ?
         Optional.of(ConstDependency.valueOf(getUpperCaseStringValue(map, VALUE_DEPENDENCY))) :
         Optional.absent();
@@ -86,7 +85,7 @@ public class MechanicConfig {
     this.isUnique = mechanicConfig.isUnique;
     this.choices = mechanicConfig.choices;
     this.mechanicToAddOptional = mechanicConfig.mechanicToAddOptional;
-    this.targetOptional = mechanicConfig.targetOptional;
+    this.targetConfig = mechanicConfig.targetConfig;
     this.valueDependency = mechanicConfig.valueDependency;
     this.conditionConfigOptional = mechanicConfig.conditionConfigOptional;
   }
@@ -116,7 +115,7 @@ public class MechanicConfig {
     final MoreObjects.ToStringHelper stringHelper = MoreObjects.toStringHelper(this)
         .add(EFFECT, effectType)
         .add(TYPE, type)
-        .add(TARGET, targetOptional)
+        .add(TARGET, targetConfig)
         .add(CONDITION, conditionConfigOptional);
     if (valueDependency.isPresent()) {
       stringHelper.add(VALUE_DEPENDENCY, valueDependency.get());

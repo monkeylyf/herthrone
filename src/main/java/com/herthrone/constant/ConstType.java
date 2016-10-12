@@ -23,5 +23,6 @@ public enum ConstType {
   SECRET,
   SPELL,
   SELF,
-  WEAPON;
+  WEAPON,
+  NOT_PROVIDED;
 }

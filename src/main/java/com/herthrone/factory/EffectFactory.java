@@ -64,11 +64,9 @@ public class EffectFactory {
 
     static void addAuraEffect(final MechanicConfig mechanicConfig, final Minion minion,
                               final Minion target) {
-      Preconditions.checkArgument(mechanicConfig.targetOptional.isPresent());
-      final TargetConfig targetConfig = mechanicConfig.targetOptional.get();
       switch (mechanicConfig.type) {
         case Constant.ATTACK:
-          if (targetConfig.isAdjacent &&
+          if (mechanicConfig.targetConfig.isAdjacent &&
               !target.binder().getSide().board.isAdjacent(target, minion)) {
             logger.debug(minion + " and " + target + " is not adjacent. " + target +
                 " will not be effected by aura");
@@ -131,10 +129,8 @@ public class EffectFactory {
         if (side.getFoeSide().hand.isEmpty()) {
           return Collections.emptyList();
         } else {
-          Preconditions.checkArgument(config.targetOptional.isPresent());
-          final TargetConfig targetConfig = config.targetOptional.get();
-          Preconditions.checkArgument(targetConfig.randomTarget.isPresent());
-          final int n = targetConfig.randomTarget.getAsInt();
+          Preconditions.checkArgument(config.targetConfig.randomTarget.isPresent());
+          final int n = config.targetConfig.randomTarget.getAsInt();
           return RandomMinionGenerator.randomN(side.getFoeSide().hand.asList(), n).stream()
               .map(card -> new CopyCardEffect(card, side.hand))
               .collect(Collectors.toList());
@@ -201,8 +197,7 @@ public class EffectFactory {
   }
 
   private static List<Effect> getDiscardEffect(final MechanicConfig config, final Creature target) {
-    Preconditions.checkArgument(config.targetOptional.isPresent());
-    final TargetConfig targetConfig = config.targetOptional.get();
+    final TargetConfig targetConfig = config.targetConfig;
     final Container<Card> container;
     switch (targetConfig.type) {
       case DECK:
@@ -243,8 +238,7 @@ public class EffectFactory {
     final String type = effect.type;
     switch (type) {
       case (Constant.ATTACK):
-        if (effect.targetOptional.isPresent() &&
-            effect.targetOptional.get().type.equals(ConstType.WEAPON)) {
+        if (effect.targetConfig.type.equals(ConstType.WEAPON)) {
           final Hero hero = creatureToHero(creature);
           final Weapon weapon = hero.getWeapon().get();
           return Collections.singletonList(getGeneralBuffEffect(
@@ -285,7 +279,7 @@ public class EffectFactory {
 
   private static List<Effect> getGenerateEffect(final MechanicConfig config, final Side side) {
     final Effect generateEffect = new GenerateEffect(
-        config.choices, config.type, config.targetOptional.get(), side);
+        config.choices, config.type, config.targetConfig, side);
     return Collections.singletonList(generateEffect);
   }
 

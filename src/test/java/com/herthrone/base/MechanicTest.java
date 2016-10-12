@@ -347,7 +347,7 @@ public class MechanicTest extends BaseGame {
 
   @Test
   public void testDealDamage() {
-    final Minion knifeJuggler = minion.addToHandAndPlay(ConstMinion.KNIFE_JUGGLER);
+    minion.addToHandAndPlay(ConstMinion.KNIFE_JUGGLER);
 
     final int numOfYetiToSummon = 5;
     for (int i = 0; i < numOfYetiToSummon; ++i) {
