@@ -2,8 +2,6 @@ package com.herthrone.helper;
 
 import com.google.common.base.Preconditions;
 import com.herthrone.base.Creature;
-import com.herthrone.configuration.TargetConfig;
-import com.herthrone.game.Side;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,46 +55,4 @@ public class RandomMinionGenerator {
     return copied.subList(0, n);
   }
 
-  public static Creature randomCreature(final TargetConfig config, final Side side) {
-    List<Creature> creatureCandidatePool = new ArrayList<>();
-    switch (config.scope) {
-      case OWN:
-        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side));
-        break;
-      case FOE:
-        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getFoeSide()));
-        break;
-      case ALL:
-        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side));
-        creatureCandidatePool.addAll(getCandidatePoolOnOneSide(config, side.getFoeSide()));
-        break;
-      default:
-        throw new RuntimeException("Unknown target scope: " + config.type);
-    }
-
-    return randomOne(creatureCandidatePool);
-  }
-
-  private static List<Creature> getCandidatePoolOnOneSide(final TargetConfig config, final Side side) {
-    List<Creature> creaturePool = new ArrayList<>();
-    switch (config.type) {
-      case HAND:
-        creaturePool.add(side.hero);
-        break;
-      case HERO:
-        creaturePool.add(side.hero);
-        break;
-      case MINION:
-        creaturePool.addAll(side.board.asList());
-        break;
-      case ALL:
-        creaturePool.add(side.hero);
-        creaturePool.addAll(side.board.asList());
-        break;
-      default:
-        throw new RuntimeException("Unknown target type: " + config.type);
-    }
-
-    return creaturePool;
-  }
 }

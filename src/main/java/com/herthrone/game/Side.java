@@ -20,6 +20,7 @@ import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstTrigger;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
+import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
@@ -155,7 +156,7 @@ public class Side implements Round, View {
   public void endTurn() {
     replay.endTurn();
     hero.endTurn();
-    board.stream().forEach(Round::endTurn);
+    board.stream().sorted(EffectFactory.compareBySequenceId).forEach(Round::endTurn);
     TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_END_TURN);
     TriggerFactory.triggerByBoard(getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_END_TURN);
   }

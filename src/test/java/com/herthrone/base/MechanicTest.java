@@ -7,11 +7,9 @@ import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstTrigger;
-import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
-import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Side;
 import com.herthrone.object.ManaCrystal;
@@ -117,8 +115,8 @@ public class MechanicTest extends BaseGame {
   @Test
   public void testElusive() {
     final Minion faerieDragon = minion.addToHandAndPlay(ConstMinion.FAERIE_DRAGON);
-    assertThat(TargetFactory.isMinionTargetable(faerieDragon, ConstType.SPELL)).isFalse();
-    assertThat(TargetFactory.isMinionTargetable(yeti, ConstType.SPELL)).isTrue();
+    assertThat(faerieDragon.isSpellTarget()).isFalse();
+    assertThat(yeti.isSpellTarget()).isTrue();
   }
 
   @Test
@@ -129,10 +127,10 @@ public class MechanicTest extends BaseGame {
     // Let jungle panther be both stealth and taunt.
     junglePanther.booleanMechanics().initialize(ConstMechanic.TAUNT);
 
-    assertThat(TargetFactory.isMinionTargetable(yeti, ConstType.ATTACK)).isFalse();
-    assertThat(TargetFactory.isHeroTargetable(hero, ConstType.ATTACK)).isFalse();
-    assertThat(TargetFactory.isMinionTargetable(senjin, ConstType.ATTACK)).isTrue();
-    assertThat(TargetFactory.isMinionTargetable(grizzly, ConstType.ATTACK)).isTrue();
+    assertThat(yeti.isAttackTarget()).isFalse();
+    assertThat(hero.isAttackTarget()).isFalse();
+    assertThat(senjin.isAttackTarget()).isTrue();
+    assertThat(grizzly.isAttackTarget()).isTrue();
 
     senjin.death();
     grizzly.death();
@@ -140,8 +138,8 @@ public class MechanicTest extends BaseGame {
 
     // Yeti and another minion with both stealth and taunt on board. Yeti should be targetable
     // because stealth prevents taunt prevents Yeti being targeted.
-    assertThat(TargetFactory.isMinionTargetable(yeti, ConstType.ATTACK)).isTrue();
-    assertThat(TargetFactory.isMinionTargetable(junglePanther, ConstType.ATTACK)).isFalse();
+    assertThat(yeti.isAttackTarget()).isTrue();
+    assertThat(junglePanther.isAttackTarget()).isFalse();
   }
 
   @Test
@@ -231,13 +229,13 @@ public class MechanicTest extends BaseGame {
     // No minions so far has default immune mechanic yet.
     // Init IMMUNE for Yeti.
     yeti.booleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(TargetFactory.isMinionTargetable(yeti, ConstType.ATTACK)).isFalse();
-    assertThat(TargetFactory.isMinionTargetable(yeti, ConstType.SPELL)).isFalse();
+    assertThat(yeti.isAttackTarget()).isFalse();
+    assertThat(yeti.isSpellTarget()).isFalse();
 
     // Test Hero immune.
     hero.booleanMechanics().initialize(ConstMechanic.IMMUNE);
-    assertThat(TargetFactory.isHeroTargetable(hero, ConstType.ATTACK)).isFalse();
-    assertThat(TargetFactory.isHeroTargetable(hero, ConstType.SPELL)).isFalse();
+    assertThat(hero.isAttackTarget()).isFalse();
+    assertThat(hero.isSpellTarget()).isFalse();
   }
 
   @Test

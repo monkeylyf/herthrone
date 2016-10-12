@@ -9,8 +9,6 @@ import com.herthrone.base.Minion;
 import com.herthrone.configuration.TargetConfig;
 import com.herthrone.constant.ConstCommand;
 import com.herthrone.constant.ConstTarget;
-import com.herthrone.constant.ConstType;
-import com.herthrone.factory.TargetFactory;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ public class CommandLine {
         final CommandNode minionAttackCommand = new CommandNode(minion.cardName(), i, ConstTarget.OWN);
         for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
           final Minion foeMinion = side.getFoeSide().board.get(j);
-          if (TargetFactory.isMinionTargetable(foeMinion, ConstType.ATTACK)) {
+          if (foeMinion.isAttackTarget()) {
             minionAttackCommand.addChildNode(new CommandNode(foeMinion.cardName(), j,
                 ConstTarget.FOE));
           }
@@ -59,7 +57,7 @@ public class CommandLine {
       final CommandNode heroAttack = new CommandNode(ConstCommand.HERO_ATTACK.toString());
       for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
         final Minion foeMinion = side.getFoeSide().board.get(j);
-        if (TargetFactory.isMinionTargetable(foeMinion, ConstType.ATTACK)) {
+        if (foeMinion.isAttackTarget()) {
           heroAttack.addChildNode(new CommandNode(foeMinion.cardName(), j, ConstTarget.FOE));
         }
       }

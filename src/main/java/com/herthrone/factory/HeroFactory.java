@@ -264,6 +264,24 @@ public class HeroFactory {
       }
 
       @Override
+      public boolean isSpellTarget() {
+        return booleanMechanics().isOff(ConstMechanic.IMMUNE);
+      }
+
+      @Override
+      public boolean isAttackTarget() {
+        if (booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
+          return false;
+        } else {
+          final boolean hasNonStealthTauntMinionOnBoard = binder().getSide().board.stream()
+              .anyMatch(minion ->
+                  minion.booleanMechanics().isOn(ConstMechanic.TAUNT) &&
+                  minion.booleanMechanics().isOff(ConstMechanic.STEALTH));
+          return !hasNonStealthTauntMinionOnBoard;
+        }
+      }
+
+      @Override
       public void endTurn() {
         // Reset attack of hero but not the one of weapon is any. Do not call attackAttribute().
         attackAttr.reset();

@@ -23,7 +23,6 @@ import com.herthrone.factory.EffectFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SecretFactory;
 import com.herthrone.factory.SpellFactory;
-import com.herthrone.factory.TargetFactory;
 import com.herthrone.factory.TriggerFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.service.Command;
@@ -297,17 +296,14 @@ public class Game implements Round {
 
   private void useHeroPower(final Entity target) {
     final Spell heroPower = activeSide.hero.getHeroPower();
-    final Creature targetCreature;
     if (target.toString().length() != 0) {
       Preconditions.checkArgument(!heroPower.getSelectTargetConfig().select.equals(
           ConstSelect.PASSIVE));
-      targetCreature = TargetParser.toCreature(activeSide, target);
+      final Creature targetCreature = TargetParser.toCreature(activeSide, target);
+      TriggerFactory.activeTrigger(activeSide.hero.getHeroPower(), targetCreature);
     } else {
-      targetCreature = TargetFactory.getSingleTarget(activeSide.hero, heroPower
-              .getSelectTargetConfig(),
-          activeSide);
+      TriggerFactory.activeTrigger(activeSide.hero.getHeroPower());
     }
-    EffectFactory.pipeEffects(activeSide.hero.getHeroPower(), targetCreature);
   }
 
   private void attack(final Entity doer, final Entity target) {
@@ -315,7 +311,6 @@ public class Game implements Round {
     final Creature attackee = TargetParser.toCreature(activeSide, target);
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(attacker, attackee);
   }
-
 
   public void useHeroPower(final Creature creature) {
     activeSide.hero.useHeroPower(creature);

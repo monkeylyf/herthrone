@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 public class EffectFactory {
 
   private static Logger logger = Logger.getLogger(EffectFactory.class.getName());
-  static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
+  public static final Comparator<Minion> compareBySequenceId = (m1, m2) -> Integer.compare(
       m1.getSequenceId(), m2.getSequenceId());
 
   static class AuraEffectFactory {

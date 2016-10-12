@@ -78,7 +78,7 @@ public class TriggerFactory {
     mechanicConfigs.stream()
         .filter(mechanicConfig -> !mechanicConfig.triggerOnlyWithTarget)
         .forEach(mechanicConfig -> {
-          final List<Creature> targets = TargetFactory.getProperTargets(triggerrer,
+          final List<Creature> targets = TargetFactory.getTargets(triggerrer,
                 mechanicConfig.targetConfig, triggerrer.binder().getSide());
           targets.forEach(
               target -> EffectFactory.pipeMechanicEffectConditionally(
@@ -103,7 +103,7 @@ public class TriggerFactory {
           final List<Creature> targets =
               (mechanicConfig.targetConfig.scope.equals(ConstTarget.NOT_PROVIDED) ?
               Collections.singletonList(selectedTarget) :
-              TargetFactory.getProperTargets(triggerrer, mechanicConfig.targetConfig, side));
+              TargetFactory.getTargets(triggerrer, mechanicConfig.targetConfig, side));
           targets.forEach(target ->
               EffectFactory.pipeMechanicEffectConditionally(mechanicConfig, side, target));
         })
@@ -113,7 +113,6 @@ public class TriggerFactory {
   public static void triggerByBoard(final Stream<Minion> minionStream, final Side triggeringSide,
                                     final ConstTrigger triggerType) {
     minionStream
-        .filter(minion -> !minion.getActiveMechanics().get(triggerType).isEmpty())
         .sorted(EffectFactory.compareBySequenceId)
         .forEach(minion ->
             minion.getActiveMechanics().get(triggerType)

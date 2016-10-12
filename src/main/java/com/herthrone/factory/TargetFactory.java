@@ -1,14 +1,10 @@
 package com.herthrone.factory;
 
-import com.google.common.base.Preconditions;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Destroyable;
-import com.herthrone.base.Hero;
 import com.herthrone.base.Mechanic;
-import com.herthrone.base.Minion;
 import com.herthrone.configuration.TargetConfig;
-import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 import com.herthrone.game.Container;
@@ -27,86 +23,30 @@ public class TargetFactory {
 
   private static final Logger logger = Logger.getLogger(TargetFactory.class.getName());
 
-  public static boolean isMinionTargetable(final Minion minion, final ConstType type) {
-    if (minion.booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
-      return false;
-    } else {
-      switch (type) {
-        case ATTACK:
-          return isMinionTargetableByAttack(minion);
-        case SPELL:
-          return isMinionTargetableBySpell(minion);
-        default:
-          throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
-      }
+  static Stream<Creature> getTarget(final Mechanic.ActiveMechanic triggerrer,
+                                    final Creature selectedTarget, final Side side,
+                                    final TargetConfig targetConfig) {
+    if (targetConfig.scope.equals(ConstTarget.NOT_PROVIDED)) {
+      return Collections.singletonList(selectedTarget).stream();
     }
+    logger.debug("Trigger with configured targets: " + targetConfig);
+    return TargetFactory.getTargets(triggerrer, targetConfig, side).stream()
+        .filter(target -> !targetConfig.type.equals(ConstType.OTHER) || target != selectedTarget);
   }
 
-  private static boolean isMinionTargetableByAttack(final Minion minion) {
-    // A stealth minion can not be targeted, even it is a taunt minion.
-    if (minion.booleanMechanics().isOn(ConstMechanic.STEALTH)) {
-      return false;
-    } else if (minion.booleanMechanics().isOn(ConstMechanic.TAUNT)) {
-      // A taunt minion is targetable.
-      return true;
-    } else {
-      // If there is any other minions on the board with taunt but not stealth ability, this minion
-      // cannot be targeted.
-      return !minion.binder().getSide().board.stream()
-          .anyMatch(minionOnBoard ->
-              minionOnBoard.booleanMechanics().isOn(ConstMechanic.TAUNT) &&
-              minionOnBoard.booleanMechanics().isOff(ConstMechanic.STEALTH));
-    }
-  }
-
-  private static boolean isMinionTargetableBySpell(final Minion minion) {
-    return !minion.booleanMechanics().isOn(ConstMechanic.ELUSIVE);
-  }
-
-  public static boolean isHeroTargetable(final Hero hero, final ConstType type) {
-    if (hero.booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
-      return false;
-    } else {
-      switch (type) {
-        case ATTACK:
-          return isHeroTargetableByAttack(hero);
-        case SPELL:
-          return isHeroTargetableBySpell(hero);
-        default:
-          throw new RuntimeException(String.format("Unknown type %s for target", type.toString()));
-      }
-    }
-  }
-
-  private static boolean isHeroTargetableByAttack(final Hero hero) {
-    return hero.booleanMechanics().isOn(ConstMechanic.TAUNT);
-  }
-
-  private static boolean isHeroTargetableBySpell(final Hero hero) {
-    return true;
-  }
-
-  public static Creature getSingleTarget(final Mechanic.ActiveMechanic triggerer, final
-                                         TargetConfig targetConfig, final Side
-      side) {
-    final List<Creature> candidates = getProperTargets(triggerer, targetConfig, side);
-    Preconditions.checkArgument(candidates.size() == 1);
-    return candidates.get(0);
-  }
-
-  static List<Creature> getProperTargets(final Mechanic.ActiveMechanic triggerrer,
-                                         final TargetConfig targetConfig, final Side side) {
+  public static List<Creature> getTargets(final Mechanic.ActiveMechanic triggerrer,
+                                          final TargetConfig targetConfig, final Side side) {
     final List<Creature> candidates = new ArrayList<>();
     switch (targetConfig.scope) {
       case OWN:
-        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side));
+        candidates.addAll(getTargetsBySide(triggerrer, targetConfig, side));
         break;
       case FOE:
-        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side.getFoeSide()));
+        candidates.addAll(getTargetsBySide(triggerrer, targetConfig, side.getFoeSide()));
         break;
       case ALL:
-        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side));
-        candidates.addAll(getProperTargetsBySide(triggerrer, targetConfig, side.getFoeSide()));
+        candidates.addAll(getTargetsBySide(triggerrer, targetConfig, side));
+        candidates.addAll(getTargetsBySide(triggerrer, targetConfig, side.getFoeSide()));
         break;
       default:
         throw new RuntimeException("Unknown scope: " + targetConfig.scope);
@@ -117,9 +57,8 @@ public class TargetFactory {
         candidates;
   }
 
-  private static List<Creature> getProperTargetsBySide(final Mechanic.ActiveMechanic triggerrer,
-                                                       final TargetConfig targetConfig,
-                                                       final Side side) {
+  private static List<Creature> getTargetsBySide(final Mechanic.ActiveMechanic triggerrer,
+                                                 final TargetConfig targetConfig, final Side side) {
     switch (targetConfig.type) {
       case HAND:
         return Collections.singletonList(side.hero);
@@ -191,8 +130,6 @@ public class TargetFactory {
         return Collections.singletonList(side.getFoeSide());
       case ALL:
         return Arrays.asList(side, side.getFoeSide());
-      case NOT_PROVIDED:
-        return Collections.singletonList(side);
       default:
         throw new RuntimeException("Unknown target scope: " + target.scope);
     }
@@ -209,14 +146,4 @@ public class TargetFactory {
     }
   }
 
-  static Stream<Creature> getTarget(final Mechanic.ActiveMechanic triggerrer,
-                                    final Creature selectedTarget, final Side triggeringSide,
-                                    final TargetConfig targetConfig) {
-    if (targetConfig.scope.equals(ConstTarget.NOT_PROVIDED)) {
-      return Collections.singletonList(selectedTarget).stream();
-    }
-    logger.debug("Trigger with configured targets: " + targetConfig);
-    return TargetFactory.getProperTargets(triggerrer, targetConfig, triggeringSide).stream()
-        .filter(t -> !targetConfig.type.equals(ConstType.OTHER) || t != selectedTarget);
-  }
 }

@@ -2,7 +2,7 @@ package com.herthrone.base;
 
 import com.herthrone.object.ValueAttribute;
 
-public interface Creature extends Card, Round, Mechanic.StaticMechanic {
+public interface Creature extends Card, Round, Targetable, Mechanic.StaticMechanic {
 
   ValueAttribute health();
 

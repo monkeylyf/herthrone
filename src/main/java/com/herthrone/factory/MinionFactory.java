@@ -292,6 +292,34 @@ public class MinionFactory {
       }
 
       @Override
+      public boolean isSpellTarget() {
+        if (booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
+          return false;
+        } else {
+          return !booleanMechanics().isOn(ConstMechanic.ELUSIVE);
+        }
+      }
+
+      @Override
+      public boolean isAttackTarget() {
+        if (booleanMechanics().isOn(ConstMechanic.IMMUNE)) {
+          return false;
+        } else if (booleanMechanics().isOn(ConstMechanic.STEALTH)) {
+          return false;
+        } else if (booleanMechanics().isOn(ConstMechanic.TAUNT)) {
+          // A taunt minion is targetable.
+          return true;
+        } else {
+          // If there is any other minions on the board with taunt but not stealth ability, this minion
+          // cannot be targeted.
+          return !binder().getSide().board.stream()
+              .anyMatch(minionOnBoard ->
+                  minionOnBoard.booleanMechanics().isOn(ConstMechanic.TAUNT) &&
+                  minionOnBoard.booleanMechanics().isOff(ConstMechanic.STEALTH));
+        }
+      }
+
+      @Override
       public void refresh() {
         binder().getSide().board.stream()
             .filter(minion -> minion != this)
