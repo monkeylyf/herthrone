@@ -1095,13 +1095,12 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
       condition:
+        # For now the previous mechanic is executed before triggering this one.
+        # Thus the condition to draw a card is the minion is dead.
         type: health_value
-        range_start: 1
-        range_end: 1
+        range_start: 0
+        range_end: 0
 
 - name: sacrificial_pact
   class: warlock

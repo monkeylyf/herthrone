@@ -578,9 +578,8 @@ public class SpellTest extends BaseGame {
 
     spell.addToHandAndCast(ConstSpell.MORTAL_COIL, BoardSide.OWN, ContainerType.BOARD, 0);
     assertThat(yeti.isDead()).isTrue();
-    // TODO: doesn't work with current effect/trigger factory.
-    //assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 1);
-    //assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1);
+    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 1);
+    assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1);
   }
 
   @Test
