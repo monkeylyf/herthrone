@@ -2,7 +2,7 @@ package com.herthrone.constant;
 
 
 public class Constant {
-  // TODO: There are used in switch/case so cannot be enum type.
+  // There are used in switch/case so cannot be enum type.
   // However, due to the silly modeling on the effect config yaml, cannot
   // use Enum to replace the String(yaml field might be mapped to different Enum
   // type, causing type conversion impossible during load config. Better to
@@ -17,10 +17,8 @@ public class Constant {
   public static final String CRYSTAL_LOCK = "crystal_lock";
   public static final String DECK_SIZE = "deck_size";
   public static final String HAND = "hand";
-  public static final String HAND_SIZE = "hand_size";
   public static final String HERO_POWER = "hero_power";
   public static final String MANA_CRYSTAL = "mana_crystal";
-  public static final String SECRET_SIZE = "secret_size";
   public static final String SECRET = "secret";
   public static final String HEALTH = "health";
   public static final String TYPE = "type";

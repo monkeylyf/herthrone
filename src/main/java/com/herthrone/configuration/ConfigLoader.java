@@ -7,6 +7,7 @@ import com.herthrone.constant.ConstClass;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import org.yaml.snakeyaml.Yaml;
 
@@ -25,35 +26,40 @@ public class ConfigLoader {
   private static final String pathTemplate = "src/main/resources/%s.yaml";
   private static volatile ResourceBundle RESOURCE;
 
-  private static AbstractConfigLoader<SpellConfig> spellConfigLoader = new AbstractConfigLoader<SpellConfig>("spell") {
+  private static AbstractConfigLoader<SpellConfig> spellConfigLoader = new
+      AbstractConfigLoader<SpellConfig>(ConstType.SPELL) {
     @Override
     protected SpellConfig createInstance(Map map) {
       return new SpellConfig(map);
     }
   };
 
-  private static AbstractConfigLoader<MinionConfig> minionConfigLoader = new AbstractConfigLoader<MinionConfig>("minion") {
+  private static AbstractConfigLoader<MinionConfig> minionConfigLoader = new
+      AbstractConfigLoader<MinionConfig>(ConstType.MINION) {
     @Override
     protected MinionConfig createInstance(Map map) {
       return new MinionConfig(map);
     }
   };
 
-  private static AbstractConfigLoader<HeroConfig> heroConfigLoader = new AbstractConfigLoader<HeroConfig>("hero") {
+  private static AbstractConfigLoader<HeroConfig> heroConfigLoader = new
+      AbstractConfigLoader<HeroConfig>(ConstType.HERO) {
     @Override
     protected HeroConfig createInstance(Map map) {
       return new HeroConfig(map);
     }
   };
 
-  private static AbstractConfigLoader<SpellConfig> heroPowerConfigLoader = new AbstractConfigLoader<SpellConfig>("hero_power") {
+  private static AbstractConfigLoader<SpellConfig> heroPowerConfigLoader = new
+      AbstractConfigLoader<SpellConfig>(ConstType.HERO_POWER) {
     @Override
     protected SpellConfig createInstance(Map map) {
       return new SpellConfig(map);
     }
   };
 
-  private static AbstractConfigLoader<WeaponConfig> weaponConfigLoader = new AbstractConfigLoader<WeaponConfig>("weapon") {
+  private static AbstractConfigLoader<WeaponConfig> weaponConfigLoader = new
+      AbstractConfigLoader<WeaponConfig>(ConstType.WEAPON) {
     @Override
     protected WeaponConfig createInstance(Map map) {
       return new WeaponConfig(map);
@@ -144,8 +150,8 @@ public class ConfigLoader {
     private volatile ImmutableMap<Enum, T> configs;
     private String configName;
 
-    public AbstractConfigLoader(final String configName) {
-      this.configName = configName;
+    public AbstractConfigLoader(final ConstType configType) {
+      this.configName = configType.toString().toLowerCase();
     }
 
     public synchronized ImmutableMap<Enum, T> getConfigurations() {

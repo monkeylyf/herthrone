@@ -38,18 +38,21 @@ import java.util.function.IntSupplier;
 public class Side implements Round, View {
 
   private static Logger logger = Logger.getLogger(Side.class.getName());
+  private static final int SHUFFLE_ITERATION = 5;
   public final Hero hero;
   public final Container<Card> hand;
   public final Container<Card> deck;
   public final Container<Minion> board;
   public final Container<Secret> secrets;
+  public final List<Enum> playedCards;
   public final Replay replay;
   private final EffectQueue effectQueue;
   private final IntSupplier idGenerator;
   private int fatigue;
   private Side foeSide;
 
-  private Side(final Hero hero, final EffectQueue effectQueue, final IntSupplier idGenerator) {
+  private Side(final Hero hero, final List<Enum> cards, final EffectQueue effectQueue,
+               final IntSupplier idGenerator) {
     // Init containers.
     final int handCapacity = Integer.parseInt(
         ConfigLoader.getResource().getString(Constant.HAND_MAX_SIZE));
@@ -59,8 +62,9 @@ public class Side implements Round, View {
     this.board = new Container<>(boardCapacity);
     final int deckCapacity = Integer.parseInt(
         ConfigLoader.getResource().getString(Constant.DECK_MAX_CAPACITY));
-    this.deck = new Container<>(deckCapacity);
     this.secrets = new Container<>();
+    this.deck = new Container<>(deckCapacity);
+    populateDeck(cards);
 
     this.hero = hero;
     bind(hero);
@@ -69,13 +73,15 @@ public class Side implements Round, View {
     this.fatigue = 0;
     this.effectQueue = effectQueue;
     this.idGenerator = idGenerator;
+    this.playedCards = new ArrayList<>();
   }
 
   public void bind(final Card card) {
     card.binder().bind(this);
   }
 
-  static Side createSidePair(final ConstHero ownHero, final ConstHero foeHero) {
+  static Side createSidePair(final ConstHero ownHero, final List<Enum> ownDeck,
+                             final ConstHero foeHero, final List<Enum> foeDeck) {
     final IntSupplier sequenceIdGenerator = new IntSupplier() {
       private int id = 0;
 
@@ -86,14 +92,16 @@ public class Side implements Round, View {
       }
     };
     final EffectQueue effectQueue = new EffectQueue();
-    final Side ownSide = new Side(HeroFactory.create(ownHero), effectQueue, sequenceIdGenerator);
-    final Side foeSide = new Side(HeroFactory.create(foeHero), effectQueue, sequenceIdGenerator);
+    final Side ownSide = new Side(
+        HeroFactory.create(ownHero), ownDeck, effectQueue, sequenceIdGenerator);
+    final Side foeSide = new Side(
+        HeroFactory.create(foeHero), foeDeck, effectQueue, sequenceIdGenerator);
     ownSide.foeSide = foeSide;
     foeSide.foeSide = ownSide;
     return ownSide;
   }
 
-  void populateDeck(final List<Enum> cards) {
+  private void populateDeck(final List<Enum> cards) {
     cards.forEach(cardName -> {
       final Card card = createCardInstance(cardName);
       deck.add(card);
@@ -101,7 +109,7 @@ public class Side implements Round, View {
     });
 
     // Shuffle the deck.
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < SHUFFLE_ITERATION; ++i) {
       deck.shuffle();
     }
   }
@@ -201,23 +209,15 @@ public class Side implements Round, View {
 
   private Map<String, String> getOwnSideView() {
     final ImmutableMap.Builder<String, String> ownSideBuilder = buildNoHiddenSideView(this);
-
-    // Add hands as part of view.
-    for (int i = 0; i < hand.size(); ++i) {
-      ownSideBuilder.put(Constant.HAND + i, hand.get(i).view().toString());
-    }
-    // Add secrets as part of view.
-    for (int i = 0; i < secrets.size(); ++i) {
-      ownSideBuilder.put(Constant.SECRET + i, secrets.get(i).view().toString());
-    }
-
+    ownSideBuilder.put(Constant.HAND, hand.view().toString());
+    ownSideBuilder.put(Constant.SECRET, secrets.view().toString());
     return ownSideBuilder.build();
   }
 
   private Map<String, String> getFoeSideView() {
     return buildNoHiddenSideView(foeSide)
-        .put(Constant.HAND_SIZE, Integer.toString(foeSide.hand.size()))
-        .put(Constant.SECRET_SIZE, Integer.toString(foeSide.secrets.size()))
+        .put(Constant.HAND, Integer.toString(foeSide.hand.size()))
+        .put(Constant.SECRET, Integer.toString(foeSide.secrets.size()))
         .build();
   }
 

@@ -8,6 +8,8 @@ import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.HeroFactory;
 import com.herthrone.object.ManaCrystal;
+import com.herthrone.service.BoardSide;
+import com.herthrone.service.ContainerType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -154,11 +156,11 @@ public class GameManagerTest extends BaseGame {
     final int damage = 2;
     game.inactiveSide.hero.takeDamage(damage);
     assertThat(game.inactiveSide.hero.healthLoss()).isEqualTo(damage);
-    game.useHeroPower(game.inactiveSide.hero);
+    heroPower.use(BoardSide.FOE, ContainerType.HERO, 0);
     assertThat(game.inactiveSide.hero.healthLoss()).isEqualTo(0);
 
     try {
-      game.useHeroPower(game.inactiveSide.hero);
+      heroPower.use(BoardSide.FOE, ContainerType.HERO, 0);
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage(HeroFactory.HERO_POWER_ERROR_MESSAGE);
     }
@@ -181,18 +183,22 @@ public class GameManagerTest extends BaseGame {
     final int numOfMyMinions = 2;
     final int numOfFoeMinions = 1;
     populateBoardWithMinions(numOfMyMinions, numOfFoeMinions);
+    // populateBoardWithMinions actually have its own turn and now it's turn #5.
+    final int numOfTurns = 5;
 
     assertThat(game.activeSide.board.size()).isEqualTo(numOfMyMinions);
     assertThat(game.inactiveSide.board.size()).isEqualTo(numOfFoeMinions);
 
     final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeSide);
-    checkCommands(myRoot, numOfMyMinions);
+    checkCommands(myRoot, numOfMyMinions, numOfTurns);
 
     // Switch side.
+    game.endTurn();
     game.switchTurn();
+    game.startTurn();
 
     final CommandLine.CommandNode foeRoot = CommandLine.yieldCommands(game.activeSide);
-    checkCommands(foeRoot, numOfFoeMinions);
+    checkCommands(foeRoot, numOfFoeMinions, numOfTurns);
   }
 
   private void jumpIntoRoundFour() {
@@ -218,7 +224,8 @@ public class GameManagerTest extends BaseGame {
     game.switchTurn();
   }
 
-  private void checkCommands(CommandLine.CommandNode root, final int numOfMinions) {
+  private void checkCommands(final CommandLine.CommandNode root, final int numOfMinions,
+                             final int numOfCardsInHand) {
     assertThat(root.childOptions.size()).isEqualTo(4);
     final List<String> childOptions = root.childOptions.stream()
         .map(option -> option.option)
@@ -228,16 +235,15 @@ public class GameManagerTest extends BaseGame {
         ConstCommand.PLAY_CARD.toString(), ConstCommand.USE_HERO_POWER.toString());
 
     for (CommandLine.CommandNode node : root.childOptions) {
-      final String optionName = node.option;
-      if (optionName.equals(ConstCommand.END_TURN.toString())) {
+      if (node.option.equals(ConstCommand.END_TURN.toString())) {
         assertThat(node.childOptions.size()).isEqualTo(0);
-      } else if (optionName.equals(ConstCommand.USE_HERO_POWER.toString())) {
+      } else if (node.option.equals(ConstCommand.USE_HERO_POWER.toString())) {
         // 1(own hero) + 2(own minions) + 1(foe hero) + 1(foe minion) = 5
         assertThat(node.childOptions.size()).isEqualTo(5);
-      } else if (optionName.equals(ConstCommand.MINION_ATTACK)) {
+      } else if (node.option.equals(ConstCommand.MINION_ATTACK.toString())) {
         assertThat(node.childOptions.size()).isEqualTo(numOfMinions);
-      } else if (optionName.equals(ConstCommand.PLAY_CARD)) {
-        assertThat(node.childOptions.size()).isEqualTo(0);
+      } else if (node.option.equals(ConstCommand.PLAY_CARD.toString())) {
+        assertThat(node.childOptions.size()).isEqualTo(numOfCardsInHand);
       }
     }
   }

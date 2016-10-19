@@ -388,8 +388,9 @@ public class EffectFactory {
       case HEALTH_LOSS:
         return side.hero.healthLoss();
       case MINIONS_PLAYED:
-        // TODO: need an accumulator.
-        return 0;
+        return (int) side.playedCards.stream()
+          .filter(card -> card.getDeclaringClass() == ConstMinion.class)
+          .count();
       default:
         throw new RuntimeException("Unknown dependency: " + constDependency);
     }

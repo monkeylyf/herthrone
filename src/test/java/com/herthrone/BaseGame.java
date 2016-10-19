@@ -37,7 +37,6 @@ public class BaseGame {
   protected static final ConstMinion YETI = ConstMinion.CHILLWIND_YETI;
   private static final String GAME_ID = "gameId";
   private static final int HAND_POSITION = 0;
-  private static final int BOARD_POSITION = 0;
 
   protected void setUpGame(final ConstHero heroName1, final ConstHero heroName2) {
     final List<Enum> cards = Collections.nCopies(DECK_SIZE, YETI);

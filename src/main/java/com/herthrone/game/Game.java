@@ -17,6 +17,7 @@ import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSecret;
 import com.herthrone.constant.ConstSelect;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstTarget;
 import com.herthrone.constant.ConstType;
 import com.herthrone.constant.ConstWeapon;
 import com.herthrone.factory.EffectFactory;
@@ -39,19 +40,18 @@ import java.util.stream.Collectors;
 public class Game implements Round {
 
   private static final Logger logger = Logger.getLogger(Game.class.getName());
-  private static Map<String, Game> gamePool = new HashMap<>();
+  private static final Map<String, Game> gamePool = new HashMap<>();
 
   private final String gameId;
   public Side activeSide;
   public Side inactiveSide;
 
   public static String StartGame(final List<StartGameSetting> settings) {
-    // TODO:
+    // For now it only support duel game.
     Preconditions.checkArgument(settings.size() == 2);
-
     // Concatenate user IDs to form a game ID in alphabetical order.
     final List<String> IdSequence = settings.stream()
-        .map(setting -> setting.getUserId())
+        .map(StartGameSetting::getUserId)
         .sorted()
         .collect(Collectors.toList());
     final String gameId = Joiner.on(':').join(IdSequence);
@@ -75,35 +75,28 @@ public class Game implements Round {
 
   private static Enum toEnum(final String cardName) {
     final String upperCardName = cardName.toUpperCase();
-    IllegalArgumentException finalError;
     try {
       return ConstMinion.valueOf(upperCardName);
     } catch (IllegalArgumentException error) {
-      finalError = error;
     }
     try {
       return ConstSpell.valueOf(upperCardName);
     } catch (IllegalArgumentException error) {
-      finalError = error;
     }
     try {
       return ConstWeapon.valueOf(upperCardName);
     } catch (IllegalArgumentException error) {
-      finalError = error;
     }
 
-    throw new IllegalArgumentException(finalError.toString());
+    throw new IllegalArgumentException("Unknown card: " + cardName);
   }
 
   public Game(final String gameId, final ConstHero hero1, final ConstHero hero2,
               final List<Enum> cardNames1, final List<Enum> cardNames2) {
     // TODO: need to find a place to init deck given cards in a collection.
     this.gameId = gameId;
-    this.activeSide = Side.createSidePair(hero1, hero2);
+    this.activeSide = Side.createSidePair(hero1, cardNames1, hero2, cardNames2);
     this.inactiveSide = activeSide.getFoeSide();
-
-    activeSide.populateDeck(cardNames1);
-    inactiveSide.populateDeck(cardNames2);
   }
 
   public static Card createCardInstance(final String cardName, final ConstType type) {
@@ -127,8 +120,7 @@ public class Game implements Round {
     ConstMinion MINION = ConstMinion.CHILLWIND_YETI;
     final List<Enum> cards1 = Collections.nCopies(deck_size, MINION);
     final List<Enum> cards2 = Collections.nCopies(deck_size, MINION);
-    final Game game = new Game("", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2);
-    game.play();
+    new Game("demo", ConstHero.ANDUIN_WRYNN, ConstHero.JAINA_PROUDMOORE, cards1, cards2).play();
   }
 
   public void play() {
@@ -150,26 +142,40 @@ public class Game implements Round {
 
   @Override
   public void endTurn() {
+    activeSide.hero.manaCrystal().endTurn();
     activeSide.endTurn();
   }
 
   @Override
   public void startTurn() {
-    increaseCrystalUpperBound();
+    activeSide.hero.manaCrystal().startTurn();
     activeSide.startTurn();
     drawCard();
   }
 
-  void playUtilEndTurn() {
+  private void playUtilEndTurn() {
     CommandLine.CommandNode leafNode;
     do {
       final CommandLine.CommandNode root = CommandLine.yieldCommands(activeSide);
-      for (Map.Entry entry : activeSide.view().entrySet()) {
-        CommandLine.println(entry.getKey() + " " + entry.getValue());
-      }
+      printPrettyView(activeSide.view());
       leafNode = CommandLine.run(root);
       play(leafNode);
     } while (!isGameFinished() && !isTurnFinished(leafNode));
+  }
+
+  private static void printPrettyView(final Map<String, String> view) {
+    printPrettyView(view, ConstTarget.FOE.toString());
+    printPrettyView(view, ConstTarget.OWN.toString());
+  }
+
+  private static void printPrettyView(final Map<String, String> view, final String prefix) {
+    for (Map.Entry<String, String> entry : view.entrySet()) {
+      final String key = entry.getKey();
+      if (key.startsWith(prefix)) {
+        CommandLine.println(key + ": " + entry.getValue());
+      }
+    }
+    CommandLine.println();
   }
 
   public void switchTurn() {
@@ -180,9 +186,6 @@ public class Game implements Round {
     activeSide.startTurn();
   }
 
-  void increaseCrystalUpperBound() {
-    activeSide.hero.manaCrystal().endTurn();
-  }
 
   void drawCard() {
     if (activeSide.deck.isEmpty()) {
@@ -270,8 +273,7 @@ public class Game implements Round {
       activeSide.replay.add(null, -1, ConstAction.PLAY_CARD, minion.cardName());
       // Assign game board sequence id to minion.
       activeSide.setSequenceId(minion);
-      // TODO:
-      if (target.toString().length() == 0) {
+      if (isProtobufMessageEmpty(target.toByteArray())) {
         minion.playOnBoard(activeSide.board, boardPosition);
       } else {
         final Creature targetCreature = TargetParser.toCreature(activeSide, target);
@@ -283,7 +285,7 @@ public class Game implements Round {
       activeSide.hero.equip((Weapon) cardToPlay);
     } else if (cardToPlay instanceof Spell) {
       final Spell spell = (Spell) cardToPlay;
-      if (target.toString().length() == 0) {
+      if (isProtobufMessageEmpty(target.toByteArray())) {
         TriggerFactory.activeTrigger(spell);
       } else {
         final Creature targetCreature = TargetParser.toCreature(activeSide, target);
@@ -294,15 +296,19 @@ public class Game implements Round {
     }
   }
 
+  public static boolean isProtobufMessageEmpty(byte[] message) {
+    return message.length == 0;
+  }
+
   private void useHeroPower(final Entity target) {
     final Spell heroPower = activeSide.hero.getHeroPower();
-    if (target.toString().length() != 0) {
+    if (isProtobufMessageEmpty(target.toByteArray())) {
+      TriggerFactory.activeTrigger(activeSide.hero.getHeroPower());
+    } else {
       Preconditions.checkArgument(!heroPower.getSelectTargetConfig().select.equals(
           ConstSelect.PASSIVE));
       final Creature targetCreature = TargetParser.toCreature(activeSide, target);
       TriggerFactory.activeTrigger(activeSide.hero.getHeroPower(), targetCreature);
-    } else {
-      TriggerFactory.activeTrigger(activeSide.hero.getHeroPower());
     }
   }
 
@@ -310,10 +316,6 @@ public class Game implements Round {
     final Creature attacker = TargetParser.toCreature(activeSide, doer);
     final Creature attackee = TargetParser.toCreature(activeSide, target);
     EffectFactory.AttackFactory.pipePhysicalDamageEffect(attacker, attackee);
-  }
-
-  public void useHeroPower(final Creature creature) {
-    activeSide.hero.useHeroPower(creature);
   }
 
   private static class TargetParser {

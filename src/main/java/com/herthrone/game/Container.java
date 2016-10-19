@@ -2,16 +2,19 @@ package com.herthrone.game;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.herthrone.base.Card;
+import com.herthrone.base.View;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Stream;
 
-public class Container<T extends Card> {
+public class Container<T extends Card> implements View {
 
   private static Logger logger = Logger.getLogger(Container.class.getName());
 
@@ -126,5 +129,14 @@ public class Container<T extends Card> {
       stringHelper.add(Integer.toString(i), container.get(i).cardName());
     }
     return stringHelper.toString();
+  }
+
+  @Override
+  public Map<String, String> view() {
+    final ImmutableMap.Builder<String, String> viewMapBuilder = ImmutableMap.builder();
+    for (int i = 0; i < container.size(); ++i) {
+      viewMapBuilder.put(Integer.toString(i), container.get(i).toString());
+    }
+    return viewMapBuilder.build();
   }
 }

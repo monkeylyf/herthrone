@@ -160,9 +160,6 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
 
 - name: swipe
   class: druid
@@ -344,9 +341,6 @@
       effect: draw
       type: card
       value: 2
-      target:
-        scope: own
-        type: deck
 
 - name: polymorph
   class: mage
@@ -469,9 +463,6 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
 
 - name: hand_of_protection
   class: paladin
@@ -603,9 +594,6 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
 
 - name: shadow_word_pain
   display: >
@@ -821,9 +809,6 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
 
 - name: shiv
   class: rogue
@@ -843,9 +828,6 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
 
 - name: sprint
   class: rogue
@@ -1253,9 +1235,6 @@
       effect: draw
       type: card
       value: 1
-      target:
-        scope: own
-        type: deck
 
 - name: whirlwind
   class: warrior

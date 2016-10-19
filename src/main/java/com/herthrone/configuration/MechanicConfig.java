@@ -38,6 +38,7 @@ public class MechanicConfig {
   public final boolean triggerOnlyWithTarget;
   public final ConstEffectType effectType;
   public final String type;  // TODO: get rid of all String.
+  public final String description;
   public final boolean isUnique;
   public final boolean isPermanent;
   public final boolean isFolded;
@@ -56,6 +57,7 @@ public class MechanicConfig {
         ConstTrigger.valueOf(getUpperCaseStringValue(map, TRIGGER)) : ConstTrigger.NO_TRIGGER;
     this.triggerOnlyWithTarget = ConfigLoader.getByDefault(map, TRIGGER_ONLY_WITH_TARGET, false);
     this.type = (String) map.get(TYPE);
+    this.description = ConfigLoader.getByDefault(map, TYPE, "");
     this.value = ConfigLoader.getByDefault(map, VALUE, 0);
     this.isPermanent = ConfigLoader.getByDefault(map, PERMANENT, false);
     this.isUnique = ConfigLoader.getByDefault(map, UNIQUE, false);
@@ -79,6 +81,7 @@ public class MechanicConfig {
     this.trigger = mechanicConfig.trigger;
     this.triggerOnlyWithTarget = mechanicConfig.triggerOnlyWithTarget;
     this.type = mechanicConfig.type;
+    this.description = mechanicConfig.description;
     this.value = mechanicConfig.value;
     this.isPermanent = mechanicConfig.isPermanent;
     this.isFolded = mechanicConfig.isFolded;
@@ -130,7 +133,7 @@ public class MechanicConfig {
   public Mechanic toMechanicProto() {
     return Mechanic.newBuilder()
         .setType(mechanic.toString())
-        .setDescription("foo") // TODO
+        .setDescription(description)
         .build();
   }
 }

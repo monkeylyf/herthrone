@@ -1,5 +1,6 @@
 package com.herthrone.game;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -18,9 +19,10 @@ import java.util.Scanner;
 public class CommandLine {
 
   private static boolean stdoutOn = true;
+  private static final String ROOT = "root";
 
   public static CommandNode yieldCommands(final Side side) {
-    final CommandNode root = new CommandNode("root");
+    final CommandNode root = new CommandNode(ROOT);
     // Populate play card option.
     final CommandNode playCardNode = new CommandNode(ConstCommand.PLAY_CARD.toString());
     for (int i = 0; i < side.hand.size(); ++i) {
@@ -155,9 +157,9 @@ public class CommandLine {
     return cursor;
   }
 
-  public static void println(final Object object) {
+  public static void println(final Object... objects) {
     if (stdoutOn) {
-      System.out.println(object);
+      System.out.println(Joiner.on("").join(objects));
     }
   }
 
@@ -165,7 +167,7 @@ public class CommandLine {
     stdoutOn = false;
   }
 
-  public static class CommandNode {
+  static class CommandNode {
 
     private static final String TEMPLATE = "%d. %s.";
     public final String option;
