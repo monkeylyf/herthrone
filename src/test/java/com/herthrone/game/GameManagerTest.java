@@ -94,7 +94,7 @@ public class GameManagerTest extends BaseGame {
   @Test
   public void testDrawCard() {
     assertThat(game.activeSide.hand.size()).isEqualTo(0);
-    game.drawCard();
+    game.activeSide.drawCard();
     assertThat(game.activeSide.hand.size()).isEqualTo(1);
   }
 
@@ -102,7 +102,7 @@ public class GameManagerTest extends BaseGame {
   public void testOverdraw() {
     assertThat(DECK_SIZE).isGreaterThan(HAND_SIZE);
     while (!game.activeSide.deck.isEmpty()) {
-      game.drawCard();
+      game.activeSide.drawCard();
     }
     assertThat(game.activeSide.hand.size()).isEqualTo(HAND_SIZE);
   }
@@ -110,7 +110,7 @@ public class GameManagerTest extends BaseGame {
   @Test
   public void testFatigue() {
     while (!game.activeSide.deck.isEmpty()) {
-      game.drawCard();
+      game.activeSide.drawCard();
     }
 
     assertThat(game.activeSide.hero.healthLoss()).isEqualTo(0);
@@ -118,7 +118,7 @@ public class GameManagerTest extends BaseGame {
     final int repeat = 10;
     for (int i = 1; i <= repeat; ++i) {
       final int healthBeforeDrawCard = game.activeSide.hero.health().value();
-      game.drawCard();
+      game.activeSide.drawCard();
       final int healthAfterDrawCard = game.activeSide.hero.health().value();
       assertThat(healthBeforeDrawCard - healthAfterDrawCard).isEqualTo(i);
       damage += i;
@@ -131,7 +131,7 @@ public class GameManagerTest extends BaseGame {
   @Test
   public void testPlayMinionCardWithProperCrystal() {
     // TODO: check crystal cost is disabled for now so this test voids.
-    game.drawCard();
+    game.activeSide.drawCard();
 
     assertThat(game.activeSide.hand.get(0) instanceof Minion).isTrue();
     assertThat(game.activeSide.hand.get(0).cardName()).isEqualTo(YETI.toString());
@@ -184,13 +184,12 @@ public class GameManagerTest extends BaseGame {
     final int numOfFoeMinions = 1;
     populateBoardWithMinions(numOfMyMinions, numOfFoeMinions);
     // populateBoardWithMinions actually have its own turn and now it's turn #5.
-    final int numOfTurns = 5;
 
     assertThat(game.activeSide.board.size()).isEqualTo(numOfMyMinions);
     assertThat(game.inactiveSide.board.size()).isEqualTo(numOfFoeMinions);
 
     final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeSide);
-    checkCommands(myRoot, numOfMyMinions, numOfTurns);
+    checkCommands(myRoot, numOfMyMinions, game.activeSide.hand.size());
 
     // Switch side.
     game.endTurn();
@@ -198,13 +197,13 @@ public class GameManagerTest extends BaseGame {
     game.startTurn();
 
     final CommandLine.CommandNode foeRoot = CommandLine.yieldCommands(game.activeSide);
-    checkCommands(foeRoot, numOfFoeMinions, numOfTurns);
+    checkCommands(foeRoot, numOfFoeMinions, game.activeSide.hand.size());
   }
 
   private void jumpIntoRoundFour() {
     // At least 4 crystals so YETI can be played and show up as options.
     for (int i = 0; i < 8; ++i) {
-      game.drawCard();
+      //game.activeSide.drawCard();
       game.activeSide.hero.manaCrystal().startTurn();
       game.switchTurn();
     }

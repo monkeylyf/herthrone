@@ -3,14 +3,17 @@ package com.herthrone;
 import com.herthrone.base.Card;
 import com.herthrone.base.Minion;
 import com.herthrone.base.Spell;
+import com.herthrone.base.Weapon;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
+import com.herthrone.constant.ConstWeapon;
 import com.herthrone.constant.Constant;
 import com.herthrone.factory.HeroPowerFactory;
 import com.herthrone.factory.MinionFactory;
 import com.herthrone.factory.SpellFactory;
+import com.herthrone.factory.WeaponFactory;
 import com.herthrone.game.Game;
 import com.herthrone.service.BoardSide;
 import com.herthrone.service.Command;
@@ -29,6 +32,9 @@ public class BaseGame {
   protected MinionUtil minion;
   protected WeaponUtil weapon;
   protected Action action;
+  protected int initialDeckSize;
+  protected int initialHandSize;
+  protected int initialBoardSize;
 
   protected static final int DECK_SIZE = Integer.parseInt(
       ConfigLoader.getResource().getString(Constant.DECK_MAX_CAPACITY));
@@ -47,6 +53,10 @@ public class BaseGame {
     this.minion = new MinionUtil(game);
     this.weapon = new WeaponUtil(game);
     this.action = new Action(game);
+
+    this.initialBoardSize = game.activeSide.board.size();
+    this.initialDeckSize = game.activeSide.deck.size();
+    this.initialHandSize = game.activeSide.hand.size();
   }
 
   protected static class WeaponUtil {
@@ -54,6 +64,15 @@ public class BaseGame {
 
     protected WeaponUtil(final Game game) {
       this.game = game;
+    }
+
+    public Weapon create(final ConstWeapon weaponName) {
+      return WeaponFactory.create(weaponName);
+    }
+
+    protected void equip(final ConstWeapon weaponName) {
+      final Weapon weapon = create(weaponName);
+      game.activeSide.hero.equip(weapon);
     }
   }
 

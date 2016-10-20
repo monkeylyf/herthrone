@@ -140,7 +140,15 @@ public class Side implements Round, View {
     throw new RuntimeException(String.format("Unknown card %s", name));
   }
 
-  public void takeFatigueDamage() {
+  public void drawCard() {
+    if (deck.isEmpty()) {
+      takeFatigueDamage();
+    } else {
+      hand.add(deck.top());
+    }
+  }
+
+  private void takeFatigueDamage() {
     fatigue += 1;
     logger.debug(String.format("Increase fatigue to %d", fatigue));
     hero.takeDamage(fatigue);
@@ -173,6 +181,7 @@ public class Side implements Round, View {
   public void startTurn() {
     replay.startTurn();
     hero.startTurn();
+    drawCard();
     board.stream().forEach(Round::startTurn);
     TriggerFactory.triggerByBoard(getFoeSide().board.stream(), this, ConstTrigger.ON_FOE_START_TURN);
     TriggerFactory.triggerByBoard(board.stream(), this, ConstTrigger.ON_START_TURN);

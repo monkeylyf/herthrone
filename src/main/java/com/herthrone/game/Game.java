@@ -150,7 +150,6 @@ public class Game implements Round {
   public void startTurn() {
     activeSide.hero.manaCrystal().startTurn();
     activeSide.startTurn();
-    drawCard();
   }
 
   private void playUtilEndTurn() {
@@ -184,16 +183,6 @@ public class Game implements Round {
     activeSide = activeSide.getFoeSide();
     inactiveSide = activeSide.getFoeSide();
     activeSide.startTurn();
-  }
-
-
-  void drawCard() {
-    if (activeSide.deck.isEmpty()) {
-      activeSide.takeFatigueDamage();
-    } else {
-      final Card card = activeSide.deck.top();
-      activeSide.hand.add(card);
-    }
   }
 
   void play(final CommandLine.CommandNode leafNode) {

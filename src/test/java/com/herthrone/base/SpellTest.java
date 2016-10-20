@@ -1,14 +1,11 @@
 package com.herthrone.base;
 
 import com.herthrone.BaseGame;
-import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMechanic;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.constant.ConstSpell;
 import com.herthrone.constant.ConstWeapon;
-import com.herthrone.factory.MinionFactory;
-import com.herthrone.factory.SpellFactory;
 import com.herthrone.factory.WeaponFactory;
 import com.herthrone.service.BoardSide;
 import com.herthrone.service.ContainerType;
@@ -27,13 +24,6 @@ public class SpellTest extends BaseGame {
   private Hero hero;
   private Hero guldan;
   private Minion yeti;
-  private int initBoardSize;
-
-  private Spell createSpellAndBind(final ConstSpell spellName) {
-    final Spell spell = SpellFactory.create(spellName);
-    game.activeSide.bind(spell);
-    return spell;
-  }
 
   @Before
   public void setUp() {
@@ -43,7 +33,9 @@ public class SpellTest extends BaseGame {
 
     game.startTurn();
     this.yeti = minion.addToHandAndPlay(ConstMinion.CHILLWIND_YETI);
-    initBoardSize = game.activeSide.board.size();
+    initialHandSize = game.activeSide.hand.size();
+    initialBoardSize = game.activeSide.board.size();
+    initialDeckSize = game.activeSide.deck.size();
   }
 
   @Test
@@ -141,12 +133,12 @@ public class SpellTest extends BaseGame {
     final int size = 4;
     for (int i = 0; i < size; ++i) {
       heroPower.use();
-      assertThat(game.activeSide.board.size()).isEqualTo(initBoardSize + i + 1);
+      assertThat(game.activeSide.board.size()).isEqualTo(initialBoardSize + i + 1);
     }
 
     final int totemCount = game.activeSide.board.stream()
         .map(Minion::cardName).collect(Collectors.toSet()).size();
-    assertThat(totemCount).isEqualTo(initBoardSize + size);
+    assertThat(totemCount).isEqualTo(initialBoardSize + size);
   }
 
   @Test
@@ -224,7 +216,7 @@ public class SpellTest extends BaseGame {
 
   @Test
   public void testMultiShot() {
-    final Spell multiShot = createSpellAndBind(ConstSpell.MULTI_SHOT);
+    final Spell multiShot = spell.create(ConstSpell.MULTI_SHOT);
     final int damage = 3;
 
     game.switchTurn();
@@ -309,10 +301,10 @@ public class SpellTest extends BaseGame {
   @Test
   public void testMirrorImage() {
     spell.addToHandAndCast(ConstSpell.MIRROR_IMAGE);
-    assertThat(game.activeSide.board.size()).isEqualTo(initBoardSize + 2);
-    assertThat(game.activeSide.board.get(initBoardSize + 1).cardName()).isEqualTo(
+    assertThat(game.activeSide.board.size()).isEqualTo(initialBoardSize + 2);
+    assertThat(game.activeSide.board.get(initialBoardSize + 1).cardName()).isEqualTo(
         ConstMinion.MIRROR_IMAGE_MINION.toString());
-    assertThat(game.activeSide.board.get(initBoardSize).cardName()).isEqualTo(
+    assertThat(game.activeSide.board.get(initialBoardSize).cardName()).isEqualTo(
         ConstMinion.MIRROR_IMAGE_MINION.toString());
   }
 
@@ -334,19 +326,14 @@ public class SpellTest extends BaseGame {
 
   @Test
   public void testPowerWordShield() {
-    final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-    for (int i = 0; i < deckSize; ++i) {
-      game.activeSide.deck.add(minion.create(ConstMinion.CHILLWIND_YETI));
-    }
-    final int handSize = game.activeSide.hand.size();
     game.switchTurn();
     final Minion ooze = minion.addToHandAndPlay(ConstMinion.ACIDIC_SWAMP_OOZE);
     game.switchTurn();
 
     spell.addToHandAndCast(ConstSpell.POWER_WORD_SHIELD, BoardSide.FOE, ContainerType.BOARD, 0);
 
-    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 1);
-    assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1);
+    assertThat(game.activeSide.deck.size()).isEqualTo(initialDeckSize - 1 - 1);
+    assertThat(game.activeSide.hand.size()).isEqualTo(initialHandSize + 1 + 1);
     assertThat(ooze.health().value()).isEqualTo(4);
   }
 
@@ -391,20 +378,20 @@ public class SpellTest extends BaseGame {
   @Test
   public void testMindVision() {
     game.switchTurn();
-    game.activeSide.hand.add(minion.create(ConstMinion.ACIDIC_SWAMP_OOZE));
-    game.activeSide.hand.add(minion.create(ConstMinion.ACIDIC_SWAMP_OOZE));
+    // It has to be yeti because your foe is already holding on when the turn starts.
+    game.activeSide.hand.add(minion.create(ConstMinion.CHILLWIND_YETI));
+    game.activeSide.hand.add(minion.create(ConstMinion.CHILLWIND_YETI));
     game.switchTurn();
 
     final int handSize = game.activeSide.hand.size();
     spell.addToHandAndCast(ConstSpell.MIND_VISION);
     assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 1);
     assertThat(game.activeSide.hand.get(game.activeSide.hand.size() - 1).cardName())
-        .isEqualTo(ConstMinion.ACIDIC_SWAMP_OOZE.toString());
+        .isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
   }
 
   @Test
   public void testShadowWord() {
-    final Spell shadowWordPain = createSpellAndBind(ConstSpell.SHADOW_WORD_PAIN);
     // In reality, shadow word: pain cannot be used to target at yeti but here
     // it's just testing when it's targeted, no effect happens.
     spell.addToHandAndCast(ConstSpell.SHADOW_WORD_PAIN, BoardSide.OWN, ContainerType.BOARD, 0);
@@ -440,16 +427,9 @@ public class SpellTest extends BaseGame {
 
   @Test
   public void testSprint() {
-    final int deckSize = Integer.parseInt(ConfigLoader.getResource().getString("deck_max_capacity"));
-    for (int i = 0; i < deckSize; ++i) {
-      game.activeSide.deck.add(MinionFactory.create(ConstMinion.CHILLWIND_YETI));
-    }
-
-    final int handSize = game.activeSide.hand.size();
     spell.addToHandAndCast(ConstSpell.SPRINT);
-
-    assertThat(game.activeSide.hand.size()).isEqualTo(handSize + 4);
-    assertThat(game.activeSide.deck.size()).isEqualTo(deckSize - 4);
+    assertThat(game.activeSide.deck.size()).isEqualTo(initialDeckSize - 4);
+    assertThat(game.activeSide.hand.size()).isEqualTo(initialHandSize + 4);
   }
 
   @Test

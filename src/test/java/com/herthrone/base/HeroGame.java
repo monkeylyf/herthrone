@@ -34,7 +34,7 @@ public class HeroGame extends BaseGame {
     this.garrosh1 = game.activeSide.hero;
     this.garrosh2 = game.inactiveSide.hero;
 
-    this.weapon1 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE);
+    this.weapon1 = weapon.create(ConstWeapon.FIERY_WAR_AXE);
     this.weapon2 = WeaponFactory.create(ConstWeapon.FIERY_WAR_AXE);
     this.weaponAttack = weapon1.getAttackAttr().value();
     this.weaponDurability = weapon1.getDurabilityAttr().value();

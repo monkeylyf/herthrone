@@ -166,8 +166,7 @@ public class EffectFactory {
       case DESTROY:
         return Collections.singletonList(new DestroyEffect(creatureToDestroyable(target)));
       case DRAW:
-        return Collections.singletonList(new MoveCardEffect(
-            triggeringSide.hand, triggeringSide.deck, triggeringSide, config.value));
+        return Collections.singletonList(new MoveCardEffect(triggeringSide, config.value));
       case FULL_HEAL:
         return (target.healthLoss() > 0) ?
           Collections.singletonList(new HealEffect(target, target.healthLoss())) :

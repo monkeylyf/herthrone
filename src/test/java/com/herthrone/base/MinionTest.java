@@ -1,64 +1,33 @@
 package com.herthrone.base;
 
+import com.herthrone.BaseGame;
 import com.herthrone.configuration.ConfigLoader;
 import com.herthrone.configuration.MinionConfig;
 import com.herthrone.constant.ConstHero;
 import com.herthrone.constant.ConstMinion;
 import com.herthrone.factory.EffectFactory;
-import com.herthrone.factory.MinionFactory;
-import com.herthrone.game.Game;
-import com.herthrone.service.BoardSide;
-import com.herthrone.service.Command;
-import com.herthrone.service.CommandType;
-import com.herthrone.service.ContainerType;
-import com.herthrone.service.Entity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.Collections;
-
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(JUnit4.class)
-public class MinionTest {
+public class MinionTest extends BaseGame {
 
   private Minion yeti1;
   private Minion yeti2;
   private MinionConfig yetiConfig;
-  private Game game;
-
-  private void addCardToHandAndPlayItOnOwnBoard(final Card card) {
-    game.activeSide.hand.add(0, card);
-    final Command playCardCommand = Command.newBuilder()
-        .setType(CommandType.PLAY_CARD)
-        .setDoer(Entity.newBuilder()
-            .setSide(BoardSide.OWN)
-            .setContainerType(ContainerType.HAND)
-            .setPosition(0))
-        .build();
-    game.command(playCardCommand);
-  }
-
-  private Minion createAndBindMinion(final ConstMinion minionName) {
-    final Minion minion = MinionFactory.create(minionName);
-    game.activeSide.bind(minion);
-    return minion;
-  }
 
   @Before
   public void setUp() {
-    this.game = new Game("gameId", ConstHero.GULDAN, ConstHero.GULDAN,
-        Collections.emptyList(), Collections.emptyList());
-    this.yeti1 = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
+    setUpGame(ConstHero.GULDAN, ConstHero.GULDAN);
     game.startTurn();
-    addCardToHandAndPlayItOnOwnBoard(yeti1);
+    this.yeti1 = minion.addToHandAndPlay(ConstMinion.CHILLWIND_YETI);
     game.switchTurn();
-    this.yeti2 = createAndBindMinion(ConstMinion.CHILLWIND_YETI);
-    addCardToHandAndPlayItOnOwnBoard(yeti2);
+    this.yeti2 = minion.addToHandAndPlay(ConstMinion.CHILLWIND_YETI);
     game.switchTurn();
-
     this.yetiConfig = ConfigLoader.getMinionConfigByName(ConstMinion.CHILLWIND_YETI);
   }
 
