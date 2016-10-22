@@ -258,26 +258,30 @@ public class GameManagerTest extends BaseGame {
     final CommandLine.CommandNode myRoot = CommandLine.yieldCommands(game.activeSide);
     // Choose option 1 which is play card.
     final InputStream playCardInput = new ByteArrayInputStream("1\n1".getBytes());
-    final CommandLine.CommandNode playCardLeaf = CommandLine.run(myRoot, playCardInput);
+    final CommandLine.CommandNode playCardLeaf = CommandLine.run(
+        myRoot, playCardInput, Game.SINGLE_COMMAND).get(0);
     assertThat(playCardLeaf.getParentType()).isEqualTo(ConstCommand.PLAY_CARD.toString());
     assertThat(playCardLeaf.option).isEqualTo(game.activeSide.hand.get(0).view().toString());
 
     // Choose option 2 which is move minion.
     final InputStream moveMinionInput = new ByteArrayInputStream("2\n1\n1".getBytes());
-    final CommandLine.CommandNode moveMinionLeaf = CommandLine.run(myRoot, moveMinionInput);
+    final CommandLine.CommandNode moveMinionLeaf = CommandLine.run(
+        myRoot, moveMinionInput, Game.SINGLE_COMMAND).get(0);
     assertThat(moveMinionLeaf.getParentType()).isEqualTo(ConstMinion.CHILLWIND_YETI.toString());
     assertThat(moveMinionLeaf.index).isEqualTo(0); // TODO: 1 points to first minion, which index is 0...
 
     // Choose option 3 which is use hero power.
     final InputStream useHeroPowerInput = new ByteArrayInputStream("3\n1".getBytes());
-    final CommandLine.CommandNode heroPowerLeafNode = CommandLine.run(myRoot, useHeroPowerInput);
+    final CommandLine.CommandNode heroPowerLeafNode = CommandLine.run(myRoot, useHeroPowerInput,
+        Game.SINGLE_COMMAND).get(0);
     assertThat(heroPowerLeafNode.getParentType()).isEqualTo(ConstCommand.USE_HERO_POWER.toString());
     assertThat(heroPowerLeafNode.option).startsWith("{hero=");
     assertThat(heroPowerLeafNode.index).isEqualTo(-1); // TODO: 1 points to own hero, which index is -1...
 
     // Choose option 4 which is end turn.
     final InputStream endTurnInput = new ByteArrayInputStream("4".getBytes());
-    CommandLine.CommandNode endTurnLeafNode = CommandLine.run(myRoot, endTurnInput);
+    CommandLine.CommandNode endTurnLeafNode = CommandLine.run(
+        myRoot, endTurnInput, Game.SINGLE_COMMAND).get(0);
     assertThat(endTurnLeafNode.option).isEqualTo(ConstCommand.END_TURN.toString());
   }
 }

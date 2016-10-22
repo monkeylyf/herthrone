@@ -2,8 +2,8 @@ package com.herthrone.game;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Range;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
@@ -13,13 +13,26 @@ import com.herthrone.constant.ConstTarget;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class CommandLine {
 
   private static boolean stdoutOn = true;
   private static final String ROOT = "root";
+
+  public static CommandNode yieldCommands(final List<Card> candidates) {
+    final CommandNode root = new CommandNode(ROOT);
+    for (int i = 0; i < candidates.size(); ++i) {
+      final CommandNode candidateNode = new CommandNode(candidates.get(i).cardName(), i);
+      root.addChildNode(candidateNode);
+    }
+    return root;
+  }
 
   public static CommandNode yieldCommands(final Side side) {
     final CommandNode root = new CommandNode(ROOT);
@@ -43,8 +56,8 @@ public class CommandLine {
         for (int j = 0; j < side.getFoeSide().board.size(); ++j) {
           final Minion foeMinion = side.getFoeSide().board.get(j);
           if (foeMinion.isAttackTarget()) {
-            minionAttackCommand.addChildNode(new CommandNode(foeMinion.cardName(), j,
-                ConstTarget.FOE));
+            final CommandNode target = new CommandNode(foeMinion.cardName(), j, ConstTarget.FOE);
+            minionAttackCommand.addChildNode(target);
           }
         }
         final CommandNode heroNode = new CommandNode(side.getFoeSide().hero.cardName(), -1);
@@ -140,21 +153,26 @@ public class CommandLine {
     }
   }
 
-  public static CommandNode run(CommandNode cursor) {
-    return run(cursor, System.in);
+  public static List<CommandNode> run(final CommandNode cursor, final Range<Integer> optionRange) {
+    return run(cursor, System.in, optionRange);
   }
 
-  static CommandNode run(CommandNode cursor, final InputStream input) {
-    boolean outOfTime = false;
+  static List<CommandNode> run(CommandNode cursor, final InputStream input,
+                               final Range<Integer> optionRange) {
     final Scanner scanner = new Scanner(input);
-    while (!cursor.isLeaf() && !outOfTime) {
+    while (!cursor.isLeaf()) {
       cursor.listChildOptions();
-      cursor = cursor.move(scanner);
+      final List<CommandNode> optionNodes = cursor.move(scanner, optionRange);
+      if (optionNodes.size() > 1) {
+        return optionNodes;
+      } else {
+        cursor = optionNodes.get(0);
+      }
       println("--------------------");
     }
     // Intentionally not to close scanner because it closes System.in as well, which causes
     // next this is called again, it throws.
-    return cursor;
+    return Collections.singletonList(cursor);
   }
 
   public static void println(final Object... objects) {
@@ -212,7 +230,7 @@ public class CommandLine {
     }
 
     public String toString() {
-      return Objects.firstNonNull(option, "");
+      return MoreObjects.firstNonNull(option, "");
     }
 
     public void addChildNode(final CommandNode node) {
@@ -220,13 +238,18 @@ public class CommandLine {
       node.parent = this;
     }
 
-    public CommandNode move(final Scanner scanner) {
-      println("Enter a number:");
-      int index = 0;
+    public List<CommandNode> move(final Scanner scanner, final Range<Integer> optionRange) {
+      List<Integer> options;
       while (true) {
+        if (optionRange == Game.SINGLE_COMMAND) {
+          println("Enter a number:");
+        } else {
+          println("Enter numbers in range [1, " + optionRange.upperEndpoint() + "] (e.g., 1" +
+              " 2 3):");
+        }
         try {
-          index = scanner.nextInt();
-          if (isValidOptionNum(index)) {
+          options = parseLine(scanner.nextLine(), optionRange);
+          if (isValidOptions(options, optionRange)) {
             break;
           } else {
             println("Invalid input.");
@@ -235,28 +258,32 @@ public class CommandLine {
           println("Invalid input.");
         }
       }
-      if (index == 0) {
-        return previous();
+      return (options.size() == 0) ?
+          Collections.singletonList(MoreObjects.firstNonNull(parent, this)) :
+          options.stream().map(index -> childOptions.get(index - 1)).collect(Collectors.toList());
+    }
+
+    private static List<Integer> parseLine(final String line, final Range<Integer> optionRange) {
+      final String[] options = line.split("\\s+");
+      if (!optionRange.contains(options.length)) {
+        throw new java.util.InputMismatchException();
       } else {
-        return next(index);
+        return Arrays.stream(options).map(Integer::parseInt).collect(Collectors.toList());
       }
     }
 
-    public boolean isValidOptionNum(final int n) {
-      // Either in range [1, size] or 0 when has previous list(parent).
-      return (1 <= n && n <= childOptions.size()) || (parent != null && n == 0);
+    private boolean isValidOptions(final List<Integer> options, final Range<Integer> optionRange) {
+      if (optionRange == Game.SINGLE_COMMAND) {
+        final int index = options.get(0);
+        return (options.size() == 1 && 1 <= index && index <= childOptions.size()) ||
+            (parent != null && options.size() == 1 && options.get(0) == 0);
+      } else {
+        return (new HashSet<>(options).size() != options.size()) &&
+           options.stream().allMatch(optionRange::contains);
+      }
     }
 
-    private CommandNode previous() {
-      return MoreObjects.firstNonNull(parent, this);
-    }
-
-    private CommandNode next(final int index) {
-      // 1-based index.
-      return childOptions.get(index - 1);
-    }
-
-    public boolean isLeaf() {
+    private boolean isLeaf() {
       return childOptions.size() == 0;
     }
 

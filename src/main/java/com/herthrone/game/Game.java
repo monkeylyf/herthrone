@@ -2,6 +2,7 @@ package com.herthrone.game;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Range;
 import com.herthrone.base.Card;
 import com.herthrone.base.Creature;
 import com.herthrone.base.Minion;
@@ -31,6 +32,7 @@ import com.herthrone.service.Entity;
 import com.herthrone.service.StartGameSetting;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,7 @@ public class Game implements Round {
 
   private static final Logger logger = Logger.getLogger(Game.class.getName());
   private static final Map<String, Game> gamePool = new HashMap<>();
+  public static final Range<Integer> SINGLE_COMMAND = Range.closed(1, 1);
 
   private final String gameId;
   public Side activeSide;
@@ -124,6 +127,7 @@ public class Game implements Round {
   }
 
   public void play() {
+    pickStartingHand();
     int turn = 1;
     while (!isGameFinished()) {
       logger.debug("Turn #." + turn);
@@ -134,6 +138,34 @@ public class Game implements Round {
       switchTurn();
       turn += 1;
     }
+  }
+
+  private void pickStartingHand() {
+    pickStartingHand(true);
+    switchActiveSide();
+    pickStartingHand(false);
+    switchActiveSide();
+  }
+
+  private void pickStartingHand(final boolean isFirstToPlay) {
+    logger.info("Picking starting hand...");
+    List<Card> startingHandCandidates = createStartingHandCandidates(isFirstToPlay);
+    final CommandLine.CommandNode root = CommandLine.yieldCommands(startingHandCandidates);
+    final List<CommandLine.CommandNode> optionsNodes = CommandLine.run(root, Range.closed(
+        0, startingHandCandidates.size()));
+    //play(leafNode);
+  }
+
+  private List<Card> createStartingHandCandidates(final boolean firstToStart) {
+    final String key = (firstToStart) ? "first_starting_hand_size" : "second_starting_hand_size";
+    final int firstStartingHandSize = Integer.parseInt(ConfigLoader.getResource().getString(key));
+    final List<Card> startingHandCandidates = new ArrayList<>();
+    for (int i = 0; i < firstStartingHandSize; ++i) {
+      // In gameplay, it seems to pick x random cards from the deck. Here since the deck
+      // is already shuffle multiple times so taking the top x is equal to random picks.
+      startingHandCandidates.add(activeSide.deck.top());
+    }
+    return startingHandCandidates;
   }
 
   private boolean isGameFinished() {
@@ -157,7 +189,9 @@ public class Game implements Round {
     do {
       final CommandLine.CommandNode root = CommandLine.yieldCommands(activeSide);
       printPrettyView(activeSide.view());
-      leafNode = CommandLine.run(root);
+      final List<CommandLine.CommandNode> optionsNodes = CommandLine.run(root, SINGLE_COMMAND);
+      Preconditions.checkArgument(optionsNodes.size() == 1);
+      leafNode = optionsNodes.get(0);
       play(leafNode);
     } while (!isGameFinished() && !isTurnFinished(leafNode));
   }
@@ -179,10 +213,13 @@ public class Game implements Round {
 
   public void switchTurn() {
     activeSide.endTurn();
-    // Swap active and inactive sides.
+    switchActiveSide();
+    activeSide.startTurn();
+  }
+
+  private void switchActiveSide() {
     activeSide = activeSide.getFoeSide();
     inactiveSide = activeSide.getFoeSide();
-    activeSide.startTurn();
   }
 
   void play(final CommandLine.CommandNode leafNode) {
