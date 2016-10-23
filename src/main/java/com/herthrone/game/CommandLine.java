@@ -278,7 +278,7 @@ public class CommandLine {
         return (options.size() == 1 && 1 <= index && index <= childOptions.size()) ||
             (parent != null && options.size() == 1 && options.get(0) == 0);
       } else {
-        return (new HashSet<>(options).size() != options.size()) &&
+        return (new HashSet<>(options).size() == options.size()) &&
            options.stream().allMatch(optionRange::contains);
       }
     }

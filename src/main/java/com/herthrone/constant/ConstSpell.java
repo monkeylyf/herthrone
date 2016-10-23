@@ -72,6 +72,7 @@ public enum ConstSpell {
   STEADY_SHOT,
   SWIPE,
   TRACKING,
+  THE_COIN,
   TOTEMIC_CALL,
   TOTEMIC_MIGHT,
   VANISH,

@@ -1252,3 +1252,20 @@
       target:
         scope: all
         type: minion
+
+- name: the_coin
+  class: neutral
+  crystal: 0
+  select:
+    scope: own
+    type: hero
+    select: passive
+  mechanics:
+    - name: mana
+      trigger: on_play
+      effect: attribute
+      type: mana_crystal
+      value: 1
+      target:
+        scope: own
+        type: hero

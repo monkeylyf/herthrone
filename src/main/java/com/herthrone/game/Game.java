@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Game implements Round {
@@ -148,12 +149,27 @@ public class Game implements Round {
   }
 
   private void pickStartingHand(final boolean isFirstToPlay) {
+    Preconditions.checkArgument(activeSide.hand.isEmpty());
     logger.info("Picking starting hand...");
-    List<Card> startingHandCandidates = createStartingHandCandidates(isFirstToPlay);
+    final List<Card> startingHandCandidates = createStartingHandCandidates(isFirstToPlay);
     final CommandLine.CommandNode root = CommandLine.yieldCommands(startingHandCandidates);
-    final List<CommandLine.CommandNode> optionsNodes = CommandLine.run(root, Range.closed(
-        0, startingHandCandidates.size()));
-    //play(leafNode);
+    final Set<Integer> chosenCardIndexes = CommandLine.run(
+        root, Range.closed(0, startingHandCandidates.size())).stream()
+        .map(node -> node.index).collect(Collectors.toSet());
+    // Add chosen cards to player's hand and put unchosen ones back to deck.
+    for (int i = 0; i < startingHandCandidates.size(); ++i) {
+      if (chosenCardIndexes.contains(i)) {
+        activeSide.hand.add(startingHandCandidates.get(i));
+      } else {
+        activeSide.deck.add(startingHandCandidates.get(i));
+      }
+    }
+    // Shuffle deck no matter there are cards been put back or not.
+    activeSide.deck.shuffle();
+    // TODO: add coin to the hand of player who starts second.
+    if (!isFirstToPlay) {
+      activeSide.hand.add(SpellFactory.create(ConstSpell.THE_COIN));
+    }
   }
 
   private List<Card> createStartingHandCandidates(final boolean firstToStart) {

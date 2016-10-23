@@ -588,4 +588,13 @@ public class SpellTest extends BaseGame {
         ((dalaranMage.healthLoss() > 0) ? 1: 0);
     assertThat(damagedMinionCount).isEqualTo(2);
   }
+
+  @Test
+  public void testTheCoin() {
+    final int value = game.activeSide.hero.manaCrystal().getCrystal();
+    final int upperBound = game.activeSide.hero.manaCrystal().getCrystalUpperBound();
+    spell.addToHandAndCast(ConstSpell.THE_COIN);
+    assertThat(game.activeSide.hero.manaCrystal().getCrystal()).isEqualTo(value + 1);
+    assertThat(game.activeSide.hero.manaCrystal().getCrystalUpperBound()).isEqualTo(upperBound);
+  }
 }
