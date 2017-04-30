@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ConfigLoader {
 
   private static final String pathTemplate = "src/main/resources/%s.yaml";
-  private static volatile ResourceBundle RESOURCE;
 
   private static AbstractConfigLoader<SpellConfig> spellConfigLoader = new
       AbstractConfigLoader<SpellConfig>(ConstType.SPELL) {
@@ -88,16 +87,11 @@ public class ConfigLoader {
   }
 
   public static ResourceBundle getResource() {
-    ResourceBundle noneVolatileResource = ConfigLoader.RESOURCE;
-    if (noneVolatileResource == null) {
-      synchronized (ConfigLoader.class) {
-        noneVolatileResource = ConfigLoader.RESOURCE;
-        if (noneVolatileResource == null) {
-          noneVolatileResource = ConfigLoader.RESOURCE = loadResource();
-        }
-      }
-    }
-    return noneVolatileResource;
+    return LazyResourceHolder.resource;
+  }
+
+  private static class LazyResourceHolder {
+    private static final ResourceBundle resource = loadResource();
   }
 
   private static ResourceBundle loadResource() {
